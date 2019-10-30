@@ -5,21 +5,19 @@
   "keywords": [],
   "main": "src/index.js",
   "dependencies": {
-    "firebase": "^7.2.1",
     "react": "16.8.6",
     "react-dom": "16.8.6",
     "react-router-dom": "^5.1.2",
     "react-scripts": "3.0.1",
-    "styled-components": "^4.4.0"
+    "firebase": "^7.2.1"
   },
-  "devDependencies": {
-    "typescript": "3.3.3"
-  },
+  "devDependencies": {},
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test --env=jsdom",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "deploy": "npm run build && firebase deploy"
   },
   "browserslist": [
     ">0.2%",
