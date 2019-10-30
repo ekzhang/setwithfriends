@@ -1,0 +1,30 @@
+{
+  "name": "set-game-starting-point",
+  "version": "1.0.0",
+  "description": "Making set in 1 hour with React",
+  "keywords": [],
+  "main": "src/index.js",
+  "dependencies": {
+    "firebase": "^7.2.1",
+    "react": "16.8.6",
+    "react-dom": "16.8.6",
+    "react-router-dom": "^5.1.2",
+    "react-scripts": "3.0.1",
+    "styled-components": "^4.4.0"
+  },
+  "devDependencies": {
+    "typescript": "3.3.3"
+  },
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test --env=jsdom",
+    "eject": "react-scripts eject"
+  },
+  "browserslist": [
+    ">0.2%",
+    "not dead",
+    "not ie <= 11",
+    "not op_mini all"
+  ]
+}

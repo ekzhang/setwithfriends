@@ -1,0 +1,65 @@
+body {
+  font-family: sans-serif;
+  text-align: center;
+  background: #fafafa;
+}
+
+.symbol {
+  margin: 3px;
+}
+
+.card {
+  width: 160px;
+  height: 100px;
+  background: #fff;
+  border: 1px solid black;
+  border-radius: 6px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  margin: 6px;
+  cursor: pointer;
+  transition: background-color 0.2s, box-shadow 0.2s;
+}
+
+.card:hover {
+  box-shadow: 0px 0px 5px 3px #bbb;
+}
+
+.card.selected {
+  background: #ebfefe;
+  border-style: dotted;
+  box-shadow: 0px 0px 5px 3px #bbb;
+}
+
+.card.freeze {
+  pointer-events: none;
+}
+
+.card-container {
+  margin: 0 auto;
+  display: flex;
+  width: 540px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.controls button {
+  margin: 10px;
+}
+
+.startGameButton {
+  width: 100px;
+  height: 20px;
+  background-color: lightblue;
+  cursor: pointer;
+}
+
+.enterGameButton {
+  width: 100px;
+  height: 20px;
+  background-color: orange;
+  cursor: pointer;
+}
