@@ -1,7 +1,7 @@
 {
-  "name": "set-game-starting-point",
+  "name": "set-game",
   "version": "1.0.0",
-  "description": "Making set in 1 hour with React",
+  "description": "Realtime set with Firebase!",
   "keywords": [],
   "main": "src/index.js",
   "dependencies": {
