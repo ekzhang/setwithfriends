@@ -20,22 +20,10 @@ export function generateDeck() {
   return deck;
 }
 
-const getRandomColor = () => {
-  var letters = "0123456789ABCDEF";
-  var color = "#";
-  for (var i = 0; i < 6; i++) {
-    color += letters[Math.floor(Math.random() * 16)];
-  }
-  return color;
+export function generateColor() {
+  const hue = Math.floor(Math.random() * 360);
+  return `hsl(${hue}, 100%, 60%)`;
 };
-
-export function generateColor(usedColors) {
-  let x = getRandomColor();
-  while (usedColors.includes(x)) {
-    x = getRandomColor();
-  }
-  return x;
-}
 
 export function checkSet(a, b, c) {
   for (let i = 0; i < 4; i++) {

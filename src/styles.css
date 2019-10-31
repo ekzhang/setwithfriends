@@ -45,21 +45,3 @@ body {
   justify-content: center;
   flex-wrap: wrap;
 }
-
-.controls button {
-  margin: 10px;
-}
-
-.startGameButton {
-  width: 100px;
-  height: 20px;
-  background-color: lightblue;
-  cursor: pointer;
-}
-
-.enterGameButton {
-  width: 100px;
-  height: 20px;
-  background-color: orange;
-  cursor: pointer;
-}

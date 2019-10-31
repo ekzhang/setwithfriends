@@ -1,8 +1,9 @@
 import React, { Component } from "react";
 import Card from "./Card";
 import { findCard } from "../util";
+import { Button } from "react-bootstrap";
 
-class InGamePage extends Component {
+class Game extends Component {
   render() {
     var colors = this.props.gameInfo.meta.userColors;
     var userNames = this.props.gameInfo.meta.userNames;
@@ -11,18 +12,17 @@ class InGamePage extends Component {
     var selected = JSON.parse(this.props.gameInfo.cards[this.props.uid]);
     const cards = deck.slice(0, count);
     return (
-      <div className="app">
+      <div>
         <p>
-          {" "}
           You are:
           <span
             style={{
-              display: " inline",
+              display: "inline",
               backgroundColor: `${colors[this.props.uid]}`
             }}
           >
             {userNames[this.props.uid]}
-          </span>{" "}
+          </span>
         </p>
         {scores && (
           <div className="scoreboard">
@@ -46,7 +46,7 @@ class InGamePage extends Component {
           </div>
         )}
 
-        <h1>Set Game in 1 Hour</h1>
+        <h1>Set Game</h1>
         <p>
           <b>Remaining cards:</b> {deck.length}
         </p>
@@ -69,13 +69,12 @@ class InGamePage extends Component {
             />
           ))}
         </div>
-        <div className="controls">
-          <button onClick={this.props.onAdd3}>Add 3</button>
-          {/* <button onClick={this.reset}>Reset</button> */}
+        <div className="m-3">
+          <Button variant="outline-secondary" onClick={this.props.onAdd3}>Add 3</Button>
         </div>
       </div>
     );
   }
 }
 
-export default InGamePage;
+export default Game;

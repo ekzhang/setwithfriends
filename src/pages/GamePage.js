@@ -1,8 +1,7 @@
 import React, { Component } from "react";
 import firebase from "../firebase";
-import { withRouter } from "react-router-dom";
-import SetGame from "../components/InGamePage";
-import Lobby from "../components/LobbyPage";
+import Game from "../components/Game";
+import Lobby from "../components/Lobby";
 import NormalUserEnter from "../components/NormalUserEnter";
 import {
   generateDeck,
@@ -11,12 +10,13 @@ import {
   removeCard,
   checkSet
 } from "../util";
+import Loading from "../components/Loading";
 
 class GamePage extends Component {
   state = { readFromFB: false, gameInfo: null };
 
   componentDidMount() {
-    var gameInfoRef = firebase.database().ref("/" + this.props.match.params.id);
+    var gameInfoRef = firebase.database().ref("/" + this.props.gameId);
     gameInfoRef.on("value", snapshot => {
       this.setState({ gameInfo: snapshot.val(), readFromFB: true });
     });
@@ -27,18 +27,14 @@ class GamePage extends Component {
       alert("Please enter a name");
       return;
     }
-    let gameInfo = this.state.gameInfo;
-    let usedColorsCopy = JSON.parse(gameInfo.meta.usedColors);
-    let newColor = generateColor(usedColorsCopy);
-    usedColorsCopy.push(newColor);
+    let newColor = generateColor();
     var updates = {};
     updates["/userColors/" + this.props.uid] = newColor;
     updates["/userNames/" + this.props.uid] = userName;
-    updates["/usedColors/"] = JSON.stringify(usedColorsCopy);
-    updates["/users/" + this.props.uid] = "hey";
+    updates["/users/" + this.props.uid] = true;
     firebase
       .database()
-      .ref("/" + this.props.match.params.id + "/meta")
+      .ref("/" + this.props.gameId + "/meta")
       .update(updates);
   };
 
@@ -53,7 +49,7 @@ class GamePage extends Component {
     }
     firebase
       .database()
-      .ref("/" + this.props.match.params.id)
+      .ref("/" + this.props.gameId)
       .update(updates);
   };
 
@@ -61,13 +57,13 @@ class GamePage extends Component {
     let { count, deck } = this.state.gameInfo;
     firebase
       .database()
-      .ref("/" + this.props.match.params.id + "/count")
+      .ref("/" + this.props.gameId + "/count")
       .set(Math.min(count + 3, deck.length));
   };
 
   select = card => {
     let gameInfo = this.state.gameInfo;
-    let gameId = this.props.match.params.id;
+    let gameId = this.props.gameId;
     let { deck: deckF, count: countF } = this.state.gameInfo;
     let currentScore = gameInfo.scores[this.props.uid];
     let currentColor = gameInfo.meta.userColors[this.props.uid];
@@ -129,20 +125,20 @@ class GamePage extends Component {
 
   render() {
     if (!this.state.readFromFB) {
-      return <div>Loading...</div>;
+      return <Loading />;
     }
     var { status: gameStatus } = this.state.gameInfo.meta;
     var users = Object.keys(this.state.gameInfo.meta.userNames);
     if (gameStatus === "inGame") {
       if (users.includes(this.props.uid)) {
         return (
-          <SetGame
+          <Game
             uid={this.props.uid}
-            gameId={this.props.match.params.id}
+            gameId={this.props.gameId}
             gameInfo={this.state.gameInfo}
             onSelect={this.select}
             onAdd3={this.add3}
-          ></SetGame>
+          />
         );
       } else {
         return <div>Game already started</div>;
@@ -152,7 +148,7 @@ class GamePage extends Component {
         <Lobby
           uid={this.props.uid}
           onStartGame={this.startGame}
-          gameId={this.props.match.params.id}
+          gameId={this.props.gameId}
           gameInfo={this.state.gameInfo}
         />
       );
@@ -168,4 +164,4 @@ class GamePage extends Component {
   }
 }
 
-export default withRouter(GamePage);
+export default GamePage;

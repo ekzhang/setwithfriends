@@ -1,10 +1,13 @@
 import React, { Component } from "react";
-import "./styles.css";
 import firebase from "./firebase";
 
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import GamePage from "./pages/GamePage";
 import IndexPage from "./pages/IndexPage";
+
+import 'bootstrap/dist/css/bootstrap.min.css';
+import "./styles.css";
+import Loading from "./components/Loading";
 
 class App extends Component {
   state = { uid: null };
@@ -22,14 +25,13 @@ class App extends Component {
         this.setState({ uid: user.uid });
       } else {
         // User is signed out.
-        // ...
+        this.setState({ uid: null});
       }
-      // ...
     });
   }
 
   render() {
-    if (!this.state.uid) return "Loading...";
+    if (!this.state.uid) return <Loading />;
     return (
       <Router>
         <Switch>
@@ -40,7 +42,7 @@ class App extends Component {
           />
           <Route
             path="/:id"
-            render={props => <GamePage uid={this.state.uid} />}
+            render={({ match }) => <GamePage uid={this.state.uid} gameId={match.params.id} />}
           />
         </Switch>
       </Router>

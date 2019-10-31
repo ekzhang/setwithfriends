@@ -1,6 +1,7 @@
 import React, { Component } from "react";
+import { Button } from "react-bootstrap";
 
-class LobbyPage extends Component {
+class Lobby extends Component {
   render() {
     var admin = this.props.gameInfo.meta.admin;
     var userNames = this.props.gameInfo.meta.userNames;
@@ -21,7 +22,7 @@ class LobbyPage extends Component {
         </div>{" "}
         <p>Status: {admin === this.props.uid ? "admin" : "normal user"}</p>
         <p>Lobby: {gameId}</p>
-        <p> Current users:</p>
+        <p>Current users:</p>
         <div>
           {users.map(user => (
             <div key={user}>
@@ -36,16 +37,14 @@ class LobbyPage extends Component {
             </div>
           ))}
         </div>
-        {admin === this.props.uid ? (
-          <div onClick={this.props.onStartGame} className="startGameButton">
+        {admin === this.props.uid &&
+          <Button onClick={this.props.onStartGame}>
             Start game
-          </div>
-        ) : (
-          <div></div>
-        )}
+          </Button>
+        }
       </div>
     );
   }
 }
 
-export default LobbyPage;
+export default Lobby;
