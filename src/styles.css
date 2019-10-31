@@ -45,3 +45,17 @@ body {
   justify-content: center;
   flex-wrap: wrap;
 }
+
+.scoreboard {
+  position: absolute;
+  right: 40px;
+  border: 1px solid black;
+  padding: 1em;
+}
+
+.color-block {
+  display: inline-block;
+  border: 1px solid black;
+  height: 0.8rem;
+  width: 0.8rem;
+}
