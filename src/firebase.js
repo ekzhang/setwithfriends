@@ -1,18 +1,21 @@
 import firebase from "firebase/app";
 import "firebase/database";
 import "firebase/auth";
+import "firebase/analytics";
 
 const config = {
-  apiKey: "AIzaSyDcyJ8xRKr6anHhxP34n2OFQgUbB5LXGxc",
-  authDomain: "set-game-a0ca5.firebaseapp.com",
-  databaseURL: "https://set-game-a0ca5.firebaseio.com",
-  projectId: "set-game-a0ca5",
-  storageBucket: "set-game-a0ca5.appspot.com",
-  messagingSenderId: "676769431894",
-  appId: "1:676769431894:web:76456039d2f4be912896f7",
-  measurementId: "G-PT86NMCNSG"
+  apiKey: "AIzaSyCeKQ4rauZ_fq1rEIPJ8m5XfppwjtmTZBY",
+  authDomain: "setwithfriends.firebaseapp.com",
+  databaseURL: "https://setwithfriends.firebaseio.com",
+  projectId: "setwithfriends",
+  storageBucket: "setwithfriends.appspot.com",
+  messagingSenderId: "970544876139",
+  appId: "1:970544876139:web:06295fe4079007f76abf2e",
+  measurementId: "G-QDX193SN7R"
 };
 
 export default !firebase.apps.length
   ? firebase.initializeApp(config)
   : firebase.app();
+
+firebase.analytics();

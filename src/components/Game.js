@@ -17,14 +17,22 @@ class Game extends Component {
           <div className="scoreboard">
             <h5>Scoreboard</h5>
             <ul className="list-unstyled">
-              {Object.entries(scores).sort((a, b) => b[1] - a[1]).map(([uid, score]) => (
-                <li>
-                  <span className="color-block mr-1" style={{ background: colors[uid] }}></span>
-                  <span className="font-weight-bold">{trim(userNames[uid], 20)}{this.props.uid === uid && " (You)"}</span>
-                  {": "}
-                  <span>{score}</span>
-                </li>
-              ))}
+              {Object.entries(scores)
+                .sort((a, b) => b[1] - a[1])
+                .map(([uid, score]) => (
+                  <li key={uid}>
+                    <span
+                      className="color-block mr-1"
+                      style={{ background: colors[uid] }}
+                    ></span>
+                    <span className="font-weight-bold">
+                      {trim(userNames[uid], 20)}
+                      {this.props.uid === uid && " (You)"}
+                    </span>
+                    {": "}
+                    <span>{score}</span>
+                  </li>
+                ))}
             </ul>
           </div>
         )}
@@ -53,7 +61,9 @@ class Game extends Component {
           ))}
         </div>
         <div className="m-3">
-          <Button variant="outline-secondary" onClick={this.props.onAdd3}>Add 3</Button>
+          <Button variant="outline-secondary" onClick={this.props.onAdd3}>
+            Add 3
+          </Button>
         </div>
       </div>
     );
