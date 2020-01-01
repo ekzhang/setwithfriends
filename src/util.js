@@ -1,3 +1,5 @@
+import animals from "./utils/animals.json";
+
 export function generateDeck() {
   const deck = [];
   for (let i = 0; i < 3; i++) {
@@ -51,4 +53,9 @@ export function removeCard(deck, c) {
 export function trim(str, maxlen) {
   if (str.length <= maxlen) return str;
   return str.substring(0, maxlen) + "…";
+}
+
+export function generateName() {
+  // Source: https://a-z-animals.com/animals/
+  return "Anonymous " + animals[Math.floor(Math.random() * animals.length)];
 }

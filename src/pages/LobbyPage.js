@@ -8,9 +8,6 @@ import Typography from "@material-ui/core/Typography";
 import Grid from "@material-ui/core/Grid";
 import Button from "@material-ui/core/Button";
 
-import firebase from "../firebase";
-import { generateColor } from "../util";
-
 const useStyles = makeStyles({
   container: {
     padding: 40,
@@ -36,7 +33,7 @@ const useStyles = makeStyles({
   }
 });
 
-function LobbyPage({ uid }) {
+function LobbyPage({ user }) {
   const styles = useStyles();
   const [redirect, setRedirect] = useState(null);
 
@@ -49,7 +46,7 @@ function LobbyPage({ uid }) {
   }
 
   function newRoom() {
-    setRedirect("/room");
+    setRedirect("/room/" + generate().dashed);
   }
 
   function joinRoom() {
