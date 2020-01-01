@@ -1,77 +1,55 @@
-import React, { Component } from "react";
-import firebase from "../firebase";
-import { generateColor } from "../util";
+import React, { useState, useEffect } from 'react';
+import { Link as RouterLink, Redirect } from 'react-router-dom';
+import { makeStyles } from '@material-ui/core/styles';
+import Button from '@material-ui/core/Button';
+import Link from '@material-ui/core/Link';
+import Container from '@material-ui/core/Container';
+import Typography from '@material-ui/core/Typography';
 
-import { Redirect } from "react-router";
-import { Form, InputGroup, FormControl, Container, Button } from 'react-bootstrap';
-import generate from 'project-name-generator';
+const useStyles = makeStyles({
+  indexMenu: {
+    margin: 26,
+    '& a': {
+      margin: 12
+    }
+  },
+  container: {
+    padding: 40,
+    height: '100%',
+    textAlign: 'center'
+  }
+});
 
-class IndexPage extends Component {
-  state = { value: "", redirect: null };
-
-  handleChangeName = event => {
-    this.setState({ value: event.target.value });
-  };
-
-  createGame = evt => {
-    evt.preventDefault();
-    if (!this.state.value) {
-      alert("Please enter a name");
-      return;
+function IndexPage() {
+  const classes = useStyles();
+  const [redirect, setRedirect] = useState(false);
+  useEffect(() => {
+    function handleKeyDown(evt) {
+      if (evt.code === 'Enter' || evt.code === 'Space')
+        setRedirect(true);
     }
 
-    const newGameId = generate({ number: true }).dashed;
+    document.body.addEventListener('keydown', handleKeyDown);
+    return () => {
+      document.body.removeEventListener('keydown', handleKeyDown);
+    }
+  });
 
-    let newColor = generateColor();
-    let uid = this.props.uid;
+  if (redirect)
+    return <Redirect to="/lobby" />;
 
-    firebase
-      .database()
-      .ref("/" + newGameId)
-      .set({
-        meta: {
-          status: "lobby",
-          admin: uid,
-          userColors: {
-            [uid]: newColor
-          },
-          userNames: {
-            [uid]: this.state.value
-          },
-          users: {
-            [uid]: "hey"
-          }
-        },
-        freeze: {
-          freeze: false
-        }
-      });
-
-    this.setState({ redirect: `/${newGameId}` });
-  };
-
-  render() {
-    if (this.state.redirect) return <Redirect to={this.state.redirect} />;
-    return (
-      <Container>
-        <h1>Realtime Set</h1>
-        {/* You are user: {this.props.uid} */}
-        <Form onSubmit={this.createGame}>
-          <InputGroup>
-            <InputGroup.Prepend>
-              <InputGroup.Text>Name</InputGroup.Text>
-            </InputGroup.Prepend>
-            <FormControl
-              value={this.state.value}
-              onChange={this.handleChangeName}
-              required
-            />
-          </InputGroup>
-          <Button type="submit">Create Game</Button>
-        </Form>
-      </Container>
-    );
-  }
+  return (
+    <Container className={classes.container}>
+      <Typography variant="h3" component="h2" gutterBottom>Set with Friends</Typography>
+      <Button variant="contained" color="primary"
+        onClick={() => setRedirect(true)}>ENTER >></Button>
+      <div className={classes.indexMenu}>
+        <Link component={RouterLink} to="/help">Help</Link>
+        <Link component={RouterLink} to="/about">About</Link>
+        <Link component={RouterLink} to="/contact">Contact</Link>
+      </div>
+    </Container>
+  );
 }
 
 export default IndexPage;

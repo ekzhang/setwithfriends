@@ -1,53 +1,63 @@
-import React, { Component } from "react";
+import React, { useState, useEffect } from "react";
 import firebase from "./firebase";
+import "./styles.css";
 
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
+import CssBaseline from '@material-ui/core/CssBaseline';
+
 import GamePage from "./pages/GamePage";
+import LobbyPage from "./pages/LobbyPage";
+import LoadingPage from "./pages/LoadingPage";
 import IndexPage from "./pages/IndexPage";
+import NotFoundPage from "./pages/NotFoundPage";
 
-import 'bootstrap/dist/css/bootstrap.min.css';
-import "./styles.css";
-import Loading from "./components/Loading";
+function App() {
+  const [uid, setUid] = useState(null);
 
-class App extends Component {
-  state = { uid: null };
-
-  componentDidMount() {
+  useEffect(() => {
     firebase
       .auth()
       .signInAnonymously()
-      .catch(function(error) {
-        //TODO: catch error
+      .catch(error => {
+        alert("Unable to connect to server. Please try again later.")
       });
     firebase.auth().onAuthStateChanged(user => {
       if (user) {
         // User is signed in.
-        this.setState({ uid: user.uid });
+        setUid(user.uid);
       } else {
         // User is signed out.
-        this.setState({ uid: null});
+        setUid(null);
       }
     });
-  }
+  });
 
-  render() {
-    if (!this.state.uid) return <Loading />;
-    return (
-      <Router>
-        <Switch>
-          <Route
-            path="/"
-            exact
-            render={() => <IndexPage uid={this.state.uid}></IndexPage>}
-          />
-          <Route
-            path="/:id"
-            render={({ match }) => <GamePage uid={this.state.uid} gameId={match.params.id} />}
-          />
-        </Switch>
-      </Router>
-    );
-  }
+  return (
+    <>
+      <CssBaseline />
+      {!uid ?
+        <LoadingPage /> :
+        <Router>
+          <Switch>
+            <Route
+              path="/"
+              exact
+              component={IndexPage}
+            />
+            <Route
+              path="/lobby"
+              render={() => <LobbyPage uid={uid}></LobbyPage>}
+            />
+            <Route
+              path="/game/:id"
+              render={({ match }) => <GamePage uid={uid} gameId={match.params.id} />}
+            />
+            <Route component={NotFoundPage} />
+          </Switch>
+        </Router>
+      }
+    </>
+  );
 }
 
 export default App;

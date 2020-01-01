@@ -1,7 +1,6 @@
 import React, { Component } from "react";
 import Card from "./Card";
 import { findCard, trim } from "../util";
-import { Button } from "react-bootstrap";
 
 class Game extends Component {
   render() {
@@ -61,9 +60,7 @@ class Game extends Component {
           ))}
         </div>
         <div className="m-3">
-          <Button variant="outline-secondary" onClick={this.props.onAdd3}>
-            Add 3
-          </Button>
+          <button onClick={this.props.onAdd3}>Add 3</button>
         </div>
       </div>
     );

@@ -1,5 +1,4 @@
 import React, { Component } from "react";
-import { Button } from "react-bootstrap";
 
 class Lobby extends Component {
   render() {
@@ -38,9 +37,7 @@ class Lobby extends Component {
           ))}
         </div>
         {admin === this.props.uid &&
-          <Button onClick={this.props.onStartGame}>
-            Start game
-          </Button>
+          <button onClick={this.props.onStartGame}>Start game</button>
         }
       </div>
     );
