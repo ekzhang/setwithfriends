@@ -23,7 +23,7 @@ export function generateDeck() {
 export function generateColor() {
   const hue = Math.floor(Math.random() * 360);
   return `hsl(${hue}, 100%, 60%)`;
-};
+}
 
 export function checkSet(a, b, c) {
   for (let i = 0; i < 4; i++) {
@@ -49,7 +49,6 @@ export function removeCard(deck, c) {
 }
 
 export function trim(str, maxlen) {
-  if (str.length <= maxlen)
-    return str;
+  if (str.length <= maxlen) return str;
   return str.substring(0, maxlen) + "…";
 }

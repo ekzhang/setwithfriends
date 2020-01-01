@@ -10,7 +10,7 @@ class NormalUserEnter extends Component {
   onSubmit = event => {
     event.preventDefault();
     this.props.onEnter(this.state.value);
-  }
+  };
 
   render() {
     return (

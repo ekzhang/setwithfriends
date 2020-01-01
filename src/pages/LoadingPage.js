@@ -1,14 +1,14 @@
-import React from 'react';
+import React from "react";
 
-import { makeStyles } from '@material-ui/core/styles';
+import { makeStyles } from "@material-ui/core/styles";
 import Container from "@material-ui/core/Container";
 
-import Loading from '../components/Loading';
+import Loading from "../components/Loading";
 
 const useStyles = makeStyles({
   loadingContainer: {
     padding: 48,
-    textAlign: 'center'
+    textAlign: "center"
   }
 });
 
@@ -18,7 +18,7 @@ function LoadingPage() {
     <Container className={styles.loadingContainer}>
       <Loading />
     </Container>
-  )
+  );
 }
 
 export default LoadingPage;

@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import generate from 'project-name-generator';
-import { makeStyles } from '@material-ui/core/styles';
+import generate from "project-name-generator";
+import { makeStyles } from "@material-ui/core/styles";
 import { Redirect } from "react-router";
 import Card from "@material-ui/core/Card";
 import Container from "@material-ui/core/Container";
@@ -14,23 +14,23 @@ import { generateColor } from "../util";
 const useStyles = makeStyles({
   container: {
     padding: 40,
-    height: '100%',
-    textAlign: 'center'
+    height: "100%",
+    textAlign: "center"
   },
   menu: {
     padding: 12,
-    display: 'flex',
-    flexDirection: 'column',
-    '& button': {
+    display: "flex",
+    flexDirection: "column",
+    "& button": {
       margin: 12,
       marginTop: 6,
       marginBottom: 6
     },
-    '& button:first-child': {
+    "& button:first-child": {
       marginTop: 12,
       marginBottom: 12
     },
-    '& button:last-child': {
+    "& button:last-child": {
       marginBottom: 12
     }
   }
@@ -42,15 +42,14 @@ function LobbyPage({ uid }) {
 
   const UNIMPLEMENTED_MESSAGE = 'unimplemented. click "New Room" instead.';
 
-  if (redirect)
-    return <Redirect to={redirect} />
+  if (redirect) return <Redirect to={redirect} />;
 
   function play() {
     alert(UNIMPLEMENTED_MESSAGE);
   }
 
   function newRoom() {
-    setRedirect('/room');
+    setRedirect("/room");
   }
 
   function joinRoom() {
@@ -67,23 +66,37 @@ function LobbyPage({ uid }) {
 
   return (
     <Container className={styles.container}>
-      <Typography variant="h3" component="h2" gutterBottom>Set with Friends</Typography>
+      <Typography variant="h3" component="h2" gutterBottom>
+        Set with Friends
+      </Typography>
       <Grid container spacing={3}>
         <Grid item xs={4}>
           {/* empty */}
         </Grid>
         <Grid item xs={4}>
           <Card elevation={2} className={styles.menu}>
-            <Button onClick={play} variant="contained" color="primary">Play</Button>
-            <Button onClick={newRoom} variant="contained">New Room</Button>
-            <Button onClick={joinRoom} variant="contained">Join Room by ID</Button>
-            <Button onClick={spectate} variant="contained">Spectate</Button>
-            <Button onClick={options} variant="contained">Options</Button>
+            <Button onClick={play} variant="contained" color="primary">
+              Play
+            </Button>
+            <Button onClick={newRoom} variant="contained">
+              New Room
+            </Button>
+            <Button onClick={joinRoom} variant="contained">
+              Join Room by ID
+            </Button>
+            <Button onClick={spectate} variant="contained">
+              Spectate
+            </Button>
+            <Button onClick={options} variant="contained">
+              Options
+            </Button>
           </Card>
         </Grid>
         <Grid item xs={3}>
           <Card className={styles.menu}>
-            <Typography variant="h6" gutterBottom>Statistics</Typography>
+            <Typography variant="h6" gutterBottom>
+              Statistics
+            </Typography>
             <Typography variant="body1">Games Played: x</Typography>
             <Typography variant="body1">Games Won: x</Typography>
             <Typography variant="body1">Total Sets: x</Typography>
@@ -96,7 +109,7 @@ function LobbyPage({ uid }) {
         </Grid>
       </Grid>
     </Container>
-  )
+  );
 }
 
 export default LobbyPage;

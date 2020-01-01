@@ -36,9 +36,9 @@ class Lobby extends Component {
             </div>
           ))}
         </div>
-        {admin === this.props.uid &&
+        {admin === this.props.uid && (
           <button onClick={this.props.onStartGame}>Start game</button>
-        }
+        )}
       </div>
     );
   }

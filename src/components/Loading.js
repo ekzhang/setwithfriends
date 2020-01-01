@@ -1,10 +1,8 @@
-import React from 'react';
-import CircularProgress from '@material-ui/core/CircularProgress';
+import React from "react";
+import CircularProgress from "@material-ui/core/CircularProgress";
 
 function Loading() {
-    return (
-        <CircularProgress />
-    )
+  return <CircularProgress />;
 }
 
 export default Loading;
