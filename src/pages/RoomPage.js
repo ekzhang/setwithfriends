@@ -121,17 +121,16 @@ function RoomPage({ user, gameId }) {
       return (
         <Container className={classes.container}>
           <Typography variant="h4" align="center" gutterBottom>
-            Oops!
+            The game has already{" "}
+            {game.meta.status === "ingame" ? "started" : "ended"}.
           </Typography>
-          <Typography variant="body1" align="center">
-            It seems that this game has already{" "}
-            {game.meta.status === "ingame" ? "started" : "ended"}. You can
-            spectate{" "}
-            <Link component={RouterLink} to={`/game/${gameId}`}>
-              here
-            </Link>
-            .
-          </Typography>
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={() => setRedirect(true)}
+          >
+            Spectate
+          </Button>
         </Container>
       );
     }
