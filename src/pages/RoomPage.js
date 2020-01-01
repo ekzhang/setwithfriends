@@ -41,6 +41,7 @@ const useStyles = makeStyles({
 function RoomPage({ user, gameId }) {
   const classes = useStyles();
   const [game, setGame] = useState(null);
+  const [redirect, setRedirect] = useState(false);
 
   useEffect(() => {
     function update(snapshot) {
@@ -107,25 +108,33 @@ function RoomPage({ user, gameId }) {
       .set("ingame");
   }
 
+  if (redirect) return <Redirect to={`/game/${gameId}`} />;
+
+  let starting = false;
   if (game && game.meta.status !== "waiting") {
-    if (game.meta.users && user.id in game.meta.users)
-      return <Redirect to={`/game/${gameId}`} />;
-    return (
-      <Container className={classes.container}>
-        <Typography variant="h4" align="center" gutterBottom>
-          Oops!
-        </Typography>
-        <Typography variant="body1" align="center">
-          It seems that this game has already{" "}
-          {game.meta.status === "ingame" ? "started" : "ended"}. You can
-          spectate{" "}
-          <Link component={RouterLink} to={`/game/${gameId}`}>
-            here
-          </Link>
-          .
-        </Typography>
-      </Container>
-    );
+    if (game.meta.users && user.id in game.meta.users) {
+      setTimeout(() => {
+        setRedirect(true);
+      }, 1500);
+      starting = true;
+    } else {
+      return (
+        <Container className={classes.container}>
+          <Typography variant="h4" align="center" gutterBottom>
+            Oops!
+          </Typography>
+          <Typography variant="body1" align="center">
+            It seems that this game has already{" "}
+            {game.meta.status === "ingame" ? "started" : "ended"}. You can
+            spectate{" "}
+            <Link component={RouterLink} to={`/game/${gameId}`}>
+              here
+            </Link>
+            .
+          </Typography>
+        </Container>
+      );
+    }
   }
 
   let players = [];
@@ -140,7 +149,7 @@ function RoomPage({ user, gameId }) {
   return (
     <Container className={classes.container}>
       <Typography variant="h4" align="center" gutterBottom>
-        Waiting for Players...
+        {starting ? "Starting..." : "Waiting for Players..."}
       </Typography>
       <Typography variant="body1" align="center">
         Invite by sharing the link:{" "}
@@ -174,11 +183,18 @@ function RoomPage({ user, gameId }) {
           </div>
           <div className={classes.center}>
             {user.id === game.meta.admin ? (
-              <Button variant="contained" color="primary" onClick={startGame}>
+              <Button
+                variant="contained"
+                color="primary"
+                onClick={startGame}
+                disabled={starting}
+              >
                 Start
               </Button>
             ) : (
-              <Button disabled>Waiting for host to start</Button>
+              <Button disabled>
+                {starting ? "Starting" : "Waiting for host to start"}
+              </Button>
             )}
           </div>
         </Paper>
