@@ -1,11 +1,32 @@
-set
-===
+# set
 
 Online, real-time set application hosted on Firebase.
 
 Made by Eric Zhang and Cynthia Du. Special thanks to Vicki Xu for helpful discussions on design.
 
+## Realtime DB Structure
+
+The structure of the realtime database is described below.
+
+- root (setwithfriends)
+  - **games**
+    - _game id_
+      - history: [timestamped list of score events]
+      - deck: [array of cards]
+      - meta
+        - admin: [user id]
+        - created: [time stamp]
+        - status: ['waiting' or 'ingame' or 'done']
+        - users:
+          - _user id_: { name, color }
+  - **users**
+    - _user id_
+      - games: [list of game ids]
+      - color: [last used color]
+      - name: [last used name]
+
 ## TODO
+
 - [x] Migrate to Material UI
 - [ ] Implement basic interface/layout
 - [ ] Re-integrate backend
