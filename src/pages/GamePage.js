@@ -1,25 +1,19 @@
 import React, { useState, useEffect } from "react";
 
 import { makeStyles } from "@material-ui/core/styles";
-import { red } from "@material-ui/core/colors";
 import Grid from "@material-ui/core/Grid";
-import Box from "@material-ui/core/Box";
 import Typography from "@material-ui/core/Typography";
-import AlarmIcon from "@material-ui/icons/Alarm";
-import Divider from "@material-ui/core/Divider";
-import List from "@material-ui/core/List";
-import ListItem from "@material-ui/core/ListItem";
-import ListItemText from "@material-ui/core/ListItemText";
-import ListItemIcon from "@material-ui/core/ListItemIcon";
-import moment from "moment";
+import Button from "@material-ui/core/Button";
+import Modal from "@material-ui/core/Modal";
+import Paper from "@material-ui/core/Paper";
+import { Redirect } from "react-router-dom";
 
-import { removeCard } from "../util";
+import { removeCard, findSet } from "../util";
 import firebase from "../firebase";
-import SetCard from "../components/SetCard";
 import Game from "../components/Game";
 import NotFoundPage from "./NotFoundPage";
 import LoadingPage from "./LoadingPage";
-import ColorSquare from "../components/ColorSquare";
+import Sidebar from "../components/Sidebar";
 
 const useStyles = makeStyles(theme => ({
   container: {
@@ -27,9 +21,7 @@ const useStyles = makeStyles(theme => ({
   },
   gamePanel: {
     height: "100%",
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center"
+    display: "flex"
   },
   sidePanel: {
     height: "100%",
@@ -38,28 +30,25 @@ const useStyles = makeStyles(theme => ({
     background: theme.palette.background.paper,
     borderLeft: "1px solid lightgray"
   },
-  alarm: { color: red[700], marginRight: 10, marginBottom: 3 },
-  panelTitle: {
-    paddingLeft: 8,
-    paddingRight: 8,
-    paddingTop: 6
+  modal: {
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center"
   },
-  logName: {
-    marginLeft: 12,
-    fontWeight: "bold"
+  modalBox: {
+    outline: 0,
+    padding: 28,
+    textAlign: "center"
   },
-  historyTimeIcon: {
-    marginRight: 12,
-    "& span": {
-      margin: "0 auto"
-    }
+  play: {
+    marginTop: 14
   }
 }));
 
 function GamePage({ user, gameId }) {
   const classes = useStyles();
   const [game, setGame] = useState(null);
-  const [time, setTime] = useState(0);
+  const [redirect, setRedirect] = useState(null);
 
   useEffect(() => {
     function update(snapshot) {
@@ -73,12 +62,7 @@ function GamePage({ user, gameId }) {
     };
   }, [gameId]);
 
-  useEffect(() => {
-    const t = Date.now();
-    setTime(t);
-    const id = setInterval(() => setTime(t => t + 1000), 1000);
-    return () => clearInterval(id);
-  }, []);
+  if (redirect) return <Redirect push to={redirect} />;
 
   if (game === undefined) {
     return <NotFoundPage />;
@@ -92,15 +76,20 @@ function GamePage({ user, gameId }) {
     return <h1>Sorry, spectating not supported yet.</h1>;
   }
 
-  const scores = {};
+  const scoreMap = {};
   for (const uid of Object.keys(game.meta.users)) {
-    scores[uid] = 0;
+    scoreMap[uid] = 0;
   }
   if (game.history) {
     for (const event of Object.values(game.history)) {
-      scores[event.user] += 1;
+      scoreMap[event.user] += 1;
     }
   }
+
+  const scores = Object.entries(scoreMap).sort(([u1, s1], [u2, s2]) => {
+    if (s1 !== s2) return s2 - s1;
+    return u1 < u2 ? -1 : 1;
+  });
 
   function handleSet(vals) {
     let deck = game.deck;
@@ -114,84 +103,54 @@ function GamePage({ user, gameId }) {
       cards: vals,
       time: Date.now()
     });
+    if (!findSet(deck)) {
+      gameRef.child("meta/status").set("done");
+    }
   }
 
-  function compare([u1, s1], [u2, s2]) {
-    if (s1 !== s2) return s2 - s1;
-    return u1 < u2 ? -1 : 1;
-  }
-
-  function formatTime(t) {
-    const hours = Math.floor(t / (3600 * 1000));
-    const rest = t % (3600 * 1000);
-    return (hours ? `${hours}:` : "") + moment(rest).format("mm:ss");
+  function handlePlayAgain() {
+    const idx = gameId.lastIndexOf("-");
+    let id = gameId,
+      num = 0;
+    if (gameId.slice(idx + 1).match(/[0-9]+/)) {
+      id = gameId.slice(0, idx);
+      num = parseInt(gameId.slice(idx + 1));
+    }
+    setRedirect(`/room/${id}-${num + 1}`);
   }
 
   return (
     <Grid container spacing={0} className={classes.container}>
+      <Modal className={classes.modal} open={game.meta.status === "done"}>
+        <Paper className={classes.modalBox}>
+          <Typography variant="h4" gutterBottom>
+            The game has ended.
+          </Typography>
+          <Typography variant="body1">
+            Winner: {game.meta.users[scores[0][0]].name}
+          </Typography>
+          {scores.length >= 2 && (
+            <Typography variant="body2">
+              Runner-up: {game.meta.users[scores[1][0]].name}
+            </Typography>
+          )}
+          <Button
+            className={classes.play}
+            variant="contained"
+            color="primary"
+            onClick={handlePlayAgain}
+          >
+            Play Again
+          </Button>
+        </Paper>
+      </Modal>
       <Grid item xs={8} lg={9} className={classes.gamePanel}>
         {/* Game Area */}
         <Game game={game} onSet={handleSet} />
       </Grid>
       <Grid item xs={4} lg={3} className={classes.sidePanel}>
         {/* Sidebar */}
-        <Box
-          p={2}
-          display="flex"
-          alignItems="center"
-          justifyContent="center"
-          fontSize="4em"
-        >
-          {/* Timer */}
-          <AlarmIcon className={classes.alarm} fontSize="large" />
-          <Typography variant="h4" align="center">
-            {formatTime(time - game.meta.started)}
-          </Typography>
-        </Box>
-        <Divider />
-        <Box maxHeight="40%" flexShrink={0} overflow="auto">
-          {/* Scoreboard */}
-          <Typography variant="h6" className={classes.panelTitle}>
-            Scoreboard
-          </Typography>
-          <List disablePadding dense>
-            {Object.entries(scores)
-              .sort(compare)
-              .map(([uid, score], idx) => (
-                <ListItem key={uid} button>
-                  <ColorSquare color={game.meta.users[uid].color} />
-                  <ListItemText>
-                    {idx + 1}. {game.meta.users[uid].name} ({score} sets)
-                  </ListItemText>
-                </ListItem>
-              ))}
-          </List>
-        </Box>
-        <Divider />
-        <Box flexGrow={1} overflow="auto">
-          {/* Log */}
-          <Typography variant="h6" className={classes.panelTitle}>
-            Game Log
-          </Typography>
-          <List disablePadding dense>
-            {game.history &&
-              Object.entries(game.history).map(([id, event]) => (
-                <ListItem button key={id}>
-                  <ListItemIcon className={classes.historyTimeIcon}>
-                    <span>[{formatTime(event.time - game.meta.started)}]</span>
-                  </ListItemIcon>
-                  <ListItemText>
-                    <SetCard value={event.cards[0]} size="sm" />
-                    <SetCard value={event.cards[1]} size="sm" />
-                    <SetCard value={event.cards[2]} size="sm" />
-                    <span className={classes.logName}>
-                      {game.meta.users[event.user].name}
-                    </span>
-                  </ListItemText>
-                </ListItem>
-              ))}
-          </List>
-        </Box>
+        <Sidebar game={game} scores={scores} />
       </Grid>
     </Grid>
   );

@@ -39,7 +39,7 @@ function LobbyPage({ user }) {
 
   const UNIMPLEMENTED_MESSAGE = 'unimplemented. click "New Room" instead.';
 
-  if (redirect) return <Redirect to={redirect} />;
+  if (redirect) return <Redirect push to={redirect} />;
 
   function play() {
     alert(UNIMPLEMENTED_MESSAGE);

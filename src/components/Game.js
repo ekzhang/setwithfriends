@@ -1,14 +1,27 @@
 import React, { useEffect, useState } from "react";
 
-import Box from "@material-ui/core/Box";
 import Paper from "@material-ui/core/Paper";
 import Typography from "@material-ui/core/Typography";
+import { makeStyles } from "@material-ui/core/styles";
 import { Motion, spring } from "react-motion";
 
-import { removeCard, checkSet, splitDeck } from "../util";
+import { removeCard, checkSet, splitDeck, findSet } from "../util";
 import SetCard from "../components/SetCard";
 
+const useStyles = makeStyles({
+  gameContainer: {
+    display: "flex",
+    flexGrow: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    "& > *": {
+      position: "absolute"
+    }
+  }
+});
+
 function Game({ game, onSet }) {
+  const classes = useStyles();
   const [selected, setSelected] = useState([]);
 
   useEffect(() => {
@@ -77,18 +90,21 @@ function Game({ game, onSet }) {
     }
   }
 
+  function cheat() {
+    onSet(findSet(board));
+  }
+
   return (
-    <>
-      <Box
-        position="absolute"
+    <div className={classes.gameContainer}>
+      <div
         style={{
           transform: `translate(${-2 * cardWidth}px, ${0}px)`
         }}
       >
-        <Paper elevation={deck.length ? 1 : 0} style={{ padding: 16 }}>
+        <Paper elevation={2} style={{ padding: 16 }}>
           <Typography variant="h3">{deck.length}</Typography>
         </Paper>
-      </Box>
+      </div>
       {Object.entries(cards).map(([card, pos]) => (
         <Motion
           key={card}
@@ -100,8 +116,7 @@ function Game({ game, onSet }) {
           }}
         >
           {style => (
-            <Box
-              position="absolute"
+            <div
               style={{
                 transform: `translate(${style.x}px, ${style.y}px)`,
                 opacity: style.opacity,
@@ -114,11 +129,12 @@ function Game({ game, onSet }) {
                 selected={selected.includes(card)}
                 onClick={pos.active ? () => handleClick(card) : null}
               />
-            </Box>
+            </div>
           )}
         </Motion>
       ))}
-    </>
+      <button onClick={cheat}>Cheat</button>
+    </div>
   );
 }
 
