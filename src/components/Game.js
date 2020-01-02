@@ -1,70 +1,112 @@
-import React, { Component } from "react";
-import Card from "./Card";
-import { findCard, trim } from "../util";
+import React, { useEffect, useState } from "react";
 
-class Game extends Component {
-  render() {
-    var colors = this.props.gameInfo.meta.userColors;
-    var userNames = this.props.gameInfo.meta.userNames;
+import Box from "@material-ui/core/Box";
+import { Motion, spring } from "react-motion";
 
-    var { deck, count, scores, freeze } = this.props.gameInfo;
-    var selected = JSON.parse(this.props.gameInfo.cards[this.props.uid]);
-    const cards = deck.slice(0, count);
-    return (
-      <div className="pt-3">
-        {scores && (
-          <div className="scoreboard">
-            <h5>Scoreboard</h5>
-            <ul className="list-unstyled">
-              {Object.entries(scores)
-                .sort((a, b) => b[1] - a[1])
-                .map(([uid, score]) => (
-                  <li key={uid}>
-                    <span
-                      className="color-block mr-1"
-                      style={{ background: colors[uid] }}
-                    ></span>
-                    <span className="font-weight-bold">
-                      {trim(userNames[uid], 20)}
-                      {this.props.uid === uid && " (You)"}
-                    </span>
-                    {": "}
-                    <span>{score}</span>
-                  </li>
-                ))}
-            </ul>
-          </div>
-        )}
+import { removeCard, checkSet, splitDeck } from "../util";
+import SetCard from "../components/SetCard";
 
-        <h1>Set Game</h1>
-        <p>
-          <b>Remaining cards:</b> {deck.length}
-        </p>
+function Game({ game, onSet }) {
+  const [selected, setSelected] = useState([]);
 
-        <div className="card-container">
-          {cards.map((c, i) => (
-            <Card
-              value={c}
-              key={i}
-              freeze={freeze ? freeze.freeze : false}
-              freezeColor={
-                freeze && freeze.goodCards
-                  ? findCard(freeze.goodCards, c) !== -1
-                    ? freeze.color
-                    : ""
-                  : "#fff"
-              }
-              selected={findCard(selected, c) !== -1}
-              onClick={() => this.props.onSelect(c)}
-            />
-          ))}
-        </div>
-        <div className="m-3">
-          <button onClick={this.props.onAdd3}>Add 3</button>
-        </div>
-      </div>
-    );
+  useEffect(() => {
+    setSelected([]);
+  }, [game]);
+
+  const cardWidth = 172,
+    cardHeight = 112;
+
+  const cards = {};
+  if (game.history) {
+    for (const event of Object.values(game.history)) {
+      const { user, cards: set } = event;
+      for (const c of set) {
+        cards[c] = {
+          positionX: cardWidth * 2.5,
+          positionY: 0,
+          opacity: 0,
+          color: game.meta.users[user].color,
+          active: false
+        };
+      }
+    }
   }
+  const [board, deck] = splitDeck(game.deck);
+  const rows = board.length / 3;
+  for (let i = 0; i < board.length; i++) {
+    const r = Math.floor(i / 3),
+      c = i % 3;
+    cards[board[i]] = {
+      positionX: (c - 1) * cardWidth,
+      positionY: (r - (rows - 1) / 2) * cardHeight,
+      opacity: 1,
+      active: true
+    };
+  }
+  for (const c of deck) {
+    cards[c] = {
+      positionX: -cardWidth * 2.5,
+      positionY: 0,
+      opacity: 0,
+      active: false
+    };
+  }
+
+  const springConfig = {
+    stiffness: 50,
+    damping: 12
+  };
+
+  function handleClick(card) {
+    if (selected.includes(card)) {
+      setSelected(removeCard(selected, card));
+    } else {
+      const vals = [...selected, card];
+      if (vals.length === 3) {
+        if (checkSet(...vals)) {
+          onSet(vals);
+        } else {
+          alert("Not a set!");
+        }
+        setSelected([]);
+      } else {
+        setSelected(vals);
+      }
+    }
+  }
+
+  return (
+    <>
+      {Object.entries(cards).map(([card, pos]) => (
+        <Motion
+          key={card}
+          defaultStyle={{ x: -cardWidth * 2.5, y: 0, opacity: 0 }}
+          style={{
+            x: spring(pos.positionX, springConfig),
+            y: spring(pos.positionY, springConfig),
+            opacity: spring(pos.opacity, springConfig)
+          }}
+        >
+          {style => (
+            <Box
+              position="absolute"
+              style={{
+                transform: `translate(${style.x}px, ${style.y}px)`,
+                opacity: style.opacity
+              }}
+            >
+              <SetCard
+                value={card}
+                color={pos.color}
+                selected={selected.includes(card)}
+                onClick={pos.active ? () => handleClick(card) : null}
+              />
+            </Box>
+          )}
+        </Motion>
+      ))}
+    </>
+  );
 }
 
 export default Game;

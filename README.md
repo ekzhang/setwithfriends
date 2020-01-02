@@ -2,7 +2,7 @@
 
 Online, real-time set application hosted on Firebase.
 
-Made by Eric Zhang and Cynthia Du. Special thanks to Vicki Xu for helpful discussions on design.
+Made by Eric Zhang and Cynthia Du.
 
 ## Realtime DB Structure
 
@@ -16,6 +16,7 @@ The structure of the realtime database is described below.
       - meta
         - admin: [user id]
         - created: [time stamp]
+        - started: [time stamp]
         - status: ['waiting' or 'ingame' or 'done']
         - users:
           - _user id_: { name, color }
@@ -28,10 +29,12 @@ The structure of the realtime database is described below.
 ## TODO
 
 - [x] Migrate to Material UI
-- [ ] Implement basic interface/layout
-- [ ] Re-integrate backend
+- [x] Implement basic interface/layout
+- [x] Re-integrate backend
+- [ ] Show number of remaining cards
+- [ ] End-of-game screen
 - [ ] Modals
-- [ ] Coherent card animations
+- [x] Coherent card animations
 - [ ] Firebase database rules
 - [ ] Additional features
   - [ ] "Play again" button

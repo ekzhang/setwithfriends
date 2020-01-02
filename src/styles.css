@@ -1,35 +1,9 @@
-.symbol {
-  margin: 3px;
-}
-
-.card {
-  width: 160px;
-  height: 100px;
-  background: #fff;
-  border: 1px solid black;
-  border-radius: 6px;
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-  margin: 6px;
-  cursor: pointer;
-  transition: background-color 0.2s, box-shadow 0.2s;
-}
-
-.card:hover {
-  box-shadow: 0px 0px 5px 3px #bbb;
-}
-
-.card.selected {
-  background: #ebfefe;
-  border-style: dotted;
-  box-shadow: 0px 0px 5px 3px #bbb;
-}
-
-.card.freeze {
-  pointer-events: none;
+#root {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
 }
 
 .card-container {

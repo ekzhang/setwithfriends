@@ -80,7 +80,7 @@ function RoomPage({ user, gameId }) {
       firebase
         .database()
         .ref(`games/${gameId}/meta/users/${user.id}`)
-        .set(user.name);
+        .set({ name: user.name, color: user.color });
       firebase
         .database()
         .ref(`users/${user.id}/games`)
@@ -93,7 +93,7 @@ function RoomPage({ user, gameId }) {
     if (name) {
       const updates = {};
       updates[`users/${user.id}/name`] = name;
-      updates[`games/${gameId}/meta/users/${user.id}`] = name;
+      updates[`games/${gameId}/meta/users/${user.id}/name`] = name;
       firebase
         .database()
         .ref()
@@ -104,8 +104,11 @@ function RoomPage({ user, gameId }) {
   function startGame() {
     firebase
       .database()
-      .ref(`games/${gameId}/meta/status`)
-      .set("ingame");
+      .ref(`games/${gameId}/meta`)
+      .update({
+        status: "ingame",
+        started: Date.now()
+      });
   }
 
   if (redirect) return <Redirect to={`/game/${gameId}`} />;
@@ -159,7 +162,7 @@ function RoomPage({ user, gameId }) {
       {game ? (
         <Paper className={classes.gameArea}>
           <div className={classes.playerList}>
-            {players.map(([id, name]) => (
+            {players.map(([id, info]) => (
               <Motion
                 key={id}
                 defaultStyle={{ opacity: 0 }}
@@ -168,7 +171,7 @@ function RoomPage({ user, gameId }) {
                 {style => (
                   <Chip
                     icon={id === game.meta.admin ? <StarsIcon /> : <FaceIcon />}
-                    label={name + (id === user.id ? " (You)" : "")}
+                    label={info.name + (id === user.id ? " (You)" : "")}
                     className={classes.chip}
                     onClick={id === user.id ? () => {} : null}
                     onDelete={id === user.id ? changeName : null}
