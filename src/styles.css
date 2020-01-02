@@ -1,29 +1,9 @@
+/* Avoid adding styles to this file; prefer @material-ui/core/styles instead. */
+
 #root {
   position: absolute;
   top: 0;
   bottom: 0;
   left: 0;
   right: 0;
-}
-
-.card-container {
-  margin: 0 auto;
-  display: flex;
-  width: 540px;
-  justify-content: center;
-  flex-wrap: wrap;
-}
-
-.scoreboard {
-  position: absolute;
-  right: 40px;
-  border: 1px solid black;
-  padding: 1em;
-}
-
-.color-block {
-  display: inline-block;
-  border: 1px solid black;
-  height: 0.8rem;
-  width: 0.8rem;
 }

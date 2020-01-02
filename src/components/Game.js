@@ -145,7 +145,9 @@ function Game({ game, spectating, onSet }) {
           </Paper>
         </div>
       )}
-      {/* <button onClick={cheat}>Cheat</button> */}
+      <button style={{ display: "none" }} onClick={cheat}>
+        Cheat
+      </button>
     </div>
   );
 }

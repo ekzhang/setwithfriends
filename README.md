@@ -1,4 +1,4 @@
-# set
+# setwithfriends
 
 Online, real-time set application hosted on Firebase.
 
