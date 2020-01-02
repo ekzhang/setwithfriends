@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from "react";
 
 import Box from "@material-ui/core/Box";
+import Paper from "@material-ui/core/Paper";
+import Typography from "@material-ui/core/Typography";
 import { Motion, spring } from "react-motion";
 
 import { removeCard, checkSet, splitDeck } from "../util";
@@ -22,7 +24,7 @@ function Game({ game, onSet }) {
       const { user, cards: set } = event;
       for (const c of set) {
         cards[c] = {
-          positionX: cardWidth * 2.5,
+          positionX: 2.5 * cardWidth,
           positionY: 0,
           opacity: 0,
           color: game.meta.users[user].color,
@@ -45,7 +47,7 @@ function Game({ game, onSet }) {
   }
   for (const c of deck) {
     cards[c] = {
-      positionX: -cardWidth * 2.5,
+      positionX: -2.5 * cardWidth,
       positionY: 0,
       opacity: 0,
       active: false
@@ -53,8 +55,8 @@ function Game({ game, onSet }) {
   }
 
   const springConfig = {
-    stiffness: 50,
-    damping: 12
+    stiffness: 64,
+    damping: 14
   };
 
   function handleClick(card) {
@@ -77,6 +79,16 @@ function Game({ game, onSet }) {
 
   return (
     <>
+      <Box
+        position="absolute"
+        style={{
+          transform: `translate(${-2 * cardWidth}px, ${0}px)`
+        }}
+      >
+        <Paper elevation={deck.length ? 1 : 0} style={{ padding: 16 }}>
+          <Typography variant="h3">{deck.length}</Typography>
+        </Paper>
+      </Box>
       {Object.entries(cards).map(([card, pos]) => (
         <Motion
           key={card}
@@ -92,7 +104,8 @@ function Game({ game, onSet }) {
               position="absolute"
               style={{
                 transform: `translate(${style.x}px, ${style.y}px)`,
-                opacity: style.opacity
+                opacity: style.opacity,
+                visibility: style.opacity > 0 ? "visible" : "hidden"
               }}
             >
               <SetCard

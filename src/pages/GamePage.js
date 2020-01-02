@@ -47,6 +47,12 @@ const useStyles = makeStyles(theme => ({
   logName: {
     marginLeft: 12,
     fontWeight: "bold"
+  },
+  historyTimeIcon: {
+    marginRight: 12,
+    "& span": {
+      margin: "0 auto"
+    }
   }
 }));
 
@@ -115,6 +121,12 @@ function GamePage({ user, gameId }) {
     return u1 < u2 ? -1 : 1;
   }
 
+  function formatTime(t) {
+    const hours = Math.floor(t / (3600 * 1000));
+    const rest = t % (3600 * 1000);
+    return (hours ? `${hours}:` : "") + moment(rest).format("mm:ss");
+  }
+
   return (
     <Grid container spacing={0} className={classes.container}>
       <Grid item xs={8} lg={9} className={classes.gamePanel}>
@@ -133,7 +145,7 @@ function GamePage({ user, gameId }) {
           {/* Timer */}
           <AlarmIcon className={classes.alarm} fontSize="large" />
           <Typography variant="h4" align="center">
-            {moment(time - game.meta.started).format("mm:ss")}
+            {formatTime(time - game.meta.started)}
           </Typography>
         </Box>
         <Divider />
@@ -163,12 +175,10 @@ function GamePage({ user, gameId }) {
           </Typography>
           <List disablePadding dense>
             {game.history &&
-              Object.values(game.history).map(event => (
-                <ListItem button>
-                  <ListItemIcon>
-                    <span>
-                      [{moment(event.time - game.meta.started).format("mm:ss")}]
-                    </span>
+              Object.entries(game.history).map(([id, event]) => (
+                <ListItem button key={id}>
+                  <ListItemIcon className={classes.historyTimeIcon}>
+                    <span>[{formatTime(event.time - game.meta.started)}]</span>
                   </ListItemIcon>
                   <ListItemText>
                     <SetCard value={event.cards[0]} size="sm" />

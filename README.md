@@ -31,7 +31,7 @@ The structure of the realtime database is described below.
 - [x] Migrate to Material UI
 - [x] Implement basic interface/layout
 - [x] Re-integrate backend
-- [ ] Show number of remaining cards
+- [x] Show number of remaining cards
 - [ ] End-of-game screen
 - [ ] Modals
 - [x] Coherent card animations
@@ -41,6 +41,7 @@ The structure of the realtime database is described below.
   - [ ] Chat
   - [ ] Spectating
   - [ ] Statistics panel
+  - [ ] Fix race conditions
   - [ ] Quick-play queueing
   - [ ] Options panel (setting color)
   - [ ] Keyboard shortcuts to select cards
