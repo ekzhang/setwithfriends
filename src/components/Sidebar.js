@@ -20,7 +20,8 @@ const useStyles = makeStyles({
   panelTitle: {
     paddingLeft: 8,
     paddingRight: 8,
-    paddingTop: 6
+    paddingTop: 10,
+    textAlign: "center"
   },
   logName: {
     marginLeft: 12,
@@ -71,7 +72,7 @@ function Sidebar({ game, scores }) {
         <Typography variant="h6" className={classes.panelTitle}>
           Scoreboard
         </Typography>
-        <List disablePadding dense>
+        <List disablePadding dense style={{ paddingBottom: 6 }}>
           {scores.map(([uid, score], idx) => (
             <ListItem key={uid} button>
               <ColorSquare color={game.meta.users[uid].color} />
@@ -88,7 +89,7 @@ function Sidebar({ game, scores }) {
         <Typography variant="h6" className={classes.panelTitle}>
           Game Log
         </Typography>
-        <List disablePadding dense>
+        <List disablePadding dense style={{ paddingBottom: 6 }}>
           {game.history &&
             Object.entries(game.history).map(([id, event]) => (
               <ListItem button key={id}>
