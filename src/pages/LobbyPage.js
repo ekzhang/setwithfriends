@@ -64,7 +64,7 @@ function LobbyPage({ user }) {
   return (
     <Container className={styles.container}>
       <Typography variant="h3" component="h2" gutterBottom>
-        Set with Friends (α)
+        Set with Friends
       </Typography>
       <Grid container spacing={3}>
         <Grid item xs={4}>

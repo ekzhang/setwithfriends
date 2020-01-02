@@ -173,7 +173,6 @@ function RoomPage({ user, gameId }) {
                     icon={id === game.meta.admin ? <StarsIcon /> : <FaceIcon />}
                     label={info.name + (id === user.id ? " (You)" : "")}
                     className={classes.chip}
-                    onClick={id === user.id ? () => {} : null}
                     onDelete={id === user.id ? changeName : null}
                     deleteIcon={<EditIcon />}
                     color={id === game.meta.admin ? "secondary" : "default"}

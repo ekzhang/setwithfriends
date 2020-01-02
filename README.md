@@ -36,6 +36,7 @@ The structure of the realtime database is described below.
 - [ ] Modals and popups
 - [x] Coherent card animations
 - [ ] Firebase database rules
+- [ ] Help, About, and Contact pages
 - [ ] Additional features
   - [x] "Play again" button
   - [ ] Chat

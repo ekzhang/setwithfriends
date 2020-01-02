@@ -39,14 +39,14 @@ function IndexPage() {
   return (
     <Container className={classes.container}>
       <Typography variant="h3" component="h2" gutterBottom>
-        Set with Friends (α)
+        Set with Friends
       </Typography>
       <Button
         variant="contained"
         color="primary"
         onClick={() => setRedirect(true)}
       >
-        ENTER >>
+        Enter
       </Button>
       <div className={classes.indexMenu}>
         <Link component={RouterLink} to="/help">
