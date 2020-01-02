@@ -20,7 +20,7 @@ const useStyles = makeStyles({
   }
 });
 
-function Game({ game, onSet }) {
+function Game({ game, spectating, onSet }) {
   const classes = useStyles();
   const [selected, setSelected] = useState([]);
 
@@ -73,6 +73,7 @@ function Game({ game, onSet }) {
   };
 
   function handleClick(card) {
+    if (spectating) return;
     if (selected.includes(card)) {
       setSelected(removeCard(selected, card));
     } else {
@@ -133,7 +134,18 @@ function Game({ game, onSet }) {
           )}
         </Motion>
       ))}
-      <button onClick={cheat}>Cheat</button>
+      {spectating && (
+        <div
+          style={{
+            transform: `translate(${0}px, ${-(rows / 2) * cardHeight - 24}px)`
+          }}
+        >
+          <Paper>
+            <Typography variant="h6">(Spectating...)</Typography>
+          </Paper>
+        </div>
+      )}
+      {/* <button onClick={cheat}>Cheat</button> */}
     </div>
   );
 }

@@ -72,9 +72,7 @@ function GamePage({ user, gameId }) {
     return <LoadingPage />;
   }
 
-  if (!game.meta.users || !game.meta.users[user.id]) {
-    return <h1>Sorry, spectating not supported yet.</h1>;
-  }
+  const spectating = !game.meta.users || !game.meta.users[user.id];
 
   const scoreMap = {};
   for (const uid of Object.keys(game.meta.users)) {
@@ -146,7 +144,7 @@ function GamePage({ user, gameId }) {
       </Modal>
       <Grid item xs={8} lg={9} className={classes.gamePanel}>
         {/* Game Area */}
-        <Game game={game} onSet={handleSet} />
+        <Game game={game} spectating={spectating} onSet={handleSet} />
       </Grid>
       <Grid item xs={4} lg={3} className={classes.sidePanel}>
         {/* Sidebar */}
