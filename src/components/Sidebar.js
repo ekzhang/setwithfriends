@@ -12,8 +12,8 @@ import { makeStyles } from "@material-ui/core/styles";
 import { red } from "@material-ui/core/colors";
 import moment from "moment";
 
-import ColorSquare from "../components/ColorSquare";
-import SetCard from "../components/SetCard";
+import ColorSquare from "./ColorSquare";
+import SetCard from "./SetCard";
 
 const useStyles = makeStyles({
   alarm: { color: red[700], marginRight: 10, marginBottom: 3 },

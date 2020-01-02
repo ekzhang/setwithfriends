@@ -2,6 +2,8 @@ import React, { useEffect, useState } from "react";
 
 import Paper from "@material-ui/core/Paper";
 import Typography from "@material-ui/core/Typography";
+import Snackbar from "@material-ui/core/Snackbar";
+import SnackContent from "./SnackContent";
 import { makeStyles } from "@material-ui/core/styles";
 import { Motion, spring } from "react-motion";
 
@@ -23,6 +25,7 @@ const useStyles = makeStyles({
 function Game({ game, spectating, onSet }) {
   const classes = useStyles();
   const [selected, setSelected] = useState([]);
+  const [snack, setSnack] = useState({ open: false });
 
   useEffect(() => {
     setSelected([]);
@@ -81,8 +84,17 @@ function Game({ game, spectating, onSet }) {
       if (vals.length === 3) {
         if (checkSet(...vals)) {
           onSet(vals);
+          setSnack({
+            open: true,
+            variant: "success",
+            message: "Found a set!"
+          });
         } else {
-          alert("Not a set!");
+          setSnack({
+            open: true,
+            variant: "error",
+            message: "Not a set!"
+          });
         }
         setSelected([]);
       } else {
@@ -91,64 +103,86 @@ function Game({ game, spectating, onSet }) {
     }
   }
 
+  function handleClose(event, reason) {
+    if (reason === "clickaway") return;
+    setSnack({ ...snack, open: false });
+  }
+
   function cheat() {
     onSet(findSet(board));
   }
 
   return (
-    <div className={classes.gameContainer}>
-      <div
-        style={{
-          transform: `translate(${-2 * cardWidth}px, ${0}px)`
+    <>
+      <Snackbar
+        anchorOrigin={{
+          vertical: "bottom",
+          horizontal: "left"
         }}
+        open={snack.open}
+        autoHideDuration={2000}
+        onClose={handleClose}
       >
-        <Paper elevation={2} style={{ padding: 16 }}>
-          <Typography variant="h3">{deck.length}</Typography>
-        </Paper>
-      </div>
-      {Object.entries(cards).map(([card, pos]) => (
-        <Motion
-          key={card}
-          defaultStyle={{ x: -cardWidth * 2.5, y: 0, opacity: 0 }}
-          style={{
-            x: spring(pos.positionX, springConfig),
-            y: spring(pos.positionY, springConfig),
-            opacity: spring(pos.opacity, springConfig)
-          }}
-        >
-          {style => (
-            <div
-              style={{
-                transform: `translate(${style.x}px, ${style.y}px)`,
-                opacity: style.opacity,
-                visibility: style.opacity > 0 ? "visible" : "hidden"
-              }}
-            >
-              <SetCard
-                value={card}
-                color={pos.color}
-                selected={selected.includes(card)}
-                onClick={pos.active ? () => handleClick(card) : null}
-              />
-            </div>
-          )}
-        </Motion>
-      ))}
-      {spectating && (
+        <SnackContent
+          variant={snack.variant || "info"}
+          message={snack.message || ""}
+          onClose={handleClose}
+        />
+      </Snackbar>
+      <div className={classes.gameContainer}>
         <div
           style={{
-            transform: `translate(${0}px, ${-(rows / 2) * cardHeight - 24}px)`
+            transform: `translate(${-2 * cardWidth}px, ${0}px)`
           }}
         >
-          <Paper>
-            <Typography variant="h6">(Spectating...)</Typography>
+          <Paper elevation={2} style={{ padding: 16 }}>
+            <Typography variant="h3">{deck.length}</Typography>
           </Paper>
         </div>
-      )}
-      <button style={{ display: "none" }} onClick={cheat}>
-        Cheat
-      </button>
-    </div>
+        {Object.entries(cards).map(([card, pos]) => (
+          <Motion
+            key={card}
+            defaultStyle={{ x: -cardWidth * 2.5, y: 0, opacity: 0 }}
+            style={{
+              x: spring(pos.positionX, springConfig),
+              y: spring(pos.positionY, springConfig),
+              opacity: spring(pos.opacity, springConfig)
+            }}
+          >
+            {style => (
+              <div
+                style={{
+                  transform: `translate(${style.x}px, ${style.y}px)`,
+                  opacity: style.opacity,
+                  visibility: style.opacity > 0 ? "visible" : "hidden"
+                }}
+              >
+                <SetCard
+                  value={card}
+                  color={pos.color}
+                  selected={selected.includes(card)}
+                  onClick={pos.active ? () => handleClick(card) : null}
+                />
+              </div>
+            )}
+          </Motion>
+        ))}
+        {spectating && (
+          <div
+            style={{
+              transform: `translate(${0}px, ${-(rows / 2) * cardHeight - 24}px)`
+            }}
+          >
+            <Paper>
+              <Typography variant="h6">(Spectating...)</Typography>
+            </Paper>
+          </div>
+        )}
+        <button style={{ display: "none" }} onClick={cheat}>
+          Cheat
+        </button>
+      </div>
+    </>
   );
 }
 

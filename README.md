@@ -33,7 +33,7 @@ The structure of the realtime database is described below.
 - [x] Re-integrate backend
 - [x] Show number of remaining cards
 - [x] End-of-game screen
-- [ ] Modals and popups
+- [x] Modals and popups
 - [x] Coherent card animations
 - [ ] Firebase database rules
 - [ ] Help, About, and Contact pages
