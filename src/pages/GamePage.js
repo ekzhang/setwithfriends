@@ -101,7 +101,7 @@ function GamePage({ user, gameId }) {
     gameRef.child("history").push({
       user: user.id,
       cards: vals,
-      time: Date.now()
+      time: firebase.database.ServerValue.TIMESTAMP
     });
     if (!findSet(deck)) {
       gameRef.child("meta/status").set("done");

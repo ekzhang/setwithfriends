@@ -1,6 +1,114 @@
 {
   "rules": {
-    ".read": "auth != null",
-    ".write": "auth != null"
+    "games": {
+      "$game_id": {
+        ".read": "auth != null",
+        ".write": "auth != null && !data.exists() && newData.exists()",
+        ".validate": "newData.hasChildren(['deck', 'meta'])",
+        "history": {
+          "$event_id": {
+            ".write": "auth != null && data.parent().parent().child('meta/users/' + auth.uid).exists() && !data.exists() && newData.exists()",
+            ".validate": "newData.hasChildren(['user', 'cards', 'time'])",
+            "user": {
+              ".validate": "newData.isString() && newData.val() == auth.uid"
+            },
+            "cards": {
+              ".validate": "newData.hasChildren(['0', '1', '2'])",
+              "$index": {
+                ".validate": "$index.matches(/^[0-2]$/) && newData.isString() && newData.val().matches(/^[0-2][0-2][0-2][0-2]$/)"
+              }
+            },
+            "time": {
+              ".validate": "newData.isNumber() && newData.val() == now"
+            },
+            "$other": {
+              ".validate": false
+            }
+          }
+        },
+        "deck": {
+          ".write": "auth != null && data.parent().child('meta/users/' + auth.uid).exists()",
+          "$index": {
+            ".validate": "newData.isString() && newData.val().matches(/^[0-2][0-2][0-2][0-2]$/)"
+          }
+        },
+        "meta": {
+          ".validate": "newData.hasChildren(['admin', 'created', 'status'])",
+          "admin": {
+            ".validate": "newData.isString() && newData.val() == auth.uid"
+          },
+          "created": {
+            ".validate": "newData.isNumber() && newData.val() == now"
+          },
+          "started": {
+            ".write": "auth != null && auth.uid == data.parent().child('admin').val() && !data.exists() && newData.exists()",
+            ".validate": "newData.isNumber() && newData.val() == now"
+          },
+          "status": {
+            ".write": "auth != null && data.parent().child('users/' + auth.uid).exists() && newData.exists()",
+            ".validate": "newData.isString() && ((!data.exists() && newData.val() == 'waiting') || (data.val() == 'waiting' && newData.val() == 'ingame') || (data.val() == 'ingame' && newData.val() == 'done'))"
+          },
+          "users": {
+            "$user_id": {
+              ".write": "auth != null && auth.uid == $user_id && newData.exists()",
+              ".validate": "newData.hasChildren(['name', 'color'])",
+              "name": {
+                ".validate": "newData.isString() && newData.val().length > 0"
+              },
+              "color": {
+                ".validate": "newData.isString()"
+              },
+              "$other": {
+                ".validate": false
+              }
+            }
+          },
+          "$other": {
+            ".validate": false
+          }
+        },
+        "$other": {
+          ".validate": false
+        }
+      }
+    },
+    "users": {
+      "$user_id": {
+        ".read": "auth != null && auth.uid == $user_id",
+        ".write": "auth != null && auth.uid == $user_id",
+        "games": {
+          "$key": {
+            ".validate": "newData.isString()"
+          }
+        },
+        "color": {
+          ".validate": "newData.isString()"
+        },
+        "name": {
+          ".validate": "newData.isString()"
+        },
+        "$other": {
+          ".validate": false
+        }
+      }
+    },
+    "chats": {
+      "$chat_id": {
+        ".read": true,
+        "$message_id": {
+          ".write": "!data.exists() && newData.exists() && auth != null",
+          ".validate": "newData.hasChildren(['user', 'message'])",
+          "user": {
+            ".validate": "newData.isString() && newData.val().length > 0 && newData.val() == root.child('users/' + auth.uid + '/name').val()"
+          },
+          "message": {
+            ".validate": "newData.isString() && newData.val().length > 0"
+          },
+          "$other": {
+            ".validate": false
+          }
+        }
+      }
+    }
   }
 }

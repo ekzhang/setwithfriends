@@ -14,8 +14,7 @@ const config = {
   measurementId: "G-QDX193SN7R"
 };
 
-export default !firebase.apps.length
-  ? firebase.initializeApp(config)
-  : firebase.app();
-
+firebase.initializeApp(config);
 firebase.analytics();
+
+export default firebase;

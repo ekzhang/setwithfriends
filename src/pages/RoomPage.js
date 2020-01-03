@@ -55,7 +55,7 @@ function RoomPage({ user, gameId }) {
           deck: generateDeck(),
           meta: {
             admin: user.id,
-            created: Date.now(),
+            created: firebase.database.ServerValue.TIMESTAMP,
             status: "waiting",
             users: {}
           }
@@ -108,7 +108,7 @@ function RoomPage({ user, gameId }) {
       .ref(`games/${gameId}/meta`)
       .update({
         status: "ingame",
-        started: Date.now()
+        started: firebase.database.ServerValue.TIMESTAMP
       });
   }
 

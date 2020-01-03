@@ -13,7 +13,7 @@ Made by Eric Zhang and Cynthia Du.
 - [x] End-of-game screen
 - [x] Modals and popups
 - [x] Coherent card animations
-- [ ] Firebase database rules
+- [x] Firebase database rules
 - [ ] Help, About, and Contact pages
 - [ ] Pixel-perfect tweaks (e.g. padding, chat icon position)
 - [ ] Additional features

@@ -53,13 +53,12 @@ const useStyles = makeStyles({
 
 function Sidebar({ game, scores }) {
   const classes = useStyles();
-  const [time, setTime] = useState(0);
+  const [time, setTime] = useState(Date.now());
   const logEl = useRef(null);
 
   useEffect(() => {
-    const t = Date.now();
-    setTime(t);
-    const id = setInterval(() => setTime(t => t + 1000), 1000);
+    setTime(Date.now());
+    const id = setInterval(() => setTime(Date.now()), 1000);
     return () => clearInterval(id);
   }, []);
 
@@ -68,6 +67,7 @@ function Sidebar({ game, scores }) {
   }, []);
 
   function formatTime(t) {
+    t = Math.max(t, 0);
     const hours = Math.floor(t / (3600 * 1000));
     const rest = t % (3600 * 1000);
     return (hours ? `${hours}:` : "") + moment(rest).format("mm:ss");
