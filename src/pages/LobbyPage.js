@@ -71,7 +71,7 @@ function LobbyPage({ user }) {
           const scores = computeScores(game);
           setGames(games => ({
             ...games,
-            gameId: {
+            [gameId]: {
               winner: scores[0][0],
               score: scores.filter(([u, s]) => u === user.id)[0][1]
             }
