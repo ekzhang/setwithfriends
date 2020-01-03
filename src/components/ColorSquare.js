@@ -8,6 +8,7 @@ const useStyles = makeStyles({
     border: "1px solid black",
     height: "1rem",
     width: "1rem",
+    minWidth: "1rem",
     marginRight: 12
   }
 });

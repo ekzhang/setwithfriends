@@ -2,7 +2,6 @@
 // https://medium.com/@heatherbooker/how-to-auto-scroll-to-the-bottom-of-a-div-415e967e7a24
 
 export default function autoscroll(element) {
-  console.log(element);
   function animateScroll(duration) {
     var start = element.scrollTop;
     var end = element.scrollHeight;
@@ -34,7 +33,6 @@ export default function autoscroll(element) {
   }
 
   function scrollToBottom() {
-    console.log("Observed mutation ", element);
     var duration = 300;
     animateScroll(duration);
   }

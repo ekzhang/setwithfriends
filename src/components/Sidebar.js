@@ -14,7 +14,6 @@ import moment from "moment";
 
 import ColorSquare from "./ColorSquare";
 import SetCard from "./SetCard";
-import { trim } from "../util";
 import autoscroll from "../utils/autoscroll";
 
 const useStyles = makeStyles({
@@ -34,6 +33,11 @@ const useStyles = makeStyles({
   panelList: {
     flexGrow: 1,
     overflowY: "auto"
+  },
+  textOverflow: {
+    whiteSpace: "nowrap",
+    textOverflow: "ellipsis",
+    overflow: "hidden"
   },
   logName: {
     marginLeft: 12,
@@ -90,11 +94,12 @@ function Sidebar({ game, scores }) {
           Scoreboard
         </Typography>
         <List disablePadding dense className={classes.panelList}>
-          {scores.map(([uid, score], idx) => (
+          {scores.map(([uid, score]) => (
             <ListItem key={uid} button>
               <ColorSquare color={game.meta.users[uid].color} />
-              <ListItemText>
-                {idx + 1}. {game.meta.users[uid].name} ({score} sets)
+              <ListItemText className={classes.textOverflow}>
+                {game.meta.users[uid].name} - {score}{" "}
+                {score === 1 ? "set" : "sets"}
               </ListItemText>
             </ListItem>
           ))}
@@ -113,12 +118,12 @@ function Sidebar({ game, scores }) {
                 <ListItemIcon className={classes.historyTimeIcon}>
                   <span>[{formatTime(event.time - game.meta.started)}]</span>
                 </ListItemIcon>
-                <ListItemText>
+                <ListItemText className={classes.textOverflow}>
                   <SetCard value={event.cards[0]} size="sm" />
                   <SetCard value={event.cards[1]} size="sm" />
                   <SetCard value={event.cards[2]} size="sm" />
                   <span className={classes.logName}>
-                    {trim(game.meta.users[event.user].name, 16)}
+                    {game.meta.users[event.user].name}
                   </span>
                 </ListItemText>
               </ListItem>
