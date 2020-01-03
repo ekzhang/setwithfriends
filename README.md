@@ -25,6 +25,8 @@ The structure of the realtime database is described below.
       - games: [list of game ids]
       - color: [last used color]
       - name: [last used name]
+  - **chats**
+    - _chat id_: [list of messages]
 
 ## TODO
 
@@ -39,7 +41,7 @@ The structure of the realtime database is described below.
 - [ ] Help, About, and Contact pages
 - [ ] Additional features
   - [x] "Play again" button
-  - [ ] Chat
+  - [x] Chat
   - [x] Spectating
   - [x] Statistics panel
   - [ ] Fix race conditions

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 
 import Box from "@material-ui/core/Box";
 import AlarmIcon from "@material-ui/icons/Alarm";
@@ -15,14 +15,25 @@ import moment from "moment";
 import ColorSquare from "./ColorSquare";
 import SetCard from "./SetCard";
 import { trim } from "../util";
+import autoscroll from "../utils/autoscroll";
 
 const useStyles = makeStyles({
   alarm: { color: red[700], marginRight: 10, marginBottom: 3 },
+  panel: {
+    overflow: "hidden",
+    display: "flex",
+    flexDirection: "column"
+  },
   panelTitle: {
     paddingLeft: 8,
     paddingRight: 8,
     paddingTop: 10,
-    textAlign: "center"
+    textAlign: "center",
+    flexShrink: 0
+  },
+  panelList: {
+    flexGrow: 1,
+    overflowY: "auto"
   },
   logName: {
     marginLeft: 12,
@@ -39,12 +50,17 @@ const useStyles = makeStyles({
 function Sidebar({ game, scores }) {
   const classes = useStyles();
   const [time, setTime] = useState(0);
+  const logEl = useRef(null);
 
   useEffect(() => {
     const t = Date.now();
     setTime(t);
     const id = setInterval(() => setTime(t => t + 1000), 1000);
     return () => clearInterval(id);
+  }, []);
+
+  useEffect(() => {
+    return autoscroll(logEl.current);
   }, []);
 
   function formatTime(t) {
@@ -68,12 +84,12 @@ function Sidebar({ game, scores }) {
         </Typography>
       </Box>
       <Divider />
-      <Box maxHeight="40%" flexShrink={0} overflow="auto">
+      <Box maxHeight="40%" flexShrink={0} className={classes.panel}>
         {/* Scoreboard */}
         <Typography variant="h6" className={classes.panelTitle}>
           Scoreboard
         </Typography>
-        <List disablePadding dense style={{ paddingBottom: 6 }}>
+        <List disablePadding dense className={classes.panelList}>
           {scores.map(([uid, score], idx) => (
             <ListItem key={uid} button>
               <ColorSquare color={game.meta.users[uid].color} />
@@ -85,12 +101,12 @@ function Sidebar({ game, scores }) {
         </List>
       </Box>
       <Divider />
-      <Box flexGrow={1} overflow="auto">
+      <Box flexGrow={1} className={classes.panel}>
         {/* Log */}
         <Typography variant="h6" className={classes.panelTitle}>
           Game Log
         </Typography>
-        <List disablePadding dense style={{ paddingBottom: 6 }}>
+        <List disablePadding dense className={classes.panelList} ref={logEl}>
           {game.history &&
             Object.entries(game.history).map(([id, event]) => (
               <ListItem button key={id}>

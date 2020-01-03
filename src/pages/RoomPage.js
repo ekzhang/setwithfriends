@@ -16,6 +16,7 @@ import { Motion, spring } from "react-motion";
 import firebase from "../firebase";
 import { generateDeck } from "../util";
 import Loading from "../components/Loading";
+import Chat from "../components/Chat";
 
 const useStyles = makeStyles({
   container: {
@@ -150,6 +151,7 @@ function RoomPage({ user, gameId }) {
 
   return (
     <Container className={classes.container}>
+      <Chat user={user} chatId={gameId} />
       <Typography variant="h4" align="center" gutterBottom>
         {starting ? "Starting..." : "Waiting for Players..."}
       </Typography>

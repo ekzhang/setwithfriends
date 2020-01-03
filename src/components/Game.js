@@ -117,7 +117,7 @@ function Game({ game, spectating, onSet }) {
       <Snackbar
         anchorOrigin={{
           vertical: "bottom",
-          horizontal: "left"
+          horizontal: "center"
         }}
         open={snack.open}
         autoHideDuration={2000}

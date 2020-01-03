@@ -16,6 +16,7 @@ import Game from "../components/Game";
 import NotFoundPage from "./NotFoundPage";
 import LoadingPage from "./LoadingPage";
 import Sidebar from "../components/Sidebar";
+import Chat from "../components/Chat";
 
 const useStyles = makeStyles(theme => ({
   container: {
@@ -120,6 +121,7 @@ function GamePage({ user, gameId }) {
 
   return (
     <Grid container spacing={0} className={classes.container}>
+      <Chat user={user} chatId={gameId} />
       <Modal className={classes.modal} open={game.meta.status === "done"}>
         <Paper className={classes.modalBox}>
           <Typography variant="h4" gutterBottom>
