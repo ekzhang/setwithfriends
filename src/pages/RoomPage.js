@@ -89,6 +89,21 @@ function RoomPage({ user, gameId }) {
     }
   }, [game, gameId, user]);
 
+  // Redirect if game has started
+  useEffect(() => {
+    if (
+      game &&
+      game.meta.status !== "waiting" &&
+      game.meta.users &&
+      user.id in game.meta.users
+    ) {
+      const id = setTimeout(() => {
+        setRedirect(true);
+      }, 1500);
+      return () => clearTimeout(id);
+    }
+  }, [game, user]);
+
   function changeName() {
     const name = prompt("Set name");
     if (name) {
@@ -117,9 +132,6 @@ function RoomPage({ user, gameId }) {
   let starting = false;
   if (game && game.meta.status !== "waiting") {
     if (game.meta.users && user.id in game.meta.users) {
-      setTimeout(() => {
-        setRedirect(true);
-      }, 1500);
       starting = true;
     } else {
       return (
