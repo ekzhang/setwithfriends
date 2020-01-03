@@ -17,6 +17,7 @@ import firebase from "../firebase";
 import { generateDeck } from "../util";
 import Loading from "../components/Loading";
 import Chat from "../components/Chat";
+import PromptDialog from "../components/PromptDialog";
 
 const useStyles = makeStyles({
   container: {
@@ -43,6 +44,7 @@ function RoomPage({ user, gameId }) {
   const classes = useStyles();
   const [game, setGame] = useState(null);
   const [redirect, setRedirect] = useState(false);
+  const [changeName, setChangeName] = useState(false);
 
   useEffect(() => {
     function update(snapshot) {
@@ -104,8 +106,8 @@ function RoomPage({ user, gameId }) {
     }
   }, [game, user]);
 
-  function changeName() {
-    const name = prompt("Set name");
+  function handleChangeName(name) {
+    setChangeName(false);
     if (name) {
       const updates = {};
       updates[`users/${user.id}/name`] = name;
@@ -164,6 +166,14 @@ function RoomPage({ user, gameId }) {
   return (
     <Container className={classes.container}>
       <Chat user={user} chatId={gameId} />
+      <PromptDialog
+        open={changeName}
+        onClose={handleChangeName}
+        title="Change Name"
+        message="Enter your preferred display name below. This will be automatically remembered for future games."
+        label="Name"
+        maxLength={40}
+      />
       <Typography variant="h4" align="center" gutterBottom>
         {starting ? "Starting..." : "Waiting for Players..."}
       </Typography>
@@ -187,7 +197,7 @@ function RoomPage({ user, gameId }) {
                     icon={id === game.meta.admin ? <StarsIcon /> : <FaceIcon />}
                     label={info.name + (id === user.id ? " (You)" : "")}
                     className={classes.chip}
-                    onDelete={id === user.id ? changeName : null}
+                    onDelete={id === user.id ? () => setChangeName(true) : null}
                     deleteIcon={<EditIcon />}
                     color={id === game.meta.admin ? "secondary" : "default"}
                     style={style}

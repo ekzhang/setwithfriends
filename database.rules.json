@@ -53,7 +53,7 @@
               ".write": "auth != null && auth.uid == $user_id && newData.exists()",
               ".validate": "newData.hasChildren(['name', 'color'])",
               "name": {
-                ".validate": "newData.isString() && newData.val().length > 0"
+                ".validate": "newData.isString() && newData.val().length > 0 && newData.val().length <= 40"
               },
               "color": {
                 ".validate": "newData.isString()"
@@ -85,7 +85,7 @@
           ".validate": "newData.isString()"
         },
         "name": {
-          ".validate": "newData.isString()"
+          ".validate": "newData.isString() && newData.val().length > 0 && newData.val().length <= 40"
         },
         "$other": {
           ".validate": false

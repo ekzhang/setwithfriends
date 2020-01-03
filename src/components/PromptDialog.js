@@ -9,7 +9,7 @@ import DialogContentText from "@material-ui/core/DialogContentText";
 import DialogTitle from "@material-ui/core/DialogTitle";
 
 function PromptDialog(props) {
-  const { open, onClose, title, message, label } = props;
+  const { open, onClose, title, message, label, maxLength } = props;
   const [value, setValue] = useState("");
 
   function handleClose() {
@@ -44,6 +44,7 @@ function PromptDialog(props) {
           onChange={e => setValue(e.target.value)}
           variant="outlined"
           onKeyDown={handleKeyDown}
+          inputProps={{ maxLength }}
         />
       </DialogContent>
       <DialogActions>
