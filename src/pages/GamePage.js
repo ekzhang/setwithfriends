@@ -5,6 +5,8 @@ import Grid from "@material-ui/core/Grid";
 import Typography from "@material-ui/core/Typography";
 import Button from "@material-ui/core/Button";
 import Modal from "@material-ui/core/Modal";
+import Container from "@material-ui/core/Container";
+import Box from "@material-ui/core/Box";
 import Paper from "@material-ui/core/Paper";
 import { Redirect } from "react-router-dom";
 
@@ -70,6 +72,18 @@ function GamePage({ user, gameId }) {
 
   if (!game) {
     return <LoadingPage />;
+  }
+
+  if (game.meta.status === "waiting") {
+    return (
+      <Container>
+        <Box p={4}>
+          <Typography variant="h4" align="center">
+            Waiting for the game to start...
+          </Typography>
+        </Box>
+      </Container>
+    );
   }
 
   const spectating = !game.meta.users || !game.meta.users[user.id];

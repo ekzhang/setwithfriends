@@ -18,13 +18,15 @@ function App() {
   const [user, setUser] = useState(null);
 
   useEffect(() => {
-    firebase
-      .auth()
-      .signInAnonymously()
-      .catch(error => {
-        alert("Unable to connect to server. Please try again later.");
-      });
-    firebase.auth().onAuthStateChanged(user => {
+    if (!uid) {
+      firebase
+        .auth()
+        .signInAnonymously()
+        .catch(error => {
+          alert("Unable to connect to the server. Please try again later.");
+        });
+    }
+    return firebase.auth().onAuthStateChanged(user => {
       if (user) {
         // User is signed in.
         setUid(user.uid);
@@ -33,10 +35,13 @@ function App() {
         setUid(null);
       }
     });
-  }, []);
+  }, [uid]);
 
   useEffect(() => {
-    if (!uid) return;
+    if (!uid) {
+      setUser(null);
+      return;
+    }
     const userRef = firebase.database().ref(`/users/${uid}`);
     function update(snapshot) {
       if (snapshot.exists()) {

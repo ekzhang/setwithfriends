@@ -40,7 +40,7 @@ The structure of the realtime database is described below.
 - [ ] Additional features
   - [x] "Play again" button
   - [ ] Chat
-  - [ ] Spectating
+  - [x] Spectating
   - [ ] Statistics panel
   - [ ] Fix race conditions
   - [ ] Quick-play queueing
