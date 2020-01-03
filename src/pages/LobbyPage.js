@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
 import generate from "project-name-generator";
 import { makeStyles } from "@material-ui/core/styles";
@@ -16,6 +16,7 @@ import DialogActions from "@material-ui/core/DialogActions";
 
 import PromptDialog from "../components/PromptDialog";
 import firebase from "../firebase";
+import { computeScores } from "../util";
 
 const useStyles = makeStyles(theme => ({
   container: {
@@ -56,6 +57,39 @@ function LobbyPage({ user }) {
   const [join, setJoin] = useState(false);
   const [spectate, setSpectate] = useState(false);
   const [options, setOptions] = useState(false);
+  const [games, setGames] = useState({});
+
+  useEffect(() => {
+    const gameList = user.games ? Object.values(user.games) : [];
+    const gamesRef = firebase.database().ref("games/");
+    const cleanup = [];
+    for (const gameId of gameList) {
+      const gameRef = gamesRef.child(gameId);
+      const update = snapshot => {
+        const game = snapshot.val();
+        if (game.meta.status === "done") {
+          const scores = computeScores(game);
+          setGames(games => ({
+            ...games,
+            gameId: {
+              winner: scores[0][0],
+              score: scores.filter(([u, s]) => u === user.id)[0][1]
+            }
+          }));
+        }
+      };
+      gameRef.on("value", update);
+      cleanup.push(() => gameRef.off("value", update));
+    }
+    return () => {
+      for (const func of cleanup) func();
+    };
+  }, [user]);
+
+  const stats = Object.values(games).reduce(
+    ([p, w, s], g) => [p + 1, w + (g.winner === user.id), s + g.score],
+    [0, 0, 0]
+  );
 
   if (redirect) return <Redirect push to={redirect} />;
 
@@ -192,11 +226,13 @@ function LobbyPage({ user }) {
             <Typography variant="h6" gutterBottom>
               Statistics
             </Typography>
-            <Typography variant="body1">Games Played: x</Typography>
-            <Typography variant="body1">Games Won: x</Typography>
-            <Typography variant="body1">Total Sets: x</Typography>
-            <Typography variant="body1">Avg. Sets per Game: x</Typography>
-            <Typography variant="body1">(filler etc... todo)</Typography>
+            <Typography variant="body1">Games played: {stats[0]}</Typography>
+            <Typography variant="body1">Games won: {stats[1]}</Typography>
+            <Typography variant="body1">Total sets: {stats[2]}</Typography>
+            <Typography variant="body1">
+              Avg. sets per game:{" "}
+              {stats[0] ? (stats[2] / stats[0]).toFixed(2) : "N/A"}
+            </Typography>
           </Card>
         </Grid>
         <Grid item xs={1}>

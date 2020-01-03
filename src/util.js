@@ -67,3 +67,20 @@ export function generateName() {
   // Source: https://a-z-animals.com/animals/
   return "Anonymous " + animals[Math.floor(Math.random() * animals.length)];
 }
+
+export function computeScores(game) {
+  const scoreMap = {};
+  for (const uid of Object.keys(game.meta.users)) {
+    scoreMap[uid] = 0;
+  }
+  if (game.history) {
+    for (const event of Object.values(game.history)) {
+      scoreMap[event.user] += 1;
+    }
+  }
+
+  return Object.entries(scoreMap).sort(([u1, s1], [u2, s2]) => {
+    if (s1 !== s2) return s2 - s1;
+    return u1 < u2 ? -1 : 1;
+  });
+}

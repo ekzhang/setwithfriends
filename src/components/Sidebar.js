@@ -14,6 +14,7 @@ import moment from "moment";
 
 import ColorSquare from "./ColorSquare";
 import SetCard from "./SetCard";
+import { trim } from "../util";
 
 const useStyles = makeStyles({
   alarm: { color: red[700], marginRight: 10, marginBottom: 3 },
@@ -101,7 +102,7 @@ function Sidebar({ game, scores }) {
                   <SetCard value={event.cards[1]} size="sm" />
                   <SetCard value={event.cards[2]} size="sm" />
                   <span className={classes.logName}>
-                    {game.meta.users[event.user].name}
+                    {trim(game.meta.users[event.user].name, 16)}
                   </span>
                 </ListItemText>
               </ListItem>

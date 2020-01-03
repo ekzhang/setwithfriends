@@ -10,7 +10,7 @@ import Box from "@material-ui/core/Box";
 import Paper from "@material-ui/core/Paper";
 import { Redirect } from "react-router-dom";
 
-import { removeCard, findSet } from "../util";
+import { removeCard, findSet, computeScores } from "../util";
 import firebase from "../firebase";
 import Game from "../components/Game";
 import NotFoundPage from "./NotFoundPage";
@@ -88,20 +88,7 @@ function GamePage({ user, gameId }) {
 
   const spectating = !game.meta.users || !game.meta.users[user.id];
 
-  const scoreMap = {};
-  for (const uid of Object.keys(game.meta.users)) {
-    scoreMap[uid] = 0;
-  }
-  if (game.history) {
-    for (const event of Object.values(game.history)) {
-      scoreMap[event.user] += 1;
-    }
-  }
-
-  const scores = Object.entries(scoreMap).sort(([u1, s1], [u2, s2]) => {
-    if (s1 !== s2) return s2 - s1;
-    return u1 < u2 ? -1 : 1;
-  });
+  const scores = computeScores(game);
 
   function handleSet(vals) {
     let deck = game.deck;
