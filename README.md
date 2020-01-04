@@ -14,7 +14,7 @@ Made by Eric Zhang and Cynthia Du.
 - [x] Modals and popups
 - [x] Coherent card animations
 - [x] Firebase database rules
-- [ ] Help, About, and Contact pages
+- [x] Help, About, and Contact pages
 - [ ] Pixel-perfect tweaks (e.g. padding, chat icon position)
 - [ ] Additional features
   - [x] "Play again" button

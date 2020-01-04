@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 
 import { makeStyles } from "@material-ui/core/styles";
 import Grid from "@material-ui/core/Grid";
@@ -65,6 +65,26 @@ function GamePage({ user, gameId }) {
     };
   }, [gameId]);
 
+  const handleSet = useCallback(
+    vals => {
+      let deck = game.deck;
+      deck = removeCard(deck, vals[0]);
+      deck = removeCard(deck, vals[1]);
+      deck = removeCard(deck, vals[2]);
+      const gameRef = firebase.database().ref(`games/${gameId}`);
+      gameRef.child("deck").set(deck);
+      gameRef.child("history").push({
+        user: user.id,
+        cards: vals,
+        time: firebase.database.ServerValue.TIMESTAMP
+      });
+      if (!findSet(deck)) {
+        gameRef.child("meta/status").set("done");
+      }
+    },
+    [game, gameId, user.id]
+  );
+
   if (redirect) return <Redirect push to={redirect} />;
 
   if (game === undefined) {
@@ -90,23 +110,6 @@ function GamePage({ user, gameId }) {
   const spectating = !game.meta.users || !game.meta.users[user.id];
 
   const scores = computeScores(game);
-
-  function handleSet(vals) {
-    let deck = game.deck;
-    deck = removeCard(deck, vals[0]);
-    deck = removeCard(deck, vals[1]);
-    deck = removeCard(deck, vals[2]);
-    const gameRef = firebase.database().ref(`games/${gameId}`);
-    gameRef.child("deck").set(deck);
-    gameRef.child("history").push({
-      user: user.id,
-      cards: vals,
-      time: firebase.database.ServerValue.TIMESTAMP
-    });
-    if (!findSet(deck)) {
-      gameRef.child("meta/status").set("done");
-    }
-  }
 
   function handlePlayAgain() {
     const idx = gameId.lastIndexOf("-");

@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState, useRef, memo } from "react";
 
 import { makeStyles } from "@material-ui/core/styles";
 import Card from "@material-ui/core/Card";
@@ -152,4 +152,4 @@ function Chat({ chatId, user }) {
   );
 }
 
-export default Chat;
+export default memo(Chat);

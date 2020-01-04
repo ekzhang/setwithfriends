@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback, useMemo } from "react";
 
 import Paper from "@material-ui/core/Paper";
 import Typography from "@material-ui/core/Typography";
@@ -7,7 +7,13 @@ import SnackContent from "./SnackContent";
 import { makeStyles } from "@material-ui/core/styles";
 import { Motion, spring } from "react-motion";
 
-import { removeCard, checkSet, splitDeck, findSet } from "../util";
+import {
+  generateDeck,
+  removeCard,
+  checkSet,
+  splitDeck,
+  findSet
+} from "../util";
 import SetCard from "../components/SetCard";
 
 const useStyles = makeStyles({
@@ -30,6 +36,47 @@ function Game({ game, spectating, onSet }) {
   useEffect(() => {
     setSelected([]);
   }, [game]);
+
+  const handleClick = useCallback(
+    card => {
+      if (spectating) return;
+      setSelected(selected => {
+        if (selected.includes(card)) {
+          return removeCard(selected, card);
+        } else {
+          const vals = [...selected, card];
+          if (vals.length === 3) {
+            if (checkSet(...vals)) {
+              onSet(vals);
+              setSnack({
+                open: true,
+                variant: "success",
+                message: "Found a set!"
+              });
+            } else {
+              setSnack({
+                open: true,
+                variant: "error",
+                message: "Not a set!"
+              });
+            }
+            setSelected([]);
+          } else {
+            setSelected(vals);
+          }
+        }
+      });
+    },
+    [spectating, onSet]
+  );
+
+  const clickHandlers = useMemo(() => {
+    const obj = {};
+    for (const card of generateDeck()) {
+      obj[card] = () => handleClick(card);
+    }
+    return obj;
+  }, [handleClick]);
 
   const cardWidth = 172,
     cardHeight = 112;
@@ -74,34 +121,6 @@ function Game({ game, spectating, onSet }) {
     stiffness: 64,
     damping: 14
   };
-
-  function handleClick(card) {
-    if (spectating) return;
-    if (selected.includes(card)) {
-      setSelected(removeCard(selected, card));
-    } else {
-      const vals = [...selected, card];
-      if (vals.length === 3) {
-        if (checkSet(...vals)) {
-          onSet(vals);
-          setSnack({
-            open: true,
-            variant: "success",
-            message: "Found a set!"
-          });
-        } else {
-          setSnack({
-            open: true,
-            variant: "error",
-            message: "Not a set!"
-          });
-        }
-        setSelected([]);
-      } else {
-        setSelected(vals);
-      }
-    }
-  }
 
   function handleClose(event, reason) {
     if (reason === "clickaway") return;
@@ -161,7 +180,7 @@ function Game({ game, spectating, onSet }) {
                   value={card}
                   color={pos.color}
                   selected={selected.includes(card)}
-                  onClick={pos.active ? () => handleClick(card) : null}
+                  onClick={pos.active ? clickHandlers[card] : null}
                 />
               </div>
             )}
