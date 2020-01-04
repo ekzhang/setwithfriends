@@ -1,8 +1,19 @@
 # setwithfriends
 
-Online, real-time set application hosted on Firebase.
+Online, real-time [Set](<https://en.wikipedia.org/wiki/Set_(card_game)>)
+application hosted on Firebase.
 
-Made by Eric Zhang and Cynthia Du.
+[Play it here!](https://setwithfriends.web.app/)
+
+Made by [Eric Zhang](https://github.com/ekzhang) and
+[Cynthia Du](https://github.com/cynthiakedu).
+
+## Technical Details
+
+This app was built with a serverless architecture, using the
+[Firebase Javascript SDK](https://firebase.google.com/docs/reference/js). The
+frontend was built with [React](https://reactjs.org/), with components from
+[Material UI](https://material-ui.com/).
 
 ## TODO
 
