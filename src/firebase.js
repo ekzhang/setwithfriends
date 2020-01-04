@@ -5,7 +5,7 @@ import "firebase/analytics";
 
 const config = {
   apiKey: "AIzaSyCeKQ4rauZ_fq1rEIPJ8m5XfppwjtmTZBY",
-  authDomain: "setwithfriends.firebaseapp.com",
+  authDomain: "setwithfriends.com",
   databaseURL: "https://setwithfriends.firebaseio.com",
   projectId: "setwithfriends",
   storageBucket: "setwithfriends.appspot.com",

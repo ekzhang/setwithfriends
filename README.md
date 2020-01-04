@@ -3,7 +3,7 @@
 Online, real-time [Set](<https://en.wikipedia.org/wiki/Set_(card_game)>)
 application hosted on Firebase.
 
-[Play it here!](https://setwithfriends.web.app/)
+[Play it here!](https://setwithfriends.com/)
 
 Made by [Eric Zhang](https://github.com/ekzhang) and
 [Cynthia Du](https://github.com/cynthiakedu).
