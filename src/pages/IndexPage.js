@@ -25,18 +25,18 @@ const useStyles = makeStyles({
 function IndexPage() {
   const classes = useStyles();
   const [redirect, setRedirect] = useState(false);
+
   useEffect(() => {
     function handleKeyDown(evt) {
-      if (evt.code === "Enter" || evt.code === "Space") setRedirect(true);
+      if (evt.code === "Enter" || evt.code === "Space") {
+        setRedirect(true);
+      }
     }
-
     document.body.addEventListener("keydown", handleKeyDown);
     return () => {
       document.body.removeEventListener("keydown", handleKeyDown);
     };
-  });
-
-  // if (redirect) return <Redirect to="/lobby" />;
+  }, []);
 
   return (
     <Motion

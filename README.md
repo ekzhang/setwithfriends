@@ -27,6 +27,7 @@ Made by Eric Zhang and Cynthia Du.
   - [ ] Keyboard shortcuts to select cards
   - [ ] Responsive layout
   - [ ] Wittier 404 page
+  - [ ] Prompt user to rotate screen if portrait mode
 
 ## Realtime DB Structure
 

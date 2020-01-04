@@ -5,13 +5,16 @@ import "./styles.css";
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import CssBaseline from "@material-ui/core/CssBaseline";
 
+import { generateColor, generateName } from "./util";
 import RoomPage from "./pages/RoomPage";
 import GamePage from "./pages/GamePage";
 import LobbyPage from "./pages/LobbyPage";
 import LoadingPage from "./pages/LoadingPage";
 import IndexPage from "./pages/IndexPage";
 import NotFoundPage from "./pages/NotFoundPage";
-import { generateColor, generateName } from "./util";
+import HelpPage from "./pages/HelpPage";
+import AboutPage from "./pages/AboutPage";
+import ContactPage from "./pages/ContactPage";
 
 function App() {
   const [uid, setUid] = useState(null);
@@ -68,18 +71,24 @@ function App() {
       ) : (
         <Router>
           <Switch>
-            <Route path="/" exact component={IndexPage} />
+            <Route exact path="/" component={IndexPage} />
+            <Route exact path="/help" component={HelpPage} />
+            <Route exact path="/about" component={AboutPage} />
+            <Route exact path="/contact" component={ContactPage} />
             <Route
+              exact
               path="/lobby"
               render={() => <LobbyPage user={user}></LobbyPage>}
             />
             <Route
+              exact
               path="/room/:id"
               render={({ match }) => (
                 <RoomPage user={user} gameId={match.params.id} />
               )}
             />
             <Route
+              exact
               path="/game/:id"
               render={({ match }) => (
                 <GamePage user={user} gameId={match.params.id} />
