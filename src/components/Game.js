@@ -96,7 +96,7 @@ function Game({ game, spectating, onSet }) {
       }
     }
   }
-  const [board, deck] = splitDeck(game.deck);
+  const [board, deck] = splitDeck(game.deck || []);
   const rows = board.length / 3;
   for (let i = 0; i < board.length; i++) {
     const r = Math.floor(i / 3),

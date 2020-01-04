@@ -4,7 +4,7 @@
       "$game_id": {
         ".read": "auth != null",
         ".write": "auth != null && !data.exists() && newData.exists()",
-        ".validate": "newData.hasChildren(['deck', 'meta'])",
+        ".validate": "newData.hasChildren(['meta'])",
         "history": {
           "$event_id": {
             ".write": "auth != null && data.parent().parent().child('meta/users/' + auth.uid).exists() && !data.exists() && newData.exists()",
