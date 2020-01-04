@@ -51,6 +51,13 @@ const useStyles = makeStyles({
   }
 });
 
+function formatTime(t) {
+  t = Math.max(t, 0);
+  const hours = Math.floor(t / (3600 * 1000));
+  const rest = t % (3600 * 1000);
+  return (hours ? `${hours}:` : "") + moment(rest).format("mm:ss");
+}
+
 function Sidebar({ game, scores }) {
   const classes = useStyles();
   const [time, setTime] = useState(Date.now());
@@ -65,13 +72,6 @@ function Sidebar({ game, scores }) {
   useEffect(() => {
     return autoscroll(logEl.current);
   }, []);
-
-  function formatTime(t) {
-    t = Math.max(t, 0);
-    const hours = Math.floor(t / (3600 * 1000));
-    const rest = t % (3600 * 1000);
-    return (hours ? `${hours}:` : "") + moment(rest).format("mm:ss");
-  }
 
   const currentTime =
     game.meta.status === "done"
