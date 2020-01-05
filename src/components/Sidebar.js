@@ -113,21 +113,25 @@ function Sidebar({ game, scores }) {
         </Typography>
         <List disablePadding dense className={classes.panelList} ref={logEl}>
           {game.history &&
-            Object.entries(game.history).map(([id, event]) => (
-              <ListItem button key={id}>
-                <ListItemIcon className={classes.historyTimeIcon}>
-                  <span>[{formatTime(event.time - game.meta.started)}]</span>
-                </ListItemIcon>
-                <ListItemText className={classes.textOverflow}>
-                  <SetCard value={event.cards[0]} size="sm" />
-                  <SetCard value={event.cards[1]} size="sm" />
-                  <SetCard value={event.cards[2]} size="sm" />
-                  <span className={classes.logName}>
-                    {game.meta.users[event.user].name}
-                  </span>
-                </ListItemText>
-              </ListItem>
-            ))}
+            Object.entries(game.history)
+              .sort(([id1, e1], [id2, e2]) => {
+                return e1.time - e2.time;
+              })
+              .map(([id, event]) => (
+                <ListItem button key={id}>
+                  <ListItemIcon className={classes.historyTimeIcon}>
+                    <span>[{formatTime(event.time - game.meta.started)}]</span>
+                  </ListItemIcon>
+                  <ListItemText className={classes.textOverflow}>
+                    <SetCard value={event.cards[0]} size="sm" />
+                    <SetCard value={event.cards[1]} size="sm" />
+                    <SetCard value={event.cards[2]} size="sm" />
+                    <span className={classes.logName}>
+                      {game.meta.users[event.user].name}
+                    </span>
+                  </ListItemText>
+                </ListItem>
+              ))}
         </List>
       </Box>
     </>

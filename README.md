@@ -26,6 +26,8 @@ frontend was built with [React](https://reactjs.org/), with components from
 - [x] Coherent card animations
 - [x] Firebase database rules
 - [x] Help, About, and Contact pages
+- [x] Fix bug where events are not sorted - chat and game log
+- [ ] Add notification when chat is collapsed and new message
 - [ ] Pixel-perfect tweaks (e.g. padding, chat icon position)
 - [ ] Additional features
   - [x] "Play again" button
