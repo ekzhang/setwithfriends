@@ -26,8 +26,8 @@ const useStyles = makeStyles(theme => ({
     width: 280,
     zIndex: 1
   },
-  chatTitle: {
-    padding: 10,
+  chatHeader: {
+    padding: 12,
     fontSize: "1.4rem",
     background: theme.palette.primary.main,
     color: theme.palette.primary.contrastText,
@@ -36,6 +36,17 @@ const useStyles = makeStyles(theme => ({
       display: "flex",
       alignItems: "center"
     }
+  },
+  chatAvatar: {
+    marginRight: 10
+  },
+  badge: {
+    background: theme.palette.secondary.main,
+    color: theme.palette.secondary.contrastText,
+    borderRadius: 5,
+    padding: "1px 5px",
+    fontSize: "1.25rem",
+    marginLeft: 14
   },
   content: {
     height: CHAT_HEIGHT,
@@ -66,6 +77,7 @@ function Chat({ chatId, user }) {
   const [input, setInput] = useState("");
   const [messages, setMessages] = useState(null);
   const [open, setOpen] = useState(false);
+  const [read, setRead] = useState(0);
   const chatAreaEl = useRef(null);
 
   useEffect(() => {
@@ -76,16 +88,26 @@ function Chat({ chatId, user }) {
         items.push(child.val());
       });
       setMessages(items);
+      if (open) {
+        setRead(items.length);
+      }
     }
     chatRef.on("value", update);
     return () => {
       chatRef.off("value", update);
     };
-  }, [chatId]);
+  }, [chatId, open]);
 
   useEffect(() => {
     return autoscroll(chatAreaEl.current);
   }, []);
+
+  function handleShow() {
+    if (!open) {
+      setRead(messages.length);
+    }
+    setOpen(!open);
+  }
 
   function handleSubmit(event) {
     event.preventDefault();
@@ -115,9 +137,19 @@ function Chat({ chatId, user }) {
           <CardHeader
             disableTypography
             avatar={<ForumIcon size="small" />}
-            title={<span>Chat</span>}
-            className={classes.chatTitle}
-            onClick={() => setOpen(!open)}
+            title={
+              <>
+                Chat
+                {messages && messages.length > read && (
+                  <span className={classes.badge}>
+                    {messages.length - read}
+                  </span>
+                )}
+              </>
+            }
+            className={classes.chatHeader}
+            classes={{ avatar: classes.chatAvatar }}
+            onClick={handleShow}
           />
           <CardContent className={classes.content}>
             <div className={classes.chatArea} ref={chatAreaEl}>
