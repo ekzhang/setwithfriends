@@ -5,10 +5,10 @@ import Typography from "@material-ui/core/Typography";
 import Snackbar from "@material-ui/core/Snackbar";
 import SnackContent from "./SnackContent";
 import { makeStyles } from "@material-ui/core/styles";
-import { Motion, spring } from "react-motion";
+import { animated, useSprings } from "react-spring";
 
 import {
-  generateDeck,
+  generateCards,
   removeCard,
   checkSet,
   splitDeck,
@@ -60,9 +60,9 @@ function Game({ game, gameState, spectating, onSet }) {
                 message: "Not a set!"
               });
             }
-            setSelected([]);
+            return [];
           } else {
-            setSelected(vals);
+            return vals;
           }
         }
       });
@@ -72,7 +72,7 @@ function Game({ game, gameState, spectating, onSet }) {
 
   const clickHandlers = useMemo(() => {
     const obj = {};
-    for (const card of generateDeck()) {
+    for (const card of generateCards()) {
       obj[card] = () => handleClick(card);
     }
     return obj;
@@ -115,10 +115,21 @@ function Game({ game, gameState, spectating, onSet }) {
     };
   }
 
-  const springConfig = {
-    stiffness: 64,
-    damping: 14
-  };
+  const cardArray = generateCards();
+  const springProps = useSprings(
+    cardArray.length,
+    cardArray.map(c => ({
+      from: { transform: `translate(${-cardWidth * 2.5}px, 0px)`, opacity: 0 },
+      to: {
+        transform: `translate(${cards[c].positionX}px, ${cards[c].positionY}px)`,
+        opacity: cards[c].opacity
+      },
+      config: {
+        tension: 64,
+        friction: 14
+      }
+    }))
+  );
 
   function handleClose(event, reason) {
     if (reason === "clickaway") return;
@@ -156,33 +167,23 @@ function Game({ game, gameState, spectating, onSet }) {
             <Typography variant="h3">{deck.length}</Typography>
           </Paper>
         </div>
-        {Object.entries(cards).map(([card, pos]) => (
-          <Motion
+        {cardArray.map((card, idx) => (
+          <animated.div
             key={card}
-            defaultStyle={{ x: -cardWidth * 2.5, y: 0, opacity: 0 }}
             style={{
-              x: spring(pos.positionX, springConfig),
-              y: spring(pos.positionY, springConfig),
-              opacity: spring(pos.opacity, springConfig)
+              ...springProps[idx],
+              visibility: springProps[idx].opacity.interpolate(x =>
+                x > 0 ? "visible" : "hidden"
+              )
             }}
           >
-            {style => (
-              <div
-                style={{
-                  transform: `translate(${style.x}px, ${style.y}px)`,
-                  opacity: style.opacity,
-                  visibility: style.opacity > 0 ? "visible" : "hidden"
-                }}
-              >
-                <SetCard
-                  value={card}
-                  color={pos.color}
-                  selected={selected.includes(card)}
-                  onClick={pos.active ? clickHandlers[card] : null}
-                />
-              </div>
-            )}
-          </Motion>
+            <SetCard
+              value={card}
+              color={cards[card].color}
+              selected={selected.includes(card)}
+              onClick={cards[card].active ? clickHandlers[card] : null}
+            />
+          </animated.div>
         ))}
         {spectating && (
           <div

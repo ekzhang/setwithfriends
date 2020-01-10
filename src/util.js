@@ -1,6 +1,6 @@
 import animals from "./utils/animals.json";
 
-export function generateDeck() {
+export function generateCards() {
   const deck = [];
   for (let i = 0; i < 3; i++) {
     for (let j = 0; j < 3; j++) {
@@ -11,6 +11,11 @@ export function generateDeck() {
       }
     }
   }
+  return deck;
+}
+
+export function generateDeck() {
+  const deck = generateCards();
   // Fisher-Yates
   for (let i = deck.length - 1; i > 0; i--) {
     let j = Math.floor(Math.random() * (i + 1));
@@ -18,7 +23,6 @@ export function generateDeck() {
     deck[i] = deck[j];
     deck[j] = temp;
   }
-
   return deck;
 }
 

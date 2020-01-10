@@ -10,7 +10,7 @@ import CardContent from "@material-ui/core/CardContent";
 import TextField from "@material-ui/core/TextField";
 import Button from "@material-ui/core/Button";
 import Typography from "@material-ui/core/Typography";
-import { Motion, spring } from "react-motion";
+import { animated, useSpring } from "react-spring";
 
 import firebase from "../firebase";
 import Loading from "./Loading";
@@ -79,6 +79,9 @@ function Chat({ chatId, user }) {
   const [open, setOpen] = useState(false);
   const [read, setRead] = useState(0);
   const chatAreaEl = useRef(null);
+  const springProps = useSpring({
+    transform: `translateY(${open ? 0 : CHAT_HEIGHT}px)`
+  });
 
   useEffect(() => {
     const chatRef = firebase.database().ref(`chats/${chatId}`);
@@ -124,63 +127,52 @@ function Chat({ chatId, user }) {
   }
 
   return (
-    <Motion
-      defaultStyle={{ y: CHAT_HEIGHT }}
-      style={{ y: spring(open ? 0 : CHAT_HEIGHT) }}
-    >
-      {style => (
-        <Card
-          className={classes.chatContainer}
-          style={{ transform: `translateY(${style.y}px)` }}
-          elevation={2}
-        >
-          <CardHeader
-            disableTypography
-            avatar={<ForumIcon size="small" />}
-            title={
-              <>
-                Chat
-                {messages && messages.length > read && (
-                  <span className={classes.badge}>
-                    {messages.length - read}
-                  </span>
-                )}
-              </>
-            }
-            className={classes.chatHeader}
-            classes={{ avatar: classes.chatAvatar }}
-            onClick={handleShow}
-          />
-          <CardContent className={classes.content}>
-            <div className={classes.chatArea} ref={chatAreaEl}>
-              {messages ? (
-                messages.map((msg, i) => (
-                  <Typography key={i} gutterBottom>
-                    <b>{msg.user}:</b> {msg.message}
-                  </Typography>
-                ))
-              ) : (
-                <Loading />
+    <animated.div className={classes.chatContainer} style={springProps}>
+      <Card elevation={2}>
+        <CardHeader
+          disableTypography
+          avatar={<ForumIcon size="small" />}
+          title={
+            <>
+              Chat
+              {messages && messages.length > read && (
+                <span className={classes.badge}>{messages.length - read}</span>
               )}
-            </div>
-            <Divider />
-            <form className={classes.chatInput} onSubmit={handleSubmit}>
-              <TextField
-                variant="outlined"
-                margin="none"
-                size="small"
-                label="Message"
-                value={input}
-                onChange={e => setInput(e.target.value)}
-              />
-              <Button variant="contained" color="primary" type="submit">
-                <SendIcon style={{ fontSize: "1.68rem" }} />
-              </Button>
-            </form>
-          </CardContent>
-        </Card>
-      )}
-    </Motion>
+            </>
+          }
+          className={classes.chatHeader}
+          classes={{ avatar: classes.chatAvatar }}
+          onClick={handleShow}
+        />
+        <CardContent className={classes.content}>
+          <div className={classes.chatArea} ref={chatAreaEl}>
+            {messages ? (
+              messages.map((msg, i) => (
+                <Typography key={i} gutterBottom>
+                  <b>{msg.user}:</b> {msg.message}
+                </Typography>
+              ))
+            ) : (
+              <Loading />
+            )}
+          </div>
+          <Divider />
+          <form className={classes.chatInput} onSubmit={handleSubmit}>
+            <TextField
+              variant="outlined"
+              margin="none"
+              size="small"
+              label="Message"
+              value={input}
+              onChange={e => setInput(e.target.value)}
+            />
+            <Button variant="contained" color="primary" type="submit">
+              <SendIcon style={{ fontSize: "1.68rem" }} />
+            </Button>
+          </form>
+        </CardContent>
+      </Card>
+    </animated.div>
   );
 }
 

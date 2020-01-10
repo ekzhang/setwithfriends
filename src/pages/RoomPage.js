@@ -11,7 +11,7 @@ import FaceIcon from "@material-ui/icons/Face";
 import StarsIcon from "@material-ui/icons/Stars";
 import EditIcon from "@material-ui/icons/Edit";
 import { Link as RouterLink, Redirect } from "react-router-dom";
-import { Motion, spring } from "react-motion";
+import { animated, useTransition } from "react-spring";
 
 import firebase from "../firebase";
 import { generateDeck } from "../util";
@@ -45,6 +45,22 @@ function RoomPage({ user, gameId }) {
   const [game, setGame] = useState(null);
   const [redirect, setRedirect] = useState(false);
   const [changeName, setChangeName] = useState(false);
+
+  let players = [];
+  if (game && game.meta.users) {
+    players = Object.entries(game.meta.users).sort((a, b) => {
+      if (a[0] === game.meta.admin) return -1;
+      if (b[0] === game.meta.admin) return 1;
+      return a[0] < b[0] ? -1 : 1;
+    });
+  }
+
+  const transitions = useTransition(players, player => player[0], {
+    from: { opacity: 0 },
+    enter: { opacity: 1 },
+    leave: { opacity: 0 },
+    config: { friction: 40 }
+  });
 
   useEffect(() => {
     function update(snapshot) {
@@ -154,15 +170,6 @@ function RoomPage({ user, gameId }) {
     }
   }
 
-  let players = [];
-  if (game && game.meta.users) {
-    players = Object.entries(game.meta.users).sort((a, b) => {
-      if (a[0] === game.meta.admin) return -1;
-      if (b[0] === game.meta.admin) return 1;
-      return a[0] < b[0] ? -1 : 1;
-    });
-  }
-
   return (
     <Container className={classes.container}>
       <Chat user={user} chatId={gameId} />
@@ -186,24 +193,17 @@ function RoomPage({ user, gameId }) {
       {game ? (
         <Paper className={classes.gameArea}>
           <div className={classes.playerList}>
-            {players.map(([id, info]) => (
-              <Motion
-                key={id}
-                defaultStyle={{ opacity: 0 }}
-                style={{ opacity: spring(1, { damping: 40 }) }}
-              >
-                {style => (
-                  <Chip
-                    icon={id === game.meta.admin ? <StarsIcon /> : <FaceIcon />}
-                    label={info.name + (id === user.id ? " (You)" : "")}
-                    className={classes.chip}
-                    onDelete={id === user.id ? () => setChangeName(true) : null}
-                    deleteIcon={<EditIcon />}
-                    color={id === game.meta.admin ? "secondary" : "default"}
-                    style={style}
-                  />
-                )}
-              </Motion>
+            {transitions.map(({ item: [id, info], props, key }) => (
+              <animated.div key={key} style={props}>
+                <Chip
+                  icon={id === game.meta.admin ? <StarsIcon /> : <FaceIcon />}
+                  label={info.name + (id === user.id ? " (You)" : "")}
+                  className={classes.chip}
+                  onDelete={id === user.id ? () => setChangeName(true) : null}
+                  deleteIcon={<EditIcon />}
+                  color={id === game.meta.admin ? "secondary" : "default"}
+                />
+              </animated.div>
             ))}
           </div>
           <div className={classes.center}>

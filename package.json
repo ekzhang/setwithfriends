@@ -7,16 +7,16 @@
   "keywords": [],
   "main": "src/index.js",
   "dependencies": {
-    "@material-ui/core": "^4.8.2",
+    "@material-ui/core": "^4.8.3",
     "@material-ui/icons": "^4.5.1",
-    "firebase": "^7.6.1",
+    "firebase": "^7.6.2",
     "moment": "^2.24.0",
     "project-name-generator": "^2.1.7",
     "react": "^16.12.0",
     "react-dom": "^16.12.0",
-    "react-motion": "^0.5.2",
     "react-router-dom": "^5.1.2",
-    "react-scripts": "^3.3.0"
+    "react-scripts": "^3.3.0",
+    "react-spring": "^8.0.27"
   },
   "devDependencies": {},
   "scripts": {
