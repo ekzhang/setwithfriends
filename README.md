@@ -39,7 +39,7 @@ frontend was built with [React](https://reactjs.org/), with components from
   - [ ] Options panel (setting color)
   - [ ] Keyboard shortcuts to select cards
   - [ ] Responsive layout
-  - [ ] Wittier 404 page
+  - [x] Wittier 404 page
   - [ ] Prompt user to rotate screen if portrait mode
   - [ ] Make clearer that "dead states" don't exist
   - [ ] Offer public/private game modes, spectate ongoing games
