@@ -34,7 +34,7 @@ frontend was built with [React](https://reactjs.org/), with components from
   - [x] Chat
   - [x] Spectating
   - [x] Statistics panel
-  - [ ] Fix race conditions - we have evidence of this now from users!
+  - [x] Fix race conditions - we have evidence of this now from users!
   - [ ] Quick-play queueing
   - [ ] Options panel (setting color)
   - [ ] Keyboard shortcuts to select cards

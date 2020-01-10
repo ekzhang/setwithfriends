@@ -10,7 +10,7 @@ import Box from "@material-ui/core/Box";
 import Paper from "@material-ui/core/Paper";
 import { Redirect } from "react-router-dom";
 
-import { removeCard, findSet, computeScores } from "../util";
+import { removeCard, findSet, computeState } from "../util";
 import firebase from "../firebase";
 import Game from "../components/Game";
 import NotFoundPage from "./NotFoundPage";
@@ -67,12 +67,11 @@ function GamePage({ user, gameId }) {
 
   const handleSet = useCallback(
     vals => {
-      let deck = game.deck;
+      let { deck } = computeState(game);
       deck = removeCard(deck, vals[0]);
       deck = removeCard(deck, vals[1]);
       deck = removeCard(deck, vals[2]);
       const gameRef = firebase.database().ref(`games/${gameId}`);
-      gameRef.child("deck").set(deck);
       gameRef.child("history").push({
         user: user.id,
         cards: vals,
@@ -109,7 +108,7 @@ function GamePage({ user, gameId }) {
 
   const spectating = !game.meta.users || !game.meta.users[user.id];
 
-  const scores = computeScores(game);
+  const gameState = computeState(game);
 
   function handlePlayAgain() {
     const idx = gameId.lastIndexOf("-");
@@ -131,11 +130,11 @@ function GamePage({ user, gameId }) {
             The game has ended.
           </Typography>
           <Typography variant="body1">
-            Winner: {game.meta.users[scores[0][0]].name}
+            Winner: {game.meta.users[gameState.scores[0][0]].name}
           </Typography>
-          {scores.length >= 2 && (
+          {gameState.scores.length >= 2 && (
             <Typography variant="body2">
-              Runner-up: {game.meta.users[scores[1][0]].name}
+              Runner-up: {game.meta.users[gameState.scores[1][0]].name}
             </Typography>
           )}
           <Button
@@ -150,11 +149,16 @@ function GamePage({ user, gameId }) {
       </Modal>
       <Grid item xs={8} lg={9} className={classes.gamePanel}>
         {/* Game Area */}
-        <Game game={game} spectating={spectating} onSet={handleSet} />
+        <Game
+          game={game}
+          gameState={gameState}
+          spectating={spectating}
+          onSet={handleSet}
+        />
       </Grid>
       <Grid item xs={4} lg={3} className={classes.sidePanel}>
         {/* Sidebar */}
-        <Sidebar game={game} scores={scores} />
+        <Sidebar game={game} gameState={gameState} />
       </Grid>
     </Grid>
   );

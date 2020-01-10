@@ -28,7 +28,7 @@ const useStyles = makeStyles({
   }
 });
 
-function Game({ game, spectating, onSet }) {
+function Game({ game, gameState, spectating, onSet }) {
   const classes = useStyles();
   const [selected, setSelected] = useState([]);
   const [snack, setSnack] = useState({ open: false });
@@ -82,21 +82,19 @@ function Game({ game, spectating, onSet }) {
     cardHeight = 112;
 
   const cards = {};
-  if (game.history) {
-    for (const event of Object.values(game.history)) {
-      const { user, cards: set } = event;
-      for (const c of set) {
-        cards[c] = {
-          positionX: 2.5 * cardWidth,
-          positionY: 0,
-          opacity: 0,
-          color: game.meta.users[user].color,
-          active: false
-        };
-      }
+  for (const event of gameState.history) {
+    const { user, cards: set } = event;
+    for (const c of set) {
+      cards[c] = {
+        positionX: 2.5 * cardWidth,
+        positionY: 0,
+        opacity: 0,
+        color: game.meta.users[user].color,
+        active: false
+      };
     }
   }
-  const [board, deck] = splitDeck(game.deck || []);
+  const [board, deck] = splitDeck(gameState.deck);
   const rows = board.length / 3;
   for (let i = 0; i < board.length; i++) {
     const r = Math.floor(i / 3),

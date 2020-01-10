@@ -58,7 +58,7 @@ function formatTime(t) {
   return (hours ? `${hours}:` : "") + moment(rest).format("mm:ss");
 }
 
-function Sidebar({ game, scores }) {
+function Sidebar({ game, gameState }) {
   const classes = useStyles();
   const [time, setTime] = useState(Date.now());
   const logEl = useRef(null);
@@ -74,9 +74,7 @@ function Sidebar({ game, scores }) {
   }, []);
 
   const currentTime =
-    game.meta.status === "done"
-      ? Object.values(game.history).slice(-1)[0].time
-      : time;
+    game.meta.status === "done" ? gameState.history.slice(-1)[0].time : time;
 
   return (
     <>
@@ -94,7 +92,7 @@ function Sidebar({ game, scores }) {
           Scoreboard
         </Typography>
         <List disablePadding dense className={classes.panelList}>
-          {scores.map(([uid, score]) => (
+          {gameState.scores.map(([uid, score]) => (
             <ListItem key={uid} button>
               <ColorSquare color={game.meta.users[uid].color} />
               <ListItemText className={classes.textOverflow}>
@@ -112,26 +110,21 @@ function Sidebar({ game, scores }) {
           Game Log
         </Typography>
         <List disablePadding dense className={classes.panelList} ref={logEl}>
-          {game.history &&
-            Object.entries(game.history)
-              .sort(([id1, e1], [id2, e2]) => {
-                return e1.time - e2.time;
-              })
-              .map(([id, event]) => (
-                <ListItem button key={id}>
-                  <ListItemIcon className={classes.historyTimeIcon}>
-                    <span>[{formatTime(event.time - game.meta.started)}]</span>
-                  </ListItemIcon>
-                  <ListItemText className={classes.textOverflow}>
-                    <SetCard value={event.cards[0]} size="sm" />
-                    <SetCard value={event.cards[1]} size="sm" />
-                    <SetCard value={event.cards[2]} size="sm" />
-                    <span className={classes.logName}>
-                      {game.meta.users[event.user].name}
-                    </span>
-                  </ListItemText>
-                </ListItem>
-              ))}
+          {gameState.history.map((event, id) => (
+            <ListItem button key={id}>
+              <ListItemIcon className={classes.historyTimeIcon}>
+                <span>[{formatTime(event.time - game.meta.started)}]</span>
+              </ListItemIcon>
+              <ListItemText className={classes.textOverflow}>
+                <SetCard value={event.cards[0]} size="sm" />
+                <SetCard value={event.cards[1]} size="sm" />
+                <SetCard value={event.cards[2]} size="sm" />
+                <span className={classes.logName}>
+                  {game.meta.users[event.user].name}
+                </span>
+              </ListItemText>
+            </ListItem>
+          ))}
         </List>
       </Box>
     </>

@@ -16,7 +16,7 @@ import DialogActions from "@material-ui/core/DialogActions";
 
 import PromptDialog from "../components/PromptDialog";
 import firebase from "../firebase";
-import { computeScores } from "../util";
+import { computeState } from "../util";
 
 const useStyles = makeStyles(theme => ({
   container: {
@@ -68,7 +68,7 @@ function LobbyPage({ user }) {
       const update = snapshot => {
         const game = snapshot.val();
         if (game.meta.status === "done") {
-          const scores = computeScores(game);
+          const { scores } = computeState(game);
           setGames(games => ({
             ...games,
             [gameId]: {

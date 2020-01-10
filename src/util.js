@@ -68,19 +68,33 @@ export function generateName() {
   return "Anonymous " + animals[Math.floor(Math.random() * animals.length)];
 }
 
-export function computeScores(game) {
+export function computeState(game) {
   const scoreMap = {};
   for (const uid of Object.keys(game.meta.users)) {
     scoreMap[uid] = 0;
   }
+  const used = {};
+  const history = [];
   if (game.history) {
     for (const event of Object.values(game.history)) {
-      scoreMap[event.user] += 1;
+      const [a, b, c] = event.cards;
+      if (!used[a] && !used[b] && !used[c]) {
+        used[a] = used[b] = used[c] = true;
+        scoreMap[event.user] += 1;
+        history.push(event);
+      }
     }
   }
-
-  return Object.entries(scoreMap).sort(([u1, s1], [u2, s2]) => {
+  history.sort((e1, e2) => {
+    return e1.time - e2.time;
+  });
+  const scores = Object.entries(scoreMap).sort(([u1, s1], [u2, s2]) => {
     if (s1 !== s2) return s2 - s1;
     return u1 < u2 ? -1 : 1;
   });
+  const deck = [];
+  for (const c of game.deck || []) {
+    if (!used[c]) deck.push(c);
+  }
+  return { deck, scores, history };
 }
