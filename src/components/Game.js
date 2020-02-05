@@ -196,9 +196,6 @@ function Game({ game, gameState, spectating, onSet }) {
             </Paper>
           </div>
         )}
-        <button style={{ display: "none" }} onClick={cheat}>
-          Cheat
-        </button>
       </div>
     </>
   );
