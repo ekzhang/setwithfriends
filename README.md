@@ -36,7 +36,7 @@ frontend was built with [React](https://reactjs.org/), with components from
   - [x] Statistics panel
   - [x] Fix race conditions - we have evidence of this now from users!
   - [ ] Quick-play queueing
-  - [ ] Options panel (setting color)
+  - [x] Options panel (setting color)
   - [ ] Keyboard shortcuts to select cards
   - [ ] Responsive layout
   - [x] Wittier 404 page

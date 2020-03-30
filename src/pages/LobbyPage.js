@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 
 import generate from "project-name-generator";
+import parseColor from "parse-color";
 import { Link as RouterLink } from "react-router-dom";
 import { makeStyles } from "@material-ui/core/styles";
 import { Redirect } from "react-router";
@@ -15,6 +16,9 @@ import DialogContent from "@material-ui/core/DialogContent";
 import DialogContentText from "@material-ui/core/DialogContentText";
 import DialogTitle from "@material-ui/core/DialogTitle";
 import DialogActions from "@material-ui/core/DialogActions";
+import FormControl from "@material-ui/core/FormControl";
+import Input from "@material-ui/core/Input";
+import InputLabel from "@material-ui/core/InputLabel";
 
 import PromptDialog from "../components/PromptDialog";
 import firebase from "../firebase";
@@ -44,10 +48,13 @@ const useStyles = makeStyles(theme => ({
     }
   },
   warningBtn: {
-    color: theme.palette.warning.contrastText,
-    background: theme.palette.warning.main,
-    "&:hover": {
-      background: theme.palette.warning.dark
+    color: theme.palette.warning.dark
+  },
+  optionsForm: {
+    display: "flex",
+    marginBottom: 12,
+    "& > div": {
+      flexGrow: 1
     }
   }
 }));
@@ -60,6 +67,8 @@ function LobbyPage({ user }) {
   const [spectate, setSpectate] = useState(false);
   const [options, setOptions] = useState(false);
   const [games, setGames] = useState({});
+  const [userName, setUserName] = useState("Anonymous");
+  const [userColor, setUserColor] = useState("#888888");
 
   useEffect(() => {
     const gameList = user.games ? Object.values(user.games) : [];
@@ -126,12 +135,27 @@ function LobbyPage({ user }) {
   }
 
   function optionsButton() {
+    setUserName(user.name);
+    setUserColor(user.color);
     setOptions(true);
   }
 
   function handleReset() {
     setOptions(false);
     firebase.auth().currentUser.delete();
+  }
+
+  function handleSave() {
+    setOptions(false);
+    if (userName && userColor) {
+      firebase
+        .database()
+        .ref(`users/${user.id}`)
+        .set({
+          name: userName,
+          color: userColor
+        });
+    }
   }
 
   return (
@@ -150,29 +174,27 @@ function LobbyPage({ user }) {
               View help page
             </Link>
           </DialogContentText>
-          <DialogActions>
-            <Button
-              onClick={() => {
-                setPlay(false);
-                newRoom();
-              }}
-              variant="contained"
-              color="primary"
-            >
-              New Room
-            </Button>
-            <Button
-              onClick={() => {
-                setPlay(false);
-                joinRoom();
-              }}
-              variant="contained"
-              color="primary"
-            >
-              Join Room
-            </Button>
-          </DialogActions>
         </DialogContent>
+        <DialogActions>
+          <Button
+            onClick={() => {
+              setPlay(false);
+              newRoom();
+            }}
+            color="primary"
+          >
+            New Room
+          </Button>
+          <Button
+            onClick={() => {
+              setPlay(false);
+              joinRoom();
+            }}
+            color="primary"
+          >
+            Join Room
+          </Button>
+        </DialogActions>
       </Dialog>
       <PromptDialog
         open={join}
@@ -192,15 +214,41 @@ function LobbyPage({ user }) {
         <DialogTitle>Options</DialogTitle>
         <DialogContent>
           <DialogContentText>
-            You can reset your user data (including stats) with the button
-            below.
+            You can configure your nickname and in-game display color below. You
+            can also reset your data, including user statistics.
           </DialogContentText>
-          <DialogActions>
-            <Button className={classes.warningBtn} onClick={handleReset}>
-              Reset Data
-            </Button>
-          </DialogActions>
+          <form
+            className={classes.optionsForm}
+            onSubmit={e => e.preventDefault()}
+          >
+            <FormControl>
+              <InputLabel htmlFor="name-input">Name</InputLabel>
+              <Input
+                id="name-input"
+                value={userName}
+                onChange={e => setUserName(e.target.value)}
+                inputProps={{ maxLength: 40 }}
+              />
+            </FormControl>
+            <FormControl>
+              <InputLabel htmlFor="color-input">Color</InputLabel>
+              <Input
+                id="color-input"
+                type="color"
+                value={parseColor(userColor).hex}
+                onChange={e => setUserColor(e.target.value)}
+              />
+            </FormControl>
+          </form>
         </DialogContent>
+        <DialogActions>
+          <Button className={classes.warningBtn} onClick={handleReset}>
+            Reset Data
+          </Button>
+          <Button variant="contained" color="primary" onClick={handleSave}>
+            Save
+          </Button>
+        </DialogActions>
       </Dialog>
       <Typography variant="h3" component="h2" gutterBottom>
         Set with Friends
