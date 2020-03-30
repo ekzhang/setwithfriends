@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 
 import generate from "project-name-generator";
+import { Link as RouterLink } from "react-router-dom";
 import { makeStyles } from "@material-ui/core/styles";
 import { Redirect } from "react-router";
 import Card from "@material-ui/core/Card";
@@ -8,6 +9,7 @@ import Container from "@material-ui/core/Container";
 import Typography from "@material-ui/core/Typography";
 import Grid from "@material-ui/core/Grid";
 import Button from "@material-ui/core/Button";
+import Link from "@material-ui/core/Link";
 import Dialog from "@material-ui/core/Dialog";
 import DialogContent from "@material-ui/core/DialogContent";
 import DialogContentText from "@material-ui/core/DialogContentText";
@@ -142,6 +144,11 @@ function LobbyPage({ user }) {
             real time with others online. To begin, you can either{" "}
             <b>create a new room</b> and share the link with friends, or{" "}
             <b>join an existing game</b> by entering the ID.
+          </DialogContentText>
+          <DialogContentText>
+            <Link component={RouterLink} to="/help">
+              View help page
+            </Link>
           </DialogContentText>
           <DialogActions>
             <Button

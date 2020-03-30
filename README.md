@@ -41,7 +41,7 @@ frontend was built with [React](https://reactjs.org/), with components from
   - [ ] Responsive layout
   - [x] Wittier 404 page
   - [ ] Prompt user to rotate screen if portrait mode
-  - [ ] Make clearer that "dead states" don't exist
+  - [x] Make clearer that "dead states" don't exist
   - [ ] Offer public/private game modes, spectate ongoing games
   - [ ] Optimize for mobile (fix inconsistent tapping, increase selected card contrast)
   - [ ] Option to reverse the game log

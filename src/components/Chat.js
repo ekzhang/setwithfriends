@@ -24,7 +24,9 @@ const useStyles = makeStyles(theme => ({
     bottom: 0,
     left: 16,
     width: 280,
-    zIndex: 1
+    zIndex: 1,
+    opacity: 0.9,
+    backdropFilter: "blur(3px)"
   },
   chatHeader: {
     padding: 12,
