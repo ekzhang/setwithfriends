@@ -11,8 +11,7 @@ import {
   generateCards,
   removeCard,
   checkSet,
-  splitDeck,
-  findSet
+  splitDeck
 } from "../util";
 import SetCard from "../components/SetCard";
 
@@ -134,10 +133,6 @@ function Game({ game, gameState, spectating, onSet }) {
   function handleClose(event, reason) {
     if (reason === "clickaway") return;
     setSnack({ ...snack, open: false });
-  }
-
-  function cheat() {
-    onSet(findSet(board));
   }
 
   return (
