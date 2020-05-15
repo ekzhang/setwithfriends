@@ -15,37 +15,9 @@ This app was built with a serverless architecture, using the
 frontend was built with [React](https://reactjs.org/), with components from
 [Material UI](https://material-ui.com/).
 
-## TODO
+## Roadmap
 
-- [x] Migrate to Material UI
-- [x] Implement basic interface/layout
-- [x] Re-integrate backend
-- [x] Show number of remaining cards
-- [x] End-of-game screen
-- [x] Modals and popups
-- [x] Coherent card animations
-- [x] Firebase database rules
-- [x] Help, About, and Contact pages
-- [x] Fix bug where events are not sorted - chat and game log
-- [x] Add notification when chat is collapsed and new message
-- [x] Pixel-perfect tweaks (e.g. padding, chat icon position)
-- [ ] Additional features
-  - [x] "Play again" button
-  - [x] Chat
-  - [x] Spectating
-  - [x] Statistics panel
-  - [x] Fix race conditions - we have evidence of this now from users!
-  - [ ] Quick-play queueing
-  - [x] Options panel (setting color)
-  - [ ] Keyboard shortcuts to select cards
-  - [ ] Responsive layout
-  - [x] Wittier 404 page
-  - [ ] Prompt user to rotate screen if portrait mode
-  - [x] Make clearer that "dead states" don't exist
-  - [ ] Offer public/private game modes, spectate ongoing games
-  - [ ] Optimize for mobile (fix inconsistent tapping, increase selected card contrast)
-  - [ ] Option to reverse the game log
-  - [ ] Stripes on log might look solid on small screens
+This section has been moved to [TODO.md](TODO.md).
 
 ## Realtime DB Structure
 
