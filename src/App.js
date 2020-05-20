@@ -21,7 +21,6 @@ import RoomPage from "./pages/RoomPage";
 import GamePage from "./pages/GamePage";
 import LobbyPage from "./pages/LobbyPage";
 import LoadingPage from "./pages/LoadingPage";
-import IndexPage from "./pages/IndexPage";
 import NotFoundPage from "./pages/NotFoundPage";
 import HelpPage from "./pages/HelpPage";
 import AboutPage from "./pages/AboutPage";
@@ -109,13 +108,12 @@ function App() {
             </Toolbar>
           </AppBar>
           <Switch>
-            <Route exact path="/" component={IndexPage} />
             <Route exact path="/help" component={HelpPage} />
             <Route exact path="/about" component={AboutPage} />
             <Route exact path="/contact" component={ContactPage} />
             <Route
               exact
-              path="/lobby"
+              path="/"
               render={() => <LobbyPage user={user}></LobbyPage>}
             />
             <Route
