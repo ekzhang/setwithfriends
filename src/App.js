@@ -25,11 +25,11 @@ function App() {
       firebase
         .auth()
         .signInAnonymously()
-        .catch(error => {
+        .catch((error) => {
           alert("Unable to connect to the server. Please try again later.");
         });
     }
-    return firebase.auth().onAuthStateChanged(user => {
+    return firebase.auth().onAuthStateChanged((user) => {
       if (user) {
         // User is signed in.
         setUid(user.uid);
@@ -53,7 +53,7 @@ function App() {
         userRef.set({
           games: {},
           color: generateColor(),
-          name: generateName()
+          name: generateName(),
         });
       }
     }
@@ -94,6 +94,7 @@ function App() {
                 <GamePage user={user} gameId={match.params.id} />
               )}
             />
+
             <Route component={NotFoundPage} />
           </Switch>
         </Router>
