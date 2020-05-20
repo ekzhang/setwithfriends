@@ -2,8 +2,19 @@ import React, { useState, useEffect } from "react";
 import firebase from "./firebase";
 import "./styles.css";
 
-import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
+import {
+  BrowserRouter as Router,
+  Switch,
+  Route,
+  Link as RouterLink,
+} from "react-router-dom";
 import CssBaseline from "@material-ui/core/CssBaseline";
+import AppBar from "@material-ui/core/AppBar";
+import Toolbar from "@material-ui/core/Toolbar";
+import Typography from "@material-ui/core/Typography";
+import IconButton from "@material-ui/core/IconButton";
+import Link from "@material-ui/core/Link";
+import Settings from "@material-ui/icons/Settings";
 
 import { generateColor, generateName } from "./util";
 import RoomPage from "./pages/RoomPage";
@@ -70,6 +81,33 @@ function App() {
         <LoadingPage />
       ) : (
         <Router>
+          <AppBar position="relative" color="transparent" elevation={0}>
+            <Toolbar variant="dense">
+              <Typography variant="h6" style={{ flexGrow: 1 }}>
+                <Link
+                  underline="none"
+                  color="inherit"
+                  component={RouterLink}
+                  to="/"
+                >
+                  Set with Friends
+                </Link>
+              </Typography>
+              <Typography variant="subtitle1" style={{ marginRight: 8 }}>
+                <Link
+                  underline="none"
+                  color="inherit"
+                  component={RouterLink}
+                  to="/profile/42"
+                >
+                  Eric Zhang
+                </Link>
+              </Typography>
+              <IconButton color="inherit">
+                <Settings />
+              </IconButton>
+            </Toolbar>
+          </AppBar>
           <Switch>
             <Route exact path="/" component={IndexPage} />
             <Route exact path="/help" component={HelpPage} />
