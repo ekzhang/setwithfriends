@@ -94,7 +94,6 @@ function App() {
                 <GamePage user={user} gameId={match.params.id} />
               )}
             />
-
             <Route component={NotFoundPage} />
           </Switch>
         </Router>
