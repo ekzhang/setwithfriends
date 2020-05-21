@@ -161,10 +161,10 @@ function LobbyPage({ user }) {
     return () => clearInterval(id);
   }, []);
 
-  const [value, setValue] = React.useState(0);
+  const [tabValue, setTabValue] = React.useState(0);
 
-  const handleChange = (event, newValue) => {
-    setValue(newValue);
+  const handleTabChange = (event, newValue) => {
+    setTabValue(newValue);
   };
 
   if (redirect) return <Redirect push to={redirect} />;
@@ -186,7 +186,7 @@ function LobbyPage({ user }) {
               }}
             >
               <Typography variant="overline">
-                Online Users {Object.keys(users).length}
+                Online Users ({Object.keys(users).length})
               </Typography>
               <List
                 dense
@@ -233,8 +233,8 @@ function LobbyPage({ user }) {
               indicatorColor="secondary"
               textColor="secondary"
               variant="fullWidth"
-              value={value}
-              onChange={handleChange}
+              value={tabValue}
+              onChange={handleTabChange}
             >
               <Tab label="Lobby"></Tab>
               <Tab label="Your games"></Tab>
@@ -250,7 +250,7 @@ function LobbyPage({ user }) {
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  {Object.entries(value == 0 ? games : myGames)
+                  {Object.entries(tabValue == 0 ? games : myGames)
                     .sort((a, b) => b[1].meta.created - a[1].meta.created)
                     .map(([gameId, gameInfo]) => (
                       <TableRow
