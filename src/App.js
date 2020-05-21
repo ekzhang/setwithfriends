@@ -57,10 +57,10 @@ function App() {
     }
     const userRef = firebase.database().ref(`/users/${uid}`);
     function update(snapshot) {
-      if (snapshot.exists()) {
+      if (snapshot.child("name").exists()) {
         setUser({ ...snapshot.val(), id: uid });
       } else {
-        userRef.set({
+        userRef.update({
           games: {},
           color: generateColor(),
           name: generateName(),
@@ -71,6 +71,27 @@ function App() {
     return () => {
       userRef.off("value", update);
     };
+  }, [uid]);
+
+  useEffect(() => {
+    if (!uid) {
+      return;
+    }
+    var connectionsRef = firebase.database().ref(`users/${uid}/connections`);
+    var lastOnlineRef = firebase.database().ref(`users/${uid}/lastOnline`);
+    var connectedRef = firebase.database().ref(".info/connected");
+
+    connectedRef.on("value", function (snap) {
+      if (snap.val() == true) {
+        var con = connectionsRef.push();
+        con.onDisconnect().remove();
+        con.set(true);
+
+        lastOnlineRef
+          .onDisconnect()
+          .set(firebase.database.ServerValue.TIMESTAMP);
+      }
+    });
   }, [uid]);
 
   return (
