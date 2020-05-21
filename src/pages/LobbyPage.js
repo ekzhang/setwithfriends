@@ -32,9 +32,11 @@ import SportsEsports from "@material-ui/icons/SportsEsports";
 
 import autoscroll from "../utils/autoscroll";
 
+import moment from "moment";
+
 import firebase from "../firebase";
 import useFirebaseQuery from "../hooks/useFirebaseQuery";
-import moment from "moment";
+import useMoment from "../hooks/useMoment";
 
 const useStyles = makeStyles((theme) => ({
   mainGrid: {
@@ -151,21 +153,17 @@ function LobbyPage({ user }) {
       .ref("/games")
       .orderByChild(`/meta/users/${user.id}`)
       .startAt(false);
-  }, []);
+  }, [user.id]);
 
   const myGames = useFirebaseQuery(myGamesQuery);
-
-  const [, setTime] = useState(Date.now());
-  useEffect(() => {
-    const id = setInterval(() => setTime(Date.now()), 1000);
-    return () => clearInterval(id);
-  }, []);
 
   const [tabValue, setTabValue] = React.useState(0);
 
   const handleTabChange = (event, newValue) => {
     setTabValue(newValue);
   };
+
+  const time = useMoment();
 
   if (redirect) return <Redirect push to={redirect} />;
 
@@ -250,7 +248,7 @@ function LobbyPage({ user }) {
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  {Object.entries(tabValue == 0 ? games : myGames)
+                  {Object.entries(tabValue === 0 ? games : myGames)
                     .sort((a, b) => b[1].meta.created - a[1].meta.created)
                     .map(([gameId, gameInfo]) => (
                       <TableRow
@@ -273,7 +271,7 @@ function LobbyPage({ user }) {
                           )}
                         </TableCell>
                         <TableCell>
-                          {moment(gameInfo.meta.created).fromNow()}
+                          {moment(gameInfo.meta.created).from(time)}
                         </TableCell>
                       </TableRow>
                     ))}
