@@ -135,6 +135,16 @@ function LobbyPage({ user }) {
   }, []);
   const games = useFirebaseQuery(gamesQuery);
 
+  const onlineUsersQuery = useMemo(() => {
+    return firebase
+      .database()
+      .ref("users")
+      .orderByChild("connections")
+      .startAt(false);
+  }, []);
+
+  const users = useFirebaseQuery(onlineUsersQuery);
+
   const [, setTime] = useState(Date.now());
   useEffect(() => {
     const id = setInterval(() => setTime(Date.now()), 1000);
@@ -164,36 +174,15 @@ function LobbyPage({ user }) {
                 dense
                 style={{ paddingTop: 0, overflowY: "auto", flexGrow: 1 }}
               >
-                <ListItem button>
-                  <ListItemIcon>
-                    <Face />
-                  </ListItemIcon>
-                  <ListItemText>Eric Zhang</ListItemText>
-                </ListItem>
-                <ListItem button>
-                  <ListItemIcon>
-                    <SportsEsports />
-                  </ListItemIcon>
-                  <ListItemText>Cynthia Du</ListItemText>
-                </ListItem>
-                <ListItem button>
-                  <ListItemIcon>
-                    <SportsEsports />
-                  </ListItemIcon>
-                  <ListItemText>Anonymous Polar Bear</ListItemText>
-                </ListItem>
-                <ListItem button>
-                  <ListItemIcon>
-                    <Face />
-                  </ListItemIcon>
-                  <ListItemText>Anonymous Skunk</ListItemText>
-                </ListItem>
-                <ListItem button>
-                  <ListItemIcon>
-                    <Face />
-                  </ListItemIcon>
-                  <ListItemText>Anonymous Ant</ListItemText>
-                </ListItem>
+                {Object.values(users).map((user) => (
+                  <ListItem button>
+                    <ListItemIcon>
+                      <Face />
+                    </ListItemIcon>
+                    <ListItemText>{user.name}</ListItemText>
+                  </ListItem>
+                ))}
+                {/* <SportsEsports /> */}
               </List>
             </section>
             <Divider />
