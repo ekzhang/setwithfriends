@@ -134,6 +134,13 @@ function LobbyPage({ user }) {
       .limitToLast(100);
   }, []);
   const games = useFirebaseQuery(gamesQuery);
+
+  const [, setTime] = useState(Date.now());
+  useEffect(() => {
+    const id = setInterval(() => setTime(Date.now()), 1000);
+    return () => clearInterval(id);
+  }, []);
+
   if (redirect) return <Redirect push to={redirect} />;
 
   function newRoom() {
