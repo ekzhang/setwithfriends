@@ -145,11 +145,27 @@ function LobbyPage({ user }) {
 
   const users = useFirebaseQuery(onlineUsersQuery);
 
+  const myGamesQuery = useMemo(() => {
+    return firebase
+      .database()
+      .ref("/games")
+      .orderByChild(`/meta/users/${user.id}`)
+      .startAt(false);
+  }, []);
+
+  const myGames = useFirebaseQuery(myGamesQuery);
+
   const [, setTime] = useState(Date.now());
   useEffect(() => {
     const id = setInterval(() => setTime(Date.now()), 1000);
     return () => clearInterval(id);
   }, []);
+
+  const [value, setValue] = React.useState(0);
+
+  const handleChange = (event, newValue) => {
+    setValue(newValue);
+  };
 
   if (redirect) return <Redirect push to={redirect} />;
 
@@ -169,7 +185,9 @@ function LobbyPage({ user }) {
                 maxHeight: "40%",
               }}
             >
-              <Typography variant="overline">Online Users (5)</Typography>
+              <Typography variant="overline">
+                Online Users {Object.keys(users).length}
+              </Typography>
               <List
                 dense
                 style={{ paddingTop: 0, overflowY: "auto", flexGrow: 1 }}
@@ -215,7 +233,8 @@ function LobbyPage({ user }) {
               indicatorColor="secondary"
               textColor="secondary"
               variant="fullWidth"
-              value={0}
+              value={value}
+              onChange={handleChange}
             >
               <Tab label="Lobby"></Tab>
               <Tab label="Your games"></Tab>
@@ -231,7 +250,7 @@ function LobbyPage({ user }) {
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  {Object.entries(games)
+                  {Object.entries(value == 0 ? games : myGames)
                     .sort((a, b) => b[1].meta.created - a[1].meta.created)
                     .map(([gameId, gameInfo]) => (
                       <TableRow
