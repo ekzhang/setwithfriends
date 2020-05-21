@@ -174,8 +174,8 @@ function LobbyPage({ user }) {
                 dense
                 style={{ paddingTop: 0, overflowY: "auto", flexGrow: 1 }}
               >
-                {Object.values(users).map((user) => (
-                  <ListItem button>
+                {Object.entries(users).map(([userId, user]) => (
+                  <ListItem key={userId} button>
                     <ListItemIcon>
                       <Face />
                     </ListItemIcon>
