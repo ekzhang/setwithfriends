@@ -4,7 +4,7 @@ function useFirebaseQuery(query) {
   const [value, setValue] = useState({});
 
   useEffect(() => {
-    function childAdded(snap) {
+    function childAddedOrChanged(snap) {
       setValue((value) => ({ ...value, [snap.key]: snap.val() }));
     }
 
@@ -17,11 +17,13 @@ function useFirebaseQuery(query) {
     }
 
     setValue({});
-    query.on("child_added", childAdded);
+    query.on("child_added", childAddedOrChanged);
     query.on("child_removed", childRemoved);
+    query.on("child_changed", childAddedOrChanged);
     return () => {
-      query.off("child_added", childAdded);
+      query.off("child_added", childAddedOrChanged);
       query.off("child_removed", childRemoved);
+      query.off("child_changed", childAddedOrChanged);
     };
   }, [query]);
 
