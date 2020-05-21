@@ -2,6 +2,7 @@ import firebase from "firebase/app";
 import "firebase/database";
 import "firebase/auth";
 import "firebase/analytics";
+import "firebase/functions";
 
 const config = {
   apiKey: "AIzaSyB6jICg__HEdtZRcSoIoeUMau41jvKNwvU",
@@ -16,5 +17,7 @@ const config = {
 
 firebase.initializeApp(config);
 firebase.analytics();
+
+export const createGame = firebase.functions().httpsCallable("createGame");
 
 export default firebase;

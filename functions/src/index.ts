@@ -6,7 +6,7 @@ admin.initializeApp();
 const MAX_GAME_ID_LENGTH = 64;
 
 /** Create a new game in the database */
-export const createGame = functions.https.onCall((data, context) => {
+export const createGame = functions.https.onCall(async (data, context) => {
   const gameId = data.gameId;
   const access = data.access || "public";
   if (
@@ -38,29 +38,30 @@ export const createGame = functions.https.onCall((data, context) => {
   }
 
   const gameRef = admin.database().ref(`games/${gameId}`);
-  return gameRef
-    .transaction((currentData) => {
-      if (currentData === null) {
-        return {
-          deck: generateDeck(),
-          host: context.auth!.uid,
-          createdAt: admin.database.ServerValue.TIMESTAMP,
-          status: "waiting",
-          access,
-        };
-      } else {
-        throw new functions.https.HttpsError(
-          "already-exists",
-          "The requested `gameId` already exists."
-        );
-      }
-    })
-    .then(() => {
-      return admin
-        .database()
-        .ref("stats/gameCount")
-        .transaction((count) => (count || 0) + 1);
-    });
+  const { committed, snapshot } = await gameRef.transaction((currentData) => {
+    if (currentData === null) {
+      return {
+        deck: generateDeck(),
+        host: context.auth!.uid,
+        createdAt: admin.database.ServerValue.TIMESTAMP,
+        status: "waiting",
+        access,
+      };
+    } else {
+      return;
+    }
+  });
+  if (!committed) {
+    throw new functions.https.HttpsError(
+      "already-exists",
+      "The requested `gameId` already exists."
+    );
+  }
+  await admin
+    .database()
+    .ref("stats/gameCount")
+    .transaction((count) => (count || 0) + 1);
+  return snapshot?.val();
 });
 
 function generateDeck() {
