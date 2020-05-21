@@ -144,7 +144,6 @@ function LobbyPage({ user }) {
       .orderByChild("connections")
       .startAt(false);
   }, []);
-
   const users = useFirebaseQuery(onlineUsersQuery);
 
   const myGamesQuery = useMemo(() => {
@@ -154,11 +153,9 @@ function LobbyPage({ user }) {
       .orderByChild(`/meta/users/${user.id}`)
       .startAt(false);
   }, [user.id]);
-
   const myGames = useFirebaseQuery(myGamesQuery);
 
   const [tabValue, setTabValue] = React.useState(0);
-
   const handleTabChange = (event, newValue) => {
     setTabValue(newValue);
   };
@@ -167,8 +164,10 @@ function LobbyPage({ user }) {
 
   if (redirect) return <Redirect push to={redirect} />;
 
-  function newRoom() {
-    setRedirect("/room/" + generate().dashed);
+  function newRoom(isPrivate) {
+    setRedirect(
+      "/room/" + generate().dashed + `${isPrivate ? "?private=true" : ""}`
+    );
   }
 
   return (
@@ -287,11 +286,15 @@ function LobbyPage({ user }) {
                 variant="contained"
                 fullWidth
                 color="primary"
-                onClick={newRoom}
+                onClick={() => newRoom(false)}
               >
                 Create a Game
               </Button>
-              <Button variant="contained" fullWidth>
+              <Button
+                variant="contained"
+                fullWidth
+                onClick={() => newRoom(true)}
+              >
                 New Private Game
               </Button>
             </div>
