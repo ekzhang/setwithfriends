@@ -10,7 +10,7 @@ function useFirebaseQuery(query) {
 
     function childRemoved(snap) {
       setValue((value) => {
-        const { [snap.key]: removedKey, newValue } = value;
+        const { [snap.key]: removedKey, ...newValue } = value;
         void removedKey;
         return newValue;
       });
