@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useMemo } from "react";
 
 import generate from "project-name-generator";
 import { Link as RouterLink } from "react-router-dom";
@@ -31,6 +31,10 @@ import Face from "@material-ui/icons/Face";
 import SportsEsports from "@material-ui/icons/SportsEsports";
 
 import autoscroll from "../utils/autoscroll";
+
+import firebase from "../firebase";
+import useFirebaseQuery from "../hooks/useFirebaseQuery";
+import moment from "moment";
 
 const useStyles = makeStyles((theme) => ({
   mainGrid: {
@@ -121,6 +125,15 @@ function LobbyPage({ user }) {
     return autoscroll(chatEl.current);
   }, []);
 
+  const gamesQuery = useMemo(() => {
+    return firebase
+      .database()
+      .ref("/games")
+      .orderByChild("/meta/created")
+      .startAt(false)
+      .limitToLast(100);
+  }, []);
+  const games = useFirebaseQuery(gamesQuery);
   if (redirect) return <Redirect push to={redirect} />;
 
   function newRoom() {
@@ -222,36 +235,33 @@ function LobbyPage({ user }) {
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  {[...Array(30)].map((_, i) =>
-                    i % 2 ? (
-                      <TableRow key={i} onClick={() => setRedirect("/game")}>
-                        <TableCell>Anonymous Polar Bear</TableCell>
-                        <TableCell>3</TableCell>
+                  {Object.entries(games)
+                    .sort((a, b) => b[1].meta.created - a[1].meta.created)
+                    .map(([gameId, gameInfo]) => (
+                      <TableRow
+                        key={gameId}
+                        onClick={() => setRedirect(`/room/${gameId}`)}
+                      >
+                        <TableCell>{gameId}</TableCell>
                         <TableCell>
-                          <PlayArrowRounded fontSize="small" />
+                          {"users" in gameInfo.meta
+                            ? Object.keys(gameInfo.meta.users).length
+                            : ""}
                         </TableCell>
-                        <TableCell>{i + 2} minutes ago</TableCell>
-                      </TableRow>
-                    ) : i % 3 ? (
-                      <TableRow key={i} onClick={() => setRedirect("/game")}>
-                        <TableCell>Anonymous Ant</TableCell>
-                        <TableCell>2</TableCell>
                         <TableCell>
-                          <DoneRounded fontSize="small" />
+                          {gameInfo.meta.status === "ingame" ? (
+                            <PlayArrowRounded fontSize="small" />
+                          ) : gameInfo.meta.status === "waiting" ? (
+                            <HourglassEmptyRounded fontSize="small" />
+                          ) : (
+                            <DoneRounded fontSize="small" />
+                          )}
                         </TableCell>
-                        <TableCell>{i + 2} minutes ago</TableCell>
-                      </TableRow>
-                    ) : (
-                      <TableRow key={i} onClick={() => setRedirect("/game")}>
-                        <TableCell>Anonymous Dragonfly</TableCell>
-                        <TableCell>2</TableCell>
                         <TableCell>
-                          <HourglassEmptyRounded fontSize="small" />
+                          {moment(gameInfo.meta.created).fromNow()}
                         </TableCell>
-                        <TableCell>{i + 2} minutes ago</TableCell>
                       </TableRow>
-                    )
-                  )}
+                    ))}
                 </TableBody>
               </Table>
             </TableContainer>
