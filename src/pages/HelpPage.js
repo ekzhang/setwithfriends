@@ -116,7 +116,7 @@ function HelpPage() {
           </b>
         </Typography>
       </Paper>
-      <Typography variant="body1" align="center">
+      <Typography variant="body1" align="center" gutterBottom>
         <Link component={RouterLink} to="/">
           Return to home
         </Link>

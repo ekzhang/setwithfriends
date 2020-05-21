@@ -23,7 +23,7 @@ function ContactPage() {
         </Typography>
       </Paper>
       <Typography variant="body1" align="center">
-        <Link component={RouterLink} to="/">
+        <Link component={RouterLink} to="/" gutterBottom>
           Return to home
         </Link>
       </Typography>

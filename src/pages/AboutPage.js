@@ -14,18 +14,20 @@ function AboutPage() {
       </Typography>
       <Paper style={{ padding: "1rem", maxWidth: 720, margin: "12px auto" }}>
         <Typography variant="body1" gutterBottom>
-          Set with Friends was made by{" "}
+          Set with Friends was developed by{" "}
           <Link href="https://github.com/ekzhang">Eric Zhang</Link> and{" "}
-          <Link href="https://github.com/cynthiakedu">Cynthia Du</Link> as a fun
-          side project. The source code and technical details are available on
-          GitHub at{" "}
+          <Link href="https://github.com/cynthiakedu">Cynthia Du</Link> as a
+          side project in early 2020. We love the game, and our goal was to
+          bridge the distance between friends by creating the simplest interface
+          for playing Set online. The source code and technical details are
+          available on GitHub at{" "}
           <Link href="https://github.com/ekzhang/setwithfriends">
             ekzhang/setwithfriends
           </Link>
           . We would appreciate stars, forks, and any comments or suggestions!
         </Typography>
       </Paper>
-      <Typography variant="body1" align="center">
+      <Typography variant="body1" align="center" gutterBottom>
         <Link component={RouterLink} to="/">
           Return to home
         </Link>
