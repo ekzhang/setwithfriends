@@ -3,10 +3,10 @@ import firebase from "./firebase";
 import "./styles.css";
 
 import {
-  BrowserRouter as Router,
   Switch,
   Route,
   Link as RouterLink,
+  useLocation,
 } from "react-router-dom";
 import CssBaseline from "@material-ui/core/CssBaseline";
 import AppBar from "@material-ui/core/AppBar";
@@ -29,6 +29,7 @@ import ContactPage from "./pages/ContactPage";
 function App() {
   const [uid, setUid] = useState(null);
   const [user, setUser] = useState(null);
+  const [connectionRef, setConnectionRef] = useState(null);
 
   useEffect(() => {
     if (!uid) {
@@ -73,6 +74,14 @@ function App() {
     };
   }, [uid]);
 
+  const location = useLocation();
+  React.useEffect(() => {
+    if (!connectionRef) {
+      return;
+    }
+    connectionRef.set(location.pathname);
+  }, [location, connectionRef]);
+
   useEffect(() => {
     if (!uid) {
       return;
@@ -82,10 +91,10 @@ function App() {
     var connectedRef = firebase.database().ref(".info/connected");
 
     connectedRef.on("value", function (snap) {
-      if (snap.val() == true) {
+      if (snap.val() === true) {
         var con = connectionsRef.push();
         con.onDisconnect().remove();
-        con.set(true);
+        setConnectionRef(con);
 
         lastOnlineRef
           .onDisconnect()
@@ -100,7 +109,7 @@ function App() {
       {!user ? (
         <LoadingPage />
       ) : (
-        <Router>
+        <div>
           <AppBar position="relative" color="transparent" elevation={0}>
             <Toolbar variant="dense">
               <Typography variant="h6" style={{ flexGrow: 1 }}>
@@ -153,7 +162,7 @@ function App() {
             />
             <Route component={NotFoundPage} />
           </Switch>
-        </Router>
+        </div>
       )}
     </>
   );
