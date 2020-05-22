@@ -32,11 +32,9 @@ import SportsEsports from "@material-ui/icons/SportsEsports";
 
 import autoscroll from "../utils/autoscroll";
 
-import moment from "moment";
-
 import firebase from "../firebase";
 import useFirebaseQuery from "../hooks/useFirebaseQuery";
-import useMoment from "../hooks/useMoment";
+import ElapsedTime from "../components/ElapsedTime";
 
 const useStyles = makeStyles((theme) => ({
   mainGrid: {
@@ -180,8 +178,6 @@ function LobbyPage({ user }) {
     setTabValue(newValue);
   };
 
-  const time = useMoment();
-
   if (redirect) return <Redirect push to={redirect} />;
 
   function newRoom(isPrivate) {
@@ -303,7 +299,9 @@ function LobbyPage({ user }) {
                           )}
                         </TableCell>
                         <TableCell>
-                          {moment(gameInfo.meta.created).from(time)}
+                          <ElapsedTime
+                            pastTime={gameInfo.meta.created}
+                          ></ElapsedTime>
                         </TableCell>
                       </TableRow>
                     ))}
