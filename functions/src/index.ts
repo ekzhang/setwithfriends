@@ -41,7 +41,6 @@ export const createGame = functions.https.onCall(async (data, context) => {
   const { committed, snapshot } = await gameRef.transaction((currentData) => {
     if (currentData === null) {
       return {
-        deck: generateDeck(),
         host: context.auth!.uid,
         createdAt: admin.database.ServerValue.TIMESTAMP,
         status: "waiting",
@@ -57,10 +56,29 @@ export const createGame = functions.https.onCall(async (data, context) => {
       "The requested `gameId` already exists."
     );
   }
-  await admin
-    .database()
-    .ref("stats/gameCount")
-    .transaction((count) => (count || 0) + 1);
+
+  // After this point, the game has successfully been created.
+  // We update the database asynchronously in three different places:
+  //   1. /gameStates/:gameId
+  //   2. /stats/gameCount
+  //   3. /publicGamesList (if access is public)
+  const updates: Array<Promise<any>> = [];
+  updates.push(
+    admin.database().ref(`gameStates/${gameId}/deck`).set({
+      deck: generateDeck(),
+    })
+  );
+  updates.push(
+    admin
+      .database()
+      .ref("stats/gameCount")
+      .transaction((count) => (count || 0) + 1)
+  );
+  if (access === "public") {
+    updates.push(admin.database().ref("publicGamesList").push(gameId));
+  }
+
+  await Promise.all(updates);
   return snapshot?.val();
 });
 

@@ -10,11 +10,13 @@ function useFirebaseRef(path) {
       setValue(snapshot.val());
     }
 
-    const ref = firebase.database().ref(path);
-    ref.on("value", update);
-    return () => {
-      ref.off("value", update);
-    };
+    if (path) {
+      const ref = firebase.database().ref(path);
+      ref.on("value", update);
+      return () => {
+        ref.off("value", update);
+      };
+    }
   }, [path]);
 
   return value;

@@ -127,7 +127,7 @@ function App() {
                   underline="none"
                   color="inherit"
                   component={RouterLink}
-                  to="/profile/42"
+                  to={`/profile/${user.id}`}
                 >
                   Eric Zhang
                 </Link>

@@ -29,10 +29,11 @@ import SportsEsportsIcon from "@material-ui/icons/SportsEsports";
 
 import autoscroll from "../utils/autoscroll";
 
-import firebase from "../firebase";
+import firebase, { createGame } from "../firebase";
 import useFirebaseQuery from "../hooks/useFirebaseQuery";
 import useFirebaseRef from "../hooks/useFirebaseRef";
 import GameInfoRow from "../components/GameInfoRow";
+
 const useStyles = makeStyles((theme) => ({
   mainGrid: {
     "--table-height": "400px", // responsive variable
@@ -81,7 +82,7 @@ const useStyles = makeStyles((theme) => ({
       flexDirection: "column",
       justifyContent: "center",
       "& button": {
-        margin: "18px 0",
+        margin: "12px 0",
       },
     },
     [theme.breakpoints.down("xs")]: {
@@ -116,21 +117,12 @@ const useStyles = makeStyles((theme) => ({
 function LobbyPage({ user }) {
   const classes = useStyles();
   const [redirect, setRedirect] = useState(null);
+  const [waiting, setWaiting] = useState(false);
   const chatEl = useRef();
 
   useEffect(() => {
     return autoscroll(chatEl.current);
   }, []);
-
-  const gamesQuery = useMemo(() => {
-    return firebase
-      .database()
-      .ref("/games")
-      .orderByChild("/meta/created")
-      .startAt(false)
-      .limitToLast(100);
-  }, []);
-  const games = useFirebaseQuery(gamesQuery);
 
   const onlineUsersQuery = useMemo(() => {
     return firebase
@@ -141,16 +133,25 @@ function LobbyPage({ user }) {
   }, []);
   const onlineUsers = useFirebaseQuery(onlineUsersQuery);
 
+  const gamesQuery = useMemo(() => {
+    return firebase
+      .database()
+      .ref("/publicGamesList")
+      .orderByKey()
+      .limitToLast(50);
+  }, []);
+  const games = useFirebaseQuery(gamesQuery);
+
   const myGamesQuery = useMemo(() => {
     return firebase
       .database()
-      .ref("/games")
-      .orderByChild(`/meta/users/${user.id}`)
-      .startAt(false);
+      .ref(`/userGamesList/${user.id}`)
+      .orderByKey()
+      .limitToLast(50);
   }, [user.id]);
   const myGames = useFirebaseQuery(myGamesQuery);
 
-  const totalNumGamesPlayed = useFirebaseRef("/stats/gameCount");
+  const stats = useFirebaseRef("/stats");
 
   const [tabValue, setTabValue] = React.useState(0);
 
@@ -160,14 +161,20 @@ function LobbyPage({ user }) {
 
   if (redirect) return <Redirect push to={redirect} />;
 
-  function newRoom(isPrivate) {
-    setRedirect(
-      "/room/" + generate().dashed + `${isPrivate ? "?private=true" : ""}`
-    );
+  async function newRoom(access) {
+    const gameId = generate().dashed;
+    try {
+      setWaiting(true);
+      await createGame({ gameId, access });
+      setRedirect(`/room/${gameId}`);
+    } catch (error) {
+      setWaiting(false);
+      alert(error.toString());
+    }
   }
 
-  function isOnline(user) {
-    for (var url of Object.values(user.connections)) {
+  function isIngame(user) {
+    for (const url of Object.values(user.connections)) {
       if (url.startsWith("/game")) {
         return true;
       }
@@ -195,9 +202,14 @@ function LobbyPage({ user }) {
                 style={{ paddingTop: 0, overflowY: "auto", flexGrow: 1 }}
               >
                 {Object.entries(onlineUsers).map(([userId, user]) => (
-                  <ListItem key={userId} button>
+                  <ListItem
+                    key={userId}
+                    button
+                    component={RouterLink}
+                    to={`/profile/${userId}`}
+                  >
                     <ListItemIcon>
-                      {isOnline(user) ? <SportsEsportsIcon /> : <FaceIcon />}
+                      {isIngame(user) ? <SportsEsportsIcon /> : <FaceIcon />}
                     </ListItemIcon>
                     <ListItemText>{user.name}</ListItemText>
                   </ListItem>
@@ -237,8 +249,8 @@ function LobbyPage({ user }) {
               value={tabValue}
               onChange={handleTabChange}
             >
-              <Tab label="Lobby"></Tab>
-              <Tab label="Your games"></Tab>
+              <Tab label="Lobby" />
+              <Tab label="Your games" />
             </Tabs>
             <TableContainer component={Paper} className={classes.gamesTable}>
               <Table size="small" stickyHeader>
@@ -251,19 +263,16 @@ function LobbyPage({ user }) {
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  {Object.entries(tabValue === 0 ? games : myGames)
-                    .filter(([gameId, gameInfo]) => {
-                      return tabValue === 0
-                        ? gameInfo.access === "public"
-                        : true;
-                    })
-                    .sort((a, b) => b[1].meta.created - a[1].meta.created)
-                    .map(([gameId, game]) => (
-                      <GameInfoRow
+                  {Object.values(tabValue === 0 ? games : myGames)
+                    .reverse()
+                    .map((gameId) => (
+                      <GameInfoRowHelper
                         key={gameId}
-                        onClick={() => setRedirect(`/room/${gameId}`)}
-                        game={game}
-                      ></GameInfoRow>
+                        gameId={gameId}
+                        onClick={() => {
+                          if (!waiting) setRedirect(`/room/${gameId}`);
+                        }}
+                      />
                     ))}
                 </TableBody>
               </Table>
@@ -277,21 +286,23 @@ function LobbyPage({ user }) {
                 variant="contained"
                 fullWidth
                 color="primary"
-                onClick={() => newRoom(false)}
+                onClick={() => newRoom("public")}
+                disabled={waiting}
               >
                 Create a Game
               </Button>
               <Button
                 variant="contained"
                 fullWidth
-                onClick={() => newRoom(true)}
+                onClick={() => newRoom("private")}
+                disabled={waiting}
               >
                 New Private Game
               </Button>
             </div>
             <div className={classes.gameCounters}>
               <Typography variant="body2" gutterBottom>
-                <b>{totalNumGamesPlayed}</b> games played
+                <b>{stats ? stats.gameCount : "-----"}</b> games played
               </Typography>
             </div>
           </Grid>
@@ -312,6 +323,14 @@ function LobbyPage({ user }) {
       </Typography>
     </Container>
   );
+}
+
+function GameInfoRowHelper({ gameId, onClick }) {
+  const game = useFirebaseRef(`/games/${gameId}`);
+  const hostName = useFirebaseRef(game ? `users/${game.host}/name` : null);
+  return game ? (
+    <GameInfoRow game={game} hostName={hostName} onClick={onClick} />
+  ) : null;
 }
 
 export default LobbyPage;

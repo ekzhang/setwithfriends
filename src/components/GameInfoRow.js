@@ -8,24 +8,22 @@ import TableRow from "@material-ui/core/TableRow";
 
 import ElapsedTime from "../components/ElapsedTime";
 
-function GameInfoRow({ game, onClick }) {
+function GameInfoRow({ game, hostName, onClick }) {
   return (
     <TableRow onClick={onClick}>
-      <TableCell>{game.meta.admin}</TableCell>
+      <TableCell>{hostName}</TableCell>
+      <TableCell>{game.users ? Object.keys(game.users).length : 0}</TableCell>
       <TableCell>
-        {"users" in game.meta ? Object.keys(game.meta.users).length : ""}
-      </TableCell>
-      <TableCell>
-        {game.meta.status === "ingame" ? (
+        {game.status === "ingame" ? (
           <PlayArrowRoundedIcon fontSize="small" />
-        ) : game.meta.status === "waiting" ? (
+        ) : game.status === "waiting" ? (
           <HourglassEmptyRoundedIcon fontSize="small" />
         ) : (
           <DoneRoundedIcon fontSize="small" />
         )}
       </TableCell>
       <TableCell>
-        <ElapsedTime value={game.meta.created} />
+        <ElapsedTime value={game.createdAt} />
       </TableCell>
     </TableRow>
   );
