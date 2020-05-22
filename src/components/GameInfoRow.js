@@ -6,9 +6,9 @@ import ElapsedTime from "../components/ElapsedTime";
 import TableCell from "@material-ui/core/TableCell";
 import TableRow from "@material-ui/core/TableRow";
 
-function gameRow({ game }) {
+function gameRow({ game, onClick }) {
   return (
-    <TableRow>
+    <TableRow onClick={onClick}>
       <TableCell>{game.meta.admin}</TableCell>
       <TableCell>
         {"users" in game.meta ? Object.keys(game.meta.users).length : ""}
@@ -27,7 +27,6 @@ function gameRow({ game }) {
       </TableCell>
     </TableRow>
   );
-  //   return <span className={classes.square} style={{ background: color }}></span>;
 }
 
 export default gameRow;
