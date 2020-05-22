@@ -157,6 +157,23 @@ function LobbyPage({ user }) {
 
   const myGames = useFirebaseQuery(myGamesQuery);
 
+  const [userNames, setUserNames] = useState({});
+  useEffect(() => {
+    setUserNames((userNames) => {
+      for (var game of Object.values({ ...games, ...myGames })) {
+        const adminId = game.meta.admin;
+        if (!(adminId in userNames)) {
+          firebase
+            .database()
+            .ref(`/users/${adminId}/name`)
+            .once("value")
+            .then((snap) => (userNames[adminId] = snap.val()));
+        }
+      }
+      return userNames;
+    });
+  }, [games, myGames]);
+
   const [tabValue, setTabValue] = React.useState(0);
 
   const handleTabChange = (event, newValue) => {
@@ -266,7 +283,7 @@ function LobbyPage({ user }) {
                         key={gameId}
                         onClick={() => setRedirect(`/room/${gameId}`)}
                       >
-                        <TableCell>{gameId}</TableCell>
+                        <TableCell>{userNames[gameInfo.meta.admin]}</TableCell>
                         <TableCell>
                           {"users" in gameInfo.meta
                             ? Object.keys(gameInfo.meta.users).length
@@ -305,7 +322,6 @@ function LobbyPage({ user }) {
               <Button
                 variant="contained"
                 fullWidth
-                color="primary"
                 onClick={() => newRoom(true)}
               >
                 New Private Game
