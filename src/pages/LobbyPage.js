@@ -24,9 +24,7 @@ import TableContainer from "@material-ui/core/TableContainer";
 import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
 import Divider from "@material-ui/core/Divider";
-import HourglassEmptyRounded from "@material-ui/icons/HourglassEmptyRounded";
-import PlayArrowRounded from "@material-ui/icons/PlayArrowRounded";
-import DoneRounded from "@material-ui/icons/DoneRounded";
+
 import Face from "@material-ui/icons/Face";
 import SportsEsports from "@material-ui/icons/SportsEsports";
 
@@ -34,8 +32,8 @@ import autoscroll from "../utils/autoscroll";
 
 import firebase from "../firebase";
 import useFirebaseQuery from "../hooks/useFirebaseQuery";
-import ElapsedTime from "../components/ElapsedTime";
-
+import useFirebaseRef from "../hooks/useFirebaseRef";
+import GameInfoRow from "../components/GameInfoRow";
 const useStyles = makeStyles((theme) => ({
   mainGrid: {
     "--table-height": "400px", // responsive variable
@@ -126,14 +124,15 @@ function LobbyPage({ user }) {
   }, []);
 
   const gamesQuery = useMemo(() => {
-    return firebase
+    const query = firebase
       .database()
       .ref("/games")
       .orderByChild("/meta/created")
       .startAt(false)
       .limitToLast(100);
+    return query;
   }, []);
-  const games = useFirebaseQuery(gamesQuery);
+  const games = useFirebaseQuery(gamesQuery, "games");
 
   const onlineUsersQuery = useMemo(() => {
     return firebase
@@ -142,8 +141,7 @@ function LobbyPage({ user }) {
       .orderByChild("connections")
       .startAt(false);
   }, []);
-
-  const users = useFirebaseQuery(onlineUsersQuery);
+  const onlineUsers = useFirebaseQuery(onlineUsersQuery);
 
   const myGamesQuery = useMemo(() => {
     return firebase
@@ -152,25 +150,9 @@ function LobbyPage({ user }) {
       .orderByChild(`/meta/users/${user.id}`)
       .startAt(false);
   }, [user.id]);
-
   const myGames = useFirebaseQuery(myGamesQuery);
 
-  const [userNames, setUserNames] = useState({});
-  useEffect(() => {
-    setUserNames((userNames) => {
-      for (var game of Object.values({ ...games, ...myGames })) {
-        const adminId = game.meta.admin;
-        if (!(adminId in userNames)) {
-          firebase
-            .database()
-            .ref(`/users/${adminId}/name`)
-            .once("value")
-            .then((snap) => (userNames[adminId] = snap.val()));
-        }
-      }
-      return userNames;
-    });
-  }, [games, myGames]);
+  const totalNumGamesPlayed = useFirebaseRef("/stats/gameCount");
 
   const [tabValue, setTabValue] = React.useState(0);
 
@@ -208,13 +190,13 @@ function LobbyPage({ user }) {
               }}
             >
               <Typography variant="overline">
-                Online Users ({Object.keys(users).length})
+                Online Users ({Object.keys(onlineUsers).length})
               </Typography>
               <List
                 dense
                 style={{ paddingTop: 0, overflowY: "auto", flexGrow: 1 }}
               >
-                {Object.entries(users).map(([userId, user]) => (
+                {Object.entries(onlineUsers).map(([userId, user]) => (
                   <ListItem key={userId} button>
                     <ListItemIcon>
                       {isOnline(user) ? <SportsEsports /> : <Face />}
@@ -278,32 +260,12 @@ function LobbyPage({ user }) {
                         : true;
                     })
                     .sort((a, b) => b[1].meta.created - a[1].meta.created)
-                    .map(([gameId, gameInfo]) => (
-                      <TableRow
+                    .map(([gameId, game]) => (
+                      <GameInfoRow
                         key={gameId}
                         onClick={() => setRedirect(`/room/${gameId}`)}
-                      >
-                        <TableCell>{userNames[gameInfo.meta.admin]}</TableCell>
-                        <TableCell>
-                          {"users" in gameInfo.meta
-                            ? Object.keys(gameInfo.meta.users).length
-                            : ""}
-                        </TableCell>
-                        <TableCell>
-                          {gameInfo.meta.status === "ingame" ? (
-                            <PlayArrowRounded fontSize="small" />
-                          ) : gameInfo.meta.status === "waiting" ? (
-                            <HourglassEmptyRounded fontSize="small" />
-                          ) : (
-                            <DoneRounded fontSize="small" />
-                          )}
-                        </TableCell>
-                        <TableCell>
-                          <ElapsedTime
-                            pastTime={gameInfo.meta.created}
-                          ></ElapsedTime>
-                        </TableCell>
-                      </TableRow>
+                        game={game}
+                      ></GameInfoRow>
                     ))}
                 </TableBody>
               </Table>
@@ -331,7 +293,7 @@ function LobbyPage({ user }) {
             </div>
             <div className={classes.gameCounters}>
               <Typography variant="body2" gutterBottom>
-                <b>37,000</b> games played
+                <b>{totalNumGamesPlayed}</b> games played
               </Typography>
             </div>
           </Grid>
