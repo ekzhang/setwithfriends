@@ -191,7 +191,6 @@ function LobbyPage({ user }) {
   }
 
   function isOnline(user) {
-    console.log("user", user);
     for (var url of Object.values(user.connections)) {
       if (url.startsWith("/game")) {
         return true;
@@ -277,6 +276,11 @@ function LobbyPage({ user }) {
                 </TableHead>
                 <TableBody>
                   {Object.entries(tabValue === 0 ? games : myGames)
+                    .filter(([gameId, gameInfo]) => {
+                      return tabValue === 0
+                        ? gameInfo.access === "public"
+                        : true;
+                    })
                     .sort((a, b) => b[1].meta.created - a[1].meta.created)
                     .map(([gameId, gameInfo]) => (
                       <TableRow
