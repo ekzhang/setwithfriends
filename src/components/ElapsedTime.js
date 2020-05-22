@@ -1,9 +1,11 @@
 import React from "react";
-import useMoment from "../hooks/useMoment";
-import moment from "moment";
 
-//Wrapper around useMoment, since custom hooks cause rerender of component it's in
-export default function ElapsedTime({ pastTime }) {
+import useMoment from "../hooks/useMoment";
+
+// Wrapper around useMoment, since state hooks cause rerender of component
+function ElapsedTime({ value }) {
   const time = useMoment();
-  return <div>{moment(pastTime).from(time)}</div>;
+  return <>{time.to(value)}</>;
 }
+
+export default ElapsedTime;

@@ -24,9 +24,8 @@ import TableContainer from "@material-ui/core/TableContainer";
 import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
 import Divider from "@material-ui/core/Divider";
-
-import Face from "@material-ui/icons/Face";
-import SportsEsports from "@material-ui/icons/SportsEsports";
+import FaceIcon from "@material-ui/icons/Face";
+import SportsEsportsIcon from "@material-ui/icons/SportsEsports";
 
 import autoscroll from "../utils/autoscroll";
 
@@ -198,7 +197,7 @@ function LobbyPage({ user }) {
                 {Object.entries(onlineUsers).map(([userId, user]) => (
                   <ListItem key={userId} button>
                     <ListItemIcon>
-                      {isOnline(user) ? <SportsEsports /> : <Face />}
+                      {isOnline(user) ? <SportsEsportsIcon /> : <FaceIcon />}
                     </ListItemIcon>
                     <ListItemText>{user.name}</ListItemText>
                   </ListItem>

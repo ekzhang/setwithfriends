@@ -14,7 +14,7 @@ import Toolbar from "@material-ui/core/Toolbar";
 import Typography from "@material-ui/core/Typography";
 import IconButton from "@material-ui/core/IconButton";
 import Link from "@material-ui/core/Link";
-import Settings from "@material-ui/icons/Settings";
+import SettingsIcon from "@material-ui/icons/Settings";
 
 import { generateColor, generateName } from "./util";
 import RoomPage from "./pages/RoomPage";
@@ -133,7 +133,7 @@ function App() {
                 </Link>
               </Typography>
               <IconButton color="inherit">
-                <Settings />
+                <SettingsIcon />
               </IconButton>
             </Toolbar>
           </AppBar>

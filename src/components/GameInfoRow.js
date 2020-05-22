@@ -1,12 +1,14 @@
 import React from "react";
-import HourglassEmptyRounded from "@material-ui/icons/HourglassEmptyRounded";
-import PlayArrowRounded from "@material-ui/icons/PlayArrowRounded";
-import DoneRounded from "@material-ui/icons/DoneRounded";
-import ElapsedTime from "../components/ElapsedTime";
+
+import HourglassEmptyRoundedIcon from "@material-ui/icons/HourglassEmptyRounded";
+import PlayArrowRoundedIcon from "@material-ui/icons/PlayArrowRounded";
+import DoneRoundedIcon from "@material-ui/icons/DoneRounded";
 import TableCell from "@material-ui/core/TableCell";
 import TableRow from "@material-ui/core/TableRow";
 
-function gameRow({ game, onClick }) {
+import ElapsedTime from "../components/ElapsedTime";
+
+function GameInfoRow({ game, onClick }) {
   return (
     <TableRow onClick={onClick}>
       <TableCell>{game.meta.admin}</TableCell>
@@ -15,18 +17,18 @@ function gameRow({ game, onClick }) {
       </TableCell>
       <TableCell>
         {game.meta.status === "ingame" ? (
-          <PlayArrowRounded fontSize="small" />
+          <PlayArrowRoundedIcon fontSize="small" />
         ) : game.meta.status === "waiting" ? (
-          <HourglassEmptyRounded fontSize="small" />
+          <HourglassEmptyRoundedIcon fontSize="small" />
         ) : (
-          <DoneRounded fontSize="small" />
+          <DoneRoundedIcon fontSize="small" />
         )}
       </TableCell>
       <TableCell>
-        <ElapsedTime pastTime={game.meta.created}></ElapsedTime>
+        <ElapsedTime value={game.meta.created} />
       </TableCell>
     </TableRow>
   );
 }
 
-export default gameRow;
+export default GameInfoRow;
