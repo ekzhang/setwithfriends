@@ -124,15 +124,14 @@ function LobbyPage({ user }) {
   }, []);
 
   const gamesQuery = useMemo(() => {
-    const query = firebase
+    return firebase
       .database()
       .ref("/games")
       .orderByChild("/meta/created")
       .startAt(false)
       .limitToLast(100);
-    return query;
   }, []);
-  const games = useFirebaseQuery(gamesQuery, "games");
+  const games = useFirebaseQuery(gamesQuery);
 
   const onlineUsersQuery = useMemo(() => {
     return firebase
