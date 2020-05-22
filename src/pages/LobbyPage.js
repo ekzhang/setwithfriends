@@ -144,6 +144,7 @@ function LobbyPage({ user }) {
       .orderByChild("connections")
       .startAt(false);
   }, []);
+
   const users = useFirebaseQuery(onlineUsersQuery);
 
   const myGamesQuery = useMemo(() => {
@@ -153,9 +154,11 @@ function LobbyPage({ user }) {
       .orderByChild(`/meta/users/${user.id}`)
       .startAt(false);
   }, [user.id]);
+
   const myGames = useFirebaseQuery(myGamesQuery);
 
   const [tabValue, setTabValue] = React.useState(0);
+
   const handleTabChange = (event, newValue) => {
     setTabValue(newValue);
   };
@@ -168,6 +171,16 @@ function LobbyPage({ user }) {
     setRedirect(
       "/room/" + generate().dashed + `${isPrivate ? "?private=true" : ""}`
     );
+  }
+
+  function isOnline(user) {
+    console.log("user", user);
+    for (var url of Object.values(user.connections)) {
+      if (url.startsWith("/game")) {
+        return true;
+      }
+    }
+    return false;
   }
 
   return (
@@ -192,12 +205,11 @@ function LobbyPage({ user }) {
                 {Object.entries(users).map(([userId, user]) => (
                   <ListItem key={userId} button>
                     <ListItemIcon>
-                      <Face />
+                      {isOnline(user) ? <SportsEsports /> : <Face />}
                     </ListItemIcon>
                     <ListItemText>{user.name}</ListItemText>
                   </ListItem>
                 ))}
-                {/* <SportsEsports /> */}
               </List>
             </section>
             <Divider />
@@ -293,6 +305,7 @@ function LobbyPage({ user }) {
               <Button
                 variant="contained"
                 fullWidth
+                color="primary"
                 onClick={() => newRoom(true)}
               >
                 New Private Game
