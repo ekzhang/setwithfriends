@@ -2,22 +2,12 @@ import React, { useState, useEffect } from "react";
 import firebase from "./firebase";
 import "./styles.css";
 
-import {
-  Switch,
-  Route,
-  Link as RouterLink,
-  useLocation,
-} from "react-router-dom";
+import { Switch, Route, useLocation } from "react-router-dom";
 import CssBaseline from "@material-ui/core/CssBaseline";
-import AppBar from "@material-ui/core/AppBar";
-import Toolbar from "@material-ui/core/Toolbar";
-import Typography from "@material-ui/core/Typography";
-import IconButton from "@material-ui/core/IconButton";
-import Link from "@material-ui/core/Link";
-import SettingsIcon from "@material-ui/icons/Settings";
 
 import { generateColor, generateName } from "./util";
 import { UserContext } from "./context";
+import Navbar from "./components/Navbar";
 import RoomPage from "./pages/RoomPage";
 import GamePage from "./pages/GamePage";
 import LobbyPage from "./pages/LobbyPage";
@@ -116,33 +106,7 @@ function App() {
         <LoadingPage />
       ) : (
         <UserContext.Provider value={user}>
-          <AppBar position="relative" color="transparent" elevation={0}>
-            <Toolbar variant="dense">
-              <Typography variant="h6" style={{ flexGrow: 1 }}>
-                <Link
-                  underline="none"
-                  color="inherit"
-                  component={RouterLink}
-                  to="/"
-                >
-                  Set with Friends
-                </Link>
-              </Typography>
-              <Typography variant="subtitle1" style={{ marginRight: 8 }}>
-                <Link
-                  underline="none"
-                  color="inherit"
-                  component={RouterLink}
-                  to={`/profile/${user.id}`}
-                >
-                  {user.name}
-                </Link>
-              </Typography>
-              <IconButton color="inherit">
-                <SettingsIcon />
-              </IconButton>
-            </Toolbar>
-          </AppBar>
+          <Navbar />
           <Switch>
             <Route exact path="/help" component={HelpPage} />
             <Route exact path="/about" component={AboutPage} />
