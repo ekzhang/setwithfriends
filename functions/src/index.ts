@@ -61,10 +61,10 @@ export const createGame = functions.https.onCall(async (data, context) => {
   // We update the database asynchronously in three different places:
   //   1. /gameStates/:gameId
   //   2. /stats/gameCount
-  //   3. /publicGamesList (if access is public)
+  //   3. /publicGames (if access is public)
   const updates: Array<Promise<any>> = [];
   updates.push(
-    admin.database().ref(`gameStates/${gameId}/deck`).set({
+    admin.database().ref(`gameStates/${gameId}`).set({
       deck: generateDeck(),
     })
   );
@@ -75,7 +75,13 @@ export const createGame = functions.https.onCall(async (data, context) => {
       .transaction((count) => (count || 0) + 1)
   );
   if (access === "public") {
-    updates.push(admin.database().ref("publicGamesList").push(gameId));
+    updates.push(
+      admin
+        .database()
+        .ref("publicGames")
+        .child(gameId)
+        .set(snapshot?.child("createdAt").val())
+    );
   }
 
   await Promise.all(updates);
