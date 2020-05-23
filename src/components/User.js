@@ -3,13 +3,17 @@ import React from "react";
 import useFirebaseRef from "../hooks/useFirebaseRef";
 
 function User(props) {
-  const { id, style, ...other } = props;
+  const { id, style, render, ...other } = props;
   const user = useFirebaseRef(`users/${id}`);
-  return user ? (
+  if (!user) {
+    return null;
+  }
+  const userEl = (
     <span style={{ color: user.color, fontWeight: 500, ...style }} {...other}>
       {user.name}
     </span>
-  ) : null;
+  );
+  return render ? render(user, userEl) : userEl;
 }
 
 export default User;
