@@ -61,10 +61,7 @@ function Chat({ user }) {
         {messages ? (
           messages.map((msg, i) => (
             <Typography key={i} gutterBottom>
-              <b>
-                <User id={msg.user} />:
-              </b>
-              {msg.message}
+              <User id={msg.user} />: {msg.message}
             </Typography>
           ))
         ) : (
