@@ -1,12 +1,12 @@
-import React, { useEffect, useRef, useState, memo } from "react";
+import React, { useEffect, useRef, useState, useMemo, memo } from "react";
 
 import Typography from "@material-ui/core/Typography";
 import { makeStyles } from "@material-ui/core/styles";
 
-import Loading from "./Loading";
 import User from "./User";
 import firebase from "../firebase";
 import autoscroll from "../utils/autoscroll";
+import useFirebaseQuery from "../hooks/useFirebaseQuery";
 
 const useStyles = makeStyles((theme) => ({
   chatPanel: {
@@ -26,21 +26,13 @@ function Chat({ user }) {
   }, []);
 
   const [input, setInput] = useState("");
-  const [messages, setMessages] = useState(null);
-  useEffect(() => {
-    const chatRef = firebase.database().ref(`lobbyChat`);
-    function update(snapshot) {
-      const items = [];
-      snapshot.forEach((child) => {
-        items.push(child.val());
-      });
-      setMessages(items);
-    }
-    chatRef.on("value", update);
-    return () => {
-      chatRef.off("value", update);
-    };
-  }, []);
+
+  const messagesQuery = useMemo(
+    () =>
+      firebase.database().ref("lobbyChat").orderByChild("time").limitToLast(50),
+    []
+  );
+  const messages = useFirebaseQuery(messagesQuery);
 
   function handleSubmit(event) {
     event.preventDefault();
@@ -61,15 +53,11 @@ function Chat({ user }) {
     >
       <Typography variant="overline">Lobby Chat</Typography>
       <div style={{ overflowY: "auto", flexGrow: 1 }} ref={chatEl}>
-        {messages ? (
-          messages.map((msg, i) => (
-            <Typography key={i} gutterBottom>
-              <User id={msg.user} />: {msg.message}
-            </Typography>
-          ))
-        ) : (
-          <Loading />
-        )}
+        {Object.entries(messages).map(([key, msg]) => (
+          <Typography key={key} gutterBottom>
+            <User id={msg.user} />: {msg.message}
+          </Typography>
+        ))}
       </div>
       <form onSubmit={handleSubmit}>
         <input
