@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useMemo } from "react";
+import React, { useState, useMemo } from "react";
 
 import generate from "project-name-generator";
 import { Link as RouterLink } from "react-router-dom";
@@ -27,12 +27,11 @@ import Divider from "@material-ui/core/Divider";
 import FaceIcon from "@material-ui/icons/Face";
 import SportsEsportsIcon from "@material-ui/icons/SportsEsports";
 
-import autoscroll from "../utils/autoscroll";
-
 import firebase, { createGame } from "../firebase";
 import useFirebaseQuery from "../hooks/useFirebaseQuery";
 import useFirebaseRef from "../hooks/useFirebaseRef";
 import GameInfoRow from "../components/GameInfoRow";
+import Chat from "../components/Chat";
 
 const useStyles = makeStyles((theme) => ({
   mainGrid: {
@@ -118,11 +117,6 @@ function LobbyPage({ user }) {
   const classes = useStyles();
   const [redirect, setRedirect] = useState(null);
   const [waiting, setWaiting] = useState(false);
-  const chatEl = useRef();
-
-  useEffect(() => {
-    return autoscroll(chatEl.current);
-  }, []);
 
   const onlineUsersQuery = useMemo(() => {
     return firebase
@@ -217,25 +211,7 @@ function LobbyPage({ user }) {
               </List>
             </section>
             <Divider />
-            <section
-              className={classes.chatPanel}
-              style={{ flexGrow: 1, overflowY: "hidden" }}
-            >
-              <Typography variant="overline">Lobby Chat</Typography>
-              <div style={{ overflowY: "auto", flexGrow: 1 }} ref={chatEl}>
-                {[...Array(50)].map((_, i) => (
-                  <div key={i}>
-                    <b>Eric Zhang</b>: Hello world {i}!
-                  </div>
-                ))}
-              </div>
-              <form onSubmit={(e) => e.preventDefault() || alert("chat!")}>
-                <input
-                  style={{ width: "100%" }}
-                  placeholder="Press [Enter] to chat"
-                />
-              </form>
-            </section>
+            <Chat user={user}></Chat>
             <Divider />
           </Grid>
         </Box>
