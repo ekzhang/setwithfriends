@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback, useContext } from "react";
 
 import { makeStyles } from "@material-ui/core/styles";
 import Grid from "@material-ui/core/Grid";
@@ -17,38 +17,41 @@ import NotFoundPage from "./NotFoundPage";
 import LoadingPage from "./LoadingPage";
 import Sidebar from "../components/Sidebar";
 import Chat from "../components/Chat";
+import { UserContext } from "../context";
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles((theme) => ({
   container: {
-    height: "100%"
+    height: "100%",
   },
   gamePanel: {
     height: "100%",
-    display: "flex"
+    display: "flex",
   },
   sidePanel: {
     height: "100%",
     display: "flex",
     flexDirection: "column",
     background: theme.palette.background.paper,
-    borderLeft: "1px solid lightgray"
+    borderLeft: "1px solid lightgray",
   },
   modal: {
     display: "flex",
     alignItems: "center",
-    justifyContent: "center"
+    justifyContent: "center",
   },
   modalBox: {
     outline: 0,
     padding: 28,
-    textAlign: "center"
+    textAlign: "center",
   },
   play: {
-    marginTop: 14
-  }
+    marginTop: 14,
+  },
 }));
 
-function GamePage({ user, gameId }) {
+function GamePage({ match }) {
+  const user = useContext(UserContext);
+  const gameId = match.params.id;
   const classes = useStyles();
   const [game, setGame] = useState(null);
   const [redirect, setRedirect] = useState(null);
@@ -66,7 +69,7 @@ function GamePage({ user, gameId }) {
   }, [gameId]);
 
   const handleSet = useCallback(
-    vals => {
+    (vals) => {
       let { deck } = computeState(game);
       deck = removeCard(deck, vals[0]);
       deck = removeCard(deck, vals[1]);
@@ -75,7 +78,7 @@ function GamePage({ user, gameId }) {
       gameRef.child("history").push({
         user: user.id,
         cards: vals,
-        time: firebase.database.ServerValue.TIMESTAMP
+        time: firebase.database.ServerValue.TIMESTAMP,
       });
       if (!findSet(deck)) {
         gameRef.child("meta/status").set("done");

@@ -17,6 +17,7 @@ import Link from "@material-ui/core/Link";
 import SettingsIcon from "@material-ui/icons/Settings";
 
 import { generateColor, generateName } from "./util";
+import { UserContext } from "./context";
 import RoomPage from "./pages/RoomPage";
 import GamePage from "./pages/GamePage";
 import LobbyPage from "./pages/LobbyPage";
@@ -114,7 +115,7 @@ function App() {
       {!user ? (
         <LoadingPage />
       ) : (
-        <div>
+        <UserContext.Provider value={user}>
           <AppBar position="relative" color="transparent" elevation={0}>
             <Toolbar variant="dense">
               <Typography variant="h6" style={{ flexGrow: 1 }}>
@@ -146,28 +147,12 @@ function App() {
             <Route exact path="/help" component={HelpPage} />
             <Route exact path="/about" component={AboutPage} />
             <Route exact path="/contact" component={ContactPage} />
-            <Route
-              exact
-              path="/"
-              render={() => <LobbyPage user={user}></LobbyPage>}
-            />
-            <Route
-              exact
-              path="/room/:id"
-              render={({ match }) => (
-                <RoomPage user={user} gameId={match.params.id} />
-              )}
-            />
-            <Route
-              exact
-              path="/game/:id"
-              render={({ match }) => (
-                <GamePage user={user} gameId={match.params.id} />
-              )}
-            />
+            <Route exact path="/" component={LobbyPage} />
+            <Route exact path="/room/:id" component={RoomPage} />
+            <Route exact path="/game/:id" component={GamePage} />
             <Route component={NotFoundPage} />
           </Switch>
-        </div>
+        </UserContext.Provider>
       )}
     </>
   );

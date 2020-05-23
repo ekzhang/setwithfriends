@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 
 import { makeStyles } from "@material-ui/core/styles";
 import Container from "@material-ui/core/Container";
@@ -17,13 +17,14 @@ import DoneIcon from "@material-ui/icons/Done";
 import PersonIcon from "@material-ui/icons/Person";
 import SnoozeIcon from "@material-ui/icons/Snooze";
 import StarsIcon from "@material-ui/icons/Stars";
-import { Link as RouterLink, useLocation, Redirect } from "react-router-dom";
+import { Link as RouterLink, Redirect } from "react-router-dom";
 
 import useFirebaseRef from "../hooks/useFirebaseRef";
 import LoadingPage from "./LoadingPage";
 import NotFoundPage from "./NotFoundPage";
 import User from "../components/User";
 import firebase from "../firebase";
+import { UserContext } from "../context";
 
 const useStyles = makeStyles((theme) => ({
   subpanel: {
@@ -45,9 +46,10 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-function RoomPage({ user, gameId }) {
+function RoomPage({ match, location }) {
+  const user = useContext(UserContext);
+  const gameId = match.params.id;
   const classes = useStyles();
-  const location = useLocation();
 
   const [copiedLink, setCopiedLink] = useState(false);
   const [game, loadingGame] = useFirebaseRef(`games/${gameId}`);

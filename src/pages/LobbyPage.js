@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useContext } from "react";
 
 import generate from "project-name-generator";
 import { Link as RouterLink } from "react-router-dom";
@@ -32,6 +32,7 @@ import useFirebaseQuery from "../hooks/useFirebaseQuery";
 import useFirebaseRef from "../hooks/useFirebaseRef";
 import GameInfoRow from "../components/GameInfoRow";
 import Chat from "../components/Chat";
+import { UserContext } from "../context";
 
 const useStyles = makeStyles((theme) => ({
   mainGrid: {
@@ -113,7 +114,8 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-function LobbyPage({ user }) {
+function LobbyPage() {
+  const user = useContext(UserContext);
   const classes = useStyles();
   const [redirect, setRedirect] = useState(null);
   const [waiting, setWaiting] = useState(false);
