@@ -215,9 +215,7 @@ function LobbyPage({ user }) {
               </List>
             </section>
             <Divider />
-            <Chat user={user}></Chat>
-
-            <Divider />
+            <Chat user={user} />
           </Grid>
         </Box>
         <Box clone order={{ xs: 1, md: 2 }}>

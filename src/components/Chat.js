@@ -4,6 +4,7 @@ import Typography from "@material-ui/core/Typography";
 import { makeStyles } from "@material-ui/core/styles";
 
 import User from "./User";
+import ChatInput from "./ChatInput";
 import firebase from "../firebase";
 import autoscroll from "../utils/autoscroll";
 import useFirebaseQuery from "../hooks/useFirebaseQuery";
@@ -60,11 +61,10 @@ function Chat({ user }) {
         ))}
       </div>
       <form onSubmit={handleSubmit}>
-        <input
+        <ChatInput
           value={input}
           onChange={(e) => setInput(e.target.value)}
-          style={{ width: "100%" }}
-          placeholder="Press [Enter] to chat"
+          placeholder="Type a message..."
         />
       </form>
     </section>
