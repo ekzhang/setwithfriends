@@ -145,7 +145,7 @@ function LobbyPage({ user }) {
   }, [user.id]);
   const myGames = useFirebaseQuery(myGamesQuery);
 
-  const stats = useFirebaseRef("/stats");
+  const [stats, loadingStats] = useFirebaseRef("/stats");
 
   const [tabValue, setTabValue] = React.useState(0);
 
@@ -283,7 +283,10 @@ function LobbyPage({ user }) {
             </div>
             <div className={classes.gameCounters}>
               <Typography variant="body2" gutterBottom>
-                <b>{stats ? stats.gameCount : "-----"}</b> games played
+                <strong>
+                  {loadingStats ? "-----" : stats ? stats.gameCount : 0}
+                </strong>{" "}
+                games played
               </Typography>
             </div>
           </Grid>

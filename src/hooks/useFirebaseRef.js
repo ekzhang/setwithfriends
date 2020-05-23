@@ -4,12 +4,15 @@ import firebase from "../firebase";
 
 function useFirebaseRef(path) {
   const [value, setValue] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     function update(snapshot) {
       setValue(snapshot.val());
+      setLoading(false);
     }
 
+    setLoading(true);
     if (path) {
       const ref = firebase.database().ref(path);
       ref.on("value", update);
@@ -19,7 +22,7 @@ function useFirebaseRef(path) {
     }
   }, [path]);
 
-  return value;
+  return [value, loading];
 }
 
 export default useFirebaseRef;

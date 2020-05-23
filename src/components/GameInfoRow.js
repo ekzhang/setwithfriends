@@ -11,8 +11,11 @@ import User from "./User";
 import useFirebaseRef from "../hooks/useFirebaseRef";
 
 function GameInfoRow({ gameId, onClick }) {
-  const game = useFirebaseRef(`/games/${gameId}`);
-  return game ? (
+  const [game, loading] = useFirebaseRef(`/games/${gameId}`);
+  if (loading) {
+    return null;
+  }
+  return (
     <TableRow onClick={onClick}>
       <TableCell>
         <User id={game.host} />
@@ -31,7 +34,7 @@ function GameInfoRow({ gameId, onClick }) {
         <ElapsedTime value={game.createdAt} />
       </TableCell>
     </TableRow>
-  ) : null;
+  );
 }
 
 export default GameInfoRow;

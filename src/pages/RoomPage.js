@@ -21,6 +21,7 @@ import { Link as RouterLink, useLocation, Redirect } from "react-router-dom";
 
 import useFirebaseRef from "../hooks/useFirebaseRef";
 import LoadingPage from "./LoadingPage";
+import NotFoundPage from "./NotFoundPage";
 import User from "../components/User";
 import firebase from "../firebase";
 
@@ -49,7 +50,7 @@ function RoomPage({ user, gameId }) {
   const location = useLocation();
 
   const [copiedLink, setCopiedLink] = useState(false);
-  const game = useFirebaseRef(`games/${gameId}`);
+  const [game, loadingGame] = useFirebaseRef(`games/${gameId}`);
 
   useEffect(() => {
     if (
@@ -68,8 +69,12 @@ function RoomPage({ user, gameId }) {
     }
   }, [user.id, game, gameId]);
 
-  if (!game) {
+  if (loadingGame) {
     return <LoadingPage />;
+  }
+
+  if (!game) {
+    return <NotFoundPage />;
   }
 
   if (game.status !== "waiting") {

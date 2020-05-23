@@ -14,7 +14,7 @@ function NotFoundPage() {
       <img
         src={cowImage}
         alt="404"
-        style={{ display: "block", maxWidth: "100%", margin: "0 auto" }}
+        style={{ display: "block", maxWidth: "100%", margin: "0 auto 8px" }}
       />
       <Typography variant="body1" align="center">
         <Link component={RouterLink} to="/" gutterBottom>

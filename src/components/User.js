@@ -4,8 +4,8 @@ import useFirebaseRef from "../hooks/useFirebaseRef";
 
 function User(props) {
   const { id, style, render, ...other } = props;
-  const user = useFirebaseRef(`users/${id}`);
-  if (!user) {
+  const [user, loading] = useFirebaseRef(`users/${id}`);
+  if (loading) {
     return null;
   }
   const userEl = (
