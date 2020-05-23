@@ -6,7 +6,7 @@ import { makeStyles } from "@material-ui/core/styles";
 import Loading from "./Loading";
 import User from "./User";
 
-function LobbyChat({ user }) {
+function Chat({ user }) {
   const useStyles = makeStyles((theme) => ({
     chatPanel: {
       paddingTop: theme.spacing(1),
@@ -43,7 +43,7 @@ function LobbyChat({ user }) {
     event.preventDefault();
     if (input) {
       firebase.database().ref(`lobbyChat`).push({
-        userId: user.id,
+        user: user.id,
         message: input,
         time: firebase.database.ServerValue.TIMESTAMP,
       });
@@ -62,9 +62,8 @@ function LobbyChat({ user }) {
           messages.map((msg, i) => (
             <Typography key={i} gutterBottom>
               <b>
-                {" "}
-                <User id={msg.userId} />:
-              </b>{" "}
+                <User id={msg.user} />:
+              </b>
               {msg.message}
             </Typography>
           ))
@@ -84,4 +83,4 @@ function LobbyChat({ user }) {
   );
 }
 
-export default memo(LobbyChat);
+export default memo(Chat);
