@@ -33,6 +33,7 @@ import firebase, { createGame } from "../firebase";
 import useFirebaseQuery from "../hooks/useFirebaseQuery";
 import useFirebaseRef from "../hooks/useFirebaseRef";
 import GameInfoRow from "../components/GameInfoRow";
+import User from "../components/User";
 
 const useStyles = makeStyles((theme) => ({
   mainGrid: {
@@ -211,7 +212,11 @@ function LobbyPage({ user }) {
                     <ListItemIcon>
                       {isIngame(user) ? <SportsEsportsIcon /> : <FaceIcon />}
                     </ListItemIcon>
-                    <ListItemText>{user.name}</ListItemText>
+                    <ListItemText>
+                      <span style={{ fontWeight: 500, color: user.color }}>
+                        {user.name}
+                      </span>
+                    </ListItemText>
                   </ListItem>
                 ))}
               </List>
@@ -225,7 +230,7 @@ function LobbyPage({ user }) {
               <div style={{ overflowY: "auto", flexGrow: 1 }} ref={chatEl}>
                 {[...Array(50)].map((_, i) => (
                   <div key={i}>
-                    <b>Eric Zhang</b>: Hello world {i}!
+                    <User id={user.id} />: Hello world {i}!
                   </div>
                 ))}
               </div>
@@ -266,7 +271,7 @@ function LobbyPage({ user }) {
                   {Object.values(tabValue === 0 ? games : myGames)
                     .reverse()
                     .map((gameId) => (
-                      <GameInfoRowHelper
+                      <GameInfoRow
                         key={gameId}
                         gameId={gameId}
                         onClick={() => {
@@ -323,14 +328,6 @@ function LobbyPage({ user }) {
       </Typography>
     </Container>
   );
-}
-
-function GameInfoRowHelper({ gameId, onClick }) {
-  const game = useFirebaseRef(`/games/${gameId}`);
-  const hostName = useFirebaseRef(game ? `users/${game.host}/name` : null);
-  return game ? (
-    <GameInfoRow game={game} hostName={hostName} onClick={onClick} />
-  ) : null;
 }
 
 export default LobbyPage;
