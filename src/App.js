@@ -16,6 +16,7 @@ import NotFoundPage from "./pages/NotFoundPage";
 import HelpPage from "./pages/HelpPage";
 import AboutPage from "./pages/AboutPage";
 import ContactPage from "./pages/ContactPage";
+import ProfilePage from "./pages/ProfilePage";
 
 function App() {
   const [uid, setUid] = useState(null);
@@ -114,6 +115,7 @@ function App() {
             <Route exact path="/" component={LobbyPage} />
             <Route exact path="/room/:id" component={RoomPage} />
             <Route exact path="/game/:id" component={GamePage} />
+            <Route exact path="/profile/:id" component={ProfilePage} />
             <Route component={NotFoundPage} />
           </Switch>
         </UserContext.Provider>
