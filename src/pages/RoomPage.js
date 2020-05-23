@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
 import { makeStyles } from "@material-ui/core/styles";
 import Container from "@material-ui/core/Container";
@@ -17,7 +17,12 @@ import DoneIcon from "@material-ui/icons/Done";
 import PersonIcon from "@material-ui/icons/Person";
 import SnoozeIcon from "@material-ui/icons/Snooze";
 import StarsIcon from "@material-ui/icons/Stars";
-import { Link as RouterLink, useLocation } from "react-router-dom";
+import { Link as RouterLink, useLocation, Redirect } from "react-router-dom";
+
+import useFirebaseRef from "../hooks/useFirebaseRef";
+import LoadingPage from "./LoadingPage";
+import User from "../components/User";
+import firebase from "../firebase";
 
 const useStyles = makeStyles((theme) => ({
   subpanel: {
@@ -43,13 +48,43 @@ function RoomPage({ user, gameId }) {
   const classes = useStyles();
   const location = useLocation();
 
+  const [copiedLink, setCopiedLink] = useState(false);
+  const game = useFirebaseRef(`games/${gameId}`);
+
+  useEffect(() => {
+    if (
+      game &&
+      game.status === "waiting" &&
+      (!game.users || !(user.id in game.users))
+    ) {
+      firebase
+        .database()
+        .ref(`games/${gameId}/users/${user.id}`)
+        .set(firebase.database.ServerValue.TIMESTAMP);
+      firebase
+        .database()
+        .ref(`userGames/${user.id}/${gameId}`)
+        .set(game.createdAt);
+    }
+  }, [user.id, game, gameId]);
+
+  if (!game) {
+    return <LoadingPage />;
+  }
+
+  if (game.status !== "waiting") {
+    return <Redirect to={`/game/${gameId}`} />;
+  }
+
   // Current href, without the query string or hash
   const link = window.location.origin + location.pathname;
 
-  const [copiedLink, setCopiedLink] = useState(false);
-
   function handleCopy() {
     navigator.clipboard.writeText(link).then(() => setCopiedLink(true));
+  }
+
+  function startGame() {
+    firebase.database().ref(`games/${gameId}/status`).set("ingame");
   }
 
   return (
@@ -76,41 +111,37 @@ function RoomPage({ user, gameId }) {
                           <StarsIcon />
                         </ListItemIcon>
                         <ListItemText>
-                          <span style={{ fontWeight: 500, color: "green" }}>
-                            Eric Zhang
-                          </span>
+                          <User id={game.host} />
                         </ListItemText>
                       </ListItem>
-                      <ListItem button component={RouterLink} to="/profile">
-                        <ListItemIcon>
-                          <PersonIcon />
-                        </ListItemIcon>
-                        <ListItemText>
-                          <span style={{ fontWeight: 500, color: "purple" }}>
-                            Anonymous Koala
-                          </span>
-                        </ListItemText>
-                      </ListItem>
-                      <ListItem button component={RouterLink} to="/profile">
-                        <ListItemIcon>
-                          <PersonIcon />
-                        </ListItemIcon>
-                        <ListItemText>
-                          <span style={{ fontWeight: 500, color: "brown" }}>
-                            Cynthia Du
-                          </span>
-                        </ListItemText>
-                      </ListItem>
-                      <ListItem button>
-                        <ListItemIcon>
-                          <SnoozeIcon />
-                        </ListItemIcon>
-                        <ListItemText>
-                          <span style={{ fontWeight: 500, color: "magenta" }}>
-                            Anonymous Mountain
-                          </span>
-                        </ListItemText>
-                      </ListItem>
+                      {Object.keys(game.users || {}).map(
+                        (playerId) =>
+                          playerId !== game.host && (
+                            <User
+                              key={playerId}
+                              id={playerId}
+                              render={(player, playerEl) => (
+                                <ListItem
+                                  button
+                                  component={RouterLink}
+                                  to="/profile"
+                                >
+                                  <ListItemIcon>
+                                    {player.connections &&
+                                    Object.values(player.connections).includes(
+                                      `/room/${gameId}`
+                                    ) ? (
+                                      <PersonIcon />
+                                    ) : (
+                                      <SnoozeIcon />
+                                    )}
+                                  </ListItemIcon>
+                                  <ListItemText>{playerEl}</ListItemText>
+                                </ListItem>
+                              )}
+                            />
+                          )
+                      )}
                     </List>
                   </div>
                 </Grid>
@@ -129,28 +160,25 @@ function RoomPage({ user, gameId }) {
                   </div>
                 </Grid>
               </Grid>
-              <Box marginTop={2}>
-                <Button
-                  size="large"
-                  variant="contained"
-                  color="primary"
-                  fullWidth
-                >
-                  Start game
-                </Button>
-              </Box>
-              <Box marginTop={2}>
-                (or this button, if not the host:)
-                <Button
-                  size="large"
-                  variant="contained"
-                  color="primary"
-                  fullWidth
-                  disabled
-                >
-                  Waiting for host to start
-                </Button>
-              </Box>
+              {user.id === game.host ? (
+                <Box marginTop={2}>
+                  <Button
+                    size="large"
+                    variant="contained"
+                    color="primary"
+                    fullWidth
+                    onClick={startGame}
+                  >
+                    Start game
+                  </Button>
+                </Box>
+              ) : (
+                <Box marginTop={2}>
+                  <Button size="large" fullWidth disabled>
+                    Waiting for host to start
+                  </Button>
+                </Box>
+              )}
             </Paper>
           </Grid>
         </Box>

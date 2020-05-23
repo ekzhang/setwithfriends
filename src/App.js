@@ -134,7 +134,7 @@ function App() {
                   component={RouterLink}
                   to={`/profile/${user.id}`}
                 >
-                  Eric Zhang
+                  {user.name}
                 </Link>
               </Typography>
               <IconButton color="inherit">
