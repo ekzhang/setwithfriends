@@ -74,34 +74,39 @@ function App() {
     };
   }, [uid]);
 
+  useEffect(() => {
+    if (uid) {
+      const connectionsRef = firebase
+        .database()
+        .ref(`users/${uid}/connections`);
+      const lastOnlineRef = firebase.database().ref(`users/${uid}/lastOnline`);
+      const connectedRef = firebase.database().ref(".info/connected");
+
+      function onConnectedUpdate(snap) {
+        if (snap.val() === true) {
+          const con = connectionsRef.push();
+          con.onDisconnect().remove();
+          setConnectionRef(con);
+
+          lastOnlineRef
+            .onDisconnect()
+            .set(firebase.database.ServerValue.TIMESTAMP);
+        }
+      }
+
+      connectedRef.on("value", onConnectedUpdate);
+      return () => {
+        connectedRef.off("value", onConnectedUpdate);
+      };
+    }
+  }, [uid]);
+
   const location = useLocation();
   React.useEffect(() => {
-    if (!connectionRef) {
-      return;
+    if (connectionRef) {
+      connectionRef.set(location.pathname);
     }
-    connectionRef.set(location.pathname);
   }, [location, connectionRef]);
-
-  useEffect(() => {
-    if (!uid) {
-      return;
-    }
-    var connectionsRef = firebase.database().ref(`users/${uid}/connections`);
-    var lastOnlineRef = firebase.database().ref(`users/${uid}/lastOnline`);
-    var connectedRef = firebase.database().ref(".info/connected");
-
-    connectedRef.on("value", function (snap) {
-      if (snap.val() === true) {
-        var con = connectionsRef.push();
-        con.onDisconnect().remove();
-        setConnectionRef(con);
-
-        lastOnlineRef
-          .onDisconnect()
-          .set(firebase.database.ServerValue.TIMESTAMP);
-      }
-    });
-  }, [uid]);
 
   return (
     <>
