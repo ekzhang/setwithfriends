@@ -4,6 +4,7 @@ import autoscroll from "../utils/autoscroll";
 import Typography from "@material-ui/core/Typography";
 import { makeStyles } from "@material-ui/core/styles";
 import Loading from "./Loading";
+import User from "./User";
 
 function LobbyChat({ user }) {
   const useStyles = makeStyles((theme) => ({
@@ -42,7 +43,7 @@ function LobbyChat({ user }) {
     event.preventDefault();
     if (input) {
       firebase.database().ref(`lobbyChat`).push({
-        user: user.name,
+        userId: user.id,
         message: input,
         time: firebase.database.ServerValue.TIMESTAMP,
       });
@@ -60,7 +61,11 @@ function LobbyChat({ user }) {
         {messages ? (
           messages.map((msg, i) => (
             <Typography key={i} gutterBottom>
-              <b>{msg.user}:</b> {msg.message}
+              <b>
+                {" "}
+                <User id={msg.userId} />:
+              </b>{" "}
+              {msg.message}
             </Typography>
           ))
         ) : (

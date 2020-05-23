@@ -6,12 +6,17 @@ import DoneRoundedIcon from "@material-ui/icons/DoneRounded";
 import TableCell from "@material-ui/core/TableCell";
 import TableRow from "@material-ui/core/TableRow";
 
-import ElapsedTime from "../components/ElapsedTime";
+import ElapsedTime from "./ElapsedTime";
+import User from "./User";
+import useFirebaseRef from "../hooks/useFirebaseRef";
 
-function GameInfoRow({ game, hostName, onClick }) {
-  return (
+function GameInfoRow({ gameId, onClick }) {
+  const game = useFirebaseRef(`/games/${gameId}`);
+  return game ? (
     <TableRow onClick={onClick}>
-      <TableCell>{hostName}</TableCell>
+      <TableCell>
+        <User id={game.host} />
+      </TableCell>
       <TableCell>{game.users ? Object.keys(game.users).length : 0}</TableCell>
       <TableCell>
         {game.status === "ingame" ? (
@@ -26,7 +31,7 @@ function GameInfoRow({ game, hostName, onClick }) {
         <ElapsedTime value={game.createdAt} />
       </TableCell>
     </TableRow>
-  );
+  ) : null;
 }
 
 export default GameInfoRow;

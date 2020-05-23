@@ -28,7 +28,7 @@ export function generateDeck() {
 
 export function generateColor() {
   const hue = Math.floor(Math.random() * 360);
-  return `hsl(${hue}, 100%, 60%)`;
+  return `hsl(${hue}, 90%, 35%)`;
 }
 
 export function checkSet(a, b, c) {

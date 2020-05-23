@@ -205,13 +205,18 @@ function LobbyPage({ user }) {
                     <ListItemIcon>
                       {isIngame(user) ? <SportsEsportsIcon /> : <FaceIcon />}
                     </ListItemIcon>
-                    <ListItemText>{user.name}</ListItemText>
+                    <ListItemText>
+                      <span style={{ fontWeight: 500, color: user.color }}>
+                        {user.name}
+                      </span>
+                    </ListItemText>
                   </ListItem>
                 ))}
               </List>
             </section>
             <Divider />
             <Chat user={user}></Chat>
+
             <Divider />
           </Grid>
         </Box>
@@ -242,7 +247,7 @@ function LobbyPage({ user }) {
                   {Object.values(tabValue === 0 ? games : myGames)
                     .reverse()
                     .map((gameId) => (
-                      <GameInfoRowHelper
+                      <GameInfoRow
                         key={gameId}
                         gameId={gameId}
                         onClick={() => {
@@ -299,14 +304,6 @@ function LobbyPage({ user }) {
       </Typography>
     </Container>
   );
-}
-
-function GameInfoRowHelper({ gameId, onClick }) {
-  const game = useFirebaseRef(`/games/${gameId}`);
-  const hostName = useFirebaseRef(game ? `users/${game.host}/name` : null);
-  return game ? (
-    <GameInfoRow game={game} hostName={hostName} onClick={onClick} />
-  ) : null;
 }
 
 export default LobbyPage;
