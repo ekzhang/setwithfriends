@@ -130,8 +130,8 @@ function LobbyPage({ user }) {
   const gamesQuery = useMemo(() => {
     return firebase
       .database()
-      .ref("/publicGamesList")
-      .orderByKey()
+      .ref("/publicGames")
+      .orderByValue()
       .limitToLast(50);
   }, []);
   const games = useFirebaseQuery(gamesQuery);
@@ -139,8 +139,8 @@ function LobbyPage({ user }) {
   const myGamesQuery = useMemo(() => {
     return firebase
       .database()
-      .ref(`/userGamesList/${user.id}`)
-      .orderByKey()
+      .ref(`/userGames/${user.id}`)
+      .orderByValue()
       .limitToLast(50);
   }, [user.id]);
   const myGames = useFirebaseQuery(myGamesQuery);
@@ -244,7 +244,7 @@ function LobbyPage({ user }) {
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  {Object.values(tabValue === 0 ? games : myGames)
+                  {Object.keys(tabValue === 0 ? games : myGames)
                     .reverse()
                     .map((gameId) => (
                       <GameInfoRow
