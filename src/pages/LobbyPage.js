@@ -290,7 +290,7 @@ function LobbyPage({ user }) {
           </Grid>
         </Box>
       </Grid>
-      <Typography variant="body1" align="center" style={{ margin: 16 }}>
+      <Typography variant="body1" align="center" style={{ padding: "16px 0" }}>
         <Link component={RouterLink} to="/help">
           Help
         </Link>{" "}
