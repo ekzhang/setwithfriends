@@ -1,20 +1,23 @@
 import React, { useEffect, useRef, useState, memo } from "react";
-import firebase from "firebase";
-import autoscroll from "../utils/autoscroll";
+
 import Typography from "@material-ui/core/Typography";
 import { makeStyles } from "@material-ui/core/styles";
+
 import Loading from "./Loading";
 import User from "./User";
+import firebase from "../firebase";
+import autoscroll from "../utils/autoscroll";
+
+const useStyles = makeStyles((theme) => ({
+  chatPanel: {
+    paddingTop: theme.spacing(1),
+    paddingBottom: theme.spacing(1),
+    display: "flex",
+    flexDirection: "column",
+  },
+}));
 
 function Chat({ user }) {
-  const useStyles = makeStyles((theme) => ({
-    chatPanel: {
-      paddingTop: theme.spacing(1),
-      paddingBottom: theme.spacing(1),
-      display: "flex",
-      flexDirection: "column",
-    },
-  }));
   const classes = useStyles();
 
   const chatEl = useRef();
