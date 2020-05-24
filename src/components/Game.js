@@ -143,6 +143,7 @@ function Game({ deck, spectating, onSet }) {
           overflow: "hidden",
           width: "100%",
           height: gameHeight + 19,
+          transition: "height 0.75s",
         }}
         ref={gameEl}
       >
