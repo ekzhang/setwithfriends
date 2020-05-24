@@ -32,7 +32,7 @@ function Game({ deck, spectating, onSet }) {
 
   const [board, unplayed] = splitDeck(deck);
   const rows = board.length / 3;
-  const gameHeight = cardHeight * rows + 2 * gamePadding;
+  const gameHeight = cardHeight * Math.max(rows, 4) + 2 * gamePadding;
 
   // Compute coordinate positions of each card, in and out of play
   const cards = {};
