@@ -79,7 +79,7 @@ function GameSidebar({ game, scores, leaderboard }) {
                     )}
                   </ListItemIcon>
                   <ListItemText>
-                    {userEl} - {scores[uid] || 0}{" "}
+                    {userEl} — {scores[uid] || 0}{" "}
                     {scores[uid] === 1 ? "set" : "sets"}
                   </ListItemText>
                 </ListItem>
