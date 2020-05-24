@@ -5,7 +5,6 @@ import Grid from "@material-ui/core/Grid";
 import Typography from "@material-ui/core/Typography";
 import Container from "@material-ui/core/Container";
 import Box from "@material-ui/core/Box";
-import Paper from "@material-ui/core/Paper";
 import { Redirect } from "react-router-dom";
 
 import { removeCard, findSet, computeState } from "../util";
@@ -14,11 +13,16 @@ import useFirebaseRef from "../hooks/useFirebaseRef";
 import Game from "../components/Game";
 import NotFoundPage from "./NotFoundPage";
 import LoadingPage from "./LoadingPage";
-import Sidebar from "../components/Sidebar";
+import GameSidebar from "../components/GameSidebar";
 import { UserContext } from "../context";
-import User from "../components/User";
 
-const useStyles = makeStyles((theme) => ({}));
+const useStyles = makeStyles((theme) => ({
+  sideColumn: {
+    maxHeight: "80vh",
+    display: "flex",
+    flexDirection: "column",
+  },
+}));
 
 function GamePage({ match }) {
   const user = useContext(UserContext);
@@ -59,10 +63,6 @@ function GamePage({ match }) {
   });
 
   function handleSet([c1, c2, c3]) {
-    let { current } = computeState(gameData);
-    current = removeCard(current, c1);
-    current = removeCard(current, c2);
-    current = removeCard(current, c3);
     // Asynchronous timeout fixes warning: https://fb.me/setstate-in-render
     setTimeout(() => {
       const gameRef = firebase.database().ref(`gameData/${gameId}`);
@@ -91,7 +91,7 @@ function GamePage({ match }) {
     <Container>
       <Grid container spacing={2}>
         <Box clone order={{ xs: 3, sm: 1 }}>
-          <Grid item xs={12} sm={4} md={3}>
+          <Grid item xs={12} sm={4} md={3} className={classes.sideColumn}>
             <Typography variant="overline">Game Chat</Typography>
           </Grid>
         </Box>
@@ -101,8 +101,12 @@ function GamePage({ match }) {
           </Grid>
         </Box>
         <Box clone order={{ xs: 2, sm: 3 }}>
-          <Grid item xs={12} md={3}>
-            <Typography variant="overline">Scoreboard</Typography>
+          <Grid item xs={12} md={3} className={classes.sideColumn}>
+            <GameSidebar
+              game={game}
+              scores={scores}
+              leaderboard={leaderboard}
+            />
           </Grid>
         </Box>
       </Grid>

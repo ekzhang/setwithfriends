@@ -195,7 +195,8 @@ function LobbyPage() {
               </Typography>
               <List
                 dense
-                style={{ paddingTop: 0, overflowY: "auto", flexGrow: 1 }}
+                disablePadding
+                style={{ overflowY: "auto", flexGrow: 1 }}
               >
                 {Object.entries(onlineUsers).map(([userId, user]) => (
                   <ListItem

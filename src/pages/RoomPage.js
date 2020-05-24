@@ -116,7 +116,11 @@ function RoomPage({ match, location }) {
                   <div className={classes.subpanel}>
                     <Typography variant="overline">Players</Typography>
                     <List dense>
-                      <ListItem button component={RouterLink} to="/profile">
+                      <ListItem
+                        button
+                        component={RouterLink}
+                        to={`/profile/${game.host}`}
+                      >
                         <ListItemIcon>
                           <StarsIcon />
                         </ListItemIcon>
@@ -134,7 +138,7 @@ function RoomPage({ match, location }) {
                                 <ListItem
                                   button
                                   component={RouterLink}
-                                  to="/profile"
+                                  to={`/profile/${playerId}`}
                                 >
                                   <ListItemIcon>
                                     {player.connections &&
