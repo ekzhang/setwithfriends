@@ -1,134 +1,118 @@
-import React, { useEffect, useState, useCallback, useMemo } from "react";
+import React, { useEffect, useState } from "react";
 
 import Paper from "@material-ui/core/Paper";
-import Typography from "@material-ui/core/Typography";
 import Snackbar from "@material-ui/core/Snackbar";
 import SnackContent from "./SnackContent";
-import { makeStyles } from "@material-ui/core/styles";
 import { animated, useSprings } from "react-spring";
 
-import {
-  generateCards,
-  removeCard,
-  checkSet,
-  splitDeck
-} from "../util";
-import SetCard from "../components/SetCard";
+import { generateCards, removeCard, checkSet, splitDeck } from "../util";
+import ResponsiveSetCard from "../components/ResponsiveSetCard";
+import useDimensions from "../hooks/useDimensions";
 
-const useStyles = makeStyles({
-  gameContainer: {
-    display: "flex",
-    flexGrow: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    "& > *": {
-      position: "absolute"
-    }
-  }
-});
+const gamePadding = 8;
+const cardArray = generateCards();
 
-function Game({ game, gameState, spectating, onSet }) {
-  const classes = useStyles();
+function Game({ deck, spectating, onSet }) {
+  const [gameDimensions, gameEl] = useDimensions();
   const [selected, setSelected] = useState([]);
   const [snack, setSnack] = useState({ open: false });
 
+  // Reset card selection on update to game
   useEffect(() => {
     setSelected([]);
-  }, [game]);
+  }, [deck]);
 
-  const handleClick = useCallback(
-    card => {
-      if (spectating) return;
-      setSelected(selected => {
-        if (selected.includes(card)) {
-          return removeCard(selected, card);
-        } else {
-          const vals = [...selected, card];
-          if (vals.length === 3) {
-            if (checkSet(...vals)) {
-              onSet(vals);
-              setSnack({
-                open: true,
-                variant: "success",
-                message: "Found a set!"
-              });
-            } else {
-              setSnack({
-                open: true,
-                variant: "error",
-                message: "Not a set!"
-              });
-            }
-            return [];
-          } else {
-            return vals;
-          }
-        }
-      });
-    },
-    [spectating, onSet]
-  );
+  // Calculate widths and heights in pixels to fit cards in the game container
+  // (The default value for `gameWidth` is a hack since we don't know the
+  //  actual dimensions of the game container on initial render)
+  const gameWidth = gameDimensions ? gameDimensions.width : 200;
+  const cardWidth = Math.floor((gameWidth - 2 * gamePadding) / 3);
+  const cardHeight = Math.round(cardWidth / 1.6);
 
-  const clickHandlers = useMemo(() => {
-    const obj = {};
-    for (const card of generateCards()) {
-      obj[card] = () => handleClick(card);
-    }
-    return obj;
-  }, [handleClick]);
-
-  const cardWidth = 172,
-    cardHeight = 112;
-
-  const cards = {};
-  for (const event of gameState.history) {
-    const { user, cards: set } = event;
-    for (const c of set) {
-      cards[c] = {
-        positionX: 2.5 * cardWidth,
-        positionY: 0,
-        opacity: 0,
-        color: game.meta.users[user].color,
-        active: false
-      };
-    }
-  }
-  const [board, deck] = splitDeck(gameState.deck);
+  const [board, unplayed] = splitDeck(deck);
   const rows = board.length / 3;
+  const gameHeight = cardHeight * rows + 2 * gamePadding;
+
+  // Compute coordinate positions of each card, in and out of play
+  const cards = {};
+  for (const c of cardArray) {
+    cards[c] = {
+      positionX: gameWidth,
+      positionY: gameHeight / 2 - cardHeight / 2,
+      opacity: 0,
+      background: "#90ee90",
+      inplay: false,
+    };
+  }
   for (let i = 0; i < board.length; i++) {
     const r = Math.floor(i / 3),
       c = i % 3;
     cards[board[i]] = {
-      positionX: (c - 1) * cardWidth,
-      positionY: (r - (rows - 1) / 2) * cardHeight,
+      positionX: cardWidth * c + gamePadding,
+      positionY: cardHeight * r + gamePadding,
       opacity: 1,
-      active: true
+      inplay: true,
     };
   }
-  for (const c of deck) {
+  for (const c of unplayed) {
     cards[c] = {
-      positionX: -2.5 * cardWidth,
-      positionY: 0,
+      positionX: -cardWidth,
+      positionY: gameHeight / 2 - cardHeight / 2,
       opacity: 0,
-      active: false
+      inplay: false,
     };
   }
 
-  const cardArray = generateCards();
   const springProps = useSprings(
     cardArray.length,
-    cardArray.map(c => ({
-      from: { transform: `translate(${-cardWidth * 2.5}px, 0px)`, opacity: 0 },
+    cardArray.map((c) => ({
       to: {
         transform: `translate(${cards[c].positionX}px, ${cards[c].positionY}px)`,
-        opacity: cards[c].opacity
+        opacity: cards[c].opacity,
       },
       config: {
         tension: 64,
-        friction: 14
-      }
+        friction: 14,
+      },
     }))
   );
+
+  function handleClick(card) {
+    if (spectating) {
+      setSnack({
+        open: true,
+        variant: "warning",
+        message: "You are spectating!",
+      });
+      return;
+    }
+    setSelected((selected) => {
+      if (selected.includes(card)) {
+        return removeCard(selected, card);
+      } else {
+        const vals = [...selected, card];
+        if (vals.length === 3) {
+          if (checkSet(...vals)) {
+            onSet(vals);
+            setSnack({
+              open: true,
+              variant: "success",
+              message: "Found a set!",
+            });
+          } else {
+            setSnack({
+              open: true,
+              variant: "error",
+              message: "Not a set!",
+            });
+          }
+          return [];
+        } else {
+          return vals;
+        }
+      }
+    });
+  }
 
   function handleClose(event, reason) {
     if (reason === "clickaway") return;
@@ -140,7 +124,7 @@ function Game({ game, gameState, spectating, onSet }) {
       <Snackbar
         anchorOrigin={{
           vertical: "bottom",
-          horizontal: "center"
+          horizontal: "center",
         }}
         open={snack.open}
         autoHideDuration={2000}
@@ -152,46 +136,36 @@ function Game({ game, gameState, spectating, onSet }) {
           onClose={handleClose}
         />
       </Snackbar>
-      <div className={classes.gameContainer}>
-        <div
-          style={{
-            transform: `translate(${-2 * cardWidth}px, ${0}px)`
-          }}
-        >
-          <Paper elevation={2} style={{ padding: 16 }}>
-            <Typography variant="h3">{deck.length}</Typography>
-          </Paper>
-        </div>
+      <Paper
+        style={{
+          position: "relative",
+          overflow: "hidden",
+          width: "100%",
+          height: gameHeight,
+        }}
+        ref={gameEl}
+      >
         {cardArray.map((card, idx) => (
           <animated.div
             key={card}
             style={{
+              position: "absolute",
               ...springProps[idx],
-              visibility: springProps[idx].opacity.interpolate(x =>
+              visibility: springProps[idx].opacity.interpolate((x) =>
                 x > 0 ? "visible" : "hidden"
-              )
+              ),
             }}
           >
-            <SetCard
+            <ResponsiveSetCard
               value={card}
-              color={cards[card].color}
-              selected={selected.includes(card)}
-              onClick={cards[card].active ? clickHandlers[card] : null}
+              width={cardWidth}
+              background={cards[card].background}
+              active={selected.includes(card)}
+              onClick={cards[card].inplay ? () => handleClick(card) : null}
             />
           </animated.div>
         ))}
-        {spectating && (
-          <div
-            style={{
-              transform: `translate(${0}px, ${-(rows / 2) * cardHeight - 24}px)`
-            }}
-          >
-            <Paper>
-              <Typography variant="h6">(Spectating...)</Typography>
-            </Paper>
-          </div>
-        )}
-      </div>
+      </Paper>
     </>
   );
 }

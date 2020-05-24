@@ -91,7 +91,10 @@ function RoomPage({ match, location }) {
   }
 
   function startGame() {
-    firebase.database().ref(`games/${gameId}/status`).set("ingame");
+    firebase.database().ref(`games/${gameId}`).update({
+      status: "ingame",
+      startedAt: firebase.database.ServerValue.TIMESTAMP,
+    });
   }
 
   return (
