@@ -2,11 +2,12 @@ import React, { useEffect, useState } from "react";
 
 import Paper from "@material-ui/core/Paper";
 import Snackbar from "@material-ui/core/Snackbar";
-import SnackContent from "./SnackContent";
+import Typography from "@material-ui/core/Typography";
 import { animated, useSprings } from "react-spring";
 
 import { generateCards, removeCard, checkSet, splitDeck } from "../util";
 import ResponsiveSetCard from "../components/ResponsiveSetCard";
+import SnackContent from "./SnackContent";
 import useDimensions from "../hooks/useDimensions";
 
 const gamePadding = 8;
@@ -141,10 +142,21 @@ function Game({ deck, spectating, onSet }) {
           position: "relative",
           overflow: "hidden",
           width: "100%",
-          height: gameHeight,
+          height: gameHeight + 19,
         }}
         ref={gameEl}
       >
+        <Typography
+          variant="caption"
+          align="center"
+          style={{
+            position: "absolute",
+            bottom: gamePadding,
+            width: "100%",
+          }}
+        >
+          <strong>{unplayed.length}</strong> cards remaining in the deck
+        </Typography>
         {cardArray.map((card, idx) => (
           <animated.div
             key={card}
