@@ -112,7 +112,7 @@ function RoomPage({ match, location }) {
                 <Grid item xs={12} md={6}>
                   <div className={classes.subpanel}>
                     <Typography variant="overline">Players</Typography>
-                    <List dense>
+                    <List dense disablePadding>
                       <ListItem button component={RouterLink} to="/profile">
                         <ListItemIcon>
                           <StarsIcon />
