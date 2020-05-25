@@ -14,18 +14,6 @@ export function generateCards() {
   return deck;
 }
 
-export function generateDeck() {
-  const deck = generateCards();
-  // Fisher-Yates
-  for (let i = deck.length - 1; i > 0; i--) {
-    let j = Math.floor(Math.random() * (i + 1));
-    let temp = deck[i];
-    deck[i] = deck[j];
-    deck[j] = temp;
-  }
-  return deck;
-}
-
 export function generateColor() {
   const hue = Math.floor(Math.random() * 360);
   return `hsl(${hue}, 90%, 35%)`;
@@ -72,47 +60,47 @@ export function generateName() {
   return "Anonymous " + animals[Math.floor(Math.random() * animals.length)];
 }
 
-export function computeState(game) {
-  const scoreMap = {};
-  for (const uid of Object.keys(game.meta.users)) {
-    scoreMap[uid] = 0;
-  }
-  const used = {};
-  const history = [];
-  const deck = game.deck.slice();
-  if (game.history) {
-    const events = Object.values(game.history).sort((e1, e2) => {
+export function computeState(gameData) {
+  const scores = {}; // scores of all users
+  const used = {}; // set of cards that have been taken
+  const history = []; // list of valid events in time order
+  const current = gameData.deck.slice();
+  if (gameData.events) {
+    const events = Object.values(gameData.events).sort((e1, e2) => {
       return e1.time - e2.time;
     });
     for (const event of events) {
-      const [a, b, c] = event.cards;
-      if (!used[a] && !used[b] && !used[c]) {
-        used[a] = used[b] = used[c] = true;
-        scoreMap[event.user] += 1;
+      const { user, c1, c2, c3 } = event;
+      if (
+        c1 !== c2 &&
+        c2 !== c3 &&
+        c3 !== c1 &&
+        !used[c1] &&
+        !used[c2] &&
+        !used[c3]
+      ) {
+        used[c1] = used[c2] = used[c3] = true;
+        scores[user] = (scores[user] || 0) + 1;
         history.push(event);
         if (
-          deck.indexOf(a) < 12 &&
-          deck.indexOf(b) < 12 &&
-          deck.indexOf(c) < 12 &&
-          deck.length >= 15
+          current.indexOf(c1) < 12 &&
+          current.indexOf(c2) < 12 &&
+          current.indexOf(c3) < 12 &&
+          current.length >= 15
         ) {
           // Try to preserve card locations, if possible
-          const [a1, b1, c1] = deck.splice(12, 3);
-          deck[deck.indexOf(a)] = a1;
-          deck[deck.indexOf(b)] = b1;
-          deck[deck.indexOf(c)] = c1;
+          const [d1, d2, d3] = current.splice(12, 3);
+          current[current.indexOf(c1)] = d1;
+          current[current.indexOf(c2)] = d2;
+          current[current.indexOf(c3)] = d3;
         } else {
           // Otherwise, just remove the cards
-          deck.splice(deck.indexOf(a), 1);
-          deck.splice(deck.indexOf(b), 1);
-          deck.splice(deck.indexOf(c), 1);
+          current.splice(current.indexOf(c1), 1);
+          current.splice(current.indexOf(c2), 1);
+          current.splice(current.indexOf(c3), 1);
         }
       }
     }
   }
-  const scores = Object.entries(scoreMap).sort(([u1, s1], [u2, s2]) => {
-    if (s1 !== s2) return s2 - s1;
-    return u1 < u2 ? -1 : 1;
-  });
-  return { deck, scores, history };
+  return { current, scores, history };
 }

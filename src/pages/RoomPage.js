@@ -23,6 +23,7 @@ import useFirebaseRef from "../hooks/useFirebaseRef";
 import LoadingPage from "./LoadingPage";
 import NotFoundPage from "./NotFoundPage";
 import User from "../components/User";
+import GameChat from "../components/GameChat";
 import firebase from "../firebase";
 import { UserContext } from "../context";
 
@@ -43,6 +44,11 @@ const useStyles = makeStyles((theme) => ({
       whiteSpace: "nowrap",
       overflow: "hidden",
     },
+  },
+  chatPanel: {
+    display: "flex",
+    flexDirection: "column",
+    maxHeight: 400,
   },
 }));
 
@@ -91,15 +97,18 @@ function RoomPage({ match, location }) {
   }
 
   function startGame() {
-    firebase.database().ref(`games/${gameId}/status`).set("ingame");
+    firebase.database().ref(`games/${gameId}`).update({
+      status: "ingame",
+      startedAt: firebase.database.ServerValue.TIMESTAMP,
+    });
   }
 
   return (
     <Container>
       <Grid container spacing={2}>
         <Box clone order={{ xs: 2, sm: 1 }}>
-          <Grid item xs={12} sm={4} md={3}>
-            <Typography variant="overline">Game Chat</Typography>
+          <Grid item xs={12} sm={4} md={3} className={classes.chatPanel}>
+            <GameChat gameId={gameId} />
           </Grid>
         </Box>
         <Box clone order={{ xs: 1, sm: 2 }}>
@@ -113,7 +122,11 @@ function RoomPage({ match, location }) {
                   <div className={classes.subpanel}>
                     <Typography variant="overline">Players</Typography>
                     <List dense disablePadding>
-                      <ListItem button component={RouterLink} to="/profile">
+                      <ListItem
+                        button
+                        component={RouterLink}
+                        to={`/profile/${game.host}`}
+                      >
                         <ListItemIcon>
                           <StarsIcon />
                         </ListItemIcon>
@@ -131,7 +144,7 @@ function RoomPage({ match, location }) {
                                 <ListItem
                                   button
                                   component={RouterLink}
-                                  to="/profile"
+                                  to={`/profile/${playerId}`}
                                 >
                                   <ListItemIcon>
                                     {player.connections &&

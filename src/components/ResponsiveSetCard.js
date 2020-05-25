@@ -1,0 +1,104 @@
+import React, { memo } from "react";
+
+import { makeStyles } from "@material-ui/core/styles";
+import clsx from "clsx";
+
+const useStyles = makeStyles({
+  symbol: {
+    margin: 3,
+  },
+  card: {
+    boxSizing: "border-box",
+    background: "#fff",
+    border: "1px solid black",
+    display: "inline-flex",
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    flexShrink: 0,
+    transition: "background-color 0.2s, box-shadow 0.2s",
+  },
+  clickable: {
+    cursor: "pointer",
+    "&:hover": {
+      boxShadow: "0px 0px 5px 3px #bbb",
+    },
+  },
+  active: {
+    boxShadow: "0px 0px 5px 3px #4b9e9e !important",
+  },
+});
+
+const COLORS = ["purple", "green", "red"];
+const SHAPES = ["squiggle", "oval", "diamond"];
+const SHADES = ["filled", "outline", "striped"];
+
+function ResponsiveSymbol(props) {
+  const classes = useStyles();
+
+  const color = COLORS[props.color];
+  const shape = SHAPES[props.shape];
+  const shade = SHADES[props.shade];
+
+  return (
+    <svg
+      className={classes.symbol}
+      width={props.size}
+      height={2 * props.size}
+      viewBox="0 0 200 400"
+    >
+      <use
+        href={"#" + shape}
+        fill={shade === "outline" ? "transparent" : color}
+        mask={shade === "striped" ? "url(#mask-stripe)" : ""}
+      />
+      <use href={"#" + shape} stroke={color} fill="none" strokeWidth={18} />
+    </svg>
+  );
+}
+
+function ResponsiveSetCard(props) {
+  const classes = useStyles();
+
+  // Black magic below to scale cards given any width
+  const { width, value, onClick, background, active } = props;
+  const height = Math.round(width / 1.6);
+  const margin = Math.round(width * 0.035);
+  const contentWidth = width - 2 * margin;
+  const contentHeight = height - 2 * margin;
+
+  // 4-character string of 0..2
+  const color = value.charCodeAt(0) - 48;
+  const shape = value.charCodeAt(1) - 48;
+  const shade = value.charCodeAt(2) - 48;
+  const number = value.charCodeAt(3) - 48;
+
+  return (
+    <div
+      className={clsx(classes.card, {
+        [classes.clickable]: onClick,
+        [classes.active]: active,
+      })}
+      style={{
+        width: contentWidth,
+        height: contentHeight,
+        margin: margin,
+        borderRadius: margin,
+        background,
+      }}
+      onClick={onClick}
+    >
+      {[...Array(number + 1)].map((_, i) => (
+        <ResponsiveSymbol
+          key={i}
+          color={color}
+          shape={shape}
+          shade={shade}
+          size={Math.round(contentHeight * 0.36)}
+        />
+      ))}
+    </div>
+  );
+}
+
+export default memo(ResponsiveSetCard);
