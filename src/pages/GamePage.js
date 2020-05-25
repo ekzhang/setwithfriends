@@ -18,6 +18,7 @@ import Loading from "../components/Loading";
 import NotFoundPage from "./NotFoundPage";
 import LoadingPage from "./LoadingPage";
 import GameSidebar from "../components/GameSidebar";
+import GameChat from "../components/GameChat";
 import { UserContext } from "../context";
 
 const useStyles = makeStyles((theme) => ({
@@ -156,7 +157,7 @@ function GamePage({ match }) {
       <Grid container spacing={2}>
         <Box clone order={{ xs: 3, sm: 1 }}>
           <Grid item xs={12} sm={4} md={3} className={classes.sideColumn}>
-            <Typography variant="overline">Game Chat</Typography>
+            <GameChat gameId={gameId} history={history} />
           </Grid>
         </Box>
         <Box clone order={{ xs: 1, sm: 2 }} position="relative">
