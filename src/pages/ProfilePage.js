@@ -1,7 +1,6 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import { Redirect } from "react-router-dom";
 
-import Box from "@material-ui/core/Box";
 import Container from "@material-ui/core/Container";
 import Divider from "@material-ui/core/Divider";
 import Grid from "@material-ui/core/Grid";
@@ -22,7 +21,8 @@ import StarIcon from "@material-ui/icons/Star";
 
 import { Pie } from "react-chartjs-2";
 
-import User from "../components/User";
+import { UserContext } from "../context";
+import ProfileName from "../components/ProfileName";
 
 const useStyles = makeStyles((theme) => ({
   statisticsPanel: {
@@ -100,22 +100,7 @@ function ProfilePage({ match }) {
       <Paper style={{ padding: 16 }}>
         <Grid container className={classes.mainGrid}>
           <Grid item xs={12} sm={12} md={4} className={classes.usernamePanel}>
-            <User
-              component={Typography}
-              variant="h4"
-              gutterBottom
-              id={match.params.id}
-            />
-            <div style={{ display: "flex", flexDirection: "row" }}>
-              <Box mr={1} display="inline">
-                <Typography variant="body2" mr={1} style={{ color: "black" }}>
-                  Last seen:
-                </Typography>
-              </Box>
-              <Typography variant="body2" style={{ color: "#1976d2" }}>
-                a few seconds ago
-              </Typography>
-            </div>
+            <ProfileName userId={match.params.id}></ProfileName>
           </Grid>
           <Divider
             orientation="vertical"
