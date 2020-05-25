@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import Paper from "@material-ui/core/Paper";
 import Snackbar from "@material-ui/core/Snackbar";
 import Typography from "@material-ui/core/Typography";
+import { lightGreen } from "@material-ui/core/colors";
 import { animated, useSprings } from "react-spring";
 
 import { generateCards, removeCard, checkSet, splitDeck } from "../util";
@@ -41,7 +42,7 @@ function Game({ deck, spectating, onSet }) {
       positionX: gameWidth,
       positionY: gameHeight / 2 - cardHeight / 2,
       opacity: 0,
-      background: "#90ee90",
+      background: lightGreen[100],
       inplay: false,
     };
   }

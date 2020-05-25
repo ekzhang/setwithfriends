@@ -9,6 +9,7 @@ import React, {
 
 import Typography from "@material-ui/core/Typography";
 import { makeStyles } from "@material-ui/core/styles";
+import { lightGreen } from "@material-ui/core/colors";
 
 import User from "./User";
 import ChatInput from "./ChatInput";
@@ -28,7 +29,7 @@ const useStyles = makeStyles((theme) => ({
   logEntry: {
     marginBottom: "0.35em",
     textAlign: "center",
-    background: "#90ee90",
+    background: lightGreen[100],
   },
 }));
 
@@ -95,7 +96,7 @@ function GameChat({ gameId, history }) {
                 </div>
               </div>
             ) : (
-              <Typography key={key} gutterBottom>
+              <Typography key={key} variant="body2" gutterBottom>
                 <User id={item.user} />: {item.message}
               </Typography>
             )

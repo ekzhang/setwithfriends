@@ -64,7 +64,7 @@ function Chat() {
       <Typography variant="overline">Lobby Chat</Typography>
       <div style={{ overflowY: "auto", flexGrow: 1 }} ref={chatEl}>
         {Object.entries(messages).map(([key, msg]) => (
-          <Typography key={key} gutterBottom>
+          <Typography key={key} variant="body2" gutterBottom>
             <User id={msg.user} />: {msg.message}
           </Typography>
         ))}
