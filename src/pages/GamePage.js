@@ -22,9 +22,18 @@ import { UserContext } from "../context";
 
 const useStyles = makeStyles((theme) => ({
   sideColumn: {
-    maxHeight: "80vh",
     display: "flex",
     flexDirection: "column",
+    justifyContent: "center",
+    [theme.breakpoints.up("lg")]: {
+      maxHeight: 543,
+    },
+    [theme.breakpoints.down("md")]: {
+      maxHeight: 435,
+    },
+    [theme.breakpoints.down("xs")]: {
+      maxHeight: 400,
+    },
   },
   doneOverlay: {
     position: "absolute",
