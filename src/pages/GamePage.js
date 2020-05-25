@@ -113,7 +113,9 @@ function GamePage({ match }) {
   const spectating = !game.users || !(user.id in game.users);
   const { current, scores, history } = computeState(gameData);
   const leaderboard = Object.keys(game.users).sort((u1, u2) => {
-    if (scores[u1] !== scores[u2]) return scores[u2] - scores[u1];
+    const s1 = scores[u1] || 0;
+    const s2 = scores[u2] || 0;
+    if (s1 !== s2) return s2 - s1;
     return u1 < u2 ? -1 : 1;
   });
 

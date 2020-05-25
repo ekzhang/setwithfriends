@@ -80,7 +80,7 @@ export function computeState(gameData) {
         !used[c3]
       ) {
         used[c1] = used[c2] = used[c3] = true;
-        scores[user] += 1;
+        scores[user] = (scores[user] || 0) + 1;
         history.push(event);
         if (
           current.indexOf(c1) < 12 &&
