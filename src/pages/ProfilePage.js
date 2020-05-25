@@ -67,6 +67,7 @@ const useStyles = makeStyles((theme) => ({
       display: "none",
     },
   },
+  usernamePanel: { display: "flex", flexDirection: "column" },
 }));
 
 function ProfilePage({ match }) {
@@ -95,46 +96,38 @@ function ProfilePage({ match }) {
   if (redirect) return <Redirect push to={redirect} />;
 
   return (
-    <Container className={classes.mainGrid}>
+    <Container>
       <Paper style={{ padding: 16 }}>
-        <Grid container>
-          <Grid item xs={12} sm={12} md={4}>
-            <Grid container direction="column">
-              <User
-                component={Typography}
-                variant="h4"
-                gutterBottom
-                id={match.params.id}
-              />
-              <Grid container direction="row">
-                <Box mr={1} display="inline">
-                  <Typography variant="body2" style={{ color: "black" }}>
-                    Last seen:
-                  </Typography>
-                </Box>
-                <Typography variant="body2" style={{ color: "#1976d2" }}>
-                  a few seconds ago
+        <Grid container className={classes.mainGrid}>
+          <Grid item xs={12} sm={12} md={4} className={classes.usernamePanel}>
+            <User
+              component={Typography}
+              variant="h4"
+              gutterBottom
+              id={match.params.id}
+            />
+            <div style={{ display: "flex", flexDirection: "row" }}>
+              <Box mr={1} display="inline">
+                <Typography variant="body2" mr={1} style={{ color: "black" }}>
+                  Last seen:
                 </Typography>
-              </Grid>
-            </Grid>
+              </Box>
+              <Typography variant="body2" style={{ color: "#1976d2" }}>
+                a few seconds ago
+              </Typography>
+            </div>
           </Grid>
-
           <Divider
             orientation="vertical"
             variant="middle"
             flexItem
             className={classes.divider}
           />
-
           <Grid item xs={12} sm={12} style={{ flex: 1 }} p={1}>
-            <Grid container direction="row">
-              <Grid item>
-                <Typography variant="overline"> Statistics</Typography>
-              </Grid>
-              <Grid item>
-                <EqualizerIcon />
-              </Grid>
-            </Grid>
+            <div style={{ display: "flex", flexDirection: "row" }}>
+              <Typography variant="overline"> Statistics</Typography>
+              <EqualizerIcon />
+            </div>
             <Grid container direction="row" className={classes.statisticsPanel}>
               <Grid item xs={12} sm={6} md={6} className={classes.pie}>
                 <Pie data={data} options={options} />
@@ -174,77 +167,78 @@ function ProfilePage({ match }) {
               </Grid>
             </Grid>
           </Grid>
-        </Grid>
-        <Grid container>
-          <Typography variant="overline"> Finished Games</Typography>
-          <TableContainer component={Paper} className={classes.gamesTable}>
-            <Table size="small" stickyHeader>
-              <TableHead>
-                <TableRow>
-                  <TableCell>#</TableCell>
-                  <TableCell className={classes.vanishingTableCell}>
-                    Host
-                  </TableCell>
-                  <TableCell># Users</TableCell>
-                  <TableCell># Sets</TableCell>
-                  <TableCell>Length</TableCell>
-                  <TableCell className={classes.vanishingTableCell}>
-                    Created
-                  </TableCell>
-                  <TableCell></TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {[...Array(30)].map((_, i) =>
-                  i % 2 ? (
-                    <TableRow key={i} onClick={() => setRedirect("/game")}>
-                      <TableCell>{i + 1}.</TableCell>
-                      <TableCell className={classes.vanishingTableCell}>
-                        Anonymous Polar Bear
-                      </TableCell>
-                      <TableCell>3</TableCell>
-                      <TableCell>6</TableCell>
-                      <TableCell>0h {i + 2}m 5s</TableCell>
-                      <TableCell className={classes.vanishingTableCell}>
-                        {i + 2} hours ago
-                      </TableCell>
-                      <TableCell />
-                    </TableRow>
-                  ) : i % 3 ? (
-                    <TableRow key={i} onClick={() => setRedirect("/game")}>
-                      <TableCell>{i + 1}.</TableCell>
-                      <TableCell className={classes.vanishingTableCell}>
-                        Anonymous Ant
-                      </TableCell>
-                      <TableCell>2</TableCell>
-                      <TableCell>5</TableCell>
-                      <TableCell>1h {i + 2}m 20s</TableCell>
-                      <TableCell className={classes.vanishingTableCell}>
-                        {i + 2} hours ago
-                      </TableCell>
-                      <TableCell />
-                    </TableRow>
-                  ) : (
-                    <TableRow key={i} onClick={() => setRedirect("/game")}>
-                      <TableCell>{i + 1}.</TableCell>
-                      <TableCell className={classes.vanishingTableCell}>
-                        Anonymous Dragonfly
-                      </TableCell>
-                      <TableCell>4</TableCell>
-                      <TableCell>10</TableCell>
-                      <TableCell>256h {i + 2}m 35s</TableCell>
-                      <TableCell className={classes.vanishingTableCell}>
-                        {i + 2} hours ago
-                      </TableCell>
-                      <TableCell>
-                        <StarIcon style={{ color: "#ffb74d" }}></StarIcon>
-                      </TableCell>
-                    </TableRow>
-                  )
-                )}
-              </TableBody>
-            </Table>
-          </TableContainer>
+
+          <Grid item xs={12} sm={12} md={12}>
+            <Typography variant="overline"> Finished Games</Typography>
+            <TableContainer component={Paper} className={classes.gamesTable}>
+              <Table size="small" stickyHeader>
+                <TableHead>
+                  <TableRow>
+                    <TableCell>#</TableCell>
+                    <TableCell className={classes.vanishingTableCell}>
+                      Host
+                    </TableCell>
+                    <TableCell># Users</TableCell>
+                    <TableCell># Sets</TableCell>
+                    <TableCell>Length</TableCell>
+                    <TableCell className={classes.vanishingTableCell}>
+                      Created
+                    </TableCell>
+                    <TableCell></TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {[...Array(30)].map((_, i) =>
+                    i % 2 ? (
+                      <TableRow key={i} onClick={() => setRedirect("/game")}>
+                        <TableCell>{i + 1}.</TableCell>
+                        <TableCell className={classes.vanishingTableCell}>
+                          Anonymous Polar Bear
+                        </TableCell>
+                        <TableCell>3</TableCell>
+                        <TableCell>6</TableCell>
+                        <TableCell>0h {i + 2}m 5s</TableCell>
+                        <TableCell className={classes.vanishingTableCell}>
+                          {i + 2} hours ago
+                        </TableCell>
+                        <TableCell />
+                      </TableRow>
+                    ) : i % 3 ? (
+                      <TableRow key={i} onClick={() => setRedirect("/game")}>
+                        <TableCell>{i + 1}.</TableCell>
+                        <TableCell className={classes.vanishingTableCell}>
+                          Anonymous Ant
+                        </TableCell>
+                        <TableCell>2</TableCell>
+                        <TableCell>5</TableCell>
+                        <TableCell>1h {i + 2}m 20s</TableCell>
+                        <TableCell className={classes.vanishingTableCell}>
+                          {i + 2} hours ago
+                        </TableCell>
+                        <TableCell />
+                      </TableRow>
+                    ) : (
+                      <TableRow key={i} onClick={() => setRedirect("/game")}>
+                        <TableCell>{i + 1}.</TableCell>
+                        <TableCell className={classes.vanishingTableCell}>
+                          Anonymous Dragonfly
+                        </TableCell>
+                        <TableCell>4</TableCell>
+                        <TableCell>10</TableCell>
+                        <TableCell>256h {i + 2}m 35s</TableCell>
+                        <TableCell className={classes.vanishingTableCell}>
+                          {i + 2} hours ago
+                        </TableCell>
+                        <TableCell>
+                          <StarIcon style={{ color: "#ffb74d" }}></StarIcon>
+                        </TableCell>
+                      </TableRow>
+                    )
+                  )}
+                </TableBody>
+              </Table>
+            </TableContainer>
+          </Grid>
         </Grid>
       </Paper>
     </Container>
