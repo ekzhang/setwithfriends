@@ -155,7 +155,10 @@ function GamePage({ match }) {
             {/* Backdrop, to be active when the game ends */}
             <div
               className={classes.doneOverlay}
-              style={{ opacity: game.status === "done" ? 1 : 0 }}
+              style={{
+                opacity: game.status === "done" ? 1 : 0,
+                visibility: game.status === "done" ? "visible" : "hidden",
+              }}
             >
               <Paper elevation={3} className={classes.doneModal}>
                 <Typography variant="h5" gutterBottom>
