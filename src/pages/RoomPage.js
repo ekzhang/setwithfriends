@@ -23,6 +23,7 @@ import useFirebaseRef from "../hooks/useFirebaseRef";
 import LoadingPage from "./LoadingPage";
 import NotFoundPage from "./NotFoundPage";
 import User from "../components/User";
+import GameChat from "../components/GameChat";
 import firebase from "../firebase";
 import { UserContext } from "../context";
 
@@ -43,6 +44,11 @@ const useStyles = makeStyles((theme) => ({
       whiteSpace: "nowrap",
       overflow: "hidden",
     },
+  },
+  chatPanel: {
+    display: "flex",
+    flexDirection: "column",
+    maxHeight: 400,
   },
 }));
 
@@ -101,8 +107,8 @@ function RoomPage({ match, location }) {
     <Container>
       <Grid container spacing={2}>
         <Box clone order={{ xs: 2, sm: 1 }}>
-          <Grid item xs={12} sm={4} md={3}>
-            <Typography variant="overline">Game Chat</Typography>
+          <Grid item xs={12} sm={4} md={3} className={classes.chatPanel}>
+            <GameChat gameId={gameId} />
           </Grid>
         </Box>
         <Box clone order={{ xs: 1, sm: 2 }}>

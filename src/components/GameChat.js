@@ -67,8 +67,10 @@ function GameChat({ gameId, history }) {
   }
 
   const items = messages;
-  for (let i = 0; i < history.length; i++) {
-    items[`card@${i}`] = history[i];
+  if (history) {
+    for (let i = 0; i < history.length; i++) {
+      items[`card@${i}`] = history[i];
+    }
   }
 
   return (
