@@ -1,12 +1,18 @@
 import { styled } from "@material-ui/core/styles";
-import FilledInput from "@material-ui/core/FilledInput";
 
-const ChatInput = styled(FilledInput)({
+const ChatInput = styled("input")(({ theme }) => ({
   width: "100%",
-  borderRadius: 0,
-  "& input": {
-    padding: "10px 12px",
+  border: "1px solid",
+  borderRadius: 4,
+  borderColor: "rgba(0, 0, 0, 0.23)",
+  padding: "6px 8px",
+  fontSize: "0.875rem",
+  outline: "none",
+  appearance: "none",
+  transition: "border-color 0.2s",
+  "&:focus": {
+    borderColor: theme.palette.primary.main,
   },
-});
+}));
 
 export default ChatInput;
