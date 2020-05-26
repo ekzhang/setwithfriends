@@ -22,6 +22,9 @@ const useStyles = makeStyles((theme) => ({
     flexDirection: "column",
     justifyContent: "center",
   },
+  statsItem: {
+    margin: "0.25em 0",
+  },
 }));
 
 function UserStatistics({ gamesData, userId }) {
@@ -77,17 +80,17 @@ function UserStatistics({ gamesData, userId }) {
         <Pie data={stats[0] ? pieData : pieDataNoGames} options={pieOptions} />
       </Grid>
       <Grid item xs={12} sm={6} md={6} className={classes.stats}>
-        <Typography variant="body2" gutterBottom>
+        <Typography variant="body2" className={classes.statsItem}>
           Finished games: <strong>{stats[0]}</strong>
         </Typography>
-        <Typography variant="body2" gutterBottom>
+        <Typography variant="body2" className={classes.statsItem}>
           Total sets: <strong>{stats[2]}</strong>
         </Typography>
-        <Typography variant="body2" gutterBottom>
+        <Typography variant="body2" className={classes.statsItem}>
           Average sets per game:{" "}
           <strong>{stats[0] ? (stats[2] / stats[0]).toFixed(2) : "N/A"}</strong>
         </Typography>
-        <Typography variant="body2" gutterBottom>
+        <Typography variant="body2" className={classes.statsItem}>
           Fastest game won:{" "}
           <strong>
             {stats[3] !== Infinity
@@ -95,7 +98,7 @@ function UserStatistics({ gamesData, userId }) {
               : "N/A"}
           </strong>
         </Typography>
-        <Typography variant="body2" gutterBottom>
+        <Typography variant="body2" className={classes.statsItem}>
           Average game length:{" "}
           <strong>
             {stats[0] ? moment.duration(stats[4] / stats[0]).humanize() : "N/A"}

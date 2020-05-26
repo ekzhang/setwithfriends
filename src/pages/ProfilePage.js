@@ -23,6 +23,9 @@ const useStyles = makeStyles((theme) => ({
       display: "none",
     },
   },
+  mainGrid: {
+    marginBottom: theme.spacing(1),
+  },
 }));
 
 function mergeGameData(game, gameData) {
@@ -95,7 +98,7 @@ function ProfilePage({ match }) {
     <Container>
       <Paper style={{ padding: 16 }}>
         <Grid container className={classes.mainGrid}>
-          <Grid item xs={12} sm={12} md={4} className={classes.usernamePanel}>
+          <Grid item xs={12} md={4}>
             <ProfileName userId={userId} />
           </Grid>
           <Divider
@@ -104,22 +107,22 @@ function ProfilePage({ match }) {
             flexItem
             className={classes.divider}
           />
-          <Grid item xs={12} sm={12} style={{ flex: 1 }} p={1}>
+          <Grid item xs={12} style={{ flex: 1 }} p={1}>
             <div style={{ display: "flex" }}>
-              <Typography variant="overline"> Statistics</Typography>
+              <Typography variant="overline">Statistics</Typography>
               <EqualizerIcon />
             </div>
             <UserStatistics userId={userId} gamesData={gamesData} />
           </Grid>
-          <Grid item xs={12} sm={12} md={12}>
-            <Typography variant="overline"> Finished Games</Typography>
-            <ProfileGamesTable
-              userId={userId}
-              handleClickGame={handleClickGame}
-              gamesData={gamesData}
-            />
-          </Grid>
         </Grid>
+        <Typography variant="overline" component="div">
+          Finished Games
+        </Typography>
+        <ProfileGamesTable
+          userId={userId}
+          handleClickGame={handleClickGame}
+          gamesData={gamesData}
+        />
       </Paper>
     </Container>
   );
