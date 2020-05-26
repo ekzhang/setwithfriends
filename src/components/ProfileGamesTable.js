@@ -8,8 +8,13 @@ import TableContainer from "@material-ui/core/TableContainer";
 import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
 import { makeStyles } from "@material-ui/core/styles";
-
 import StarIcon from "@material-ui/icons/Star";
+import amber from "@material-ui/core/colors/amber";
+import moment from "moment";
+
+import ElapsedTime from "./ElapsedTime";
+import User from "./User";
+import Loading from "./Loading";
 
 const useStyles = makeStyles((theme) => ({
   gamesTable: {
@@ -29,7 +34,6 @@ const useStyles = makeStyles((theme) => ({
       cursor: "pointer",
     },
   },
-
   //Remove cells of some columns of table for small screens
   vanishingTableCell: {
     [theme.breakpoints.down("xs")]: {
@@ -37,9 +41,11 @@ const useStyles = makeStyles((theme) => ({
     },
   },
 }));
-function ProfileGamesTable({ handleClickGame, games }) {
+function ProfileGamesTable({ userId, gamesData, handleClickGame }) {
   const classes = useStyles();
-
+  if (!gamesData) {
+    return <Loading></Loading>;
+  }
   return (
     <TableContainer component={Paper} className={classes.gamesTable}>
       <Table size="small" stickyHeader>
@@ -57,53 +63,33 @@ function ProfileGamesTable({ handleClickGame, games }) {
           </TableRow>
         </TableHead>
         <TableBody>
-          {[...Array(30)].map((_, i) =>
-            i % 2 ? (
-              <TableRow key={i} onClick={handleClickGame}>
-                <TableCell>{i + 1}.</TableCell>
-                <TableCell className={classes.vanishingTableCell}>
-                  Anonymous Polar Bear
-                </TableCell>
-                <TableCell>3</TableCell>
-                <TableCell>6</TableCell>
-                <TableCell>0h {i + 2}m 5s</TableCell>
-                <TableCell className={classes.vanishingTableCell}>
-                  {i + 2} hours ago
-                </TableCell>
-                <TableCell />
-              </TableRow>
-            ) : i % 3 ? (
-              <TableRow key={i} onClick={handleClickGame}>
-                <TableCell>{i + 1}.</TableCell>
-                <TableCell className={classes.vanishingTableCell}>
-                  Anonymous Ant
-                </TableCell>
-                <TableCell>2</TableCell>
-                <TableCell>5</TableCell>
-                <TableCell>1h {i + 2}m 20s</TableCell>
-                <TableCell className={classes.vanishingTableCell}>
-                  {i + 2} hours ago
-                </TableCell>
-                <TableCell />
-              </TableRow>
-            ) : (
-              <TableRow key={i} onClick={handleClickGame}>
-                <TableCell>{i + 1}.</TableCell>
-                <TableCell className={classes.vanishingTableCell}>
-                  Anonymous Dragonfly
-                </TableCell>
-                <TableCell>4</TableCell>
-                <TableCell>10</TableCell>
-                <TableCell>256h {i + 2}m 35s</TableCell>
-                <TableCell className={classes.vanishingTableCell}>
-                  {i + 2} hours ago
-                </TableCell>
-                <TableCell>
-                  <StarIcon style={{ color: "#ffb74d" }}></StarIcon>
-                </TableCell>
-              </TableRow>
-            )
-          )}
+          {Object.values(gamesData)
+            .sort((g1, g2) => g2.createdAt - g1.createdAt)
+            .map((game, i) => {
+              return (
+                <TableRow key={i} onClick={() => handleClickGame(game.gameId)}>
+                  <TableCell>{i + 1}.</TableCell>
+                  <TableCell className={classes.vanishingTableCell}>
+                    <User id={game.host} />
+                  </TableCell>
+                  <TableCell>{Object.keys(game.users).length}</TableCell>
+                  <TableCell>{game.scores[userId] || 0}</TableCell>
+                  <TableCell>
+                    {moment.duration(game.endedAt - game.startedAt).humanize()}
+                  </TableCell>
+                  <TableCell className={classes.vanishingTableCell}>
+                    <ElapsedTime value={game.createdAt}></ElapsedTime>
+                  </TableCell>
+                  <TableCell>
+                    {game.winner === userId ? (
+                      <StarIcon style={{ color: amber[500] }}></StarIcon>
+                    ) : (
+                      <></>
+                    )}
+                  </TableCell>
+                </TableRow>
+              );
+            })}
         </TableBody>
       </Table>
     </TableContainer>
