@@ -17,31 +17,31 @@ const useStyles = makeStyles({
     margin: 6,
     transition: "background-color 0.2s, box-shadow 0.2s",
     "&:hover": {
-      boxShadow: "0px 0px 5px 3px #bbb"
-    }
+      boxShadow: "0px 0px 5px 3px #bbb",
+    },
   },
   selected: {
-    boxShadow: "0px 0px 5px 3px #4b9e9e !important"
+    boxShadow: "0px 0px 5px 3px #4b9e9e !important",
   },
   active: {
-    cursor: "pointer"
+    cursor: "pointer",
   },
   smallCard: {
-    width: 30,
-    height: 18,
+    width: 38,
+    height: 24,
     margin: 3,
     border: "1px solid lightgray",
     borderRadius: 2,
     "&:hover": {
-      boxShadow: "0px 0px 2px 1px #bbb"
-    }
+      boxShadow: "0px 0px 2px 1px #bbb",
+    },
   },
   symbol: {
-    margin: 3
+    margin: 3,
   },
   smallSymbol: {
-    margin: 1
-  }
+    margin: 1,
+  },
 });
 
 const COLORS = ["purple", "green", "red"];
@@ -54,8 +54,8 @@ function Symbol(props) {
   const color = COLORS[props.color];
   const shape = SHAPES[props.shape];
   const shade = SHADES[props.shade];
-  const width = props.size === "sm" ? 6 : 36;
-  const height = props.size === "sm" ? 12 : 72;
+  const width = props.size === "sm" ? 8 : 36;
+  const height = props.size === "sm" ? 16 : 72;
   let className = classes.symbol;
   if (props.size === "sm") className += " " + classes.smallSymbol;
   return (

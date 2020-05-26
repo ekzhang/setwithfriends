@@ -18,11 +18,13 @@ import PersonIcon from "@material-ui/icons/Person";
 import SnoozeIcon from "@material-ui/icons/Snooze";
 import StarsIcon from "@material-ui/icons/Stars";
 import { Link as RouterLink, Redirect } from "react-router-dom";
+import { useTransition, animated } from "react-spring";
 
 import useFirebaseRef from "../hooks/useFirebaseRef";
 import LoadingPage from "./LoadingPage";
 import NotFoundPage from "./NotFoundPage";
 import User from "../components/User";
+import GameChat from "../components/GameChat";
 import firebase from "../firebase";
 import { UserContext } from "../context";
 
@@ -44,6 +46,11 @@ const useStyles = makeStyles((theme) => ({
       overflow: "hidden",
     },
   },
+  chatPanel: {
+    display: "flex",
+    flexDirection: "column",
+    maxHeight: 400,
+  },
 }));
 
 function RoomPage({ match, location }) {
@@ -60,6 +67,7 @@ function RoomPage({ match, location }) {
       game.status === "waiting" &&
       (!game.users || !(user.id in game.users))
     ) {
+      firebase.analytics().logEvent("join_game", { gameId });
       firebase
         .database()
         .ref(`games/${gameId}/users/${user.id}`)
@@ -70,6 +78,13 @@ function RoomPage({ match, location }) {
         .set(game.createdAt);
     }
   }, [user.id, game, gameId]);
+
+  const users = game && game.users ? Object.keys(game.users) : [];
+  const transitions = useTransition(users, null, {
+    from: { opacity: 0 },
+    enter: { opacity: 1 },
+    leave: { opacity: 0 },
+  });
 
   if (loadingGame) {
     return <LoadingPage />;
@@ -91,15 +106,18 @@ function RoomPage({ match, location }) {
   }
 
   function startGame() {
-    firebase.database().ref(`games/${gameId}/status`).set("ingame");
+    firebase.database().ref(`games/${gameId}`).update({
+      status: "ingame",
+      startedAt: firebase.database.ServerValue.TIMESTAMP,
+    });
   }
 
   return (
     <Container>
       <Grid container spacing={2}>
         <Box clone order={{ xs: 2, sm: 1 }}>
-          <Grid item xs={12} sm={4} md={3}>
-            <Typography variant="overline">Game Chat</Typography>
+          <Grid item xs={12} sm={4} md={3} className={classes.chatPanel}>
+            <GameChat gameId={gameId} />
           </Grid>
         </Box>
         <Box clone order={{ xs: 1, sm: 2 }}>
@@ -112,8 +130,12 @@ function RoomPage({ match, location }) {
                 <Grid item xs={12} md={6}>
                   <div className={classes.subpanel}>
                     <Typography variant="overline">Players</Typography>
-                    <List dense>
-                      <ListItem button component={RouterLink} to="/profile">
+                    <List dense disablePadding>
+                      <ListItem
+                        button
+                        component={RouterLink}
+                        to={`/profile/${game.host}`}
+                      >
                         <ListItemIcon>
                           <StarsIcon />
                         </ListItemIcon>
@@ -121,30 +143,32 @@ function RoomPage({ match, location }) {
                           <User id={game.host} />
                         </ListItemText>
                       </ListItem>
-                      {Object.keys(game.users || {}).map(
-                        (playerId) =>
+                      {transitions.map(
+                        ({ item: playerId, props, key }) =>
                           playerId !== game.host && (
                             <User
-                              key={playerId}
+                              key={key}
                               id={playerId}
                               render={(player, playerEl) => (
-                                <ListItem
-                                  button
-                                  component={RouterLink}
-                                  to="/profile"
-                                >
-                                  <ListItemIcon>
-                                    {player.connections &&
-                                    Object.values(player.connections).includes(
-                                      `/room/${gameId}`
-                                    ) ? (
-                                      <PersonIcon />
-                                    ) : (
-                                      <SnoozeIcon />
-                                    )}
-                                  </ListItemIcon>
-                                  <ListItemText>{playerEl}</ListItemText>
-                                </ListItem>
+                                <animated.div style={props}>
+                                  <ListItem
+                                    button
+                                    component={RouterLink}
+                                    to={`/profile/${playerId}`}
+                                  >
+                                    <ListItemIcon>
+                                      {player.connections &&
+                                      Object.values(
+                                        player.connections
+                                      ).includes(`/room/${gameId}`) ? (
+                                        <PersonIcon />
+                                      ) : (
+                                        <SnoozeIcon />
+                                      )}
+                                    </ListItemIcon>
+                                    <ListItemText>{playerEl}</ListItemText>
+                                  </ListItem>
+                                </animated.div>
                               )}
                             />
                           )

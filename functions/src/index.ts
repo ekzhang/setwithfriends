@@ -59,12 +59,12 @@ export const createGame = functions.https.onCall(async (data, context) => {
 
   // After this point, the game has successfully been created.
   // We update the database asynchronously in three different places:
-  //   1. /gameStates/:gameId
+  //   1. /gameData/:gameId
   //   2. /stats/gameCount
   //   3. /publicGames (if access is public)
   const updates: Array<Promise<any>> = [];
   updates.push(
-    admin.database().ref(`gameStates/${gameId}`).set({
+    admin.database().ref(`gameData/${gameId}`).set({
       deck: generateDeck(),
     })
   );

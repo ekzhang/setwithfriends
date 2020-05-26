@@ -5,6 +5,7 @@ import PlayArrowRoundedIcon from "@material-ui/icons/PlayArrowRounded";
 import DoneRoundedIcon from "@material-ui/icons/DoneRounded";
 import TableCell from "@material-ui/core/TableCell";
 import TableRow from "@material-ui/core/TableRow";
+import Tooltip from "@material-ui/core/Tooltip";
 
 import ElapsedTime from "./ElapsedTime";
 import User from "./User";
@@ -23,11 +24,17 @@ function GameInfoRow({ gameId, onClick }) {
       <TableCell>{game.users ? Object.keys(game.users).length : 0}</TableCell>
       <TableCell>
         {game.status === "ingame" ? (
-          <PlayArrowRoundedIcon fontSize="small" />
+          <Tooltip title="Ongoing game" arrow placement="top">
+            <PlayArrowRoundedIcon fontSize="small" />
+          </Tooltip>
         ) : game.status === "waiting" ? (
-          <HourglassEmptyRoundedIcon fontSize="small" />
+          <Tooltip title="Waiting for players" arrow placement="top">
+            <HourglassEmptyRoundedIcon fontSize="small" />
+          </Tooltip>
         ) : (
-          <DoneRoundedIcon fontSize="small" />
+          <Tooltip title="Finished game" arrow placement="top">
+            <DoneRoundedIcon fontSize="small" />
+          </Tooltip>
         )}
       </TableCell>
       <TableCell>
