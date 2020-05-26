@@ -26,6 +26,11 @@ const useStyles = makeStyles((theme) => ({
     display: "flex",
     flexDirection: "column",
   },
+  chat: {
+    overflowY: "auto",
+    flexGrow: 1,
+    overflowWrap: "anywhere",
+  },
   logEntry: {
     marginBottom: "0.35em",
     textAlign: "center",
@@ -80,7 +85,7 @@ function GameChat({ gameId, history }) {
       style={{ flexGrow: 1, overflowY: "hidden" }}
     >
       <Typography variant="overline">Game Chat</Typography>
-      <div style={{ overflowY: "auto", flexGrow: 1 }} ref={chatEl}>
+      <div className={classes.chat} ref={chatEl}>
         {Object.entries(items)
           .sort(([, a], [, b]) => a.time - b.time)
           .map(([key, item]) =>
