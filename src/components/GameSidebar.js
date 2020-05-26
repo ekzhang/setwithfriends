@@ -10,11 +10,11 @@ import { makeStyles } from "@material-ui/core/styles";
 import { red } from "@material-ui/core/colors";
 import SportsEsportsIcon from "@material-ui/icons/SportsEsports";
 import SnoozeIcon from "@material-ui/icons/Snooze";
-import moment from "moment";
 import { useLocation, Link as RouterLink } from "react-router-dom";
 
 import User from "./User";
 import useMoment from "../hooks/useMoment";
+import { formatTime } from "../util";
 
 const useStyles = makeStyles((theme) => ({
   timer: {
@@ -36,13 +36,6 @@ const useStyles = makeStyles((theme) => ({
     paddingBottom: theme.spacing(1),
   },
 }));
-
-function formatTime(t) {
-  t = Math.max(t, 0);
-  const hours = Math.floor(t / (3600 * 1000));
-  const rest = t % (3600 * 1000);
-  return (hours ? `${hours}:` : "") + moment(rest).format("mm:ss");
-}
 
 function GameSidebar({ game, scores, leaderboard }) {
   const classes = useStyles();

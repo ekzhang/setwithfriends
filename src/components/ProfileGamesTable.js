@@ -12,11 +12,11 @@ import Typography from "@material-ui/core/Typography";
 import StarIcon from "@material-ui/icons/Star";
 import amber from "@material-ui/core/colors/amber";
 import grey from "@material-ui/core/colors/grey";
-import moment from "moment";
 
 import ElapsedTime from "./ElapsedTime";
 import User from "./User";
 import Loading from "./Loading";
+import { formatTime } from "../util";
 
 const useStyles = makeStyles((theme) => ({
   gamesTable: {
@@ -46,6 +46,7 @@ const useStyles = makeStyles((theme) => ({
     },
   },
 }));
+
 function ProfileGamesTable({ userId, gamesData, handleClickGame }) {
   const classes = useStyles();
   if (!gamesData) {
@@ -85,7 +86,7 @@ function ProfileGamesTable({ userId, gamesData, handleClickGame }) {
                   <TableCell>{Object.keys(game.users).length}</TableCell>
                   <TableCell>{game.scores[userId] || 0}</TableCell>
                   <TableCell>
-                    {moment.duration(game.endedAt - game.startedAt).humanize()}
+                    {formatTime(game.endedAt - game.startedAt)}
                   </TableCell>
                   <TableCell className={classes.vanishingTableCell}>
                     <ElapsedTime value={game.createdAt} />
