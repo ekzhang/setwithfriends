@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useMemo } from "react";
 import { Redirect } from "react-router-dom";
 
 import Container from "@material-ui/core/Container";
@@ -13,7 +13,7 @@ import ProfileName from "../components/ProfileName";
 import UserStatistics from "../components/UserStatistics";
 import ProfileGamesTable from "../components/ProfileGamesTable";
 import useFirebaseRef from "../hooks/useFirebaseRef";
-import firebase from "../firebase";
+import useFirebaseRefs from "../hooks/useFirebaseRefs";
 import { computeState } from "../util";
 import LoadingPage from "./LoadingPage";
 
@@ -46,53 +46,42 @@ function mergeGameData(game, gameData) {
 
 function ProfilePage({ match }) {
   const userId = match.params.id;
+  const classes = useStyles();
 
   const [games, loadingGames] = useFirebaseRef(`/userGames/${userId}`);
-  const [gamesData, setGamesData] = useState(null);
   const [redirect, setRedirect] = useState(null);
-
-  const classes = useStyles();
 
   const handleClickGame = (gameId) => {
     setRedirect(`/room/${gameId}`);
   };
 
-  useEffect(() => {
-    async function getGamesData() {
-      const gameReads = [];
-      const gameDataReads = [];
-      for (const gameId of Object.keys(games || {})) {
-        gameReads.push(
-          firebase.database().ref(`games/${gameId}`).once("value")
-        );
-        gameDataReads.push(
-          firebase.database().ref(`gameData/${gameId}`).once("value")
-        );
-      }
-      const gameReadsValues = await Promise.all(gameReads);
-      const gameDataReadsValues = await Promise.all(gameDataReads);
-      if (!loadingGames) {
-        const gamesDataCopy = {};
-        Object.keys(games || {}).forEach((gameId, i) => {
-          const game = gameReadsValues[i].val();
-          const gameData = gameDataReadsValues[i].val();
-          if (game.status === "done") {
-            gamesDataCopy[gameId] = {
-              ...mergeGameData(game, gameData),
-              gameId: gameId,
-            };
-          }
-        });
-        setGamesData(gamesDataCopy);
-      }
-    }
-    getGamesData();
-  }, [games, userId, loadingGames]);
+  const gameIds = useMemo(
+    () => (loadingGames ? [] : Object.keys(games || {})),
+    [loadingGames, games]
+  );
+  const [gameVals, loadingGameVals] = useFirebaseRefs(
+    useMemo(() => gameIds.map((gameId) => `games/${gameId}`), [gameIds])
+  );
+  const [gameDataVals, loadingGameDataVals] = useFirebaseRefs(
+    useMemo(() => gameIds.map((gameId) => `gameData/${gameId}`), [gameIds])
+  );
 
+  if (redirect) {
+    return <Redirect push to={redirect} />;
+  }
   if (loadingGames) {
     return <LoadingPage />;
   }
-  if (redirect) return <Redirect push to={redirect} />;
+
+  let gamesData = null;
+  if (!loadingGameVals && !loadingGameDataVals) {
+    gamesData = {};
+    for (let i = 0; i < gameIds.length; i++) {
+      if (gameVals[i].status === "done") {
+        gamesData[gameIds[i]] = mergeGameData(gameVals[i], gameDataVals[i]);
+      }
+    }
+  }
 
   return (
     <Container>
