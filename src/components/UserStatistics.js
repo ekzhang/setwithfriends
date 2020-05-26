@@ -6,10 +6,10 @@ import { makeStyles } from "@material-ui/core/styles";
 import green from "@material-ui/core/colors/green";
 import red from "@material-ui/core/colors/red";
 import grey from "@material-ui/core/colors/grey";
-import moment from "moment";
 import { Pie } from "react-chartjs-2";
 
 import Loading from "./Loading";
+import { formatTime } from "../util";
 
 const useStyles = makeStyles((theme) => ({
   statisticsPanel: {
@@ -93,16 +93,12 @@ function UserStatistics({ gamesData, userId }) {
         <Typography variant="body2" className={classes.statsItem}>
           Fastest game won:{" "}
           <strong>
-            {stats[3] !== Infinity
-              ? moment.duration(stats[3]).humanize()
-              : "N/A"}
+            {stats[3] !== Infinity ? formatTime(stats[3]) : "N/A"}
           </strong>
         </Typography>
         <Typography variant="body2" className={classes.statsItem}>
           Average game length:{" "}
-          <strong>
-            {stats[0] ? moment.duration(stats[4] / stats[0]).humanize() : "N/A"}
-          </strong>
+          <strong>{stats[0] ? formatTime(stats[4] / stats[0]) : "N/A"}</strong>
         </Typography>
       </Grid>
     </Grid>
