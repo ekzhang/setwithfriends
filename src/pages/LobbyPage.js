@@ -23,6 +23,7 @@ import TableCell from "@material-ui/core/TableCell";
 import TableContainer from "@material-ui/core/TableContainer";
 import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
+import Tooltip from "@material-ui/core/Tooltip";
 import Divider from "@material-ui/core/Divider";
 import FaceIcon from "@material-ui/icons/Face";
 import SportsEsportsIcon from "@material-ui/icons/SportsEsports";
@@ -278,23 +279,35 @@ function LobbyPage() {
         <Box clone order={{ xs: 2, md: 3 }} className={classes.buttonColumn}>
           <Grid item xs={12} sm={4} md={3}>
             <div className={classes.actionButtons}>
-              <Button
-                variant="contained"
-                fullWidth
-                color="primary"
-                onClick={() => newRoom("public")}
-                disabled={waiting}
+              <Tooltip
+                arrow
+                placement="top"
+                title="Create a new game, which will appear in the lobby. You can also invite your friends to join by link!"
               >
-                Create a Game
-              </Button>
-              <Button
-                variant="contained"
-                fullWidth
-                onClick={() => newRoom("private")}
-                disabled={waiting}
+                <Button
+                  variant="contained"
+                  fullWidth
+                  color="primary"
+                  onClick={() => newRoom("public")}
+                  disabled={waiting}
+                >
+                  Create a Game
+                </Button>
+              </Tooltip>
+              <Tooltip
+                arrow
+                placement="bottom"
+                title="Create a new private game. Only players you share the link with will be able to join."
               >
-                New Private Game
-              </Button>
+                <Button
+                  variant="contained"
+                  fullWidth
+                  onClick={() => newRoom("private")}
+                  disabled={waiting}
+                >
+                  New Private Game
+                </Button>
+              </Tooltip>
             </div>
             <div className={classes.gameCounters}>
               <Typography variant="body2" gutterBottom>
