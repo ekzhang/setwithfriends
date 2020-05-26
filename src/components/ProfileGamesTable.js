@@ -63,8 +63,7 @@ function ProfileGamesTable({ userId, gamesData, handleClickGame }) {
       <Table size="small" stickyHeader>
         <TableHead>
           <TableRow>
-            <TableCell>#</TableCell>
-            <TableCell className={classes.vanishingTableCell}>Host</TableCell>
+            <TableCell>Host</TableCell>
             <TableCell>Players</TableCell>
             <TableCell>Num. Sets</TableCell>
             <TableCell>Length</TableCell>
@@ -80,8 +79,7 @@ function ProfileGamesTable({ userId, gamesData, handleClickGame }) {
             .map((game, i) => {
               return (
                 <TableRow key={i} onClick={() => handleClickGame(game.gameId)}>
-                  <TableCell>{i + 1}.</TableCell>
-                  <TableCell className={classes.vanishingTableCell}>
+                  <TableCell>
                     <User id={game.host} />
                   </TableCell>
                   <TableCell>{Object.keys(game.users).length}</TableCell>
