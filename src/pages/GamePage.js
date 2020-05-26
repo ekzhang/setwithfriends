@@ -120,6 +120,7 @@ function GamePage({ match }) {
   });
 
   function handleSet([c1, c2, c3]) {
+    firebase.analytics().logEvent("find_set", { c1, c2, c3 });
     // Asynchronous timeout fixes warning: https://fb.me/setstate-in-render
     setTimeout(() => {
       const gameRef = firebase.database().ref(`gameData/${gameId}`);
@@ -143,6 +144,9 @@ function GamePage({ match }) {
     }
     setWaiting(true);
     const newId = `${id}-${num + 1}`;
+    firebase
+      .analytics()
+      .logEvent("play_again", { gameId: newId, access: game.access });
     try {
       await createGame({ gameId: newId, access: game.access });
     } catch (error) {

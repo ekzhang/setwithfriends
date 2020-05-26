@@ -2,11 +2,12 @@ import React, { useState, useEffect } from "react";
 import firebase from "./firebase";
 import "./styles.css";
 
-import { Switch, Route, useLocation } from "react-router-dom";
+import { BrowserRouter, Switch, Route } from "react-router-dom";
 import CssBaseline from "@material-ui/core/CssBaseline";
 
 import { generateColor, generateName } from "./util";
 import { UserContext } from "./context";
+import ConnectionsTracker from "./components/ConnectionsTracker";
 import Navbar from "./components/Navbar";
 import RoomPage from "./pages/RoomPage";
 import GamePage from "./pages/GamePage";
@@ -21,7 +22,6 @@ import ProfilePage from "./pages/ProfilePage";
 function App() {
   const [uid, setUid] = useState(null);
   const [user, setUser] = useState(null);
-  const [connectionRef, setConnectionRef] = useState(null);
 
   useEffect(() => {
     if (!uid) {
@@ -66,47 +66,14 @@ function App() {
     };
   }, [uid]);
 
-  useEffect(() => {
-    if (uid) {
-      const connectionsRef = firebase
-        .database()
-        .ref(`users/${uid}/connections`);
-      const lastOnlineRef = firebase.database().ref(`users/${uid}/lastOnline`);
-      const connectedRef = firebase.database().ref(".info/connected");
-
-      function onConnectedUpdate(snap) {
-        if (snap.val() === true) {
-          const con = connectionsRef.push();
-          con.onDisconnect().remove();
-          setConnectionRef(con);
-
-          lastOnlineRef
-            .onDisconnect()
-            .set(firebase.database.ServerValue.TIMESTAMP);
-        }
-      }
-
-      connectedRef.on("value", onConnectedUpdate);
-      return () => {
-        connectedRef.off("value", onConnectedUpdate);
-      };
-    }
-  }, [uid]);
-
-  const location = useLocation();
-  React.useEffect(() => {
-    if (connectionRef) {
-      connectionRef.set(location.pathname);
-    }
-  }, [location, connectionRef]);
-
   return (
-    <>
+    <BrowserRouter>
       <CssBaseline />
       {!user ? (
         <LoadingPage />
       ) : (
         <UserContext.Provider value={user}>
+          <ConnectionsTracker />
           <Navbar />
           <Switch>
             <Route exact path="/help" component={HelpPage} />
@@ -120,7 +87,7 @@ function App() {
           </Switch>
         </UserContext.Provider>
       )}
-    </>
+    </BrowserRouter>
   );
 }
 

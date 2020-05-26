@@ -162,6 +162,7 @@ function LobbyPage() {
     try {
       setWaiting(true);
       await createGame({ gameId, access });
+      firebase.analytics().logEvent("create_game", { gameId, access });
       setRedirect(`/room/${gameId}`);
     } catch (error) {
       setWaiting(false);

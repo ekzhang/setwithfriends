@@ -66,6 +66,7 @@ function RoomPage({ match, location }) {
       game.status === "waiting" &&
       (!game.users || !(user.id in game.users))
     ) {
+      firebase.analytics().logEvent("join_game", { gameId });
       firebase
         .database()
         .ref(`games/${gameId}/users/${user.id}`)
