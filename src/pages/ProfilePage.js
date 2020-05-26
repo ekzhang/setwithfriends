@@ -8,6 +8,7 @@ import { makeStyles } from "@material-ui/core/styles";
 import Paper from "@material-ui/core/Paper";
 import Typography from "@material-ui/core/Typography";
 import EqualizerIcon from "@material-ui/icons/Equalizer";
+
 import ProfileName from "../components/ProfileName";
 import UserStatistics from "../components/UserStatistics";
 import ProfileGamesTable from "../components/ProfileGamesTable";
@@ -17,15 +18,6 @@ import { computeState } from "../util";
 import LoadingPage from "./LoadingPage";
 
 const useStyles = makeStyles((theme) => ({
-  mainGrid: {
-    "--table-height": "400px", // responsive variable
-    [theme.breakpoints.up("sm")]: {
-      "--table-height": "480px",
-    },
-    [theme.breakpoints.up("md")]: {
-      "--table-height": "calc(100vh - 140px)",
-    },
-  },
   divider: {
     [theme.breakpoints.down("sm")]: {
       display: "none",

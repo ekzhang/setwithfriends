@@ -20,7 +20,10 @@ import Loading from "./Loading";
 
 const useStyles = makeStyles((theme) => ({
   gamesTable: {
-    height: "var(--table-height)",
+    display: "flex",
+    flexDirection: "column",
+    maxHeight: 400,
+    marginBottom: theme.spacing(1),
     whiteSpace: "nowrap",
     "& td, & th": {
       paddingTop: 6,
