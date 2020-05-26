@@ -57,7 +57,7 @@ function ProfilePage({ match }) {
     async function getGamesData() {
       const gameReads = [];
       const gameDataReads = [];
-      for (var gameId of Object.keys(games || {})) {
+      for (const gameId of Object.keys(games || {})) {
         gameReads.push(
           firebase.database().ref(`games/${gameId}`).once("value")
         );
@@ -86,7 +86,7 @@ function ProfilePage({ match }) {
   }, [games, userId, loadingGames]);
 
   if (loadingGames) {
-    return <LoadingPage></LoadingPage>;
+    return <LoadingPage />;
   }
   if (redirect) return <Redirect push to={redirect} />;
 
@@ -95,7 +95,7 @@ function ProfilePage({ match }) {
       <Paper style={{ padding: 16 }}>
         <Grid container className={classes.mainGrid}>
           <Grid item xs={12} sm={12} md={4} className={classes.usernamePanel}>
-            <ProfileName userId={userId}></ProfileName>
+            <ProfileName userId={userId} />
           </Grid>
           <Divider
             orientation="vertical"
@@ -104,7 +104,7 @@ function ProfilePage({ match }) {
             className={classes.divider}
           />
           <Grid item xs={12} sm={12} style={{ flex: 1 }} p={1}>
-            <div style={{ display: "flex", flexDirection: "row" }}>
+            <div style={{ display: "flex" }}>
               <Typography variant="overline"> Statistics</Typography>
               <EqualizerIcon />
             </div>
@@ -112,7 +112,7 @@ function ProfilePage({ match }) {
               userId={userId}
               gamesData={gamesData}
               loadingGames={loadingGames}
-            ></UserStatistics>
+            />
           </Grid>
           <Grid item xs={12} sm={12} md={12}>
             <Typography variant="overline"> Finished Games</Typography>
@@ -120,7 +120,7 @@ function ProfilePage({ match }) {
               userId={userId}
               handleClickGame={handleClickGame}
               gamesData={gamesData}
-            ></ProfileGamesTable>
+            />
           </Grid>
         </Grid>
       </Paper>

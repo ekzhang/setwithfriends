@@ -39,7 +39,7 @@ const useStyles = makeStyles((theme) => ({
       cursor: "pointer",
     },
   },
-  //Remove cells of some columns of table for small screens
+  // Remove cells of some columns of table for small screens
   vanishingTableCell: {
     [theme.breakpoints.down("xs")]: {
       display: "none",
@@ -49,7 +49,7 @@ const useStyles = makeStyles((theme) => ({
 function ProfileGamesTable({ userId, gamesData, handleClickGame }) {
   const classes = useStyles();
   if (!gamesData) {
-    return <Loading></Loading>;
+    return <Loading />;
   }
   if (Object.keys(gamesData).length === 0) {
     return (
@@ -65,13 +65,13 @@ function ProfileGamesTable({ userId, gamesData, handleClickGame }) {
           <TableRow>
             <TableCell>#</TableCell>
             <TableCell className={classes.vanishingTableCell}>Host</TableCell>
-            <TableCell># Users</TableCell>
-            <TableCell># Sets</TableCell>
+            <TableCell>Players</TableCell>
+            <TableCell>Num. Sets</TableCell>
             <TableCell>Length</TableCell>
             <TableCell className={classes.vanishingTableCell}>
               Created
             </TableCell>
-            <TableCell></TableCell>
+            <TableCell>Won</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
@@ -90,13 +90,11 @@ function ProfileGamesTable({ userId, gamesData, handleClickGame }) {
                     {moment.duration(game.endedAt - game.startedAt).humanize()}
                   </TableCell>
                   <TableCell className={classes.vanishingTableCell}>
-                    <ElapsedTime value={game.createdAt}></ElapsedTime>
+                    <ElapsedTime value={game.createdAt} />
                   </TableCell>
                   <TableCell>
-                    {game.winner === userId ? (
-                      <StarIcon style={{ color: amber[500] }}></StarIcon>
-                    ) : (
-                      <></>
+                    {game.winner === userId && (
+                      <StarIcon style={{ color: amber[500] }} />
                     )}
                   </TableCell>
                 </TableRow>

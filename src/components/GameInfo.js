@@ -2,12 +2,9 @@ import React from "react";
 import useFirebaseRef from "../hooks/useFirebaseRef";
 
 function GameInfo(props) {
-  const { id, style, render } = props;
+  const { id, render } = props;
   const [game, loading] = useFirebaseRef(`games/${id}`);
-  if (loading) {
-    return null;
-  }
-  return render ? render(game) : <></>;
+  return !loading && render ? render(game) : null;
 }
 
 export default GameInfo;
