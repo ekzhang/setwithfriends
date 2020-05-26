@@ -109,11 +109,7 @@ function ProfilePage({ match }) {
               <Typography variant="overline"> Statistics</Typography>
               <EqualizerIcon />
             </div>
-            <UserStatistics
-              userId={userId}
-              gamesData={gamesData}
-              loadingGames={loadingGames}
-            />
+            <UserStatistics userId={userId} gamesData={gamesData} />
           </Grid>
           <Grid item xs={12} sm={12} md={12}>
             <Typography variant="overline"> Finished Games</Typography>

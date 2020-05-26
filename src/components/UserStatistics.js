@@ -24,10 +24,10 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-function UserStatistics({ gamesData, userId, loadingGames }) {
+function UserStatistics({ gamesData, userId }) {
   const classes = useStyles();
 
-  if (loadingGames || !gamesData) {
+  if (!gamesData) {
     return <Loading />;
   }
 
