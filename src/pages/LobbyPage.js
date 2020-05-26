@@ -1,9 +1,9 @@
 import React, { useState, useMemo, useContext } from "react";
 
 import generate from "project-name-generator";
-import { Link as RouterLink } from "react-router-dom";
+import { Link as RouterLink, Redirect } from "react-router-dom";
+import { useTransition, animated } from "react-spring";
 import { makeStyles } from "@material-ui/core/styles";
-import { Redirect } from "react-router";
 import Paper from "@material-ui/core/Paper";
 import Container from "@material-ui/core/Container";
 import Typography from "@material-ui/core/Typography";
@@ -32,6 +32,7 @@ import useFirebaseQuery from "../hooks/useFirebaseQuery";
 import useFirebaseRef from "../hooks/useFirebaseRef";
 import GameInfoRow from "../components/GameInfoRow";
 import Chat from "../components/Chat";
+import User from "../components/User";
 import { UserContext } from "../context";
 
 const useStyles = makeStyles((theme) => ({
@@ -119,6 +120,7 @@ function LobbyPage() {
   const classes = useStyles();
   const [redirect, setRedirect] = useState(null);
   const [waiting, setWaiting] = useState(false);
+  const [tabValue, setTabValue] = useState(0);
 
   const onlineUsersQuery = useMemo(() => {
     return firebase
@@ -128,6 +130,12 @@ function LobbyPage() {
       .startAt(false);
   }, []);
   const onlineUsers = useFirebaseQuery(onlineUsersQuery);
+
+  const userTransitions = useTransition(Object.keys(onlineUsers), null, {
+    from: { opacity: 0 },
+    enter: { opacity: 1 },
+    leave: { opacity: 0 },
+  });
 
   const gamesQuery = useMemo(() => {
     return firebase
@@ -149,8 +157,6 @@ function LobbyPage() {
 
   const [stats, loadingStats] = useFirebaseRef("/stats");
 
-  const [tabValue, setTabValue] = React.useState(0);
-
   const handleTabChange = (event, newValue) => {
     setTabValue(newValue);
   };
@@ -171,7 +177,7 @@ function LobbyPage() {
   }
 
   function isIngame(user) {
-    for (const url of Object.values(user.connections)) {
+    for (const url of Object.values(user.connections || {})) {
       if (url.startsWith("/game")) {
         return true;
       }
@@ -199,22 +205,29 @@ function LobbyPage() {
                 disablePadding
                 style={{ overflowY: "auto", flexGrow: 1 }}
               >
-                {Object.entries(onlineUsers).map(([userId, user]) => (
-                  <ListItem
-                    key={userId}
-                    button
-                    component={RouterLink}
-                    to={`/profile/${userId}`}
-                  >
-                    <ListItemIcon>
-                      {isIngame(user) ? <SportsEsportsIcon /> : <FaceIcon />}
-                    </ListItemIcon>
-                    <ListItemText>
-                      <span style={{ fontWeight: 500, color: user.color }}>
-                        {user.name}
-                      </span>
-                    </ListItemText>
-                  </ListItem>
+                {userTransitions.map(({ item: userId, props }) => (
+                  <animated.div key={userId} style={props}>
+                    <User
+                      id={userId}
+                      render={(user, userEl) => (
+                        <ListItem
+                          key={userId}
+                          button
+                          component={RouterLink}
+                          to={`/profile/${userId}`}
+                        >
+                          <ListItemIcon>
+                            {isIngame(user) ? (
+                              <SportsEsportsIcon />
+                            ) : (
+                              <FaceIcon />
+                            )}
+                          </ListItemIcon>
+                          <ListItemText>{userEl}</ListItemText>
+                        </ListItem>
+                      )}
+                    />
+                  </animated.div>
                 ))}
               </List>
             </section>
