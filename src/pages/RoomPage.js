@@ -18,6 +18,7 @@ import PersonIcon from "@material-ui/icons/Person";
 import SnoozeIcon from "@material-ui/icons/Snooze";
 import StarsIcon from "@material-ui/icons/Stars";
 import { Link as RouterLink, Redirect } from "react-router-dom";
+import { useTransition, animated } from "react-spring";
 
 import useFirebaseRef from "../hooks/useFirebaseRef";
 import LoadingPage from "./LoadingPage";
@@ -78,6 +79,13 @@ function RoomPage({ match, location }) {
     }
   }, [user.id, game, gameId]);
 
+  const users = game && game.users ? Object.keys(game.users) : [];
+  const transitions = useTransition(users, null, {
+    from: { opacity: 0 },
+    enter: { opacity: 1 },
+    leave: { opacity: 0 },
+  });
+
   if (loadingGame) {
     return <LoadingPage />;
   }
@@ -135,30 +143,32 @@ function RoomPage({ match, location }) {
                           <User id={game.host} />
                         </ListItemText>
                       </ListItem>
-                      {Object.keys(game.users || {}).map(
-                        (playerId) =>
+                      {transitions.map(
+                        ({ item: playerId, props }) =>
                           playerId !== game.host && (
                             <User
                               key={playerId}
                               id={playerId}
                               render={(player, playerEl) => (
-                                <ListItem
-                                  button
-                                  component={RouterLink}
-                                  to={`/profile/${playerId}`}
-                                >
-                                  <ListItemIcon>
-                                    {player.connections &&
-                                    Object.values(player.connections).includes(
-                                      `/room/${gameId}`
-                                    ) ? (
-                                      <PersonIcon />
-                                    ) : (
-                                      <SnoozeIcon />
-                                    )}
-                                  </ListItemIcon>
-                                  <ListItemText>{playerEl}</ListItemText>
-                                </ListItem>
+                                <animated.div style={props}>
+                                  <ListItem
+                                    button
+                                    component={RouterLink}
+                                    to={`/profile/${playerId}`}
+                                  >
+                                    <ListItemIcon>
+                                      {player.connections &&
+                                      Object.values(
+                                        player.connections
+                                      ).includes(`/room/${gameId}`) ? (
+                                        <PersonIcon />
+                                      ) : (
+                                        <SnoozeIcon />
+                                      )}
+                                    </ListItemIcon>
+                                    <ListItemText>{playerEl}</ListItemText>
+                                  </ListItem>
+                                </animated.div>
                               )}
                             />
                           )
