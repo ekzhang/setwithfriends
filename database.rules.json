@@ -1,113 +1,137 @@
 {
   "rules": {
     "games": {
-      "$game_id": {
+      "$gameId": {
         ".read": "auth != null",
-        ".write": "auth != null && !data.exists() && newData.exists()",
-        ".validate": "newData.hasChildren(['meta'])",
-        "history": {
-          "$event_id": {
-            ".write": "auth != null && data.parent().parent().child('meta/users/' + auth.uid).exists() && !data.exists() && newData.exists()",
-            ".validate": "newData.hasChildren(['user', 'cards', 'time'])",
+        "startedAt": {
+          ".write": "auth != null && auth.uid == data.parent().child('host').val()",
+          ".validate": "newData.isNumber() && newData.val() == now"
+        },
+        "endedAt": {
+          ".write": "auth != null && auth.uid == data.parent().child('host').val()",
+          ".validate": "newData.isNumber() && newData.val() == now"
+        },
+        "status": {
+          ".write": "auth != null && data.parent().child('users/' + auth.uid).exists() && data.exists() && newData.exists()",
+          ".validate": "newData.isString() && ((data.val() == 'waiting' && newData.val() == 'ingame' && auth.uid == data.parent().child('host').val()) || (data.val() == 'ingame' && newData.val() == 'done'))"
+        },
+        "users": {
+          "$userId": {
+            ".write": "auth != null && auth.uid == $userId && data.parent().parent().child('status').val() == 'waiting' && !data.exists() && newData.exists()",
+            ".validate": "newData.isNumber() && newData.val() == now"
+          }
+        }
+      }
+    },
+    "gameData": {
+      "$gameId": {
+        ".read": "auth != null",
+        "events": {
+          "$eventId": {
+            ".write": "!data.exists() && newData.exists() && auth != null && root.child('games/' + $gameId + '/users/' + auth.uid).exists()",
+            ".validate": "newData.hasChildren(['user', 'time', 'c1', 'c2', 'c3'])",
             "user": {
               ".validate": "newData.isString() && newData.val() == auth.uid"
-            },
-            "cards": {
-              ".validate": "newData.hasChildren(['0', '1', '2'])",
-              "$index": {
-                ".validate": "$index.matches(/^[0-2]$/) && newData.isString() && newData.val().matches(/^[0-2][0-2][0-2][0-2]$/)"
-              }
             },
             "time": {
               ".validate": "newData.isNumber() && newData.val() == now"
             },
-            "$other": {
-              ".validate": false
+            "c1": {
+              ".validate": "newData.isString() && newData.val().matches(/^[0-2]{4}$/)"
+            },
+            "c2": {
+              ".validate": "newData.isString() && newData.val().matches(/^[0-2]{4}$/)"
+            },
+            "c3": {
+              ".validate": "newData.isString() && newData.val().matches(/^[0-2]{4}$/)"
             }
           }
-        },
-        "deck": {
-          "$index": {
-            ".validate": "newData.isString() && newData.val().matches(/^[0-2][0-2][0-2][0-2]$/)"
-          }
-        },
-        "meta": {
-          ".validate": "newData.hasChildren(['admin', 'created', 'status'])",
-          "admin": {
-            ".validate": "newData.isString() && newData.val() == auth.uid"
-          },
-          "created": {
-            ".validate": "newData.isNumber() && newData.val() == now"
-          },
-          "started": {
-            ".write": "auth != null && auth.uid == data.parent().child('admin').val() && !data.exists() && newData.exists()",
-            ".validate": "newData.isNumber() && newData.val() == now"
-          },
-          "status": {
-            ".write": "auth != null && data.parent().child('users/' + auth.uid).exists() && newData.exists()",
-            ".validate": "newData.isString() && ((!data.exists() && newData.val() == 'waiting') || (data.val() == 'waiting' && newData.val() == 'ingame') || (data.val() == 'ingame' && newData.val() == 'done'))"
-          },
-          "users": {
-            "$user_id": {
-              ".write": "auth != null && auth.uid == $user_id && newData.exists()",
-              ".validate": "newData.hasChildren(['name', 'color'])",
-              "name": {
-                ".validate": "newData.isString() && newData.val().length > 0 && newData.val().length <= 40"
-              },
-              "color": {
-                ".validate": "newData.isString()"
-              },
-              "$other": {
-                ".validate": false
-              }
-            }
-          },
-          "$other": {
-            ".validate": false
-          }
-        },
-        "$other": {
-          ".validate": false
         }
       }
     },
     "users": {
-      "$user_id": {
-        ".read": "auth != null && auth.uid == $user_id",
-        ".write": "auth != null && auth.uid == $user_id",
-        "games": {
-          "$key": {
-            ".validate": "newData.isString()"
-          }
-        },
+      ".read": "auth != null",
+      ".indexOn": "connections",
+      "$userId": {
+        ".write": "auth != null && auth.uid == $userId",
+        ".validate": "newData.hasChildren(['color', 'name'])",
         "color": {
           ".validate": "newData.isString()"
         },
         "name": {
           ".validate": "newData.isString() && newData.val().length > 0 && newData.val().length <= 40"
         },
+        "lastOnline": {
+          ".validate": "newData.isNumber() && newData.val() == now"
+        },
+        "connections": {
+          "$connectionId": {
+            ".validate": "newData.isString() || !newData.exists()"
+          }
+        },
         "$other": {
           ".validate": false
         }
       }
     },
-    "chats": {
-      "$chat_id": {
-        ".read": true,
-        "$message_id": {
+    "userGames": {
+      "$userId": {
+        ".read": "auth != null",
+        ".indexOn": ".value",
+        "$gameId": {
           ".write": "!data.exists() && newData.exists() && auth != null",
-          ".validate": "newData.hasChildren(['user', 'message'])",
+          ".validate": "newData.isNumber() && newData.val() == root.child('games/' + $gameId + '/createdAt').val()"
+        }
+      }
+    },
+    "publicGames": {
+      ".read": "auth != null",
+      ".indexOn": ".value"
+    },
+    "chats": {
+      "$chatId": {
+        ".read": "auth != null",
+        ".indexOn": "time",
+        "$messageId": {
+          ".write": "!data.exists() && newData.exists() && auth != null",
+          ".validate": "newData.hasChildren(['user', 'message', 'time'])",
           "user": {
-            ".validate": "newData.isString() && newData.val().length > 0 && newData.val() == root.child('users/' + auth.uid + '/name').val()"
+            ".validate": "newData.isString() && newData.val() == auth.uid"
           },
           "message": {
             ".validate": "newData.isString() && newData.val().length > 0"
+          },
+          "time": {
+            ".validate": "newData.isNumber() && newData.val() == now"
           },
           "$other": {
             ".validate": false
           }
         }
       }
+    },
+    "lobbyChat": {
+      ".read": "auth != null",
+      ".indexOn": "time",
+      "$messageId": {
+        ".write": "!data.exists() && newData.exists() && auth != null",
+        ".validate": "newData.hasChildren(['user', 'message', 'time'])",
+        "user": {
+          ".validate": "newData.isString() && newData.val() == auth.uid"
+        },
+        "message": {
+          ".validate": "newData.isString() && newData.val().length > 0"
+        },
+        "time": {
+          ".validate": "newData.isNumber() && newData.val() == now"
+        },
+        "$other": {
+          ".validate": false
+        }
+      }
+    },
+    "stats": {
+      ".read": "auth != null"
     }
   }
 }
