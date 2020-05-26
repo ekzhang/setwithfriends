@@ -75,11 +75,11 @@ function ProfileGamesTable({ userId, gamesData, handleClickGame }) {
           </TableRow>
         </TableHead>
         <TableBody>
-          {Object.values(gamesData)
-            .sort((g1, g2) => g2.createdAt - g1.createdAt)
-            .map((game, i) => {
+          {Object.entries(gamesData)
+            .sort(([, g1], [, g2]) => g2.createdAt - g1.createdAt)
+            .map(([gameId, game]) => {
               return (
-                <TableRow key={i} onClick={() => handleClickGame(game.gameId)}>
+                <TableRow key={gameId} onClick={() => handleClickGame(gameId)}>
                   <TableCell>
                     <User id={game.host} />
                   </TableCell>
