@@ -24,6 +24,7 @@ function PromptDialog(props) {
 
   function handleKeyDown(event) {
     if (event.key === "Enter") {
+      event.preventDefault();
       handleSubmit();
     }
   }
@@ -41,7 +42,7 @@ function PromptDialog(props) {
           type="text"
           fullWidth
           value={value}
-          onChange={e => setValue(e.target.value)}
+          onChange={(e) => setValue(e.target.value)}
           variant="outlined"
           onKeyDown={handleKeyDown}
           inputProps={{ maxLength }}
