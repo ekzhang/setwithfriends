@@ -205,8 +205,8 @@ function LobbyPage() {
                 disablePadding
                 style={{ overflowY: "auto", flexGrow: 1 }}
               >
-                {userTransitions.map(({ item: userId, props }) => (
-                  <animated.div key={userId} style={props}>
+                {userTransitions.map(({ item: userId, props, key }) => (
+                  <animated.div key={key} style={props}>
                     <User
                       id={userId}
                       render={(user, userEl) => (

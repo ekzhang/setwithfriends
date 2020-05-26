@@ -144,10 +144,10 @@ function RoomPage({ match, location }) {
                         </ListItemText>
                       </ListItem>
                       {transitions.map(
-                        ({ item: playerId, props }) =>
+                        ({ item: playerId, props, key }) =>
                           playerId !== game.host && (
                             <User
-                              key={playerId}
+                              key={key}
                               id={playerId}
                               render={(player, playerEl) => (
                                 <animated.div style={props}>
