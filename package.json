@@ -9,11 +9,13 @@
   "dependencies": {
     "@material-ui/core": "^4.9.8",
     "@material-ui/icons": "^4.9.1",
+    "chart.js": "^2.9.3",
     "firebase": "^7.13.1",
     "moment": "^2.24.0",
     "parse-color": "^1.0.0",
     "project-name-generator": "^2.1.7",
     "react": "^16.13.1",
+    "react-chartjs-2": "^2.9.0",
     "react-dom": "^16.13.1",
     "react-router-dom": "^5.1.2",
     "react-scripts": "^3.4.1",
