@@ -195,7 +195,7 @@ function GamePage({ match }) {
                   style={{ marginTop: 12 }}
                   disabled={waiting}
                 >
-                  {waiting ? <Loading /> : "Play Again"}
+                  {waiting ? <Loading /> : "Rematch"}
                 </Button>
               </Paper>
             </div>
