@@ -25,6 +25,22 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
+function mergeGameData(game, gameData) {
+  const scores = computeState(gameData).scores;
+  const winner = Object.keys(game.users).sort((u1, u2) => {
+    const s1 = scores[u1] || 0;
+    const s2 = scores[u2] || 0;
+    if (s1 !== s2) return s2 - s1;
+    return u1 < u2 ? -1 : 1;
+  })[0];
+  return {
+    ...game,
+    ...gameData,
+    winner: winner,
+    scores: scores,
+  };
+}
+
 function ProfilePage({ match }) {
   const userId = match.params.id;
 
@@ -39,21 +55,6 @@ function ProfilePage({ match }) {
   };
 
   useEffect(() => {
-    function mergeGameData(game, gameData) {
-      const scores = computeState(gameData).scores;
-      const winner = Object.keys(game.users).sort((u1, u2) => {
-        const s1 = scores[u1] || 0;
-        const s2 = scores[u2] || 0;
-        if (s1 !== s2) return s2 - s1;
-        return u1 < u2 ? -1 : 1;
-      })[0];
-      return {
-        ...game,
-        ...gameData,
-        winner: winner,
-        scores: scores,
-      };
-    }
     async function getGamesData() {
       const gameReads = [];
       const gameDataReads = [];
