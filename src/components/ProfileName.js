@@ -29,7 +29,7 @@ function ProfileName({ userId }) {
               </Box>
               <Typography
                 variant="body2"
-                style={{ color: `${isOnline ? green[600] : indigo[600]}` }}
+                style={{ color: `${isOnline ? green[800] : indigo[600]}` }}
               >
                 {isOnline ? (
                   "online now"

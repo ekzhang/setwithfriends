@@ -8,8 +8,10 @@ import TableContainer from "@material-ui/core/TableContainer";
 import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
 import { makeStyles } from "@material-ui/core/styles";
+import Typography from "@material-ui/core/Typography";
 import StarIcon from "@material-ui/icons/Star";
 import amber from "@material-ui/core/colors/amber";
+import grey from "@material-ui/core/colors/grey";
 import moment from "moment";
 
 import ElapsedTime from "./ElapsedTime";
@@ -45,6 +47,13 @@ function ProfileGamesTable({ userId, gamesData, handleClickGame }) {
   const classes = useStyles();
   if (!gamesData) {
     return <Loading></Loading>;
+  }
+  if (Object.keys(gamesData).length === 0) {
+    return (
+      <Typography style={{ color: grey[300] }}>
+        No games finished yet...
+      </Typography>
+    );
   }
   return (
     <TableContainer component={Paper} className={classes.gamesTable}>
