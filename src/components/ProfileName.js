@@ -20,7 +20,7 @@ function ProfileName({ userId }) {
               {userEl}
             </Typography>
             <Typography variant="body2" gutterBottom>
-              Last seen:{" "}
+              Last seen:
               <span
                 variant="body2"
                 style={{ color: `${isOnline ? green[800] : indigo[600]}` }}
@@ -38,4 +38,5 @@ function ProfileName({ userId }) {
     />
   );
 }
+
 export default memo(ProfileName);

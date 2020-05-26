@@ -104,4 +104,5 @@ function ProfileGamesTable({ userId, gamesData, handleClickGame }) {
     </TableContainer>
   );
 }
+
 export default ProfileGamesTable;

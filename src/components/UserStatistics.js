@@ -105,4 +105,5 @@ function UserStatistics({ gamesData, userId, loadingGames }) {
     </Grid>
   );
 }
+
 export default UserStatistics;
