@@ -1,22 +1,30 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 
 function useFirebaseQuery(query) {
   const [value, setValue] = useState({});
 
-  useEffect(() => {
-    function childAddedOrChanged(snap) {
-      setValue((value) => ({ ...value, [snap.key]: snap.val() }));
-    }
+  // Debounce state changes to avoid excessive initial rendering
+  const timer = useRef();
+  const state = useRef({});
 
-    function childRemoved(snap) {
-      setValue((value) => {
-        const { [snap.key]: removedKey, ...newValue } = value;
-        void removedKey;
-        return newValue;
+  useEffect(() => {
+    function update() {
+      clearInterval(timer.current);
+      timer.current = setTimeout(() => {
+        setValue({ ...state.current });
       });
     }
 
-    setValue({});
+    function childAddedOrChanged(snap) {
+      state.current[snap.key] = snap.val();
+      update();
+    }
+
+    function childRemoved(snap) {
+      delete state.current[snap.key];
+      update();
+    }
+
     query.on("child_added", childAddedOrChanged);
     query.on("child_removed", childRemoved);
     query.on("child_changed", childAddedOrChanged);
@@ -24,6 +32,9 @@ function useFirebaseQuery(query) {
       query.off("child_added", childAddedOrChanged);
       query.off("child_removed", childRemoved);
       query.off("child_changed", childAddedOrChanged);
+      clearInterval(timer.current);
+      state.current = {};
+      setValue({});
     };
   }, [query]);
 
