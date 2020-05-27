@@ -5,6 +5,7 @@ import List from "@material-ui/core/List";
 import ListItem from "@material-ui/core/ListItem";
 import ListItemIcon from "@material-ui/core/ListItemIcon";
 import ListItemText from "@material-ui/core/ListItemText";
+import Tooltip from "@material-ui/core/Tooltip";
 import Typography from "@material-ui/core/Typography";
 import { makeStyles } from "@material-ui/core/styles";
 import { red } from "@material-ui/core/colors";
@@ -66,9 +67,13 @@ function GameSidebar({ game, scores, leaderboard }) {
                   <ListItemIcon>
                     {user.connections &&
                     Object.values(user.connections).includes(pathname) ? (
-                      <SportsEsportsIcon />
+                      <Tooltip title="Active player">
+                        <SportsEsportsIcon />
+                      </Tooltip>
                     ) : (
-                      <SnoozeIcon />
+                      <Tooltip title="Disconnected player">
+                        <SnoozeIcon />
+                      </Tooltip>
                     )}
                   </ListItemIcon>
                   <ListItemText>

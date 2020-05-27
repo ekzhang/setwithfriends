@@ -93,7 +93,7 @@ function Navbar() {
             href="https://github.com/ekzhang/setwithfriends"
             onClick={handleCloseMenu}
           >
-            View GitHub
+            View on GitHub
           </MenuItem>
         </Menu>
         <PromptDialog

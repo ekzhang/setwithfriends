@@ -210,7 +210,7 @@ function LobbyPage() {
                   <animated.div key={key} style={props}>
                     <User
                       id={userId}
-                      render={(user, userEl) => (
+                      render={(thisUser, userEl) => (
                         <ListItem
                           key={userId}
                           button
@@ -218,13 +218,20 @@ function LobbyPage() {
                           to={`/profile/${userId}`}
                         >
                           <ListItemIcon>
-                            {isIngame(user) ? (
-                              <SportsEsportsIcon />
+                            {isIngame(thisUser) ? (
+                              <Tooltip title="In a game">
+                                <SportsEsportsIcon />
+                              </Tooltip>
                             ) : (
-                              <FaceIcon />
+                              <Tooltip title="Online user">
+                                <FaceIcon />
+                              </Tooltip>
                             )}
                           </ListItemIcon>
-                          <ListItemText>{userEl}</ListItemText>
+                          <ListItemText>
+                            {userEl}
+                            {userId === user.id && " (You)"}
+                          </ListItemText>
                         </ListItem>
                       )}
                     />
@@ -322,7 +329,7 @@ function LobbyPage() {
       </Grid>
       <Typography variant="body1" align="center" style={{ padding: "16px 0" }}>
         <Link component={RouterLink} to="/help">
-          Help
+          How to Play
         </Link>{" "}
         •{" "}
         <Link component={RouterLink} to="/about">

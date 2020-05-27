@@ -9,6 +9,7 @@ import List from "@material-ui/core/List";
 import ListItem from "@material-ui/core/ListItem";
 import ListItemIcon from "@material-ui/core/ListItemIcon";
 import ListItemText from "@material-ui/core/ListItemText";
+import Tooltip from "@material-ui/core/Tooltip";
 import Paper from "@material-ui/core/Paper";
 import Grid from "@material-ui/core/Grid";
 import Box from "@material-ui/core/Box";
@@ -137,10 +138,13 @@ function RoomPage({ match, location }) {
                         to={`/profile/${game.host}`}
                       >
                         <ListItemIcon>
-                          <StarsIcon />
+                          <Tooltip title="Game host">
+                            <StarsIcon />
+                          </Tooltip>
                         </ListItemIcon>
                         <ListItemText>
                           <User id={game.host} />
+                          {game.host === user.id && " (You)"}
                         </ListItemText>
                       </ListItem>
                       {transitions.map(
@@ -161,12 +165,19 @@ function RoomPage({ match, location }) {
                                       Object.values(
                                         player.connections
                                       ).includes(`/room/${gameId}`) ? (
-                                        <PersonIcon />
+                                        <Tooltip title="Active player">
+                                          <PersonIcon />
+                                        </Tooltip>
                                       ) : (
-                                        <SnoozeIcon />
+                                        <Tooltip title="Disconnected player">
+                                          <SnoozeIcon />
+                                        </Tooltip>
                                       )}
                                     </ListItemIcon>
-                                    <ListItemText>{playerEl}</ListItemText>
+                                    <ListItemText>
+                                      {playerEl}
+                                      {playerId === user.id && " (You)"}
+                                    </ListItemText>
                                   </ListItem>
                                 </animated.div>
                               )}
