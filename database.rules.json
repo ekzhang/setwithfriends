@@ -4,11 +4,11 @@
       "$gameId": {
         ".read": "auth != null",
         "startedAt": {
-          ".write": "auth != null && auth.uid == data.parent().child('host').val()",
+          ".write": "auth != null && auth.uid == data.parent().child('host').val() && !data.exists() && newData.exists()",
           ".validate": "newData.isNumber() && newData.val() == now"
         },
         "endedAt": {
-          ".write": "auth != null && auth.uid == data.parent().child('host').val()",
+          ".write": "auth != null && data.parent().child('users/' + auth.uid).exists() && !data.exists() && newData.exists()",
           ".validate": "newData.isNumber() && newData.val() == now"
         },
         "status": {

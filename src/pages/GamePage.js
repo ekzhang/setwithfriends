@@ -70,20 +70,16 @@ function GamePage({ match }) {
       const { current } = computeState(gameData);
       // Maximal cap set has size 20 (see: https://en.wikipedia.org/wiki/Cap_set)
       if (
+        game.users &&
+        user.id in game.users &&
         game.status === "ingame" &&
         current.length <= 20 &&
         !findSet(current)
       ) {
-        firebase
-          .database()
-          .ref(`games/${gameId}`)
-          .transaction((game) => {
-            if (game.status === "ingame") {
-              game.status = "done";
-              game.endedAt = firebase.database.ServerValue.TIMESTAMP;
-            }
-            return game;
-          });
+        firebase.database().ref(`games/${gameId}`).update({
+          status: "done",
+          endedAt: firebase.database.ServerValue.TIMESTAMP,
+        });
       }
     }
   });
