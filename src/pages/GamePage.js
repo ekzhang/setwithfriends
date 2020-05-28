@@ -269,15 +269,17 @@ function GamePage({ match }) {
                     Runner-up: <User id={leaderboard[1]} />
                   </Typography>
                 )}
-                <Button
-                  variant="contained"
-                  color="primary"
-                  onClick={handlePlayAgain}
-                  style={{ marginTop: 12 }}
-                  disabled={waiting}
-                >
-                  {waiting ? <Loading /> : "Rematch"}
-                </Button>
+                {!spectating && (
+                  <Button
+                    variant="contained"
+                    color="primary"
+                    onClick={handlePlayAgain}
+                    style={{ marginTop: 12 }}
+                    disabled={waiting}
+                  >
+                    {waiting ? <Loading /> : "Play Again"}
+                  </Button>
+                )}
               </Paper>
             </div>
 
