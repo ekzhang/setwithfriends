@@ -7,8 +7,12 @@ import Container from "@material-ui/core/Container";
 import Paper from "@material-ui/core/Paper";
 import Button from "@material-ui/core/Button";
 import Box from "@material-ui/core/Box";
+import Snackbar from "@material-ui/core/Snackbar";
 import { Redirect } from "react-router-dom";
+import { GlobalHotKeys } from "react-hotkeys";
 
+import { removeCard, checkSet } from "../util";
+import SnackContent from "../components/SnackContent";
 import { findSet, computeState } from "../util";
 import firebase, { createGame } from "../firebase";
 import useFirebaseRef from "../hooks/useFirebaseRef";
@@ -58,11 +62,31 @@ function GamePage({ match }) {
   const user = useContext(UserContext);
   const gameId = match.params.id;
   const classes = useStyles();
+
   const [waiting, setWaiting] = useState(false);
   const [redirect, setRedirect] = useState(null);
+  const [selected, setSelected] = useState([]);
+  const [snack, setSnack] = useState({ open: false });
 
   const [game, loadingGame] = useFirebaseRef(`games/${gameId}`);
   const [gameData, loadingGameData] = useFirebaseRef(`gameData/${gameId}`);
+
+  //Keyboard shortcuts
+  const shortcutKeyMap = {};
+  const shortcutHandlers = {};
+  const keyMapArray = [...Array(12).keys()].map((i) => [
+    `PressCard${i}`,
+    String.fromCharCode(97 + i),
+  ]);
+  keyMapArray.forEach((s, i) => {
+    shortcutKeyMap[s[0]] = s[1];
+    shortcutHandlers[`PressCard${i}`] = () => handleClick(current[i]);
+  });
+
+  // Reset card selection on update to game
+  useEffect(() => {
+    setSelected([]);
+  }, [game]);
 
   // Terminate the game if no sets are remaining
   useEffect(() => {
@@ -130,6 +154,48 @@ function GamePage({ match }) {
     });
   }
 
+  function handleClick(card) {
+    if (spectating) {
+      setSnack({
+        open: true,
+        variant: "warning",
+        message: "You are spectating!",
+      });
+      return;
+    }
+    setSelected((selected) => {
+      if (selected.includes(card)) {
+        return removeCard(selected, card);
+      } else {
+        const vals = [...selected, card];
+        if (vals.length === 3) {
+          if (checkSet(...vals)) {
+            handleSet(vals);
+            setSnack({
+              open: true,
+              variant: "success",
+              message: "Found a set!",
+            });
+          } else {
+            setSnack({
+              open: true,
+              variant: "error",
+              message: "Not a set!",
+            });
+          }
+          return [];
+        } else {
+          return vals;
+        }
+      }
+    });
+  }
+
+  function handleClose(event, reason) {
+    if (reason === "clickaway") return;
+    setSnack({ ...snack, open: false });
+  }
+
   async function handlePlayAgain() {
     const idx = gameId.lastIndexOf("-");
     let id = gameId,
@@ -156,6 +222,25 @@ function GamePage({ match }) {
 
   return (
     <Container>
+      <GlobalHotKeys
+        keyMap={game.status !== "done" ? shortcutKeyMap : {}}
+        handlers={shortcutHandlers}
+      ></GlobalHotKeys>
+      <Snackbar
+        anchorOrigin={{
+          vertical: "bottom",
+          horizontal: "center",
+        }}
+        open={snack.open}
+        autoHideDuration={2000}
+        onClose={handleClose}
+      >
+        <SnackContent
+          variant={snack.variant || "info"}
+          message={snack.message || ""}
+          onClose={handleClose}
+        />
+      </Snackbar>
       <Grid container spacing={2}>
         <Box clone order={{ xs: 3, sm: 1 }}>
           <Grid item xs={12} sm={4} md={3} className={classes.sideColumn}>
@@ -197,7 +282,11 @@ function GamePage({ match }) {
             </div>
 
             {/* Game area itself */}
-            <Game deck={current} spectating={spectating} onSet={handleSet} />
+            <Game
+              deck={current}
+              selected={selected}
+              handleClick={handleClick}
+            />
           </Grid>
         </Box>
         <Box clone order={{ xs: 2, sm: 3 }}>

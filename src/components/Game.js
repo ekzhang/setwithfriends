@@ -1,28 +1,19 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 
 import Paper from "@material-ui/core/Paper";
-import Snackbar from "@material-ui/core/Snackbar";
 import Typography from "@material-ui/core/Typography";
 import { lightGreen } from "@material-ui/core/colors";
 import { animated, useSprings } from "react-spring";
 
-import { generateCards, removeCard, checkSet, splitDeck } from "../util";
+import { generateCards, splitDeck } from "../util";
 import ResponsiveSetCard from "../components/ResponsiveSetCard";
-import SnackContent from "./SnackContent";
 import useDimensions from "../hooks/useDimensions";
 
 const gamePadding = 8;
 const cardArray = generateCards();
 
-function Game({ deck, spectating, onSet }) {
+function Game({ deck, handleClick, selected }) {
   const [gameDimensions, gameEl] = useDimensions();
-  const [selected, setSelected] = useState([]);
-  const [snack, setSnack] = useState({ open: false });
-
-  // Reset card selection on update to game
-  useEffect(() => {
-    setSelected([]);
-  }, [deck]);
 
   // Calculate widths and heights in pixels to fit cards in the game container
   // (The default value for `gameWidth` is a hack since we don't know the
@@ -79,65 +70,8 @@ function Game({ deck, spectating, onSet }) {
     }))
   );
 
-  function handleClick(card) {
-    if (spectating) {
-      setSnack({
-        open: true,
-        variant: "warning",
-        message: "You are spectating!",
-      });
-      return;
-    }
-    setSelected((selected) => {
-      if (selected.includes(card)) {
-        return removeCard(selected, card);
-      } else {
-        const vals = [...selected, card];
-        if (vals.length === 3) {
-          if (checkSet(...vals)) {
-            onSet(vals);
-            setSnack({
-              open: true,
-              variant: "success",
-              message: "Found a set!",
-            });
-          } else {
-            setSnack({
-              open: true,
-              variant: "error",
-              message: "Not a set!",
-            });
-          }
-          return [];
-        } else {
-          return vals;
-        }
-      }
-    });
-  }
-
-  function handleClose(event, reason) {
-    if (reason === "clickaway") return;
-    setSnack({ ...snack, open: false });
-  }
-
   return (
     <>
-      <Snackbar
-        anchorOrigin={{
-          vertical: "bottom",
-          horizontal: "center",
-        }}
-        open={snack.open}
-        autoHideDuration={2000}
-        onClose={handleClose}
-      >
-        <SnackContent
-          variant={snack.variant || "info"}
-          message={snack.message || ""}
-          onClose={handleClose}
-        />
-      </Snackbar>
       <Paper
         style={{
           position: "relative",
