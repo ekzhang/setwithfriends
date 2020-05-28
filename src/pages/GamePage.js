@@ -72,8 +72,8 @@ function GamePage({ match }) {
   const [gameData, loadingGameData] = useFirebaseRef(`gameData/${gameId}`);
 
   //Keyboard shortcuts
-  const shortcutKeyMap = {};
-  const shortcutHandlers = {};
+  const shortcutKeyMap = { DeselectAll: "Escape" };
+  const shortcutHandlers = { DeselectAll: () => setSelected([]) };
   const keyMapArray = [...Array(12).keys()].map((i) => [
     `PressCard${i}`,
     String.fromCharCode(97 + i),
