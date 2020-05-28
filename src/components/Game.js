@@ -71,50 +71,48 @@ function Game({ deck, handleClick, selected }) {
   );
 
   return (
-    <>
-      <Paper
+    <Paper
+      style={{
+        position: "relative",
+        overflow: "hidden",
+        width: "100%",
+        height: gameHeight + 19,
+        transition: "height 0.75s",
+      }}
+      ref={gameEl}
+    >
+      <Typography
+        variant="caption"
+        align="center"
         style={{
-          position: "relative",
-          overflow: "hidden",
+          position: "absolute",
+          bottom: gamePadding,
           width: "100%",
-          height: gameHeight + 19,
-          transition: "height 0.75s",
         }}
-        ref={gameEl}
       >
-        <Typography
-          variant="caption"
-          align="center"
+        <strong>{unplayed.length}</strong> cards remaining in the deck
+      </Typography>
+      {cardArray.map((card, idx) => (
+        <animated.div
+          key={card}
           style={{
             position: "absolute",
-            bottom: gamePadding,
-            width: "100%",
+            ...springProps[idx],
+            visibility: springProps[idx].opacity.interpolate((x) =>
+              x > 0 ? "visible" : "hidden"
+            ),
           }}
         >
-          <strong>{unplayed.length}</strong> cards remaining in the deck
-        </Typography>
-        {cardArray.map((card, idx) => (
-          <animated.div
-            key={card}
-            style={{
-              position: "absolute",
-              ...springProps[idx],
-              visibility: springProps[idx].opacity.interpolate((x) =>
-                x > 0 ? "visible" : "hidden"
-              ),
-            }}
-          >
-            <ResponsiveSetCard
-              value={card}
-              width={cardWidth}
-              background={cards[card].background}
-              active={selected.includes(card)}
-              onClick={cards[card].inplay ? () => handleClick(card) : null}
-            />
-          </animated.div>
-        ))}
-      </Paper>
-    </>
+          <ResponsiveSetCard
+            value={card}
+            width={cardWidth}
+            background={cards[card].background}
+            active={selected.includes(card)}
+            onClick={cards[card].inplay ? () => handleClick(card) : null}
+          />
+        </animated.div>
+      ))}
+    </Paper>
   );
 }
 

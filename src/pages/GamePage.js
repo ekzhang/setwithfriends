@@ -83,10 +83,10 @@ function GamePage({ match }) {
     shortcutHandlers[`PressCard${i}`] = () => handleClick(current[i]);
   });
 
-  // Reset card selection on update to game
+  // Reset card selection on update to game data
   useEffect(() => {
     setSelected([]);
-  }, [game]);
+  }, [gameData]);
 
   // Terminate the game if no sets are remaining
   useEffect(() => {
@@ -141,16 +141,12 @@ function GamePage({ match }) {
 
   function handleSet([c1, c2, c3]) {
     firebase.analytics().logEvent("find_set", { c1, c2, c3 });
-    // Asynchronous timeout fixes warning: https://fb.me/setstate-in-render
-    setTimeout(() => {
-      const gameRef = firebase.database().ref(`gameData/${gameId}`);
-      gameRef.child("events").push({
-        c1,
-        c2,
-        c3,
-        user: user.id,
-        time: firebase.database.ServerValue.TIMESTAMP,
-      });
+    firebase.database().ref(`gameData/${gameId}/events`).push({
+      c1,
+      c2,
+      c3,
+      user: user.id,
+      time: firebase.database.ServerValue.TIMESTAMP,
     });
   }
 
@@ -225,7 +221,7 @@ function GamePage({ match }) {
       <GlobalHotKeys
         keyMap={game.status !== "done" ? shortcutKeyMap : {}}
         handlers={shortcutHandlers}
-      ></GlobalHotKeys>
+      />
       <Snackbar
         anchorOrigin={{
           vertical: "bottom",
