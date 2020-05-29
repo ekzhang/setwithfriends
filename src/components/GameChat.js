@@ -34,7 +34,7 @@ const useStyles = makeStyles((theme) => ({
   logEntry: {
     marginBottom: "0.35em",
     textAlign: "center",
-    background: lightGreen[100],
+    background: theme.palette.type === "light" ? lightGreen[100] : "#71a86f",
   },
 }));
 

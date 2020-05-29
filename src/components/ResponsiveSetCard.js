@@ -3,7 +3,7 @@ import React, { memo } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import clsx from "clsx";
 
-const useStyles = makeStyles({
+const useStyles = makeStyles((theme) => ({
   symbol: {
     margin: 3,
   },
@@ -16,6 +16,8 @@ const useStyles = makeStyles({
     alignItems: "center",
     justifyContent: "center",
     flexShrink: 0,
+    backgroundColor:
+      theme.palette.type === "light" ? "white" : theme.palette.action.disabled,
     transition: "background-color 0.2s, box-shadow 0.2s",
   },
   clickable: {
@@ -27,7 +29,7 @@ const useStyles = makeStyles({
   active: {
     boxShadow: "0px 0px 5px 3px #4b9e9e !important",
   },
-});
+}));
 
 const COLORS = ["purple", "green", "red"];
 const SHAPES = ["squiggle", "oval", "diamond"];

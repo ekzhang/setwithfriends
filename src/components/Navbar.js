@@ -9,13 +9,15 @@ import Link from "@material-ui/core/Link";
 import SettingsIcon from "@material-ui/icons/Settings";
 import MenuItem from "@material-ui/core/MenuItem";
 import Menu from "@material-ui/core/Menu";
+import Brightness3Icon from "@material-ui/icons/Brightness3";
+import WbSunnyIcon from "@material-ui/icons/WbSunny";
 
 import firebase from "../firebase";
 import { UserContext } from "../context";
 import User from "./User";
 import PromptDialog from "./PromptDialog";
 
-function Navbar() {
+function Navbar({ themeType, handleChangeTheme }) {
   const user = useContext(UserContext);
   const [anchorEl, setAnchorEl] = React.useState(null);
   const [changeName, setChangeName] = useState(false);
@@ -53,6 +55,13 @@ function Navbar() {
             <User id={user.id} />
           </Link>
         </Typography>
+        <IconButton color="inherit" onClick={handleChangeTheme}>
+          {themeType === "light" ? (
+            <Brightness3Icon></Brightness3Icon>
+          ) : (
+            <WbSunnyIcon></WbSunnyIcon>
+          )}
+        </IconButton>
         <IconButton color="inherit" onClick={handleMenu}>
           <SettingsIcon />
         </IconButton>

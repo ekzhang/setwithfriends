@@ -16,8 +16,26 @@ export function generateCards() {
 }
 
 export function generateColor() {
-  const hue = Math.floor(Math.random() * 360);
-  return `hsl(${hue}, 90%, 35%)`;
+  const colors = [
+    "#e57373",
+    "#f06292",
+    "#ba68c8",
+    "#9575cd",
+    "#7986cb",
+    "#64b5f6",
+    "#4fc3f7",
+    "#4dd0e1",
+    "#4db6ac",
+    "#81c784",
+    "#aed581",
+    "#dce775",
+    "#fff176",
+    "#ffd54f",
+    "#ffb74d",
+    "#ff8a65",
+    "#a1887f",
+  ];
+  return colors[Math.floor(Math.random() * colors.length)];
 }
 
 export function checkSet(a, b, c) {
