@@ -1,13 +1,14 @@
 import React, { memo } from "react";
 
 import { makeStyles } from "@material-ui/core/styles";
+import { useTheme } from "@material-ui/styles";
 
-const useStyles = makeStyles({
+const useStyles = makeStyles((theme) => ({
   card: {
     width: 160,
     height: 100,
     background: "#fff",
-    border: "1px solid black",
+    border: `1px solid ${theme.palette.text.primary}`,
     borderRadius: 6,
     display: "inline-flex",
     flexDirection: "row",
@@ -15,6 +16,7 @@ const useStyles = makeStyles({
     justifyContent: "center",
     flexShrink: 0,
     margin: 6,
+    backgroundColor: theme.palette.background.panel,
     transition: "background-color 0.2s, box-shadow 0.2s",
     "&:hover": {
       boxShadow: "0px 0px 5px 3px #bbb",
@@ -42,14 +44,16 @@ const useStyles = makeStyles({
   smallSymbol: {
     margin: 1,
   },
-});
+}));
 
-const COLORS = ["purple", "green", "red"];
 const SHAPES = ["squiggle", "oval", "diamond"];
 const SHADES = ["filled", "outline", "striped"];
 
 function Symbol(props) {
   const classes = useStyles();
+  const theme = useTheme();
+
+  const COLORS = [theme.setCard.purple, theme.setCard.green, theme.setCard.red];
 
   const color = COLORS[props.color];
   const shape = SHAPES[props.shape];

@@ -2,6 +2,7 @@ import React, { memo } from "react";
 
 import { makeStyles } from "@material-ui/core/styles";
 import clsx from "clsx";
+import { useTheme } from "@material-ui/styles";
 
 const useStyles = makeStyles((theme) => ({
   symbol: {
@@ -10,14 +11,13 @@ const useStyles = makeStyles((theme) => ({
   card: {
     boxSizing: "border-box",
     background: "#fff",
-    border: "1px solid black",
+    border: `1px solid ${theme.palette.text.primary}`,
     display: "inline-flex",
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
     flexShrink: 0,
-    backgroundColor:
-      theme.palette.type === "light" ? "white" : theme.palette.action.disabled,
+    backgroundColor: theme.palette.background.panel,
     transition: "background-color 0.2s, box-shadow 0.2s",
   },
   clickable: {
@@ -31,12 +31,14 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const COLORS = ["purple", "green", "red"];
 const SHAPES = ["squiggle", "oval", "diamond"];
 const SHADES = ["filled", "outline", "striped"];
 
 function ResponsiveSymbol(props) {
   const classes = useStyles();
+  const theme = useTheme();
+
+  const COLORS = [theme.setCard.purple, theme.setCard.green, theme.setCard.red];
 
   const color = COLORS[props.color];
   const shape = SHAPES[props.shape];

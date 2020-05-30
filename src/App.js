@@ -4,8 +4,8 @@ import "./styles.css";
 
 import { BrowserRouter, Switch, Route } from "react-router-dom";
 import CssBaseline from "@material-ui/core/CssBaseline";
-import { createMuiTheme } from "@material-ui/core/styles";
 import { ThemeProvider } from "@material-ui/core/styles";
+
 import { generateColor, generateName } from "./util";
 import { UserContext } from "./context";
 import ConnectionsTracker from "./components/ConnectionsTracker";
@@ -19,6 +19,7 @@ import HelpPage from "./pages/HelpPage";
 import AboutPage from "./pages/AboutPage";
 import ContactPage from "./pages/ContactPage";
 import ProfilePage from "./pages/ProfilePage";
+import { lightTheme, darkTheme } from "./themes.js";
 
 function App() {
   const [uid, setUid] = useState(null);
@@ -68,18 +69,12 @@ function App() {
     };
   }, [uid]);
 
-  const theme = createMuiTheme({
-    palette: {
-      type: themeType,
-    },
-  });
-
   const handleChangeTheme = () => {
     setThemeType(themeType === "light" ? "dark" : "light");
   };
 
   return (
-    <ThemeProvider theme={theme}>
+    <ThemeProvider theme={themeType === "light" ? lightTheme : darkTheme}>
       <BrowserRouter>
         <CssBaseline />
         {!user ? (

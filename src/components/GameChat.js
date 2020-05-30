@@ -9,7 +9,6 @@ import React, {
 
 import Typography from "@material-ui/core/Typography";
 import { makeStyles } from "@material-ui/core/styles";
-import { lightGreen } from "@material-ui/core/colors";
 
 import User from "./User";
 import ChatInput from "./ChatInput";
@@ -34,7 +33,8 @@ const useStyles = makeStyles((theme) => ({
   logEntry: {
     marginBottom: "0.35em",
     textAlign: "center",
-    background: theme.palette.type === "light" ? lightGreen[100] : "#71a86f",
+    background: theme.palette.success.light,
+    color: "black",
   },
 }));
 
@@ -92,7 +92,7 @@ function GameChat({ gameId, history }) {
             key.startsWith("card@") ? (
               <div className={classes.logEntry} key={key}>
                 <Typography variant="subtitle2">
-                  Set found by <User id={item.user} />
+                  Set found by <User id={item.user} shade={900} />
                 </Typography>
                 <div>
                   <SetCard size="sm" value={item.c1} />

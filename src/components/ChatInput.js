@@ -10,6 +10,9 @@ const ChatInput = styled("input")(({ theme }) => ({
   outline: "none",
   appearance: "none",
   transition: "border-color 0.2s",
+  color: theme.input.textColor,
+  caretColor: theme.input.caretColor,
+  backgroundColor: theme.input.background,
   "&:focus": {
     borderColor: theme.palette.primary.main,
   },
