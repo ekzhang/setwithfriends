@@ -32,11 +32,13 @@ function ProfileName({ userId }) {
                   }`,
                 }}
               >
-                {isOnline ? (
-                  "online now"
-                ) : (
-                  <ElapsedTime value={user.lastOnline} />
-                )}
+                <strong>
+                  {isOnline ? (
+                    "online now"
+                  ) : (
+                    <ElapsedTime value={user.lastOnline} />
+                  )}
+                </strong>
               </span>
             </Typography>
           </section>

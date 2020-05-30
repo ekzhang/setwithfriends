@@ -330,12 +330,12 @@ function LobbyPage() {
       <Typography variant="body1" align="center" style={{ padding: "16px 0" }}>
         <Link component={RouterLink} to="/help">
           How to Play
-        </Link>{" "}
-        •{" "}
+        </Link>
+        •
         <Link component={RouterLink} to="/about">
           About
-        </Link>{" "}
-        •{" "}
+        </Link>
+        •
         <Link component={RouterLink} to="/contact">
           Contact
         </Link>
