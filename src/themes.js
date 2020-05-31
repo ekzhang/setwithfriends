@@ -39,7 +39,7 @@ export const darkTheme = createMuiTheme({
     background: "#262626",
   },
   pie: {
-    noGames: "#757575",
+    noGames: "#rgba(0, 0, 0, 0.12)",
   },
   setCard: {
     purple: "#ff47ff",
@@ -67,7 +67,7 @@ export const lightTheme = createMuiTheme({
     background: "#fff",
   },
   pie: {
-    noGames: "#757575",
+    noGames: "rgba(0, 0, 0, 0.12)",
   },
   setCard: {
     purple: "#800080",
