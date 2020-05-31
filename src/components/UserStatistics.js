@@ -13,7 +13,7 @@ const useStyles = makeStyles((theme) => ({
   statisticsPanel: {
     background: theme.palette.background.panel,
     padding: theme.spacing(2),
-    borderRadius: 4,
+    borderRadius: 6,
   },
   stats: {
     display: "flex",
