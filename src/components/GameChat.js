@@ -9,6 +9,7 @@ import React, {
 
 import Typography from "@material-ui/core/Typography";
 import { makeStyles } from "@material-ui/core/styles";
+import { useTheme } from "@material-ui/styles";
 
 import User from "./User";
 import ChatInput from "./ChatInput";
@@ -41,6 +42,7 @@ const useStyles = makeStyles((theme) => ({
 function GameChat({ gameId, history }) {
   const user = useContext(UserContext);
   const classes = useStyles();
+  const theme = useTheme();
 
   const chatEl = useRef();
   useEffect(() => {
@@ -92,7 +94,7 @@ function GameChat({ gameId, history }) {
             key.startsWith("card@") ? (
               <div className={classes.logEntry} key={key}>
                 <Typography variant="subtitle2">
-                  Set found by <User id={item.user} shade={900} />
+                  Set found by <User id={item.user} />
                 </Typography>
                 <div>
                   <SetCard size="sm" value={item.c1} />

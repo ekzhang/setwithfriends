@@ -14,16 +14,12 @@ export const darkTheme = createMuiTheme({
       main: "#ff4284",
       dark: "#c51162",
     },
-    error: {
-      light: "#f8a5c1",
-      main: "#f48fb1",
-      dark: "#f06694",
-    },
+
     action: {
       hover: "#363636",
     },
     success: {
-      light: "#c4e3c4",
+      light: "#469549",
       main: "#a5d6a7",
       dark: "#82c483",
     },
@@ -45,6 +41,7 @@ export const darkTheme = createMuiTheme({
     purple: "#ff47ff",
     green: "#00B803",
     red: "#ff0101",
+    background: "#404040",
   },
   alarm: red[700],
   profileTable: {
@@ -60,6 +57,11 @@ export const lightTheme = createMuiTheme({
       paper: "#fff",
       default: "#fafafa",
     },
+    success: {
+      light: "#dcedc8",
+      main: "#c5e1a5",
+      dark: "#aed581",
+    },
   },
   input: {
     textColor: "black",
@@ -73,6 +75,7 @@ export const lightTheme = createMuiTheme({
     purple: "#800080",
     green: "#008002",
     red: "#ff0101",
+    background: "#fff",
   },
   alarm: red[700],
   profileTable: {

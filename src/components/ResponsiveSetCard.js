@@ -17,8 +17,8 @@ const useStyles = makeStyles((theme) => ({
     alignItems: "center",
     justifyContent: "center",
     flexShrink: 0,
-    backgroundColor: theme.palette.background.panel,
-    transition: "background-color 0.2s, box-shadow 0.2s",
+    backgroundColor: theme.setCard.background,
+    transition: " box-shadow 0.2s",
   },
   clickable: {
     cursor: "pointer",
