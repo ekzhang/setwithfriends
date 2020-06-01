@@ -19,8 +19,6 @@ import { UserContext } from "../context";
 
 const useStyles = makeStyles((theme) => ({
   chatPanel: {
-    paddingTop: theme.spacing(1),
-    paddingBottom: theme.spacing(1),
     display: "flex",
     flexDirection: "column",
   },

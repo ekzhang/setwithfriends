@@ -50,7 +50,8 @@ const useStyles = makeStyles((theme) => ({
   chatPanel: {
     display: "flex",
     flexDirection: "column",
-    maxHeight: 400,
+    height: 400,
+    padding: 8,
   },
 }));
 
@@ -117,8 +118,10 @@ function RoomPage({ match, location }) {
     <Container>
       <Grid container spacing={2}>
         <Box clone order={{ xs: 2, sm: 1 }}>
-          <Grid item xs={12} sm={4} md={3} className={classes.chatPanel}>
-            <GameChat gameId={gameId} />
+          <Grid item xs={12} sm={4} md={3}>
+            <Paper className={classes.chatPanel}>
+              <GameChat gameId={gameId} />
+            </Paper>
           </Grid>
         </Box>
         <Box clone order={{ xs: 1, sm: 2 }}>

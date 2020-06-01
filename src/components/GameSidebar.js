@@ -1,6 +1,7 @@
 import React from "react";
 
 import AlarmIcon from "@material-ui/icons/Alarm";
+import Divider from "@material-ui/core/Divider";
 import List from "@material-ui/core/List";
 import ListItem from "@material-ui/core/ListItem";
 import ListItemIcon from "@material-ui/core/ListItemIcon";
@@ -19,7 +20,6 @@ import { formatTime } from "../util";
 
 const useStyles = makeStyles((theme) => ({
   timer: {
-    padding: theme.spacing(1),
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
@@ -33,8 +33,6 @@ const useStyles = makeStyles((theme) => ({
     display: "flex",
     flexDirection: "column",
     overflowY: "hidden",
-    paddingTop: theme.spacing(1),
-    paddingBottom: theme.spacing(1),
   },
 }));
 
@@ -48,12 +46,13 @@ function GameSidebar({ game, scores, leaderboard }) {
   return (
     <>
       {/* Timer */}
-      <div className={classes.timer}>
+      <div className={classes.timer} style={{ marginTop: 6 }}>
         <AlarmIcon className={classes.alarm} fontSize="large" />
         <Typography variant="h4" align="center">
           {formatTime(gameTime - game.startedAt)}
         </Typography>
       </div>
+      <Divider style={{ margin: "8px 0" }} />
       {/* Scoreboard */}
       <div className={classes.panel}>
         <Typography variant="overline">Scoreboard</Typography>

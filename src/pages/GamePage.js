@@ -240,7 +240,9 @@ function GamePage({ match }) {
       <Grid container spacing={2}>
         <Box clone order={{ xs: 3, sm: 1 }}>
           <Grid item xs={12} sm={4} md={3} className={classes.sideColumn}>
-            <GameChat gameId={gameId} history={history} />
+            <Paper style={{ display: "flex", height: "100%", padding: 8 }}>
+              <GameChat gameId={gameId} history={history} />
+            </Paper>
           </Grid>
         </Box>
         <Box clone order={{ xs: 1, sm: 2 }} position="relative">
@@ -289,11 +291,13 @@ function GamePage({ match }) {
         </Box>
         <Box clone order={{ xs: 2, sm: 3 }}>
           <Grid item xs={12} md={3} className={classes.sideColumn}>
-            <GameSidebar
-              game={game}
-              scores={scores}
-              leaderboard={leaderboard}
-            />
+            <Paper style={{ padding: 8 }}>
+              <GameSidebar
+                game={game}
+                scores={scores}
+                leaderboard={leaderboard}
+              />
+            </Paper>
           </Grid>
         </Box>
       </Grid>
