@@ -58,7 +58,7 @@ const useStyles = makeStyles((theme) => ({
     "& svg": {
       display: "block",
     },
-    "& tr:hover": {
+    "& tbody > tr:hover": {
       background: theme.palette.action.hover,
       cursor: "pointer",
     },
