@@ -5,27 +5,19 @@ import Container from "@material-ui/core/Container";
 import Typography from "@material-ui/core/Typography";
 import Button from "@material-ui/core/Button";
 import IconButton from "@material-ui/core/IconButton";
-import List from "@material-ui/core/List";
-import ListItem from "@material-ui/core/ListItem";
-import ListItemIcon from "@material-ui/core/ListItemIcon";
-import ListItemText from "@material-ui/core/ListItemText";
 import Tooltip from "@material-ui/core/Tooltip";
 import Paper from "@material-ui/core/Paper";
 import Grid from "@material-ui/core/Grid";
 import Box from "@material-ui/core/Box";
 import LinkIcon from "@material-ui/icons/Link";
 import DoneIcon from "@material-ui/icons/Done";
-import PersonIcon from "@material-ui/icons/Person";
-import SnoozeIcon from "@material-ui/icons/Snooze";
-import StarsIcon from "@material-ui/icons/Stars";
-import { Link as RouterLink, Redirect } from "react-router-dom";
-import { useTransition, animated } from "react-spring";
+import { Redirect } from "react-router-dom";
 
 import useFirebaseRef from "../hooks/useFirebaseRef";
 import LoadingPage from "./LoadingPage";
 import NotFoundPage from "./NotFoundPage";
 import SimpleInput from "../components/SimpleInput";
-import User from "../components/User";
+import RoomUserList from "../components/RoomUserList";
 import GameChat from "../components/GameChat";
 import firebase from "../firebase";
 import { UserContext } from "../context";
@@ -77,13 +69,6 @@ function RoomPage({ match, location }) {
         .set(game.createdAt);
     }
   }, [user.id, game, gameId]);
-
-  const users = game && game.users ? Object.keys(game.users) : [];
-  const transitions = useTransition(users, null, {
-    from: { opacity: 0 },
-    enter: { opacity: 1 },
-    leave: { opacity: 0 },
-  });
 
   if (loadingGame) {
     return <LoadingPage />;
@@ -143,60 +128,7 @@ function RoomPage({ match, location }) {
                 <Grid item xs={12} md={6}>
                   <div className={classes.subpanel}>
                     <Typography variant="overline">Players</Typography>
-                    <List dense disablePadding>
-                      <ListItem
-                        button
-                        component={RouterLink}
-                        to={`/profile/${game.host}`}
-                      >
-                        <ListItemIcon>
-                          <Tooltip title="Game host">
-                            <StarsIcon />
-                          </Tooltip>
-                        </ListItemIcon>
-                        <ListItemText>
-                          <User id={game.host} />
-                          {game.host === user.id && " (You)"}
-                        </ListItemText>
-                      </ListItem>
-                      {transitions.map(
-                        ({ item: playerId, props, key }) =>
-                          playerId !== game.host && (
-                            <User
-                              key={key}
-                              id={playerId}
-                              render={(player, playerEl) => (
-                                <animated.div style={props}>
-                                  <ListItem
-                                    button
-                                    component={RouterLink}
-                                    to={`/profile/${playerId}`}
-                                  >
-                                    <ListItemIcon>
-                                      {player.connections &&
-                                      Object.values(
-                                        player.connections
-                                      ).includes(`/room/${gameId}`) ? (
-                                        <Tooltip title="Active player">
-                                          <PersonIcon />
-                                        </Tooltip>
-                                      ) : (
-                                        <Tooltip title="Disconnected player">
-                                          <SnoozeIcon />
-                                        </Tooltip>
-                                      )}
-                                    </ListItemIcon>
-                                    <ListItemText>
-                                      {playerEl}
-                                      {playerId === user.id && " (You)"}
-                                    </ListItemText>
-                                  </ListItem>
-                                </animated.div>
-                              )}
-                            />
-                          )
-                      )}
-                    </List>
+                    <RoomUserList game={game} gameId={gameId} />
                   </div>
                 </Grid>
                 <Grid item xs={12} md={6}>
