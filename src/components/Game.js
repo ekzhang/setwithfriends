@@ -8,11 +8,12 @@ import { animated, useSprings } from "react-spring";
 import { generateCards, splitDeck } from "../util";
 import ResponsiveSetCard from "../components/ResponsiveSetCard";
 import useDimensions from "../hooks/useDimensions";
+import useKeydown from "../hooks/useKeydown";
 
 const gamePadding = 8;
 const cardArray = generateCards();
 
-function Game({ deck, handleClick, selected }) {
+function Game({ deck, onClick, onClear, selected }) {
   const [gameDimensions, gameEl] = useDimensions();
 
   // Calculate widths and heights in pixels to fit cards in the game container
@@ -70,6 +71,19 @@ function Game({ deck, handleClick, selected }) {
     }))
   );
 
+  // Keyboard shortcuts
+  const shortcuts = "123qweasdzxcrtyfghvbn";
+  useKeydown(({ key }) => {
+    if (key === "Escape") {
+      onClear();
+    } else if (key.length === 1 && shortcuts.includes(key)) {
+      const index = shortcuts.indexOf(key);
+      if (index < board.length) {
+        onClick(board[index]);
+      }
+    }
+  });
+
   return (
     <Paper
       style={{
@@ -108,7 +122,7 @@ function Game({ deck, handleClick, selected }) {
             width={cardWidth}
             background={cards[card].background}
             active={selected.includes(card)}
-            onClick={cards[card].inplay ? () => handleClick(card) : null}
+            onClick={cards[card].inplay ? () => onClick(card) : null}
           />
         </animated.div>
       ))}

@@ -9,7 +9,6 @@ import Button from "@material-ui/core/Button";
 import Box from "@material-ui/core/Box";
 import Snackbar from "@material-ui/core/Snackbar";
 import { Redirect } from "react-router-dom";
-import { GlobalHotKeys } from "react-hotkeys";
 
 import { removeCard, checkSet } from "../util";
 import SnackContent from "../components/SnackContent";
@@ -70,18 +69,6 @@ function GamePage({ match }) {
 
   const [game, loadingGame] = useFirebaseRef(`games/${gameId}`);
   const [gameData, loadingGameData] = useFirebaseRef(`gameData/${gameId}`);
-
-  //Keyboard shortcuts
-  const shortcutKeyMap = { DeselectAll: "Escape" };
-  const shortcutHandlers = { DeselectAll: () => setSelected([]) };
-  const keyMapArray = [...Array(12).keys()].map((i) => [
-    `PressCard${i}`,
-    String.fromCharCode(97 + i),
-  ]);
-  keyMapArray.forEach((s, i) => {
-    shortcutKeyMap[s[0]] = s[1];
-    shortcutHandlers[`PressCard${i}`] = () => handleClick(current[i]);
-  });
 
   // Reset card selection on update to game data
   useEffect(() => {
@@ -151,6 +138,9 @@ function GamePage({ match }) {
   }
 
   function handleClick(card) {
+    if (game.status !== "ingame") {
+      return;
+    }
     if (spectating) {
       setSnack({
         open: true,
@@ -187,6 +177,10 @@ function GamePage({ match }) {
     });
   }
 
+  function handleClear() {
+    setSelected([]);
+  }
+
   function handleClose(event, reason) {
     if (reason === "clickaway") return;
     setSnack({ ...snack, open: false });
@@ -218,10 +212,6 @@ function GamePage({ match }) {
 
   return (
     <Container>
-      <GlobalHotKeys
-        keyMap={game.status !== "done" ? shortcutKeyMap : {}}
-        handlers={shortcutHandlers}
-      />
       <Snackbar
         anchorOrigin={{
           vertical: "bottom",
@@ -285,7 +275,8 @@ function GamePage({ match }) {
             <Game
               deck={current}
               selected={selected}
-              handleClick={handleClick}
+              onClick={handleClick}
+              onClear={handleClear}
             />
           </Grid>
         </Box>
