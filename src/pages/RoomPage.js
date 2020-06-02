@@ -125,7 +125,19 @@ function RoomPage({ match, location }) {
           <Grid item xs={12} sm={8} md={9}>
             <Paper style={{ padding: 16 }}>
               <Typography variant="h4" gutterBottom>
-                Waiting Room
+                Waiting Room{" "}
+                <Tooltip
+                  placement="right"
+                  title={
+                    game.access === "public"
+                      ? "Anyone can join this game."
+                      : "Only players with the link can join this game."
+                  }
+                >
+                  <span style={{ opacity: 0.4 }}>
+                    [{game.access === "public" ? "Public" : "Private"}]
+                  </span>
+                </Tooltip>
               </Typography>
               <Grid container spacing={1}>
                 <Grid item xs={12} md={6}>
