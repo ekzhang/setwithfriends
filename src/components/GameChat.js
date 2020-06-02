@@ -12,7 +12,7 @@ import { makeStyles } from "@material-ui/core/styles";
 import { lightGreen } from "@material-ui/core/colors";
 
 import User from "./User";
-import ChatInput from "./ChatInput";
+import SimpleInput from "./SimpleInput";
 import SetCard from "./SetCard";
 import firebase from "../firebase";
 import autoscroll from "../utils/autoscroll";
@@ -106,7 +106,7 @@ function GameChat({ gameId, history }) {
           )}
       </div>
       <form onSubmit={handleSubmit}>
-        <ChatInput
+        <SimpleInput
           value={input}
           onChange={(e) => setInput(e.target.value)}
           placeholder="Type a message..."

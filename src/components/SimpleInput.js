@@ -1,6 +1,6 @@
 import { styled } from "@material-ui/core/styles";
 
-const ChatInput = styled("input")(({ theme }) => ({
+const SimpleInput = styled("input")(({ theme }) => ({
   width: "100%",
   border: "1px solid",
   borderRadius: 4,
@@ -15,4 +15,4 @@ const ChatInput = styled("input")(({ theme }) => ({
   },
 }));
 
-export default ChatInput;
+export default SimpleInput;

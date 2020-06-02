@@ -1,8 +1,8 @@
 import React from "react";
 
-import HourglassEmptyRoundedIcon from "@material-ui/icons/HourglassEmptyRounded";
-import PlayArrowRoundedIcon from "@material-ui/icons/PlayArrowRounded";
-import DoneRoundedIcon from "@material-ui/icons/DoneRounded";
+import ExitToAppIcon from "@material-ui/icons/ExitToApp";
+import VisibilityIcon from "@material-ui/icons/Visibility";
+import DoneIcon from "@material-ui/icons/Done";
 import TableCell from "@material-ui/core/TableCell";
 import TableRow from "@material-ui/core/TableRow";
 import Tooltip from "@material-ui/core/Tooltip";
@@ -25,15 +25,15 @@ function GameInfoRow({ gameId, onClick }) {
       <TableCell>
         {game.status === "ingame" ? (
           <Tooltip title="Ongoing game" arrow placement="top">
-            <PlayArrowRoundedIcon fontSize="small" />
+            <VisibilityIcon fontSize="small" />
           </Tooltip>
         ) : game.status === "waiting" ? (
-          <Tooltip title="Waiting for players" arrow placement="top">
-            <HourglassEmptyRoundedIcon fontSize="small" />
+          <Tooltip title="Accepting players" arrow placement="top">
+            <ExitToAppIcon fontSize="small" />
           </Tooltip>
         ) : (
           <Tooltip title="Finished game" arrow placement="top">
-            <DoneRoundedIcon fontSize="small" />
+            <DoneIcon fontSize="small" />
           </Tooltip>
         )}
       </TableCell>
