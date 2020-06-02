@@ -1,8 +1,7 @@
 import React, { memo } from "react";
 
-import { makeStyles } from "@material-ui/core/styles";
+import { makeStyles, useTheme } from "@material-ui/core/styles";
 import clsx from "clsx";
-import { useTheme } from "@material-ui/styles";
 
 const useStyles = makeStyles((theme) => ({
   symbol: {

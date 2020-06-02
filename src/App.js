@@ -19,7 +19,7 @@ import HelpPage from "./pages/HelpPage";
 import AboutPage from "./pages/AboutPage";
 import ContactPage from "./pages/ContactPage";
 import ProfilePage from "./pages/ProfilePage";
-import { lightTheme, darkTheme } from "./themes.js";
+import { lightTheme, darkTheme } from "./themes";
 
 function App() {
   const [uid, setUid] = useState(null);

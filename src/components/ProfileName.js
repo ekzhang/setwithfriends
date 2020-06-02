@@ -1,7 +1,7 @@
 import React, { memo } from "react";
 
 import Typography from "@material-ui/core/Typography";
-import { useTheme } from "@material-ui/styles";
+import { useTheme } from "@material-ui/core/styles";
 
 import ElapsedTime from "./ElapsedTime";
 import User from "./User";

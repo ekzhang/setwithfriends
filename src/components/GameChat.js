@@ -9,10 +9,9 @@ import React, {
 
 import Typography from "@material-ui/core/Typography";
 import { makeStyles } from "@material-ui/core/styles";
-import { useTheme } from "@material-ui/styles";
 
 import User from "./User";
-import ChatInput from "./ChatInput";
+import SimpleInput from "./SimpleInput";
 import SetCard from "./SetCard";
 import firebase from "../firebase";
 import autoscroll from "../utils/autoscroll";
@@ -21,8 +20,6 @@ import { UserContext } from "../context";
 
 const useStyles = makeStyles((theme) => ({
   chatPanel: {
-    paddingTop: theme.spacing(1),
-    paddingBottom: theme.spacing(1),
     display: "flex",
     flexDirection: "column",
   },
@@ -42,7 +39,6 @@ const useStyles = makeStyles((theme) => ({
 function GameChat({ gameId, history }) {
   const user = useContext(UserContext);
   const classes = useStyles();
-  const theme = useTheme();
 
   const chatEl = useRef();
   useEffect(() => {
@@ -110,7 +106,7 @@ function GameChat({ gameId, history }) {
           )}
       </div>
       <form onSubmit={handleSubmit}>
-        <ChatInput
+        <SimpleInput
           value={input}
           onChange={(e) => setInput(e.target.value)}
           placeholder="Type a message..."

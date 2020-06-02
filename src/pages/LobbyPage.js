@@ -94,16 +94,18 @@ const useStyles = makeStyles((theme) => ({
     },
   },
   chatColumn: {
-    display: "flex",
-    flexDirection: "column",
     maxHeight: "calc(var(--table-height) + 16px)",
     [theme.breakpoints.up("md")]: {
       marginTop: 36,
     },
   },
+  chatColumnPaper: {
+    padding: 8,
+    display: "flex",
+    flexDirection: "column",
+    height: "100%",
+  },
   chatPanel: {
-    paddingTop: theme.spacing(1),
-    paddingBottom: theme.spacing(1),
     display: "flex",
     flexDirection: "column",
   },
@@ -191,56 +193,58 @@ function LobbyPage() {
       <Grid container spacing={2} className={classes.mainGrid}>
         <Box clone order={{ xs: 3, md: 1 }} className={classes.chatColumn}>
           <Grid item xs={12} sm={12} md={3}>
-            <section
-              className={classes.chatPanel}
-              style={{
-                flexShrink: 0,
-                maxHeight: "40%",
-              }}
-            >
-              <Typography variant="overline">
-                Online Users ({Object.keys(onlineUsers).length})
-              </Typography>
-              <List
-                dense
-                disablePadding
-                style={{ overflowY: "auto", flexGrow: 1 }}
+            <Paper className={classes.chatColumnPaper}>
+              <section
+                className={classes.chatPanel}
+                style={{
+                  flexShrink: 0,
+                  maxHeight: "40%",
+                }}
               >
-                {userTransitions.map(({ item: userId, props, key }) => (
-                  <animated.div key={key} style={props}>
-                    <User
-                      id={userId}
-                      render={(thisUser, userEl) => (
-                        <ListItem
-                          key={userId}
-                          button
-                          component={RouterLink}
-                          to={`/profile/${userId}`}
-                        >
-                          <ListItemIcon>
-                            {isIngame(thisUser) ? (
-                              <Tooltip title="In a game">
-                                <SportsEsportsIcon />
-                              </Tooltip>
-                            ) : (
-                              <Tooltip title="Online user">
-                                <FaceIcon />
-                              </Tooltip>
-                            )}
-                          </ListItemIcon>
-                          <ListItemText>
-                            {userEl}
-                            {userId === user.id && " (You)"}
-                          </ListItemText>
-                        </ListItem>
-                      )}
-                    />
-                  </animated.div>
-                ))}
-              </List>
-            </section>
-            <Divider />
-            <Chat user={user} />
+                <Typography variant="overline">
+                  Online Users ({Object.keys(onlineUsers).length})
+                </Typography>
+                <List
+                  dense
+                  disablePadding
+                  style={{ overflowY: "auto", flexGrow: 1 }}
+                >
+                  {userTransitions.map(({ item: userId, props, key }) => (
+                    <animated.div key={key} style={props}>
+                      <User
+                        id={userId}
+                        render={(thisUser, userEl) => (
+                          <ListItem
+                            key={userId}
+                            button
+                            component={RouterLink}
+                            to={`/profile/${userId}`}
+                          >
+                            <ListItemIcon>
+                              {isIngame(thisUser) ? (
+                                <Tooltip title="In a game">
+                                  <SportsEsportsIcon />
+                                </Tooltip>
+                              ) : (
+                                <Tooltip title="Online user">
+                                  <FaceIcon />
+                                </Tooltip>
+                              )}
+                            </ListItemIcon>
+                            <ListItemText>
+                              {userEl}
+                              {userId === user.id && " (You)"}
+                            </ListItemText>
+                          </ListItem>
+                        )}
+                      />
+                    </animated.div>
+                  ))}
+                </List>
+              </section>
+              <Divider style={{ margin: "8px 0" }} />
+              <Chat user={user} />
+            </Paper>
           </Grid>
         </Box>
         <Box clone order={{ xs: 1, md: 2 }}>
@@ -329,13 +333,13 @@ function LobbyPage() {
       </Grid>
       <Typography variant="body1" align="center" style={{ padding: "16px 0" }}>
         <Link component={RouterLink} to="/help">
-          How to Play
-        </Link>
-        •
+          Help
+        </Link>{" "}
+        •{" "}
         <Link component={RouterLink} to="/about">
           About
-        </Link>
-        •
+        </Link>{" "}
+        •{" "}
         <Link component={RouterLink} to="/contact">
           Contact
         </Link>

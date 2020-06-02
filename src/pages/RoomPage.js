@@ -24,6 +24,7 @@ import { useTransition, animated } from "react-spring";
 import useFirebaseRef from "../hooks/useFirebaseRef";
 import LoadingPage from "./LoadingPage";
 import NotFoundPage from "./NotFoundPage";
+import SimpleInput from "../components/SimpleInput";
 import User from "../components/User";
 import GameChat from "../components/GameChat";
 import firebase from "../firebase";
@@ -38,19 +39,16 @@ const useStyles = makeStyles((theme) => ({
   shareLink: {
     display: "flex",
     alignItems: "center",
-    "& > span": {
+    "& > input": {
       flexGrow: 1,
-      textAlign: "center",
       color: theme.palette.secondary.main,
-      textOverflow: "ellipsis",
-      whiteSpace: "nowrap",
-      overflow: "hidden",
     },
   },
   chatPanel: {
     display: "flex",
     flexDirection: "column",
-    maxHeight: 400,
+    height: 400,
+    padding: 8,
   },
 }));
 
@@ -117,8 +115,10 @@ function RoomPage({ match, location }) {
     <Container>
       <Grid container spacing={2}>
         <Box clone order={{ xs: 2, sm: 1 }}>
-          <Grid item xs={12} sm={4} md={3} className={classes.chatPanel}>
-            <GameChat gameId={gameId} />
+          <Grid item xs={12} sm={4} md={3}>
+            <Paper className={classes.chatPanel}>
+              <GameChat gameId={gameId} />
+            </Paper>
           </Grid>
         </Box>
         <Box clone order={{ xs: 1, sm: 2 }}>
@@ -193,10 +193,19 @@ function RoomPage({ match, location }) {
                     <Typography variant="body1">
                       To invite someone to play, share this URL:
                       <span className={classes.shareLink}>
-                        <span>{link}</span>
-                        <IconButton onClick={handleCopy}>
-                          {copiedLink ? <DoneIcon /> : <LinkIcon />}
-                        </IconButton>
+                        <SimpleInput
+                          readOnly
+                          value={link}
+                          onFocus={(event) => event.target.select()}
+                        />
+                        <Tooltip
+                          placement="top"
+                          title={copiedLink ? "Link copied" : "Copy link"}
+                        >
+                          <IconButton onClick={handleCopy}>
+                            {copiedLink ? <DoneIcon /> : <LinkIcon />}
+                          </IconButton>
+                        </Tooltip>
                       </span>
                     </Typography>
                   </div>
@@ -204,15 +213,20 @@ function RoomPage({ match, location }) {
               </Grid>
               {user.id === game.host ? (
                 <Box marginTop={2}>
-                  <Button
-                    size="large"
-                    variant="contained"
-                    color="primary"
-                    fullWidth
-                    onClick={startGame}
+                  <Tooltip
+                    arrow
+                    title="Make sure everyone is in the waiting room! Additional players won't be able to join after the game has started."
                   >
-                    Start game
-                  </Button>
+                    <Button
+                      size="large"
+                      variant="contained"
+                      color="primary"
+                      fullWidth
+                      onClick={startGame}
+                    >
+                      Start game
+                    </Button>
+                  </Tooltip>
                 </Box>
               ) : (
                 <Box marginTop={2}>
