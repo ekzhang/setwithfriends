@@ -19,7 +19,7 @@ export const darkTheme = createMuiTheme({
       hover: "#363636",
     },
     success: {
-      light: "#469549",
+      light: "#81c784",
       main: "#a5d6a7",
       dark: "#82c483",
     },
@@ -47,6 +47,7 @@ export const darkTheme = createMuiTheme({
   profileTable: {
     row: "#282828",
   },
+  setFoundEntry: "rgba(130, 170, 100, 0.15)",
 });
 
 export const lightTheme = createMuiTheme({
@@ -58,7 +59,7 @@ export const lightTheme = createMuiTheme({
       default: "#fafafa",
     },
     success: {
-      light: "#dcedc8",
+      light: "#81c784",
       main: "#4caf50",
       dark: "#388e3c",
     },
@@ -81,4 +82,5 @@ export const lightTheme = createMuiTheme({
   profileTable: {
     row: "#fff",
   },
+  setFoundEntry: "rgba(130, 170, 100, 0.15)",
 });

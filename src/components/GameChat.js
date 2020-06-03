@@ -31,8 +31,7 @@ const useStyles = makeStyles((theme) => ({
   logEntry: {
     marginBottom: "0.35em",
     textAlign: "center",
-    background: theme.palette.success.light,
-    color: "black",
+    background: theme.setFoundEntry,
   },
 }));
 
