@@ -18,7 +18,7 @@ function User(props) {
     <Component
       style={{
         color: colors[user.color]
-          ? colors[user.color][theme.palette.type === "dark" ? 200 : 800]
+          ? colors[user.color][theme.palette.type === "dark" ? 100 : 900]
           : user.color,
         fontWeight: 500,
         ...style,
