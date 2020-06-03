@@ -63,18 +63,20 @@ function GameSidebar({ game, scores, leaderboard }) {
               id={uid}
               render={(user, userEl) => (
                 <ListItem button component={RouterLink} to={`/profile/${uid}`}>
-                  <ListItemIcon>
-                    {user.connections &&
-                    Object.values(user.connections).includes(pathname) ? (
-                      <Tooltip title="Active player">
-                        <SportsEsportsIcon />
-                      </Tooltip>
-                    ) : (
-                      <Tooltip title="Disconnected player">
-                        <SnoozeIcon />
-                      </Tooltip>
-                    )}
-                  </ListItemIcon>
+                  {game.status === "ingame" && (
+                    <ListItemIcon>
+                      {user.connections &&
+                      Object.values(user.connections).includes(pathname) ? (
+                        <Tooltip title="Active player">
+                          <SportsEsportsIcon />
+                        </Tooltip>
+                      ) : (
+                        <Tooltip title="Disconnected player">
+                          <SnoozeIcon />
+                        </Tooltip>
+                      )}
+                    </ListItemIcon>
+                  )}
                   <ListItemText>
                     {userEl} — {scores[uid] || 0}{" "}
                     {scores[uid] === 1 ? "set" : "sets"}

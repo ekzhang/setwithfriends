@@ -72,28 +72,12 @@ function Navbar() {
           onClose={handleCloseMenu}
         >
           <MenuItem
-            component={RouterLink}
-            to={`/profile/${user.id}`}
-            onClick={handleCloseMenu}
-          >
-            My profile
-          </MenuItem>
-          <MenuItem
             onClick={() => {
               setChangeName(true);
               handleCloseMenu();
             }}
           >
             Change name
-          </MenuItem>
-          <MenuItem
-            component={Link}
-            target="_blank"
-            rel="noopener"
-            href="https://github.com/ekzhang/setwithfriends"
-            onClick={handleCloseMenu}
-          >
-            View on GitHub
           </MenuItem>
         </Menu>
         <PromptDialog
