@@ -102,7 +102,7 @@ function Navbar() {
           title="Change Name"
           message="Enter your preferred display name below. This will be updated for all current, past, and future games."
           label="Name"
-          maxLength={40}
+          maxLength={25}
         />
       </Toolbar>
     </AppBar>

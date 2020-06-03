@@ -59,7 +59,7 @@
           ".validate": "newData.isString()"
         },
         "name": {
-          ".validate": "newData.isString() && newData.val().length > 0 && newData.val().length <= 40"
+          ".validate": "newData.isString() && newData.val().length > 0 && newData.val().length <= 25"
         },
         "lastOnline": {
           ".validate": "newData.isNumber() && newData.val() == now"
