@@ -26,6 +26,7 @@ const useStyles = makeStyles((theme) => ({
     overflowY: "auto",
     flexGrow: 1,
     overflowWrap: "anywhere",
+    padding: "0 4px",
   },
 }));
 
