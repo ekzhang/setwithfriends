@@ -40,7 +40,7 @@ function HelpPage() {
           Set is played with a special deck of 81 = 3×3×3×3 cards. You can see
           some examples of Set cards above. Each card has four features that
           distinguish it from the others: color, shape, shading, and number. For
-          every feature, there are three variants (shown by the examples above):
+          each feature, there are three variants, as shown in the example.
         </Typography>
         <Typography component="div" variant="body1" gutterBottom>
           <ul>
@@ -53,11 +53,11 @@ function HelpPage() {
         <Typography variant="body1" gutterBottom>
           A <em>set</em> is a combination of three cards such that for each of
           the four features, the variants of that feature expressed by the three
-          cards are <b>either all the same or all different</b>. For example,
-          the three cards shown above form a set, because each feature is
-          expressed in all three variants between the cards. You can also have
-          sets with some features different and others same. The three cards
-          below are another example of a set.
+          cards are <strong>either all the same or all different</strong>. For
+          example, the three cards shown above form a set, because each feature
+          is expressed in all three variants between the cards. You can also
+          have sets where some features are different and others are the same.
+          The three cards below also form a set.
         </Typography>
         <Typography component="div" align="center" gutterBottom>
           <SetCard value="2010" />
@@ -65,11 +65,11 @@ function HelpPage() {
           <SetCard value="2111" />
         </Typography>
         <Typography variant="body1" gutterBottom>
-          In this set, the three cards are identical in shading (outlined) and
-          color (red), while being all different in number and shape. In
-          general, any subset of features could be all the same among the three
-          cards, with the rest of the features being all different. You can
-          verify a couple more examples of sets below.
+          In the example above, the three cards are identical in shading
+          (outlined) and color (red), while being all different in number and
+          shape. In general, some subset of features could be all the same among
+          the three cards, with the rest of the features being all different.
+          You can verify a couple more examples of sets below.
         </Typography>
         <Typography component="div" align="center" gutterBottom>
           <SetCard value="1221" />
@@ -83,9 +83,9 @@ function HelpPage() {
         </Typography>
         <Typography variant="body1" gutterBottom>
           However, a triplet of cards needs to be correct in all four features
-          to be a set. The three cards below do <b>not</b> form a set, due to
-          their color. Two of the cards are red while the third is green, so the
-          three colors are neither all the same, nor all different.
+          to be a set. The three cards below do <strong>not</strong> form a set,
+          due to their color. Two of the cards are red while the third is green,
+          so the three colors are neither all the same, nor all different.
         </Typography>
         <Typography component="div" align="center" gutterBottom>
           <SetCard value="2010" />
@@ -101,19 +101,35 @@ function HelpPage() {
           set, they take those three cards from the playing area, and three new
           cards are dealt to replace the ones that were taken. The game ends
           when the deck is empty and no more sets are available, and your score
-          is the number of sets you've taken.
+          is equal to the number of sets you've found.
         </Typography>
         <Typography variant="body1" gutterBottom>
           In some rare occasions, there will not be any sets among the 12 cards
           in the playing area. In these cases, the computer will automatically
           will deal out 3 extra cards (for a total of 15), and play will resume
-          normally.
+          normally. In even rarer cases when there are no sets among these 15
+          cards, additional cards will be dealt out in multiples of 3.
         </Typography>
         <Typography variant="body1" gutterBottom>
-          <b>
-            That's all there is to the rules of Set, so head back and start
+          To indicate a set in the game interface, you can select three cards
+          either by clicking, tapping, or using the following keyboard
+          shortcuts, if you prefer.
+        </Typography>
+        <Typography component="div" variant="body1" gutterBottom>
+          <ul>
+            <li>
+              Select the first twelve cards with keys <code>123qweasdzxc</code>.
+            </li>
+            <li>
+              Select any additional cards with keys <code>rtyfghvbn</code>.
+            </li>
+          </ul>
+        </Typography>
+        <Typography variant="body1" gutterBottom>
+          <strong>
+            That's all there are to the rules of Set, so head back and start
             playing!
-          </b>
+          </strong>
         </Typography>
       </Paper>
       <Typography variant="body1" align="center" gutterBottom>
