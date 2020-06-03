@@ -23,22 +23,16 @@ function ProfileName({ userId }) {
             <Typography variant="body2" gutterBottom>
               Last seen:{" "}
               <span
-                variant="body2"
                 style={{
-                  color: `${
-                    isOnline
-                      ? theme.palette.success.main
-                      : theme.palette.primary.main
-                  }`,
+                  color: isOnline ? theme.palette.success.main : "inherit",
+                  fontWeight: 700,
                 }}
               >
-                <strong>
-                  {isOnline ? (
-                    "online now"
-                  ) : (
-                    <ElapsedTime value={user.lastOnline} />
-                  )}
-                </strong>
+                {isOnline ? (
+                  "online now"
+                ) : (
+                  <ElapsedTime value={user.lastOnline} />
+                )}
               </span>
             </Typography>
           </section>

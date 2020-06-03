@@ -2,13 +2,12 @@ import React from "react";
 
 import useFirebaseRef from "../hooks/useFirebaseRef";
 import { useTheme } from "@material-ui/core/styles";
-
-import { colors } from "../util";
+import * as colors from "@material-ui/core/colors";
 
 function User(props) {
   const theme = useTheme();
 
-  const { id, style, component, render, shade, ...other } = props;
+  const { id, style, component, render, ...other } = props;
   const [user, loading] = useFirebaseRef(`users/${id}`);
   if (loading) {
     return null;
