@@ -84,10 +84,10 @@ function GameSidebar({ game, scores, leaderboard }) {
                     style={{
                       flex: "0 0 50px",
                       whiteSpace: "nowrap",
+                      textAlign: "right",
                     }}
                   >
                     <strong>{scores[uid] || 0}</strong>
-                    {` ${scores[uid] === 1 ? "set" : "sets"}`}
                   </ListItemText>
                 </ListItem>
               )}
