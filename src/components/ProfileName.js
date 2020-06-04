@@ -17,7 +17,11 @@ function ProfileName({ userId }) {
           user.connections && Object.keys(user.connections).length > 0;
         return (
           <section>
-            <Typography variant="h4" gutterBottom>
+            <Typography
+              variant="h4"
+              gutterBottom
+              style={{ overflowWrap: "anywhere" }}
+            >
               {userEl}
             </Typography>
             <Typography variant="body2" gutterBottom>
