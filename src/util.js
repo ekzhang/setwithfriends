@@ -1,5 +1,6 @@
 import animals from "./utils/animals.json";
 import moment from "moment";
+import * as colors from "@material-ui/core/colors";
 
 export function generateCards() {
   const deck = [];
@@ -16,8 +17,8 @@ export function generateCards() {
 }
 
 export function generateColor() {
-  const hue = Math.floor(Math.random() * 360);
-  return `hsl(${hue}, 90%, 35%)`;
+  const colorsArray = Object.keys(colors);
+  return colorsArray[Math.floor(Math.random() * colorsArray.length)];
 }
 
 export function checkSet(a, b, c) {

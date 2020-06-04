@@ -9,7 +9,6 @@ import ListItemText from "@material-ui/core/ListItemText";
 import Tooltip from "@material-ui/core/Tooltip";
 import Typography from "@material-ui/core/Typography";
 import { makeStyles } from "@material-ui/core/styles";
-import { red } from "@material-ui/core/colors";
 import SportsEsportsIcon from "@material-ui/icons/SportsEsports";
 import SnoozeIcon from "@material-ui/icons/Snooze";
 import { useLocation, Link as RouterLink } from "react-router-dom";
@@ -25,7 +24,7 @@ const useStyles = makeStyles((theme) => ({
     justifyContent: "center",
   },
   alarm: {
-    color: red[700],
+    color: theme.alarm,
     marginRight: 10,
     marginBottom: 3,
   },

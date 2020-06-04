@@ -9,7 +9,6 @@ import React, {
 
 import Typography from "@material-ui/core/Typography";
 import { makeStyles } from "@material-ui/core/styles";
-import { lightGreen } from "@material-ui/core/colors";
 
 import User from "./User";
 import SimpleInput from "./SimpleInput";
@@ -33,7 +32,7 @@ const useStyles = makeStyles((theme) => ({
   logEntry: {
     marginBottom: "0.35em",
     textAlign: "center",
-    background: lightGreen[100],
+    background: theme.setFoundEntry,
   },
 }));
 

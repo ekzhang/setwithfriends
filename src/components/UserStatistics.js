@@ -2,10 +2,7 @@ import React from "react";
 
 import Grid from "@material-ui/core/Grid";
 import Typography from "@material-ui/core/Typography";
-import { makeStyles } from "@material-ui/core/styles";
-import green from "@material-ui/core/colors/green";
-import red from "@material-ui/core/colors/red";
-import grey from "@material-ui/core/colors/grey";
+import { makeStyles, useTheme } from "@material-ui/core/styles";
 import { Pie } from "react-chartjs-2";
 
 import Loading from "./Loading";
@@ -13,9 +10,9 @@ import { formatTime } from "../util";
 
 const useStyles = makeStyles((theme) => ({
   statisticsPanel: {
-    background: theme.palette.background.default,
+    background: theme.palette.background.panel,
     padding: theme.spacing(2),
-    borderRadius: 4,
+    borderRadius: 6,
   },
   stats: {
     display: "flex",
@@ -29,6 +26,7 @@ const useStyles = makeStyles((theme) => ({
 
 function UserStatistics({ gamesData, userId }) {
   const classes = useStyles();
+  const theme = useTheme();
 
   if (!gamesData) {
     return <Loading />;
@@ -52,7 +50,10 @@ function UserStatistics({ gamesData, userId }) {
     datasets: [
       {
         data: [stats[1], stats[0] - stats[1]],
-        backgroundColor: [green[300], red[300]],
+        backgroundColor: [
+          theme.palette.success.light,
+          theme.palette.error.light,
+        ],
       },
     ],
     labels: ["Games won", "Games lost"],
@@ -61,7 +62,7 @@ function UserStatistics({ gamesData, userId }) {
     datasets: [
       {
         data: [100],
-        backgroundColor: [grey[300]],
+        backgroundColor: [theme.pie.noGames],
       },
     ],
     labels: ["No games played"],
@@ -71,6 +72,13 @@ function UserStatistics({ gamesData, userId }) {
     responsive: true,
     legend: {
       position: "bottom",
+      onClick: (e) => e.stopPropagation(),
+    },
+    tooltips: { enabled: stats[0] },
+    elements: {
+      arc: {
+        borderWidth: 0,
+      },
     },
   };
 

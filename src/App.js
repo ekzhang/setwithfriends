@@ -4,6 +4,7 @@ import "./styles.css";
 
 import { BrowserRouter, Switch, Route } from "react-router-dom";
 import CssBaseline from "@material-ui/core/CssBaseline";
+import { ThemeProvider } from "@material-ui/core/styles";
 
 import { generateColor, generateName } from "./util";
 import { UserContext } from "./context";
@@ -18,10 +19,12 @@ import HelpPage from "./pages/HelpPage";
 import AboutPage from "./pages/AboutPage";
 import ContactPage from "./pages/ContactPage";
 import ProfilePage from "./pages/ProfilePage";
+import { lightTheme, darkTheme } from "./themes";
 
 function App() {
   const [uid, setUid] = useState(null);
   const [user, setUser] = useState(null);
+  const [themeType, setThemeType] = useState("light");
 
   useEffect(() => {
     if (!uid) {
@@ -66,28 +69,37 @@ function App() {
     };
   }, [uid]);
 
+  const handleChangeTheme = () => {
+    setThemeType(themeType === "light" ? "dark" : "light");
+  };
+
   return (
-    <BrowserRouter>
-      <CssBaseline />
-      {!user ? (
-        <LoadingPage />
-      ) : (
-        <UserContext.Provider value={user}>
-          <ConnectionsTracker />
-          <Navbar />
-          <Switch>
-            <Route exact path="/help" component={HelpPage} />
-            <Route exact path="/about" component={AboutPage} />
-            <Route exact path="/contact" component={ContactPage} />
-            <Route exact path="/" component={LobbyPage} />
-            <Route exact path="/room/:id" component={RoomPage} />
-            <Route exact path="/game/:id" component={GamePage} />
-            <Route exact path="/profile/:id" component={ProfilePage} />
-            <Route component={NotFoundPage} />
-          </Switch>
-        </UserContext.Provider>
-      )}
-    </BrowserRouter>
+    <ThemeProvider theme={themeType === "light" ? lightTheme : darkTheme}>
+      <BrowserRouter>
+        <CssBaseline />
+        {!user ? (
+          <LoadingPage />
+        ) : (
+          <UserContext.Provider value={user}>
+            <ConnectionsTracker />
+            <Navbar
+              themeType={themeType}
+              handleChangeTheme={handleChangeTheme}
+            />
+            <Switch>
+              <Route exact path="/help" component={HelpPage} />
+              <Route exact path="/about" component={AboutPage} />
+              <Route exact path="/contact" component={ContactPage} />
+              <Route exact path="/" component={LobbyPage} />
+              <Route exact path="/room/:id" component={RoomPage} />
+              <Route exact path="/game/:id" component={GamePage} />
+              <Route exact path="/profile/:id" component={ProfilePage} />
+              <Route component={NotFoundPage} />
+            </Switch>
+          </UserContext.Provider>
+        )}
+      </BrowserRouter>
+    </ThemeProvider>
   );
 }
 

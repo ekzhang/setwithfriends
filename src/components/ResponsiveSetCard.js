@@ -1,22 +1,23 @@
 import React, { memo } from "react";
 
-import { makeStyles } from "@material-ui/core/styles";
+import { makeStyles, useTheme } from "@material-ui/core/styles";
 import clsx from "clsx";
 
-const useStyles = makeStyles({
+const useStyles = makeStyles((theme) => ({
   symbol: {
     margin: 3,
   },
   card: {
     boxSizing: "border-box",
     background: "#fff",
-    border: "1px solid black",
+    border: `1px solid ${theme.palette.text.primary}`,
     display: "inline-flex",
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
     flexShrink: 0,
-    transition: "background-color 0.2s, box-shadow 0.2s",
+    backgroundColor: theme.setCard.background,
+    transition: " box-shadow 0.2s",
   },
   clickable: {
     cursor: "pointer",
@@ -27,14 +28,16 @@ const useStyles = makeStyles({
   active: {
     boxShadow: "0px 0px 5px 3px #4b9e9e !important",
   },
-});
+}));
 
-const COLORS = ["purple", "green", "red"];
 const SHAPES = ["squiggle", "oval", "diamond"];
 const SHADES = ["filled", "outline", "striped"];
 
 function ResponsiveSymbol(props) {
   const classes = useStyles();
+  const theme = useTheme();
+
+  const COLORS = [theme.setCard.purple, theme.setCard.green, theme.setCard.red];
 
   const color = COLORS[props.color];
   const shape = SHAPES[props.shape];

@@ -24,7 +24,7 @@ import { UserContext } from "../context";
 
 const useStyles = makeStyles((theme) => ({
   subpanel: {
-    background: theme.palette.background.default,
+    background: theme.palette.background.panel,
     padding: theme.spacing(1),
     borderRadius: 4,
   },

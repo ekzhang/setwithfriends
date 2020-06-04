@@ -1,13 +1,14 @@
 import React, { memo } from "react";
 
 import Typography from "@material-ui/core/Typography";
-import indigo from "@material-ui/core/colors/indigo";
-import green from "@material-ui/core/colors/green";
+import { useTheme } from "@material-ui/core/styles";
 
 import ElapsedTime from "./ElapsedTime";
 import User from "./User";
 
 function ProfileName({ userId }) {
+  const theme = useTheme();
+
   return (
     <User
       id={userId}
@@ -22,8 +23,10 @@ function ProfileName({ userId }) {
             <Typography variant="body2" gutterBottom>
               Last seen:{" "}
               <span
-                variant="body2"
-                style={{ color: `${isOnline ? green[800] : indigo[600]}` }}
+                style={{
+                  color: isOnline ? theme.palette.success.main : "inherit",
+                  fontWeight: 700,
+                }}
               >
                 {isOnline ? (
                   "online now"
