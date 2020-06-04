@@ -60,6 +60,9 @@ function GameSidebar({ game, scores, leaderboard }) {
             <User
               key={uid}
               id={uid}
+              component={Typography}
+              noWrap={true}
+              variant="subtitle2"
               render={(user, userEl) => (
                 <ListItem button component={RouterLink} to={`/profile/${uid}`}>
                   {game.status === "ingame" && (
@@ -76,9 +79,15 @@ function GameSidebar({ game, scores, leaderboard }) {
                       )}
                     </ListItemIcon>
                   )}
-                  <ListItemText>
-                    {userEl} — {scores[uid] || 0}{" "}
-                    {scores[uid] === 1 ? "set" : "sets"}
+                  <ListItemText style={{ flexGrow: 1 }}>{userEl}</ListItemText>
+                  <ListItemText
+                    style={{
+                      flex: "0 0 50px",
+                      whiteSpace: "nowrap",
+                    }}
+                  >
+                    <strong>{scores[uid] || 0}</strong>
+                    {` ${scores[uid] === 1 ? "set" : "sets"}`}
                   </ListItemText>
                 </ListItem>
               )}
