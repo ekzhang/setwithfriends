@@ -40,21 +40,24 @@ function Navbar({ themeType, handleChangeTheme }) {
   return (
     <AppBar position="relative" color="transparent" elevation={0}>
       <Toolbar variant="dense">
-        <Typography variant="h6" style={{ flexGrow: 1 }}>
+        <Typography variant="h6" style={{ flexGrow: 1, whiteSpace: "nowrap" }}>
           <Link underline="none" color="inherit" component={RouterLink} to="/">
             Set with Friends
           </Link>
         </Typography>
-        <Typography variant="subtitle1" style={{ marginRight: 8 }}>
-          <Link
-            underline="none"
-            color="inherit"
-            component={RouterLink}
-            to={`/profile/${user.id}`}
-          >
-            <User id={user.id} />
-          </Link>
-        </Typography>
+        <Link
+          underline="none"
+          component={RouterLink}
+          style={{ maxWidth: "45%", marginLeft: "2em", marginRight: 8 }}
+          to={`/profile/${user.id}`}
+        >
+          <User
+            component={Typography}
+            variant="subtitle1"
+            noWrap
+            id={user.id}
+          />
+        </Link>
         <IconButton color="inherit" onClick={handleChangeTheme}>
           {themeType === "light" ? (
             <Brightness3Icon></Brightness3Icon>
