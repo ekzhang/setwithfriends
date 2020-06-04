@@ -10,6 +10,7 @@ import { generateColor, generateName } from "./util";
 import { UserContext } from "./context";
 import useStorage from "./hooks/useStorage";
 import ConnectionsTracker from "./components/ConnectionsTracker";
+import WelcomeDialog from "./components/WelcomeDialog";
 import Navbar from "./components/Navbar";
 import RoomPage from "./pages/RoomPage";
 import GamePage from "./pages/GamePage";
@@ -83,6 +84,7 @@ function App() {
         ) : (
           <UserContext.Provider value={user}>
             <ConnectionsTracker />
+            <WelcomeDialog />
             <Navbar
               themeType={themeType}
               handleChangeTheme={handleChangeTheme}
