@@ -8,6 +8,7 @@ import PersonIcon from "@material-ui/icons/Person";
 import SnoozeIcon from "@material-ui/icons/Snooze";
 import StarsIcon from "@material-ui/icons/Stars";
 import Tooltip from "@material-ui/core/Tooltip";
+import Typography from "@material-ui/core/Typography";
 import { useTransition, animated } from "react-spring";
 import { Link as RouterLink } from "react-router-dom";
 
@@ -33,6 +34,9 @@ function RoomUserList({ game, gameId }) {
         <User
           key={key}
           id={playerId}
+          component={Typography}
+          variant="subtitle2"
+          noWrap={true}
           render={(player, playerEl) => (
             <animated.div style={props}>
               <ListItem
@@ -60,10 +64,25 @@ function RoomUserList({ game, gameId }) {
                     </Tooltip>
                   )}
                 </ListItemIcon>
-                <ListItemText>
+
+                <ListItemText
+                  style={{
+                    flexGrow: 1,
+                  }}
+                >
                   {playerEl}
-                  {playerId === user.id && " (You)"}
                 </ListItemText>
+                {playerId === user.id && (
+                  <ListItemText
+                    style={{
+                      flex: "0 0 30px",
+                      whiteSpace: "nowrap",
+                      textAlign: "center",
+                    }}
+                  >
+                    (You)
+                  </ListItemText>
+                )}
               </ListItem>
             </animated.div>
           )}
