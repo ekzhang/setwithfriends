@@ -106,7 +106,7 @@ function HelpPage() {
         <Typography variant="body1" gutterBottom>
           In some rare occasions, there will not be any sets among the 12 cards
           in the playing area. In these cases, the computer will automatically
-          will deal out 3 extra cards (for a total of 15), and play will resume
+          deal out 3 extra cards (for a total of 15), and play will resume
           normally. In even rarer cases when there are no sets among these 15
           cards, additional cards will be dealt out in multiples of 3.
         </Typography>
