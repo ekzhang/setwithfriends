@@ -201,21 +201,30 @@ function LobbyPage() {
                   maxHeight: "40%",
                 }}
               >
-                <Typography variant="overline">
-                  Online Users ({Object.keys(onlineUsers).length})
+                <Typography
+                  variant="h4"
+                  gutterBottom
+                  style={{ marginTop: "-55px", opacity: 0 }}
+                >
+                  Blank
                 </Typography>
+                <Typography variant="overline">Online Users</Typography>
+
                 <List
                   dense
                   disablePadding
                   style={{ overflowY: "auto", flexGrow: 1 }}
                 >
                   {userTransitions.map(({ item: userId, props, key }) => (
-                    <animated.div key={key} style={props}>
-                      <User
-                        id={userId}
-                        render={(thisUser, userEl) => (
+                    <User
+                      key={key}
+                      id={userId}
+                      component={Typography}
+                      variant="subtitle2"
+                      noWrap={true}
+                      render={(thisUser, userEl) => (
+                        <animated.div style={props}>
                           <ListItem
-                            key={userId}
                             button
                             component={RouterLink}
                             to={`/profile/${userId}`}
@@ -231,14 +240,28 @@ function LobbyPage() {
                                 </Tooltip>
                               )}
                             </ListItemIcon>
-                            <ListItemText>
+                            <ListItemText
+                              style={{
+                                flexGrow: 1,
+                              }}
+                            >
                               {userEl}
-                              {userId === user.id && " (You)"}
                             </ListItemText>
+                            {userId === user.id && (
+                              <ListItemText
+                                style={{
+                                  flex: "0 0 30px",
+                                  whiteSpace: "nowrap",
+                                  textAlign: "center",
+                                }}
+                              >
+                                (You)
+                              </ListItemText>
+                            )}
                           </ListItem>
-                        )}
-                      />
-                    </animated.div>
+                        </animated.div>
+                      )}
+                    />
                   ))}
                 </List>
               </section>
