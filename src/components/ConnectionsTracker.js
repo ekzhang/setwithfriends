@@ -37,10 +37,17 @@ function ConnectionsTracker() {
   }, [user.id]);
 
   useEffect(() => {
-    if (connectionRef) {
-      connectionRef.set(location.pathname);
+    const con = connectionRef;
+    if (con) {
       firebase.analytics().setCurrentScreen(location.pathname);
       firebase.analytics().logEvent("screen_view");
+      const update = (snap) => {
+        if (snap.val() !== location.pathname) {
+          con.set(location.pathname);
+        }
+      };
+      con.on("value", update);
+      return () => con.off("value", update);
     }
   }, [location, connectionRef]);
 

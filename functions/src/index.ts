@@ -108,3 +108,21 @@ function generateDeck() {
   }
   return deck;
 }
+
+/** Periodically remove stale user connections */
+export const clearConnections = functions.pubsub
+  .schedule("every 5 minutes")
+  .onRun(async (context) => {
+    const onlineUsers = await admin
+      .database()
+      .ref("users")
+      .orderByChild("connections")
+      .startAt(false)
+      .once("value");
+    const actions: Array<Promise<void>> = [];
+    onlineUsers.forEach((snap) => {
+      console.log(`Clearing connections for ${snap.ref.toString()}`);
+      actions.push(snap.ref.child("connections").remove());
+    });
+    await Promise.all(actions);
+  });
