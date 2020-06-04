@@ -8,6 +8,7 @@ import { ThemeProvider } from "@material-ui/core/styles";
 
 import { generateColor, generateName } from "./util";
 import { UserContext } from "./context";
+import useStorage from "./hooks/useStorage";
 import ConnectionsTracker from "./components/ConnectionsTracker";
 import Navbar from "./components/Navbar";
 import RoomPage from "./pages/RoomPage";
@@ -24,7 +25,7 @@ import { lightTheme, darkTheme } from "./themes";
 function App() {
   const [uid, setUid] = useState(null);
   const [user, setUser] = useState(null);
-  const [themeType, setThemeType] = useState("light");
+  const [themeType, setThemeType] = useStorage("theme", "light");
 
   useEffect(() => {
     if (!uid) {

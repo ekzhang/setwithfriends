@@ -26,7 +26,6 @@ function useFirebaseRefs(paths) {
   if (Object.keys(values).length < paths.length) {
     return [null, true];
   }
-  console.log(values);
   return [paths.map((path) => values[path]), false];
 }
 
