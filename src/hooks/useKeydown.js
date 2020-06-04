@@ -2,9 +2,11 @@ import { useEffect } from "react";
 
 function useKeydown(handler) {
   useEffect(() => {
-    window.addEventListener("keydown", handler);
+    const patchedHandler = (event) =>
+      document.activeElement.tagName !== "INPUT" && handler(event);
+    window.addEventListener("keydown", patchedHandler);
     return () => {
-      window.removeEventListener("keydown", handler);
+      window.removeEventListener("keydown", patchedHandler);
     };
   }, [handler]);
 }

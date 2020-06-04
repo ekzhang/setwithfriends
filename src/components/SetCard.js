@@ -16,7 +16,7 @@ const useStyles = makeStyles((theme) => ({
     flexShrink: 0,
     margin: 6,
     backgroundColor: theme.setCard.background,
-    transition: " box-shadow 0.2s",
+    transition: "box-shadow 0.15s",
     "&:hover": {
       boxShadow: "0px 0px 5px 3px #bbb",
     },
