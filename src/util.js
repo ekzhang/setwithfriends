@@ -52,13 +52,7 @@ export function removeCard(deck, c) {
   return [...deck.slice(0, i), ...deck.slice(i + 1)];
 }
 
-export function trim(str, maxlen) {
-  if (str.length <= maxlen) return str;
-  return str.substring(0, maxlen) + "…";
-}
-
 export function generateName() {
-  // Source: https://a-z-animals.com/animals/
   return "Anonymous " + animals[Math.floor(Math.random() * animals.length)];
 }
 
