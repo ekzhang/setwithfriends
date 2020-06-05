@@ -1,0 +1,10 @@
+[[redirects]]
+  from = "https://setwithfriends.netlify.app"
+  to = "https://setwithfriends.com"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
