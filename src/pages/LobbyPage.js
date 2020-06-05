@@ -201,29 +201,22 @@ function LobbyPage() {
                   maxHeight: "40%",
                 }}
               >
-                <Typography
-                  variant="h4"
-                  gutterBottom
-                  style={{ marginTop: "-55px", opacity: 0 }}
-                >
-                  Blank
+                <Typography variant="overline">
+                  Online Users ({Object.keys(onlineUsers).length})
                 </Typography>
-                <Typography variant="overline">Online Users</Typography>
-
                 <List
                   dense
                   disablePadding
                   style={{ overflowY: "auto", flexGrow: 1 }}
                 >
                   {userTransitions.map(({ item: userId, props, key }) => (
-                    <User
-                      key={key}
-                      id={userId}
-                      component={Typography}
-                      variant="subtitle2"
-                      noWrap={true}
-                      render={(thisUser, userEl) => (
-                        <animated.div style={props}>
+                    <animated.div key={key} style={props}>
+                      <User
+                        id={userId}
+                        component={Typography}
+                        variant="body2"
+                        noWrap
+                        render={(thisUser, userEl) => (
                           <ListItem
                             button
                             component={RouterLink}
@@ -240,28 +233,21 @@ function LobbyPage() {
                                 </Tooltip>
                               )}
                             </ListItemIcon>
-                            <ListItemText
-                              style={{
-                                flexGrow: 1,
-                              }}
-                            >
+
+                            <ListItemText disableTypography>
                               {userEl}
                             </ListItemText>
                             {userId === user.id && (
                               <ListItemText
-                                style={{
-                                  flex: "0 0 30px",
-                                  whiteSpace: "nowrap",
-                                  textAlign: "center",
-                                }}
+                                style={{ flex: "0 0 auto", marginLeft: 8 }}
                               >
                                 (You)
                               </ListItemText>
                             )}
                           </ListItem>
-                        </animated.div>
-                      )}
-                    />
+                        )}
+                      />
+                    </animated.div>
                   ))}
                 </List>
               </section>

@@ -45,19 +45,20 @@ function Navbar({ themeType, handleChangeTheme }) {
             Set with Friends
           </Link>
         </Typography>
-        <Link
-          underline="none"
-          component={RouterLink}
-          style={{ maxWidth: "45%", marginLeft: "2em", marginRight: 8 }}
-          to={`/profile/${user.id}`}
+        <Typography
+          variant="subtitle1"
+          style={{ marginLeft: "2em", marginRight: 8, minWidth: 0 }}
         >
           <User
-            component={Typography}
-            variant="subtitle1"
-            noWrap
             id={user.id}
+            style={{
+              display: "block",
+              overflow: "hidden",
+              textOverflow: "ellipsis",
+              whiteSpace: "nowrap",
+            }}
           />
-        </Link>
+        </Typography>
         <IconButton color="inherit" onClick={handleChangeTheme}>
           {themeType === "light" ? (
             <Brightness3Icon></Brightness3Icon>

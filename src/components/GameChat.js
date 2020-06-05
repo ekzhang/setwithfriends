@@ -31,17 +31,13 @@ const useStyles = makeStyles((theme) => ({
   },
   logEntry: {
     marginBottom: "0.35em",
+    padding: "0 12px",
     textAlign: "center",
     background: theme.setFoundEntry,
   },
-  logEntryTextContainer: {
+  logEntryText: {
     display: "flex",
     justifyContent: "center",
-  },
-  logEntryText: {
-    maxWidth: "90%",
-    display: "flex",
-    flexDirection: "row",
     whiteSpace: "nowrap",
   },
 }));
@@ -99,21 +95,19 @@ function GameChat({ gameId, history }) {
           .map(([key, item]) =>
             key.startsWith("card@") ? (
               <div className={classes.logEntry} key={key}>
-                <div className={classes.logEntryTextContainer}>
-                  <div className={classes.logEntryText}>
-                    <Typography
-                      variant="subtitle2"
-                      style={{ marginRight: "0.2em" }}
-                    >
-                      Set found by
-                    </Typography>
-                    <User
-                      component={Typography}
-                      noWrap={true}
-                      variant="subtitle2"
-                      id={item.user}
-                    />
-                  </div>
+                <div className={classes.logEntryText}>
+                  <Typography
+                    variant="subtitle2"
+                    style={{ marginRight: "0.2em" }}
+                  >
+                    Set found by
+                  </Typography>
+                  <User
+                    component={Typography}
+                    noWrap={true}
+                    variant="subtitle2"
+                    id={item.user}
+                  />
                 </div>
                 <div>
                   <SetCard size="sm" value={item.c1} />

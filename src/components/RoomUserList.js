@@ -31,14 +31,13 @@ function RoomUserList({ game, gameId }) {
   return (
     <List dense disablePadding>
       {transitions.map(({ item: playerId, props, key }) => (
-        <User
-          key={key}
-          id={playerId}
-          component={Typography}
-          variant="subtitle2"
-          noWrap={true}
-          render={(player, playerEl) => (
-            <animated.div style={props}>
+        <animated.div key={key} style={props}>
+          <User
+            id={playerId}
+            component={Typography}
+            variant="body2"
+            noWrap
+            render={(player, playerEl) => (
               <ListItem
                 button
                 component={RouterLink}
@@ -65,28 +64,16 @@ function RoomUserList({ game, gameId }) {
                   )}
                 </ListItemIcon>
 
-                <ListItemText
-                  style={{
-                    flexGrow: 1,
-                  }}
-                >
-                  {playerEl}
-                </ListItemText>
+                <ListItemText disableTypography>{playerEl}</ListItemText>
                 {playerId === user.id && (
-                  <ListItemText
-                    style={{
-                      flex: "0 0 30px",
-                      whiteSpace: "nowrap",
-                      textAlign: "center",
-                    }}
-                  >
+                  <ListItemText style={{ flex: "0 0 auto", marginLeft: 8 }}>
                     (You)
                   </ListItemText>
                 )}
               </ListItem>
-            </animated.div>
-          )}
-        />
+            )}
+          />
+        </animated.div>
       ))}
     </List>
   );

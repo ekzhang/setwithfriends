@@ -61,8 +61,8 @@ function GameSidebar({ game, scores, leaderboard }) {
               key={uid}
               id={uid}
               component={Typography}
-              noWrap={true}
-              variant="subtitle2"
+              variant="body2"
+              noWrap
               render={(user, userEl) => (
                 <ListItem button component={RouterLink} to={`/profile/${uid}`}>
                   {game.status === "ingame" && (
@@ -79,11 +79,10 @@ function GameSidebar({ game, scores, leaderboard }) {
                       )}
                     </ListItemIcon>
                   )}
-                  <ListItemText style={{ flexGrow: 1 }}>{userEl}</ListItemText>
+                  <ListItemText disableTypography>{userEl}</ListItemText>
                   <ListItemText
                     style={{
-                      flex: "0 0 50px",
-                      whiteSpace: "nowrap",
+                      flex: "0 0 36px",
                       textAlign: "right",
                     }}
                   >
