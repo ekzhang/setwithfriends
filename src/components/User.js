@@ -2,7 +2,7 @@ import React from "react";
 
 import useFirebaseRef from "../hooks/useFirebaseRef";
 import { useTheme } from "@material-ui/core/styles";
-import * as colors from "@material-ui/core/colors";
+import { colors } from "../util";
 
 function User(props) {
   const theme = useTheme();
@@ -16,9 +16,9 @@ function User(props) {
   const userEl = (
     <Component
       style={{
-        color: colors[user.color]
+        color: colors.hasOwnProperty(user.color)
           ? colors[user.color][theme.palette.type === "dark" ? 100 : 900]
-          : user.color,
+          : "inherit",
         fontWeight: 500,
         ...style,
       }}
