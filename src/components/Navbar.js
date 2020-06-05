@@ -3,12 +3,11 @@ import React, { useState, useContext } from "react";
 import { Link as RouterLink } from "react-router-dom";
 import AppBar from "@material-ui/core/AppBar";
 import Toolbar from "@material-ui/core/Toolbar";
+import Tooltip from "@material-ui/core/Tooltip";
 import Typography from "@material-ui/core/Typography";
 import IconButton from "@material-ui/core/IconButton";
 import Link from "@material-ui/core/Link";
-import SettingsIcon from "@material-ui/icons/Settings";
-import MenuItem from "@material-ui/core/MenuItem";
-import Menu from "@material-ui/core/Menu";
+import EditIcon from "@material-ui/icons/Edit";
 import Brightness3Icon from "@material-ui/icons/Brightness3";
 import WbSunnyIcon from "@material-ui/icons/WbSunny";
 
@@ -19,16 +18,7 @@ import PromptDialog from "./PromptDialog";
 
 function Navbar({ themeType, handleChangeTheme }) {
   const user = useContext(UserContext);
-  const [anchorEl, setAnchorEl] = React.useState(null);
   const [changeName, setChangeName] = useState(false);
-
-  function handleMenu(event) {
-    setAnchorEl(event.currentTarget);
-  }
-
-  function handleCloseMenu() {
-    setAnchorEl(null);
-  }
 
   function handleChangeName(name) {
     setChangeName(false);
@@ -49,50 +39,38 @@ function Navbar({ themeType, handleChangeTheme }) {
           variant="subtitle1"
           style={{ marginLeft: "2em", marginRight: 8, minWidth: 0 }}
         >
-          <User
-            id={user.id}
-            style={{
-              display: "block",
-              overflow: "hidden",
-              textOverflow: "ellipsis",
-              whiteSpace: "nowrap",
-            }}
-          />
+          <Link
+            underline="none"
+            component={RouterLink}
+            to={`/profile/${user.id}`}
+          >
+            <User
+              id={user.id}
+              style={{
+                display: "block",
+                overflow: "hidden",
+                textOverflow: "ellipsis",
+                whiteSpace: "nowrap",
+              }}
+            />
+          </Link>
         </Typography>
+        <IconButton color="inherit" onClick={() => setChangeName(true)}>
+          <Tooltip title="Change name">
+            <EditIcon />
+          </Tooltip>
+        </IconButton>
         <IconButton color="inherit" onClick={handleChangeTheme}>
           {themeType === "light" ? (
-            <Brightness3Icon></Brightness3Icon>
+            <Tooltip title="Dark theme">
+              <Brightness3Icon />
+            </Tooltip>
           ) : (
-            <WbSunnyIcon></WbSunnyIcon>
+            <Tooltip title="Light theme">
+              <WbSunnyIcon />
+            </Tooltip>
           )}
         </IconButton>
-        <IconButton color="inherit" onClick={handleMenu}>
-          <SettingsIcon />
-        </IconButton>
-        <Menu
-          anchorEl={anchorEl}
-          getContentAnchorEl={null}
-          anchorOrigin={{
-            vertical: "bottom",
-            horizontal: "center",
-          }}
-          keepMounted
-          transformOrigin={{
-            vertical: "top",
-            horizontal: "center",
-          }}
-          open={anchorEl !== null}
-          onClose={handleCloseMenu}
-        >
-          <MenuItem
-            onClick={() => {
-              setChangeName(true);
-              handleCloseMenu();
-            }}
-          >
-            Change name
-          </MenuItem>
-        </Menu>
         <PromptDialog
           open={changeName}
           onClose={handleChangeName}

@@ -18,22 +18,21 @@ function WelcomeDialog() {
       <DialogContent dividers>
         <Typography variant="body1">
           Welcome to <em>Set with Friends</em>, an online multiplayer card game!
-          It looks like this is your first visit, so here are a few suggestions
-          to get started:
+          It looks like this is your first visit, so here's a couple of ways you
+          can use the site:
         </Typography>
         <Typography variant="body1" component="div" style={{ padding: 12 }}>
           <div>
             <span role="img" aria-label="Game emoji">
               🎮
             </span>{" "}
-            Join a <strong>public game</strong> and start playing in seconds.
+            Join a <strong>public game</strong> in seconds.
           </div>
           <div>
             <span role="img" aria-label="Fire emoji">
               🔥
             </span>{" "}
-            Create a new <strong>private game</strong> and invite your friends
-            by link.
+            Create a <strong>private game</strong> and invite friends.
           </div>
           <div>
             <span role="img" aria-label="Books emoji">
@@ -49,8 +48,8 @@ function WelcomeDialog() {
           </div>
         </Typography>
         <Typography variant="body1">
-          Finally, if you arrived here by link to a particular game, then it
-          will start soon. We hope you enjoy using our site!
+          If you arrived here by link to a particular game, then it will start
+          soon. Good luck, and have fun playing Set!
         </Typography>
       </DialogContent>
       <DialogActions>
