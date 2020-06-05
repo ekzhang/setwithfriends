@@ -2,23 +2,31 @@ import React, { useState, useEffect } from "react";
 import firebase from "./firebase";
 import "./styles.css";
 
-import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
+import { BrowserRouter, Switch, Route } from "react-router-dom";
 import CssBaseline from "@material-ui/core/CssBaseline";
+import { ThemeProvider } from "@material-ui/core/styles";
 
 import { generateColor, generateName } from "./util";
+import { UserContext } from "./context";
+import useStorage from "./hooks/useStorage";
+import ConnectionsTracker from "./components/ConnectionsTracker";
+import WelcomeDialog from "./components/WelcomeDialog";
+import Navbar from "./components/Navbar";
 import RoomPage from "./pages/RoomPage";
 import GamePage from "./pages/GamePage";
 import LobbyPage from "./pages/LobbyPage";
 import LoadingPage from "./pages/LoadingPage";
-import IndexPage from "./pages/IndexPage";
 import NotFoundPage from "./pages/NotFoundPage";
 import HelpPage from "./pages/HelpPage";
 import AboutPage from "./pages/AboutPage";
 import ContactPage from "./pages/ContactPage";
+import ProfilePage from "./pages/ProfilePage";
+import { lightTheme, darkTheme } from "./themes";
 
 function App() {
   const [uid, setUid] = useState(null);
   const [user, setUser] = useState(null);
+  const [themeType, setThemeType] = useStorage("theme", "light");
 
   useEffect(() => {
     if (!uid) {
@@ -47,10 +55,10 @@ function App() {
     }
     const userRef = firebase.database().ref(`/users/${uid}`);
     function update(snapshot) {
-      if (snapshot.exists()) {
+      if (snapshot.child("name").exists()) {
         setUser({ ...snapshot.val(), id: uid });
       } else {
-        userRef.set({
+        userRef.update({
           games: {},
           color: generateColor(),
           name: generateName(),
@@ -63,42 +71,38 @@ function App() {
     };
   }, [uid]);
 
+  const handleChangeTheme = () => {
+    setThemeType(themeType === "light" ? "dark" : "light");
+  };
+
   return (
-    <>
-      <CssBaseline />
-      {!user ? (
-        <LoadingPage />
-      ) : (
-        <Router>
-          <Switch>
-            <Route exact path="/" component={IndexPage} />
-            <Route exact path="/help" component={HelpPage} />
-            <Route exact path="/about" component={AboutPage} />
-            <Route exact path="/contact" component={ContactPage} />
-            <Route
-              exact
-              path="/lobby"
-              render={() => <LobbyPage user={user}></LobbyPage>}
+    <ThemeProvider theme={themeType === "light" ? lightTheme : darkTheme}>
+      <BrowserRouter>
+        <CssBaseline />
+        {!user ? (
+          <LoadingPage />
+        ) : (
+          <UserContext.Provider value={user}>
+            <ConnectionsTracker />
+            <WelcomeDialog />
+            <Navbar
+              themeType={themeType}
+              handleChangeTheme={handleChangeTheme}
             />
-            <Route
-              exact
-              path="/room/:id"
-              render={({ match }) => (
-                <RoomPage user={user} gameId={match.params.id} />
-              )}
-            />
-            <Route
-              exact
-              path="/game/:id"
-              render={({ match }) => (
-                <GamePage user={user} gameId={match.params.id} />
-              )}
-            />
-            <Route component={NotFoundPage} />
-          </Switch>
-        </Router>
-      )}
-    </>
+            <Switch>
+              <Route exact path="/help" component={HelpPage} />
+              <Route exact path="/about" component={AboutPage} />
+              <Route exact path="/contact" component={ContactPage} />
+              <Route exact path="/" component={LobbyPage} />
+              <Route exact path="/room/:id" component={RoomPage} />
+              <Route exact path="/game/:id" component={GamePage} />
+              <Route exact path="/profile/:id" component={ProfilePage} />
+              <Route component={NotFoundPage} />
+            </Switch>
+          </UserContext.Provider>
+        )}
+      </BrowserRouter>
+    </ThemeProvider>
   );
 }
 

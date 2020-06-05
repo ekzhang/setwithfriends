@@ -23,7 +23,7 @@ export default function autoscroll(element) {
       var position = easeInOut(elapsedTime, start, change, duration);
       element.scrollTop = position;
       if (elapsedTime < duration) {
-        setTimeout(function() {
+        setTimeout(function () {
           animate(elapsedTime);
         }, increment);
       }
@@ -40,6 +40,7 @@ export default function autoscroll(element) {
   var observer = new MutationObserver(scrollToBottom);
   var config = { childList: true };
   observer.observe(element, config);
+  element.scrollTop = element.scrollHeight;
   return () => {
     observer.disconnect();
   };

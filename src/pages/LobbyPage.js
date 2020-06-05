@@ -1,299 +1,358 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useMemo, useContext } from "react";
 
 import generate from "project-name-generator";
-import parseColor from "parse-color";
-import { Link as RouterLink } from "react-router-dom";
+import { Link as RouterLink, Redirect } from "react-router-dom";
+import { useTransition, animated } from "react-spring";
 import { makeStyles } from "@material-ui/core/styles";
-import { Redirect } from "react-router";
-import Card from "@material-ui/core/Card";
+import Paper from "@material-ui/core/Paper";
 import Container from "@material-ui/core/Container";
 import Typography from "@material-ui/core/Typography";
 import Grid from "@material-ui/core/Grid";
 import Button from "@material-ui/core/Button";
+import Box from "@material-ui/core/Box";
 import Link from "@material-ui/core/Link";
-import Dialog from "@material-ui/core/Dialog";
-import DialogContent from "@material-ui/core/DialogContent";
-import DialogContentText from "@material-ui/core/DialogContentText";
-import DialogTitle from "@material-ui/core/DialogTitle";
-import DialogActions from "@material-ui/core/DialogActions";
-import FormControl from "@material-ui/core/FormControl";
-import Input from "@material-ui/core/Input";
-import InputLabel from "@material-ui/core/InputLabel";
+import Tabs from "@material-ui/core/Tabs";
+import Tab from "@material-ui/core/Tab";
+import List from "@material-ui/core/List";
+import ListItem from "@material-ui/core/ListItem";
+import ListItemIcon from "@material-ui/core/ListItemIcon";
+import ListItemText from "@material-ui/core/ListItemText";
+import Table from "@material-ui/core/Table";
+import TableBody from "@material-ui/core/TableBody";
+import TableCell from "@material-ui/core/TableCell";
+import TableContainer from "@material-ui/core/TableContainer";
+import TableHead from "@material-ui/core/TableHead";
+import TableRow from "@material-ui/core/TableRow";
+import Tooltip from "@material-ui/core/Tooltip";
+import Divider from "@material-ui/core/Divider";
+import FaceIcon from "@material-ui/icons/Face";
+import SportsEsportsIcon from "@material-ui/icons/SportsEsports";
 
-import PromptDialog from "../components/PromptDialog";
-import firebase from "../firebase";
-import { computeState } from "../util";
+import firebase, { createGame } from "../firebase";
+import useFirebaseQuery from "../hooks/useFirebaseQuery";
+import useFirebaseRef from "../hooks/useFirebaseRef";
+import GameInfoRow from "../components/GameInfoRow";
+import Chat from "../components/Chat";
+import User from "../components/User";
+import { UserContext } from "../context";
 
-const useStyles = makeStyles(theme => ({
-  container: {
-    padding: 40,
-    height: "100%",
-    textAlign: "center"
+const useStyles = makeStyles((theme) => ({
+  mainGrid: {
+    "--table-height": "400px", // responsive variable
+    [theme.breakpoints.up("sm")]: {
+      "--table-height": "480px",
+    },
+    [theme.breakpoints.up("md")]: {
+      "--table-height": "calc(100vh - 140px)",
+    },
   },
-  menu: {
-    padding: 12,
+  gamesTable: {
+    height: "var(--table-height)",
+    whiteSpace: "nowrap",
+    "& td, & th": {
+      paddingTop: 6,
+      paddingBottom: 6,
+      paddingLeft: 12,
+      paddingRight: 12,
+    },
+    "& svg": {
+      display: "block",
+    },
+    "& tbody > tr:hover": {
+      background: theme.palette.action.hover,
+      cursor: "pointer",
+    },
+  },
+  lobbyTabs: {
+    minHeight: 32,
+    "& .MuiTab-root": {
+      minHeight: 32,
+      textTransform: "none",
+      fontWeight: 400,
+    },
+  },
+  gameCounters: {
+    [theme.breakpoints.up("sm")]: {
+      position: "absolute",
+      bottom: 8,
+    },
+  },
+  actionButtons: {
+    [theme.breakpoints.up("sm")]: {
+      height: "100%",
+      display: "flex",
+      flexDirection: "column",
+      justifyContent: "center",
+      "& button": {
+        margin: "12px 0",
+      },
+    },
+    [theme.breakpoints.down("xs")]: {
+      "& button": {
+        marginBottom: theme.spacing(1),
+      },
+    },
+  },
+  chatColumn: {
+    maxHeight: "calc(var(--table-height) + 16px)",
+    [theme.breakpoints.up("md")]: {
+      marginTop: 36,
+    },
+  },
+  chatColumnPaper: {
+    padding: 8,
     display: "flex",
     flexDirection: "column",
-    "& button": {
-      margin: 12,
-      marginTop: 6,
-      marginBottom: 6
-    },
-    "& button:first-child": {
-      marginTop: 12,
-      marginBottom: 12
-    },
-    "& button:last-child": {
-      marginBottom: 12
-    }
+    height: "100%",
   },
-  warningBtn: {
-    color: theme.palette.warning.dark
-  },
-  optionsForm: {
+  chatPanel: {
     display: "flex",
-    marginBottom: 12,
-    "& > div": {
-      flexGrow: 1
-    }
-  }
+    flexDirection: "column",
+  },
+  buttonColumn: {
+    position: "relative",
+    maxHeight: "calc(var(--table-height) + 16px)",
+    [theme.breakpoints.up("sm")]: {
+      marginTop: 36,
+    },
+  },
 }));
 
-function LobbyPage({ user }) {
+function LobbyPage() {
+  const user = useContext(UserContext);
   const classes = useStyles();
   const [redirect, setRedirect] = useState(null);
-  const [play, setPlay] = useState(false);
-  const [join, setJoin] = useState(false);
-  const [spectate, setSpectate] = useState(false);
-  const [options, setOptions] = useState(false);
-  const [games, setGames] = useState({});
-  const [userName, setUserName] = useState("Anonymous");
-  const [userColor, setUserColor] = useState("#888888");
+  const [waiting, setWaiting] = useState(false);
+  const [tabValue, setTabValue] = useState(0);
 
-  useEffect(() => {
-    const gameList = user.games ? Object.values(user.games) : [];
-    const gamesRef = firebase.database().ref("games/");
-    const cleanup = [];
-    for (const gameId of gameList) {
-      const gameRef = gamesRef.child(gameId);
-      const update = snapshot => {
-        const game = snapshot.val();
-        if (game.meta.status === "done") {
-          const { scores } = computeState(game);
-          setGames(games => ({
-            ...games,
-            [gameId]: {
-              winner: scores[0][0],
-              score: scores.filter(([u, s]) => u === user.id)[0][1]
-            }
-          }));
-        }
-      };
-      gameRef.on("value", update);
-      cleanup.push(() => gameRef.off("value", update));
-    }
-    return () => {
-      for (const func of cleanup) func();
-    };
-  }, [user]);
+  const onlineUsersQuery = useMemo(() => {
+    return firebase
+      .database()
+      .ref("users")
+      .orderByChild("connections")
+      .startAt(false);
+  }, []);
+  const onlineUsers = useFirebaseQuery(onlineUsersQuery);
 
-  const stats = Object.values(games).reduce(
-    ([p, w, s], g) => [p + 1, w + (g.winner === user.id), s + g.score],
-    [0, 0, 0]
-  );
+  const userTransitions = useTransition(Object.keys(onlineUsers), null, {
+    from: { opacity: 0 },
+    enter: { opacity: 1 },
+    leave: { opacity: 0 },
+  });
+
+  const gamesQuery = useMemo(() => {
+    return firebase
+      .database()
+      .ref("/publicGames")
+      .orderByValue()
+      .limitToLast(50);
+  }, []);
+  const games = useFirebaseQuery(gamesQuery);
+
+  const myGamesQuery = useMemo(() => {
+    return firebase
+      .database()
+      .ref(`/userGames/${user.id}`)
+      .orderByValue()
+      .limitToLast(50);
+  }, [user.id]);
+  const myGames = useFirebaseQuery(myGamesQuery);
+
+  const [stats, loadingStats] = useFirebaseRef("/stats");
+
+  const handleTabChange = (event, newValue) => {
+    setTabValue(newValue);
+  };
 
   if (redirect) return <Redirect push to={redirect} />;
 
-  function playButton() {
-    setPlay(true);
-  }
-
-  function newRoom() {
-    setRedirect("/room/" + generate().dashed);
-  }
-
-  function joinRoom() {
-    setJoin(true);
-  }
-
-  function handleJoin(gameId) {
-    setJoin(false);
-    if (gameId) {
+  async function newRoom(access) {
+    const gameId = generate().dashed;
+    try {
+      setWaiting(true);
+      await createGame({ gameId, access });
+      firebase.analytics().logEvent("create_game", { gameId, access });
       setRedirect(`/room/${gameId}`);
+    } catch (error) {
+      setWaiting(false);
+      alert(error.toString());
     }
   }
 
-  function spectateGame() {
-    setSpectate(true);
-  }
-
-  function handleSpectate(gameId) {
-    setSpectate(false);
-    if (gameId) {
-      setRedirect(`/game/${gameId}`);
+  function isIngame(user) {
+    for (const url of Object.values(user.connections || {})) {
+      if (url.startsWith("/game")) {
+        return true;
+      }
     }
-  }
-
-  function optionsButton() {
-    setUserName(user.name);
-    setUserColor(user.color);
-    setOptions(true);
-  }
-
-  function handleReset() {
-    setOptions(false);
-    firebase.auth().currentUser.delete();
-  }
-
-  function handleSave() {
-    setOptions(false);
-    if (userName && userColor) {
-      firebase
-        .database()
-        .ref(`users/${user.id}`)
-        .set({
-          name: userName,
-          color: userColor
-        });
-    }
+    return false;
   }
 
   return (
-    <Container className={classes.container}>
-      <Dialog open={play} onClose={() => setPlay(false)}>
-        <DialogTitle>Play Set</DialogTitle>
-        <DialogContent>
-          <DialogContentText>
-            Welcome! Set with Friends is a web app that lets you play Set in
-            real time with others online. To begin, you can either{" "}
-            <b>create a new room</b> and share the link with friends, or{" "}
-            <b>join an existing game</b> by entering the ID.
-          </DialogContentText>
-          <DialogContentText>
-            <Link component={RouterLink} to="/help">
-              View help page
-            </Link>
-          </DialogContentText>
-        </DialogContent>
-        <DialogActions>
-          <Button
-            onClick={() => {
-              setPlay(false);
-              newRoom();
-            }}
-            color="primary"
-          >
-            New Room
-          </Button>
-          <Button
-            onClick={() => {
-              setPlay(false);
-              joinRoom();
-            }}
-            color="primary"
-          >
-            Join Room
-          </Button>
-        </DialogActions>
-      </Dialog>
-      <PromptDialog
-        open={join}
-        onClose={handleJoin}
-        title="Join Room"
-        message="To join a game with others, please enter the room ID below. Alternatively, you can also enter a direct link to the game in the address bar."
-        label="Room ID"
-      />
-      <PromptDialog
-        open={spectate}
-        onClose={handleSpectate}
-        title="Spectate"
-        message="To spectate a game, please enter the room ID below. You will be redirected to the game page, where you can watch the action live."
-        label="Room ID"
-      />
-      <Dialog open={options} onClose={() => setOptions(false)}>
-        <DialogTitle>Options</DialogTitle>
-        <DialogContent>
-          <DialogContentText>
-            You can configure your nickname and in-game display color below. You
-            can also reset your data, including user statistics.
-          </DialogContentText>
-          <form
-            className={classes.optionsForm}
-            onSubmit={e => e.preventDefault()}
-          >
-            <FormControl>
-              <InputLabel htmlFor="name-input">Name</InputLabel>
-              <Input
-                id="name-input"
-                value={userName}
-                onChange={e => setUserName(e.target.value)}
-                inputProps={{ maxLength: 40 }}
-              />
-            </FormControl>
-            <FormControl>
-              <InputLabel htmlFor="color-input">Color</InputLabel>
-              <Input
-                id="color-input"
-                type="color"
-                value={parseColor(userColor).hex}
-                onChange={e => setUserColor(e.target.value)}
-              />
-            </FormControl>
-          </form>
-        </DialogContent>
-        <DialogActions>
-          <Button className={classes.warningBtn} onClick={handleReset}>
-            Reset Data
-          </Button>
-          <Button variant="contained" color="primary" onClick={handleSave}>
-            Save
-          </Button>
-        </DialogActions>
-      </Dialog>
-      <Typography variant="h3" component="h2" gutterBottom>
-        Set with Friends
-      </Typography>
-      <Grid container spacing={3}>
-        <Grid item xs={4}>
-          {/* empty */}
-        </Grid>
-        <Grid item xs={4}>
-          <Card elevation={2} className={classes.menu}>
-            <Button onClick={playButton} variant="contained" color="primary">
-              Play
-            </Button>
-            <Button onClick={newRoom} variant="contained">
-              New Room
-            </Button>
-            <Button onClick={joinRoom} variant="contained">
-              Join Room by ID
-            </Button>
-            <Button onClick={spectateGame} variant="contained">
-              Spectate
-            </Button>
-            <Button onClick={optionsButton} variant="contained">
-              Options
-            </Button>
-          </Card>
-        </Grid>
-        <Grid item xs={3}>
-          <Card className={classes.menu}>
-            <Typography variant="h6" gutterBottom>
-              Statistics
-            </Typography>
-            <Typography variant="body1">Games played: {stats[0]}</Typography>
-            <Typography variant="body1">Games won: {stats[1]}</Typography>
-            <Typography variant="body1">Total sets: {stats[2]}</Typography>
-            <Typography variant="body1">
-              Avg. sets per game:{" "}
-              {stats[0] ? (stats[2] / stats[0]).toFixed(2) : "N/A"}
-            </Typography>
-          </Card>
-        </Grid>
-        <Grid item xs={1}>
-          {/* empty */}
-        </Grid>
+    <Container>
+      <Grid container spacing={2} className={classes.mainGrid}>
+        <Box clone order={{ xs: 3, md: 1 }} className={classes.chatColumn}>
+          <Grid item xs={12} sm={12} md={3}>
+            <Paper className={classes.chatColumnPaper}>
+              <section
+                className={classes.chatPanel}
+                style={{
+                  flexShrink: 0,
+                  maxHeight: "40%",
+                }}
+              >
+                <Typography variant="overline">
+                  Online Users ({Object.keys(onlineUsers).length})
+                </Typography>
+                <List
+                  dense
+                  disablePadding
+                  style={{ overflowY: "auto", flexGrow: 1 }}
+                >
+                  {userTransitions.map(({ item: userId, props, key }) => (
+                    <animated.div key={key} style={props}>
+                      <User
+                        id={userId}
+                        component={Typography}
+                        variant="body2"
+                        noWrap
+                        render={(thisUser, userEl) => (
+                          <ListItem
+                            button
+                            component={RouterLink}
+                            to={`/profile/${userId}`}
+                          >
+                            <ListItemIcon>
+                              {isIngame(thisUser) ? (
+                                <Tooltip title="In a game">
+                                  <SportsEsportsIcon />
+                                </Tooltip>
+                              ) : (
+                                <Tooltip title="Online user">
+                                  <FaceIcon />
+                                </Tooltip>
+                              )}
+                            </ListItemIcon>
+
+                            <ListItemText disableTypography>
+                              {userEl}
+                            </ListItemText>
+                            {userId === user.id && (
+                              <ListItemText
+                                style={{ flex: "0 0 auto", marginLeft: 8 }}
+                              >
+                                (You)
+                              </ListItemText>
+                            )}
+                          </ListItem>
+                        )}
+                      />
+                    </animated.div>
+                  ))}
+                </List>
+              </section>
+              <Divider style={{ margin: "8px 0" }} />
+              <Chat user={user} />
+            </Paper>
+          </Grid>
+        </Box>
+        <Box clone order={{ xs: 1, md: 2 }}>
+          <Grid item xs={12} sm={8} md={6}>
+            <Tabs
+              className={classes.lobbyTabs}
+              indicatorColor="secondary"
+              textColor="secondary"
+              variant="fullWidth"
+              value={tabValue}
+              onChange={handleTabChange}
+            >
+              <Tab label="Lobby" />
+              <Tab label="Your games" />
+            </Tabs>
+            <TableContainer component={Paper} className={classes.gamesTable}>
+              <Table size="small" stickyHeader>
+                <TableHead>
+                  <TableRow>
+                    <TableCell>Host</TableCell>
+                    <TableCell>Players</TableCell>
+                    <TableCell>Status</TableCell>
+                    <TableCell>Created</TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {Object.keys(tabValue === 0 ? games : myGames)
+                    .reverse()
+                    .map((gameId) => (
+                      <GameInfoRow
+                        key={gameId}
+                        gameId={gameId}
+                        onClick={() => {
+                          if (!waiting) setRedirect(`/room/${gameId}`);
+                        }}
+                      />
+                    ))}
+                </TableBody>
+              </Table>
+            </TableContainer>
+          </Grid>
+        </Box>
+        <Box clone order={{ xs: 2, md: 3 }} className={classes.buttonColumn}>
+          <Grid item xs={12} sm={4} md={3}>
+            <div className={classes.actionButtons}>
+              <Tooltip
+                arrow
+                placement="top"
+                title="Create a new game, which will appear in the lobby. You can also invite your friends to join by link!"
+              >
+                <Button
+                  variant="contained"
+                  fullWidth
+                  color="primary"
+                  onClick={() => newRoom("public")}
+                  disabled={waiting}
+                >
+                  Create a Game
+                </Button>
+              </Tooltip>
+              <Tooltip
+                arrow
+                placement="bottom"
+                title="Create a new private game. Only players you share the link with will be able to join."
+              >
+                <Button
+                  variant="contained"
+                  fullWidth
+                  onClick={() => newRoom("private")}
+                  disabled={waiting}
+                >
+                  New Private Game
+                </Button>
+              </Tooltip>
+            </div>
+            <div className={classes.gameCounters}>
+              <Typography variant="body2" gutterBottom>
+                <strong>
+                  {loadingStats ? "-----" : stats ? stats.gameCount : 0}
+                </strong>{" "}
+                games played
+              </Typography>
+            </div>
+          </Grid>
+        </Box>
       </Grid>
+      <Typography variant="body1" align="center" style={{ padding: "16px 0" }}>
+        <Link component={RouterLink} to="/help">
+          Help
+        </Link>{" "}
+        •{" "}
+        <Link component={RouterLink} to="/about">
+          About
+        </Link>{" "}
+        •{" "}
+        <Link component={RouterLink} to="/contact">
+          Contact
+        </Link>
+      </Typography>
     </Container>
   );
 }
