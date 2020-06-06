@@ -351,6 +351,10 @@ function LobbyPage() {
         •{" "}
         <Link component={RouterLink} to="/contact">
           Contact
+        </Link>{" "}
+        •{" "}
+        <Link target="_blank" rel="noopener" href="https://discord.gg/XbjJyc9">
+          Discord
         </Link>
       </Typography>
     </Container>
