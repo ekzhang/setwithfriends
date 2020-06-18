@@ -11,8 +11,18 @@ import Tooltip from "@material-ui/core/Tooltip";
 import ElapsedTime from "./ElapsedTime";
 import User from "./User";
 import useFirebaseRef from "../hooks/useFirebaseRef";
+import { makeStyles } from "@material-ui/core/styles";
+
+const useStyles = makeStyles({
+  host: {
+    maxWidth: "14em",
+    overflow: "hidden",
+    textOverflow: "ellipsis",
+  },
+});
 
 function GameInfoRow({ gameId, onClick }) {
+  const classes = useStyles();
   const [game, loading] = useFirebaseRef(`/games/${gameId}`);
   if (loading) {
     return null;
@@ -51,9 +61,11 @@ function GameInfoRow({ gameId, onClick }) {
   return (
     <User
       id={game.host}
+      component={TableCell}
+      className={classes.host}
       render={(host, hostEl) => (
         <TableRow onClick={onClick}>
-          <TableCell>{hostEl}</TableCell>
+          {hostEl}
           <TableCell>
             {game.users ? Object.keys(game.users).length : 0}
           </TableCell>
