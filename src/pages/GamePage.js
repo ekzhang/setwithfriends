@@ -231,7 +231,11 @@ function GamePage({ match }) {
         <Box clone order={{ xs: 3, sm: 1 }}>
           <Grid item xs={12} sm={4} md={3} className={classes.sideColumn}>
             <Paper style={{ display: "flex", height: "100%", padding: 8 }}>
-              <GameChat gameId={gameId} history={history} />
+              <GameChat
+                gameId={gameId}
+                history={history}
+                startedAt={game.startedAt}
+              />
             </Paper>
           </Grid>
         </Box>

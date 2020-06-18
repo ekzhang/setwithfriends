@@ -9,6 +9,7 @@ import React, {
 
 import Typography from "@material-ui/core/Typography";
 import { makeStyles } from "@material-ui/core/styles";
+import Tooltip from "@material-ui/core/Tooltip";
 
 import User from "./User";
 import SimpleInput from "./SimpleInput";
@@ -16,6 +17,7 @@ import firebase from "../firebase";
 import autoscroll from "../utils/autoscroll";
 import useFirebaseQuery from "../hooks/useFirebaseQuery";
 import { UserContext } from "../context";
+import ElapsedTime from "./ElapsedTime";
 
 const useStyles = makeStyles((theme) => ({
   chatPanel: {
@@ -68,9 +70,16 @@ function Chat() {
       <Typography variant="overline">Lobby Chat</Typography>
       <div className={classes.chat} ref={chatEl}>
         {Object.entries(messages).map(([key, msg]) => (
-          <Typography key={key} variant="body2" gutterBottom>
-            <User id={msg.user} />: {msg.message}
-          </Typography>
+          <Tooltip
+            key={key}
+            arrow
+            placement="left"
+            title={<ElapsedTime value={msg.time} />}
+          >
+            <Typography variant="body2" gutterBottom>
+              <User id={msg.user} />: {msg.message}
+            </Typography>
+          </Tooltip>
         ))}
       </div>
       <form onSubmit={handleSubmit}>
