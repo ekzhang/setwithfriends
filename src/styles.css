@@ -1,16 +1,10 @@
 /* Avoid adding styles to this file; prefer @material-ui/core/styles instead. */
 
 html {
-  font-size: 12px;
+  font-size: 14px;
 }
 
 @media (min-width: 600px) {
-  html {
-    font-size: 14px;
-  }
-}
-
-@media (min-width: 1280px) {
   html {
     font-size: 16px;
   }
