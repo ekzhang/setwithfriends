@@ -39,8 +39,8 @@ export const darkTheme = createMuiTheme({
   },
   setCard: {
     purple: "#ff47ff",
-    green: "#00B803",
-    red: "#ff0101",
+    green: "#00b803",
+    red: "#ffb047",
     background: "#404040",
   },
   alarm: red[700],
