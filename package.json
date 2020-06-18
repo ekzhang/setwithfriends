@@ -7,10 +7,10 @@
   "keywords": [],
   "main": "src/index.js",
   "dependencies": {
-    "@material-ui/core": "^4.10.1",
+    "@material-ui/core": "^4.10.2",
     "@material-ui/icons": "^4.9.1",
     "chart.js": "^2.9.3",
-    "firebase": "^7.15.0",
+    "firebase": "^7.15.1",
     "moment": "^2.26.0",
     "project-name-generator": "^2.1.7",
     "react": "^16.13.1",
