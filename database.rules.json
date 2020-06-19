@@ -17,8 +17,8 @@
         },
         "users": {
           "$userId": {
-            ".write": "auth != null && auth.uid == $userId && data.parent().parent().child('status').val() == 'waiting' && !data.exists() && newData.exists()",
-            ".validate": "newData.isNumber() && newData.val() == now"
+            ".write": "auth != null && auth.uid == $userId && data.parent().parent().child('status').val() == 'waiting'",
+            ".validate": "!newData.exists() || (newData.isNumber() && newData.val() == now)"
           }
         }
       }
@@ -79,8 +79,8 @@
         ".read": "auth != null",
         ".indexOn": ".value",
         "$gameId": {
-          ".write": "!data.exists() && newData.exists() && auth != null",
-          ".validate": "newData.isNumber() && newData.val() == root.child('games/' + $gameId + '/createdAt').val()"
+          ".write": "auth != null && auth.uid == $userId",
+          ".validate": "!newData.exists() || (newData.isNumber() && newData.val() == root.child('games/' + $gameId + '/createdAt').val())"
         }
       }
     },
