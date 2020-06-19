@@ -81,7 +81,7 @@ function RoomPage({ match, location }) {
     return <NotFoundPage />;
   }
 
-  if (game.status !== "waiting") {
+  if (game.status !== "waiting" && !leaving) {
     return <Redirect to={`/game/${gameId}`} />;
   }
 
@@ -109,7 +109,11 @@ function RoomPage({ match, location }) {
       .database()
       .ref()
       .update(updates)
-      .then(() => history.push("/"));
+      .then(() => history.push("/"))
+      .catch((reason) => {
+        console.warn(`Failed to leave game (${reason})`);
+        setLeaving(false);
+      });
   }
 
   return (
