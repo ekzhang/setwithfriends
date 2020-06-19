@@ -11,7 +11,7 @@ import Grid from "@material-ui/core/Grid";
 import Box from "@material-ui/core/Box";
 import LinkIcon from "@material-ui/icons/Link";
 import DoneIcon from "@material-ui/icons/Done";
-import { Redirect } from "react-router-dom";
+import { Redirect, useHistory } from "react-router-dom";
 
 import useFirebaseRef from "../hooks/useFirebaseRef";
 import LoadingPage from "./LoadingPage";
@@ -48,12 +48,15 @@ function RoomPage({ match, location }) {
   const user = useContext(UserContext);
   const gameId = match.params.id;
   const classes = useStyles();
+  const history = useHistory();
 
   const [copiedLink, setCopiedLink] = useState(false);
+  const [leaving, setLeaving] = useState(false);
   const [game, loadingGame] = useFirebaseRef(`games/${gameId}`);
 
   useEffect(() => {
     if (
+      !leaving &&
       game &&
       game.status === "waiting" &&
       (!game.users || !(user.id in game.users))
@@ -68,7 +71,7 @@ function RoomPage({ match, location }) {
         .ref(`userGames/${user.id}/${gameId}`)
         .set(game.createdAt);
     }
-  }, [user.id, game, gameId]);
+  }, [user.id, game, gameId, leaving]);
 
   if (loadingGame) {
     return <LoadingPage />;
@@ -78,7 +81,7 @@ function RoomPage({ match, location }) {
     return <NotFoundPage />;
   }
 
-  if (game.status !== "waiting") {
+  if (game.status !== "waiting" && !leaving) {
     return <Redirect to={`/game/${gameId}`} />;
   }
 
@@ -94,6 +97,23 @@ function RoomPage({ match, location }) {
       status: "ingame",
       startedAt: firebase.database.ServerValue.TIMESTAMP,
     });
+  }
+
+  function leaveGame() {
+    setLeaving(true);
+    const updates = {
+      [`games/${gameId}/users/${user.id}`]: null,
+      [`userGames/${user.id}/${gameId}`]: null,
+    };
+    firebase
+      .database()
+      .ref()
+      .update(updates)
+      .then(() => history.push("/"))
+      .catch((reason) => {
+        console.warn(`Failed to leave game (${reason})`);
+        setLeaving(false);
+      });
   }
 
   return (
@@ -155,8 +175,8 @@ function RoomPage({ match, location }) {
                   </div>
                 </Grid>
               </Grid>
-              {user.id === game.host ? (
-                <Box marginTop={2}>
+              <Box marginTop={2}>
+                {user.id === game.host ? (
                   <Tooltip
                     arrow
                     title="Make sure everyone is in the waiting room! Additional players won't be able to join after the game has started."
@@ -171,14 +191,23 @@ function RoomPage({ match, location }) {
                       Start game
                     </Button>
                   </Tooltip>
-                </Box>
-              ) : (
-                <Box marginTop={2}>
-                  <Button size="large" fullWidth disabled>
-                    Waiting for host to start
-                  </Button>
-                </Box>
-              )}
+                ) : (
+                  <Tooltip
+                    arrow
+                    title="Currently waiting for the host to start the game. You can leave by pressing this button."
+                  >
+                    <Button
+                      size="large"
+                      variant="outlined"
+                      fullWidth
+                      disabled={leaving}
+                      onClick={leaveGame}
+                    >
+                      Leave game
+                    </Button>
+                  </Tooltip>
+                )}
+              </Box>
             </Paper>
           </Grid>
         </Box>

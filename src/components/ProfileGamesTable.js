@@ -98,7 +98,7 @@ function ProfileGamesTable({ userId, gamesData, handleClickGame }) {
                     <ElapsedTime value={game.createdAt} />
                   </TableCell>
                   <TableCell>
-                    {game.winner === userId && (
+                    {game.scores[userId] === game.topScore && (
                       <StarIcon style={{ color: amber[500] }} />
                     )}
                   </TableCell>

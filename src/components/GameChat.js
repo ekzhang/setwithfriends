@@ -9,6 +9,7 @@ import React, {
 
 import Typography from "@material-ui/core/Typography";
 import { makeStyles } from "@material-ui/core/styles";
+import Tooltip from "@material-ui/core/Tooltip";
 
 import User from "./User";
 import SimpleInput from "./SimpleInput";
@@ -17,6 +18,7 @@ import firebase from "../firebase";
 import autoscroll from "../utils/autoscroll";
 import useFirebaseQuery from "../hooks/useFirebaseQuery";
 import { UserContext } from "../context";
+import { formatTime } from "../util";
 
 const useStyles = makeStyles((theme) => ({
   chatPanel: {
@@ -42,7 +44,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-function GameChat({ gameId, history }) {
+function GameChat({ gameId, history, startedAt }) {
   const user = useContext(UserContext);
   const classes = useStyles();
 
@@ -94,27 +96,33 @@ function GameChat({ gameId, history }) {
           .sort(([, a], [, b]) => a.time - b.time)
           .map(([key, item]) =>
             key.startsWith("card@") ? (
-              <div className={classes.logEntry} key={key}>
-                <div className={classes.logEntryText}>
-                  <Typography
-                    variant="subtitle2"
-                    style={{ marginRight: "0.2em" }}
-                  >
-                    Set found by
-                  </Typography>
-                  <User
-                    component={Typography}
-                    noWrap={true}
-                    variant="subtitle2"
-                    id={item.user}
-                  />
+              <Tooltip
+                arrow
+                placement="left"
+                title={formatTime(item.time - startedAt)}
+              >
+                <div className={classes.logEntry} key={key}>
+                  <div className={classes.logEntryText}>
+                    <Typography
+                      variant="subtitle2"
+                      style={{ marginRight: "0.2em" }}
+                    >
+                      Set found by
+                    </Typography>
+                    <User
+                      component={Typography}
+                      noWrap={true}
+                      variant="subtitle2"
+                      id={item.user}
+                    />
+                  </div>
+                  <div>
+                    <SetCard size="sm" value={item.c1} />
+                    <SetCard size="sm" value={item.c2} />
+                    <SetCard size="sm" value={item.c3} />
+                  </div>
                 </div>
-                <div>
-                  <SetCard size="sm" value={item.c1} />
-                  <SetCard size="sm" value={item.c2} />
-                  <SetCard size="sm" value={item.c3} />
-                </div>
-              </div>
+              </Tooltip>
             ) : (
               <Typography key={key} variant="body2" gutterBottom>
                 <User id={item.user} />: {item.message}

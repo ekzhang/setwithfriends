@@ -35,11 +35,11 @@ function UserStatistics({ gamesData, userId }) {
   const stats = Object.values(gamesData).reduce(
     ([playCount, winCount, setsCount, fastestWinTime, totalGameLength], g) => [
       playCount + 1,
-      winCount + (g.winner === userId),
+      winCount + (g.scores[userId] === g.topScore),
       setsCount + (g.scores[userId] || 0),
       Math.min(
         fastestWinTime,
-        g.winner === userId ? g.endedAt - g.startedAt : Infinity
+        g.scores[userId] === g.topScore ? g.endedAt - g.startedAt : Infinity
       ),
       totalGameLength + (g.endedAt - g.startedAt),
     ],

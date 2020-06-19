@@ -29,18 +29,13 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 function mergeGameData(game, gameData) {
-  const scores = computeState(gameData).scores;
-  const winner = Object.keys(game.users).sort((u1, u2) => {
-    const s1 = scores[u1] || 0;
-    const s2 = scores[u2] || 0;
-    if (s1 !== s2) return s2 - s1;
-    return u1 < u2 ? -1 : 1;
-  })[0];
+  const { scores } = computeState(gameData);
+  const topScore = Math.max(0, ...Object.values(scores));
   return {
     ...game,
     ...gameData,
-    winner: winner,
-    scores: scores,
+    topScore,
+    scores,
   };
 }
 

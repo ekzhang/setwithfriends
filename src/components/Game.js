@@ -76,8 +76,8 @@ function Game({ deck, onClick, onClear, selected }) {
   useKeydown(({ key }) => {
     if (key === "Escape") {
       onClear();
-    } else if (key.length === 1 && shortcuts.includes(key)) {
-      const index = shortcuts.indexOf(key);
+    } else if (key.length === 1 && shortcuts.includes(key.toLowerCase())) {
+      const index = shortcuts.indexOf(key.toLowerCase());
       if (index < board.length) {
         onClick(board[index]);
       }
