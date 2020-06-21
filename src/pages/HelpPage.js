@@ -44,7 +44,7 @@ function HelpPage() {
         </Typography>
         <Typography component="div" variant="body1" gutterBottom>
           <ul>
-            <li>Three colors: green, red, and purple.</li>
+            <li>Three colors: green, red/orange, and purple.</li>
             <li>Three shapes: ovals, squiggles, and diamonds.</li>
             <li>Three shadings: striped, outlined, and filled.</li>
             <li>Three numbers: one, two, and three.</li>
@@ -60,21 +60,21 @@ function HelpPage() {
           The three cards below also form a set.
         </Typography>
         <Typography component="div" align="center" gutterBottom>
-          <SetCard value="2010" />
-          <SetCard value="2212" />
-          <SetCard value="2111" />
+          <SetCard value="0010" />
+          <SetCard value="0212" />
+          <SetCard value="0111" />
         </Typography>
         <Typography variant="body1" gutterBottom>
           In the example above, the three cards are identical in shading
-          (outlined) and color (red), while being all different in number and
+          (outlined) and color (purple), while being all different in number and
           shape. In general, some subset of features could be all the same among
           the three cards, with the rest of the features being all different.
           You can verify a couple more examples of sets below.
         </Typography>
         <Typography component="div" align="center" gutterBottom>
-          <SetCard value="1221" />
-          <SetCard value="1211" />
-          <SetCard value="1201" />
+          <SetCard value="2221" />
+          <SetCard value="2211" />
+          <SetCard value="2201" />
         </Typography>
         <Typography component="div" align="center" gutterBottom>
           <SetCard value="0200" />
@@ -84,13 +84,14 @@ function HelpPage() {
         <Typography variant="body1" gutterBottom>
           However, a triplet of cards needs to be correct in all four features
           to be a set. The three cards below do <strong>not</strong> form a set,
-          due to their color. Two of the cards are red while the third is green,
-          so the three colors are neither all the same, nor all different.
+          due to their color. Two of the cards are green while the third is
+          purple, so the three colors are neither all the same, nor all
+          different.
         </Typography>
         <Typography component="div" align="center" gutterBottom>
-          <SetCard value="2010" />
-          <SetCard value="1001" />
-          <SetCard value="2022" />
+          <SetCard value="1010" />
+          <SetCard value="0001" />
+          <SetCard value="1022" />
         </Typography>
         <Typography variant="body1" gutterBottom>
           You should practice these rules a few times until you've mastered

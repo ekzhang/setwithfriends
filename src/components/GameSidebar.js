@@ -6,6 +6,7 @@ import List from "@material-ui/core/List";
 import ListItem from "@material-ui/core/ListItem";
 import ListItemIcon from "@material-ui/core/ListItemIcon";
 import ListItemText from "@material-ui/core/ListItemText";
+import Paper from "@material-ui/core/Paper";
 import Tooltip from "@material-ui/core/Tooltip";
 import Typography from "@material-ui/core/Typography";
 import { makeStyles } from "@material-ui/core/styles";
@@ -18,6 +19,12 @@ import useMoment from "../hooks/useMoment";
 import { formatTime } from "../util";
 
 const useStyles = makeStyles((theme) => ({
+  sidebar: {
+    maxHeight: "100%",
+    display: "flex",
+    flexDirection: "column",
+    padding: 8,
+  },
   timer: {
     display: "flex",
     alignItems: "center",
@@ -43,7 +50,7 @@ function GameSidebar({ game, scores, leaderboard }) {
   const gameTime = game.status === "done" ? game.endedAt : time;
 
   return (
-    <>
+    <Paper className={classes.sidebar}>
       {/* Timer */}
       <div className={classes.timer} style={{ marginTop: 6 }}>
         <AlarmIcon className={classes.alarm} fontSize="large" />
@@ -94,7 +101,7 @@ function GameSidebar({ game, scores, leaderboard }) {
           ))}
         </List>
       </div>
-    </>
+    </Paper>
   );
 }
 
