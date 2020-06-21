@@ -138,7 +138,7 @@ function LobbyPage() {
       .database()
       .ref("/publicGames")
       .orderByValue()
-      .limitToLast(50);
+      .limitToLast(35);
   }, []);
   const games = useFirebaseQuery(gamesQuery);
 
@@ -147,7 +147,7 @@ function LobbyPage() {
       .database()
       .ref(`/userGames/${user.id}`)
       .orderByValue()
-      .limitToLast(50);
+      .limitToLast(35);
   }, [user.id]);
   const myGames = useFirebaseQuery(myGamesQuery);
 

@@ -45,7 +45,7 @@ function Chat() {
 
   const messagesQuery = useMemo(
     () =>
-      firebase.database().ref("lobbyChat").orderByChild("time").limitToLast(50),
+      firebase.database().ref("lobbyChat").orderByChild("time").limitToLast(30),
     []
   );
   const messages = useFirebaseQuery(messagesQuery);
