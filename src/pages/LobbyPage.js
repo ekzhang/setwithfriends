@@ -2,7 +2,6 @@ import React, { useState, useMemo, useContext } from "react";
 
 import generate from "project-name-generator";
 import { Link as RouterLink, Redirect } from "react-router-dom";
-import { useTransition, animated } from "react-spring";
 import { makeStyles } from "@material-ui/core/styles";
 import Paper from "@material-ui/core/Paper";
 import Container from "@material-ui/core/Container";
@@ -134,12 +133,6 @@ function LobbyPage() {
   }, []);
   const onlineUsers = useFirebaseQuery(onlineUsersQuery);
 
-  const userTransitions = useTransition(Object.keys(onlineUsers), null, {
-    from: { opacity: 0 },
-    enter: { opacity: 1 },
-    leave: { opacity: 0 },
-  });
-
   const gamesQuery = useMemo(() => {
     return firebase
       .database()
@@ -209,45 +202,44 @@ function LobbyPage() {
                   disablePadding
                   style={{ overflowY: "auto", flexGrow: 1 }}
                 >
-                  {userTransitions.map(({ item: userId, props, key }) => (
-                    <animated.div key={key} style={props}>
-                      <User
-                        id={userId}
-                        component={Typography}
-                        variant="body2"
-                        noWrap
-                        render={(thisUser, userEl) => (
-                          <ListItem
-                            button
-                            component={RouterLink}
-                            to={`/profile/${userId}`}
-                          >
-                            <ListItemIcon>
-                              {isIngame(thisUser) ? (
-                                <Tooltip title="In a game">
-                                  <SportsEsportsIcon />
-                                </Tooltip>
-                              ) : (
-                                <Tooltip title="Online user">
-                                  <FaceIcon />
-                                </Tooltip>
-                              )}
-                            </ListItemIcon>
-
-                            <ListItemText disableTypography>
-                              {userEl}
-                            </ListItemText>
-                            {userId === user.id && (
-                              <ListItemText
-                                style={{ flex: "0 0 auto", marginLeft: 8 }}
-                              >
-                                (You)
-                              </ListItemText>
+                  {Object.keys(onlineUsers).map((userId) => (
+                    <User
+                      key={userId}
+                      id={userId}
+                      component={Typography}
+                      variant="body2"
+                      noWrap
+                      render={(thisUser, userEl) => (
+                        <ListItem
+                          button
+                          component={RouterLink}
+                          to={`/profile/${userId}`}
+                        >
+                          <ListItemIcon>
+                            {isIngame(thisUser) ? (
+                              <Tooltip title="In a game">
+                                <SportsEsportsIcon />
+                              </Tooltip>
+                            ) : (
+                              <Tooltip title="Online user">
+                                <FaceIcon />
+                              </Tooltip>
                             )}
-                          </ListItem>
-                        )}
-                      />
-                    </animated.div>
+                          </ListItemIcon>
+
+                          <ListItemText disableTypography>
+                            {userEl}
+                          </ListItemText>
+                          {userId === user.id && (
+                            <ListItemText
+                              style={{ flex: "0 0 auto", marginLeft: 8 }}
+                            >
+                              (You)
+                            </ListItemText>
+                          )}
+                        </ListItem>
+                      )}
+                    />
                   ))}
                 </List>
               </section>
