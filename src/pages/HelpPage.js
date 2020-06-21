@@ -4,8 +4,8 @@ import Typography from "@material-ui/core/Typography";
 import Link from "@material-ui/core/Link";
 import Container from "@material-ui/core/Container";
 import Paper from "@material-ui/core/Paper";
-import { Link as RouterLink } from "react-router-dom";
 
+import InternalLink from "../components/InternalLink";
 import SetCard from "../components/SetCard";
 
 function HelpPage() {
@@ -134,9 +134,7 @@ function HelpPage() {
         </Typography>
       </Paper>
       <Typography variant="body1" align="center" gutterBottom>
-        <Link component={RouterLink} to="/">
-          Return to home
-        </Link>
+        <InternalLink to="/">Return to home</InternalLink>
       </Typography>
     </Container>
   );

@@ -1,7 +1,7 @@
 import React, { useState, useMemo, useContext } from "react";
 
 import generate from "project-name-generator";
-import { Link as RouterLink, Redirect } from "react-router-dom";
+import { Redirect } from "react-router-dom";
 import { makeStyles } from "@material-ui/core/styles";
 import Paper from "@material-ui/core/Paper";
 import Container from "@material-ui/core/Container";
@@ -23,6 +23,7 @@ import Tooltip from "@material-ui/core/Tooltip";
 import firebase, { createGame } from "../firebase";
 import useFirebaseQuery from "../hooks/useFirebaseQuery";
 import useFirebaseRef from "../hooks/useFirebaseRef";
+import InternalLink from "../components/InternalLink";
 import GameInfoRow from "../components/GameInfoRow";
 import Chat from "../components/Chat";
 import { UserContext } from "../context";
@@ -256,18 +257,9 @@ function LobbyPage() {
         </Box>
       </Grid>
       <Typography variant="body1" align="center" style={{ padding: "16px 0" }}>
-        <Link component={RouterLink} to="/help">
-          Help
-        </Link>{" "}
-        •{" "}
-        <Link component={RouterLink} to="/about">
-          About
-        </Link>{" "}
-        •{" "}
-        <Link component={RouterLink} to="/contact">
-          Contact
-        </Link>{" "}
-        •{" "}
+        <InternalLink to="/help">Help</InternalLink> •{" "}
+        <InternalLink to="/about">About</InternalLink> •{" "}
+        <InternalLink to="/contact">Contact</InternalLink> •{" "}
         <Link target="_blank" rel="noopener" href="https://discord.gg/XbjJyc9">
           Discord
         </Link>

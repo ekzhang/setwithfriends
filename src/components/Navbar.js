@@ -1,12 +1,10 @@
 import React, { useState, useContext } from "react";
 
-import { Link as RouterLink } from "react-router-dom";
 import AppBar from "@material-ui/core/AppBar";
 import Toolbar from "@material-ui/core/Toolbar";
 import Tooltip from "@material-ui/core/Tooltip";
 import Typography from "@material-ui/core/Typography";
 import IconButton from "@material-ui/core/IconButton";
-import Link from "@material-ui/core/Link";
 import EditIcon from "@material-ui/icons/Edit";
 import Brightness3Icon from "@material-ui/icons/Brightness3";
 import WbSunnyIcon from "@material-ui/icons/WbSunny";
@@ -14,6 +12,7 @@ import WbSunnyIcon from "@material-ui/icons/WbSunny";
 import firebase from "../firebase";
 import { UserContext } from "../context";
 import User from "./User";
+import InternalLink from "./InternalLink";
 import PromptDialog from "./PromptDialog";
 
 function Navbar({ themeType, handleChangeTheme }) {
@@ -31,19 +30,15 @@ function Navbar({ themeType, handleChangeTheme }) {
     <AppBar position="relative" color="transparent" elevation={0}>
       <Toolbar variant="dense">
         <Typography variant="h6" style={{ flexGrow: 1, whiteSpace: "nowrap" }}>
-          <Link underline="none" color="inherit" component={RouterLink} to="/">
+          <InternalLink underline="none" color="inherit" to="/">
             Set with Friends
-          </Link>
+          </InternalLink>
         </Typography>
         <Typography
           variant="subtitle1"
           style={{ marginLeft: "2em", marginRight: 8, minWidth: 0 }}
         >
-          <Link
-            underline="none"
-            component={RouterLink}
-            to={`/profile/${user.id}`}
-          >
+          <InternalLink underline="none" to={`/profile/${user.id}`}>
             <User
               id={user.id}
               style={{
@@ -53,7 +48,7 @@ function Navbar({ themeType, handleChangeTheme }) {
                 whiteSpace: "nowrap",
               }}
             />
-          </Link>
+          </InternalLink>
         </Typography>
         <IconButton color="inherit" onClick={() => setChangeName(true)}>
           <Tooltip title="Change name">
