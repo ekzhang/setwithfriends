@@ -87,6 +87,7 @@ function Chat() {
           value={input}
           onChange={(e) => setInput(e.target.value)}
           placeholder="Type a message..."
+          maxLength={250}
         />
       </form>
     </section>
