@@ -12,6 +12,7 @@ import { makeStyles } from "@material-ui/core/styles";
 import Tooltip from "@material-ui/core/Tooltip";
 
 import User from "./User";
+import InternalLink from "./InternalLink";
 import SimpleInput from "./SimpleInput";
 import firebase from "../firebase";
 import autoscroll from "../utils/autoscroll";
@@ -45,7 +46,7 @@ function Chat() {
 
   const messagesQuery = useMemo(
     () =>
-      firebase.database().ref("lobbyChat").orderByChild("time").limitToLast(50),
+      firebase.database().ref("lobbyChat").orderByChild("time").limitToLast(30),
     []
   );
   const messages = useFirebaseQuery(messagesQuery);
@@ -77,7 +78,13 @@ function Chat() {
             title={<ElapsedTime value={msg.time} />}
           >
             <Typography variant="body2" gutterBottom>
-              <User id={msg.user} />: {msg.message}
+              <User
+                id={msg.user}
+                component={InternalLink}
+                to={`/profile/${msg.user}`}
+                underline="none"
+              />
+              : {msg.message}
             </Typography>
           </Tooltip>
         ))}
@@ -87,6 +94,7 @@ function Chat() {
           value={input}
           onChange={(e) => setInput(e.target.value)}
           placeholder="Type a message..."
+          maxLength={250}
         />
       </form>
     </section>

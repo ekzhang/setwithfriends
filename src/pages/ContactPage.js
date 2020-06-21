@@ -4,7 +4,8 @@ import Typography from "@material-ui/core/Typography";
 import Link from "@material-ui/core/Link";
 import Container from "@material-ui/core/Container";
 import Paper from "@material-ui/core/Paper";
-import { Link as RouterLink } from "react-router-dom";
+
+import InternalLink from "../components/InternalLink";
 
 function ContactPage() {
   return (
@@ -23,9 +24,7 @@ function ContactPage() {
         </Typography>
       </Paper>
       <Typography variant="body1" align="center">
-        <Link component={RouterLink} to="/" gutterBottom>
-          Return to home
-        </Link>
+        <InternalLink to="/">Return to home</InternalLink>
       </Typography>
     </Container>
   );

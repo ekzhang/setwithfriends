@@ -50,9 +50,9 @@
       }
     },
     "users": {
-      ".read": "auth != null",
       ".indexOn": "connections",
       "$userId": {
+        ".read": "auth != null",
         ".write": "auth != null && auth.uid == $userId",
         ".validate": "newData.hasChildren(['color', 'name'])",
         "color": {
@@ -99,7 +99,7 @@
             ".validate": "newData.isString() && newData.val() == auth.uid"
           },
           "message": {
-            ".validate": "newData.isString() && newData.val().length > 0"
+            ".validate": "newData.isString() && newData.val().length > 0 && newData.val().length <= 250"
           },
           "time": {
             ".validate": "newData.isNumber() && newData.val() == now"
@@ -120,7 +120,7 @@
           ".validate": "newData.isString() && newData.val() == auth.uid"
         },
         "message": {
-          ".validate": "newData.isString() && newData.val().length > 0"
+          ".validate": "newData.isString() && newData.val().length > 0 && newData.val().length <= 250"
         },
         "time": {
           ".validate": "newData.isNumber() && newData.val() == now"

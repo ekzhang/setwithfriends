@@ -1,8 +1,7 @@
 import React from "react";
 import Typography from "@material-ui/core/Typography";
-import Link from "@material-ui/core/Link";
 import Container from "@material-ui/core/Container";
-import { Link as RouterLink } from "react-router-dom";
+import InternalLink from "../components/InternalLink";
 import cowImage from "../assets/cow_404.png";
 
 function NotFoundPage() {
@@ -17,9 +16,9 @@ function NotFoundPage() {
         style={{ display: "block", maxWidth: "100%", margin: "0 auto 8px" }}
       />
       <Typography variant="body1" align="center">
-        <Link component={RouterLink} to="/" gutterBottom>
+        <InternalLink to="/" gutterBottom>
           Return to home
-        </Link>
+        </InternalLink>
       </Typography>
     </Container>
   );

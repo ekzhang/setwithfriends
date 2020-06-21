@@ -1,7 +1,7 @@
 import React, { useState, useMemo, useContext } from "react";
 
 import generate from "project-name-generator";
-import { Link as RouterLink, Redirect } from "react-router-dom";
+import { Redirect } from "react-router-dom";
 import { makeStyles } from "@material-ui/core/styles";
 import Paper from "@material-ui/core/Paper";
 import Container from "@material-ui/core/Container";
@@ -12,10 +12,6 @@ import Box from "@material-ui/core/Box";
 import Link from "@material-ui/core/Link";
 import Tabs from "@material-ui/core/Tabs";
 import Tab from "@material-ui/core/Tab";
-import List from "@material-ui/core/List";
-import ListItem from "@material-ui/core/ListItem";
-import ListItemIcon from "@material-ui/core/ListItemIcon";
-import ListItemText from "@material-ui/core/ListItemText";
 import Table from "@material-ui/core/Table";
 import TableBody from "@material-ui/core/TableBody";
 import TableCell from "@material-ui/core/TableCell";
@@ -23,16 +19,13 @@ import TableContainer from "@material-ui/core/TableContainer";
 import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
 import Tooltip from "@material-ui/core/Tooltip";
-import Divider from "@material-ui/core/Divider";
-import FaceIcon from "@material-ui/icons/Face";
-import SportsEsportsIcon from "@material-ui/icons/SportsEsports";
 
 import firebase, { createGame } from "../firebase";
 import useFirebaseQuery from "../hooks/useFirebaseQuery";
 import useFirebaseRef from "../hooks/useFirebaseRef";
+import InternalLink from "../components/InternalLink";
 import GameInfoRow from "../components/GameInfoRow";
 import Chat from "../components/Chat";
-import User from "../components/User";
 import { UserContext } from "../context";
 
 const useStyles = makeStyles((theme) => ({
@@ -124,21 +117,12 @@ function LobbyPage() {
   const [waiting, setWaiting] = useState(false);
   const [tabValue, setTabValue] = useState(0);
 
-  const onlineUsersQuery = useMemo(() => {
-    return firebase
-      .database()
-      .ref("users")
-      .orderByChild("connections")
-      .startAt(false);
-  }, []);
-  const onlineUsers = useFirebaseQuery(onlineUsersQuery);
-
   const gamesQuery = useMemo(() => {
     return firebase
       .database()
       .ref("/publicGames")
       .orderByValue()
-      .limitToLast(50);
+      .limitToLast(35);
   }, []);
   const games = useFirebaseQuery(gamesQuery);
 
@@ -147,7 +131,7 @@ function LobbyPage() {
       .database()
       .ref(`/userGames/${user.id}`)
       .orderByValue()
-      .limitToLast(50);
+      .limitToLast(35);
   }, [user.id]);
   const myGames = useFirebaseQuery(myGamesQuery);
 
@@ -172,78 +156,12 @@ function LobbyPage() {
     }
   }
 
-  function isIngame(user) {
-    for (const url of Object.values(user.connections || {})) {
-      if (url.startsWith("/game")) {
-        return true;
-      }
-    }
-    return false;
-  }
-
   return (
     <Container>
       <Grid container spacing={2} className={classes.mainGrid}>
         <Box clone order={{ xs: 3, md: 1 }} className={classes.chatColumn}>
           <Grid item xs={12} sm={12} md={3}>
             <Paper className={classes.chatColumnPaper}>
-              <section
-                className={classes.chatPanel}
-                style={{
-                  flexShrink: 0,
-                  maxHeight: "40%",
-                }}
-              >
-                <Typography variant="overline">
-                  Online Users ({Object.keys(onlineUsers).length})
-                </Typography>
-                <List
-                  dense
-                  disablePadding
-                  style={{ overflowY: "auto", flexGrow: 1 }}
-                >
-                  {Object.keys(onlineUsers).map((userId) => (
-                    <User
-                      key={userId}
-                      id={userId}
-                      component={Typography}
-                      variant="body2"
-                      noWrap
-                      render={(thisUser, userEl) => (
-                        <ListItem
-                          button
-                          component={RouterLink}
-                          to={`/profile/${userId}`}
-                        >
-                          <ListItemIcon>
-                            {isIngame(thisUser) ? (
-                              <Tooltip title="In a game">
-                                <SportsEsportsIcon />
-                              </Tooltip>
-                            ) : (
-                              <Tooltip title="Online user">
-                                <FaceIcon />
-                              </Tooltip>
-                            )}
-                          </ListItemIcon>
-
-                          <ListItemText disableTypography>
-                            {userEl}
-                          </ListItemText>
-                          {userId === user.id && (
-                            <ListItemText
-                              style={{ flex: "0 0 auto", marginLeft: 8 }}
-                            >
-                              (You)
-                            </ListItemText>
-                          )}
-                        </ListItem>
-                      )}
-                    />
-                  ))}
-                </List>
-              </section>
-              <Divider style={{ margin: "8px 0" }} />
               <Chat user={user} />
             </Paper>
           </Grid>
@@ -324,6 +242,12 @@ function LobbyPage() {
             <div className={classes.gameCounters}>
               <Typography variant="body2" gutterBottom>
                 <strong>
+                  {loadingStats ? "---" : stats ? stats.onlineUsers : 0}
+                </strong>{" "}
+                users online
+              </Typography>
+              <Typography variant="body2" gutterBottom>
+                <strong>
                   {loadingStats ? "-----" : stats ? stats.gameCount : 0}
                 </strong>{" "}
                 games played
@@ -333,18 +257,9 @@ function LobbyPage() {
         </Box>
       </Grid>
       <Typography variant="body1" align="center" style={{ padding: "16px 0" }}>
-        <Link component={RouterLink} to="/help">
-          Help
-        </Link>{" "}
-        •{" "}
-        <Link component={RouterLink} to="/about">
-          About
-        </Link>{" "}
-        •{" "}
-        <Link component={RouterLink} to="/contact">
-          Contact
-        </Link>{" "}
-        •{" "}
+        <InternalLink to="/help">Help</InternalLink> •{" "}
+        <InternalLink to="/about">About</InternalLink> •{" "}
+        <InternalLink to="/contact">Contact</InternalLink> •{" "}
         <Link target="_blank" rel="noopener" href="https://discord.gg/XbjJyc9">
           Discord
         </Link>

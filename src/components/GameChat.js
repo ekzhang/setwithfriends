@@ -12,6 +12,7 @@ import { makeStyles } from "@material-ui/core/styles";
 import Tooltip from "@material-ui/core/Tooltip";
 
 import User from "./User";
+import InternalLink from "./InternalLink";
 import SimpleInput from "./SimpleInput";
 import SetCard from "./SetCard";
 import firebase from "../firebase";
@@ -125,7 +126,13 @@ function GameChat({ gameId, history, startedAt }) {
               </Tooltip>
             ) : (
               <Typography key={key} variant="body2" gutterBottom>
-                <User id={item.user} />: {item.message}
+                <User
+                  id={item.user}
+                  component={InternalLink}
+                  to={`/profile/${item.user}`}
+                  underline="none"
+                />
+                : {item.message}
               </Typography>
             )
           )}
@@ -135,6 +142,7 @@ function GameChat({ gameId, history, startedAt }) {
           value={input}
           onChange={(e) => setInput(e.target.value)}
           placeholder="Type a message..."
+          maxLength={250}
         />
       </form>
     </section>
