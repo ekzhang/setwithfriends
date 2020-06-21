@@ -111,7 +111,7 @@ function generateDeck() {
 
 /** Periodically remove stale user connections */
 export const clearConnections = functions.pubsub
-  .schedule("every 5 minutes")
+  .schedule("every 2 minutes")
   .onRun(async (context) => {
     const onlineUsers = await admin
       .database()
@@ -121,8 +121,10 @@ export const clearConnections = functions.pubsub
       .once("value");
     const actions: Array<Promise<void>> = [];
     onlineUsers.forEach((snap) => {
-      console.log(`Clearing connections for ${snap.ref.toString()}`);
-      actions.push(snap.ref.child("connections").remove());
+      if (Math.random() < 0.1) {
+        console.log(`Clearing connections for ${snap.ref.toString()}`);
+        actions.push(snap.ref.child("connections").remove());
+      }
     });
     await Promise.all(actions);
   });
