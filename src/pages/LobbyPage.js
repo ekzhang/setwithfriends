@@ -12,10 +12,6 @@ import Box from "@material-ui/core/Box";
 import Link from "@material-ui/core/Link";
 import Tabs from "@material-ui/core/Tabs";
 import Tab from "@material-ui/core/Tab";
-import List from "@material-ui/core/List";
-import ListItem from "@material-ui/core/ListItem";
-import ListItemIcon from "@material-ui/core/ListItemIcon";
-import ListItemText from "@material-ui/core/ListItemText";
 import Table from "@material-ui/core/Table";
 import TableBody from "@material-ui/core/TableBody";
 import TableCell from "@material-ui/core/TableCell";
@@ -23,16 +19,12 @@ import TableContainer from "@material-ui/core/TableContainer";
 import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
 import Tooltip from "@material-ui/core/Tooltip";
-import Divider from "@material-ui/core/Divider";
-import FaceIcon from "@material-ui/icons/Face";
-import SportsEsportsIcon from "@material-ui/icons/SportsEsports";
 
 import firebase, { createGame } from "../firebase";
 import useFirebaseQuery from "../hooks/useFirebaseQuery";
 import useFirebaseRef from "../hooks/useFirebaseRef";
 import GameInfoRow from "../components/GameInfoRow";
 import Chat from "../components/Chat";
-import User from "../components/User";
 import { UserContext } from "../context";
 
 const useStyles = makeStyles((theme) => ({
@@ -124,15 +116,6 @@ function LobbyPage() {
   const [waiting, setWaiting] = useState(false);
   const [tabValue, setTabValue] = useState(0);
 
-  const onlineUsersQuery = useMemo(() => {
-    return firebase
-      .database()
-      .ref("users")
-      .orderByChild("connections")
-      .startAt(false);
-  }, []);
-  const onlineUsers = useFirebaseQuery(onlineUsersQuery);
-
   const gamesQuery = useMemo(() => {
     return firebase
       .database()
@@ -172,78 +155,12 @@ function LobbyPage() {
     }
   }
 
-  function isIngame(user) {
-    for (const url of Object.values(user.connections || {})) {
-      if (url.startsWith("/game")) {
-        return true;
-      }
-    }
-    return false;
-  }
-
   return (
     <Container>
       <Grid container spacing={2} className={classes.mainGrid}>
         <Box clone order={{ xs: 3, md: 1 }} className={classes.chatColumn}>
           <Grid item xs={12} sm={12} md={3}>
             <Paper className={classes.chatColumnPaper}>
-              <section
-                className={classes.chatPanel}
-                style={{
-                  flexShrink: 0,
-                  maxHeight: "40%",
-                }}
-              >
-                <Typography variant="overline">
-                  Online Users ({Object.keys(onlineUsers).length})
-                </Typography>
-                <List
-                  dense
-                  disablePadding
-                  style={{ overflowY: "auto", flexGrow: 1 }}
-                >
-                  {Object.keys(onlineUsers).map((userId) => (
-                    <User
-                      key={userId}
-                      id={userId}
-                      component={Typography}
-                      variant="body2"
-                      noWrap
-                      render={(thisUser, userEl) => (
-                        <ListItem
-                          button
-                          component={RouterLink}
-                          to={`/profile/${userId}`}
-                        >
-                          <ListItemIcon>
-                            {isIngame(thisUser) ? (
-                              <Tooltip title="In a game">
-                                <SportsEsportsIcon />
-                              </Tooltip>
-                            ) : (
-                              <Tooltip title="Online user">
-                                <FaceIcon />
-                              </Tooltip>
-                            )}
-                          </ListItemIcon>
-
-                          <ListItemText disableTypography>
-                            {userEl}
-                          </ListItemText>
-                          {userId === user.id && (
-                            <ListItemText
-                              style={{ flex: "0 0 auto", marginLeft: 8 }}
-                            >
-                              (You)
-                            </ListItemText>
-                          )}
-                        </ListItem>
-                      )}
-                    />
-                  ))}
-                </List>
-              </section>
-              <Divider style={{ margin: "8px 0" }} />
               <Chat user={user} />
             </Paper>
           </Grid>
@@ -322,6 +239,12 @@ function LobbyPage() {
               </Tooltip>
             </div>
             <div className={classes.gameCounters}>
+              <Typography variant="body2" gutterBottom>
+                <strong>
+                  {loadingStats ? "---" : stats ? stats.onlineUsers : 0}
+                </strong>{" "}
+                users online
+              </Typography>
               <Typography variant="body2" gutterBottom>
                 <strong>
                   {loadingStats ? "-----" : stats ? stats.gameCount : 0}

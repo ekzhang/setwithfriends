@@ -50,9 +50,9 @@
       }
     },
     "users": {
-      ".read": "auth != null",
       ".indexOn": "connections",
       "$userId": {
+        ".read": "auth != null",
         ".write": "auth != null && auth.uid == $userId",
         ".validate": "newData.hasChildren(['color', 'name'])",
         "color": {
