@@ -97,49 +97,51 @@ function Chat() {
     >
       <Typography variant="overline">Lobby Chat</Typography>
       <div className={classes.chat} ref={chatEl}>
-        {Object.entries(messages).map(([key, msg]) => (
-          <div
-            key={key}
-            style={{ display: "flex", flexDirection: "row" }}
-            onMouseEnter={() => setShowVertIconIdx(key)}
-            onMouseLeave={() => setShowVertIconIdx(-1)}
-          >
-            <Tooltip
-              arrow
-              placement="left"
-              title={<ElapsedTime value={msg.time} />}
+        {Object.entries(messages)
+          .sort((a, b) => a[1].time - b[1].time)
+          .map(([key, msg]) => (
+            <div
+              key={key}
+              style={{ display: "flex", flexDirection: "row" }}
+              onMouseEnter={() => setShowVertIconIdx(key)}
+              onMouseLeave={() => setShowVertIconIdx(-1)}
             >
-              <Typography variant="body2" gutterBottom>
-                <User
-                  id={msg.user}
-                  component={InternalLink}
-                  to={`/profile/${msg.user}`}
-                  underline="none"
-                />
-                : {msg.message}
-              </Typography>
-            </Tooltip>
-            <MoreVertIcon
-              aria-controls="admin-menu"
-              color="inherit"
-              className={classes.vertIcon}
-              style={{
-                opacity: `${key === showVertIconIdx ? 1 : 0}`,
-              }}
-              onClick={(e) => handleClickVertIcon(e, key)}
-            />
+              <Tooltip
+                arrow
+                placement="left"
+                title={<ElapsedTime value={msg.time} />}
+              >
+                <Typography variant="body2" gutterBottom>
+                  <User
+                    id={msg.user}
+                    component={InternalLink}
+                    to={`/profile/${msg.user}`}
+                    underline="none"
+                  />
+                  : {msg.message}
+                </Typography>
+              </Tooltip>
+              <MoreVertIcon
+                aria-controls="admin-menu"
+                color="inherit"
+                className={classes.vertIcon}
+                style={{
+                  opacity: `${key === showVertIconIdx ? 1 : 0}`,
+                }}
+                onClick={(e) => handleClickVertIcon(e, key)}
+              />
 
-            <Menu
-              id="admin-menu"
-              anchorEl={anchorEl}
-              open={Boolean(anchorEl) && key === menuOpenIdx}
-              onClose={handleClose}
-            >
-              {/* <MenuItem onClick={handleClose}>Reset user name</MenuItem> */}
-              <MenuItem onClick={handleClose}>Delete message</MenuItem>
-            </Menu>
-          </div>
-        ))}
+              <Menu
+                id="admin-menu"
+                anchorEl={anchorEl}
+                open={Boolean(anchorEl) && key === menuOpenIdx}
+                onClose={handleClose}
+              >
+                {/* <MenuItem onClick={handleClose}>Reset user name</MenuItem> */}
+                <MenuItem onClick={handleClose}>Delete message</MenuItem>
+              </Menu>
+            </div>
+          ))}
       </div>
       <form onSubmit={handleSubmit}>
         <SimpleInput
