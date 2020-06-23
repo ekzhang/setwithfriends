@@ -10,6 +10,10 @@ import React, {
 import Typography from "@material-ui/core/Typography";
 import { makeStyles } from "@material-ui/core/styles";
 import Tooltip from "@material-ui/core/Tooltip";
+import MoreVertIcon from "@material-ui/icons/MoreVert";
+import MenuItem from "@material-ui/core/MenuItem";
+import Menu from "@material-ui/core/Menu";
+import IconButton from "@material-ui/core/IconButton";
 
 import User from "./User";
 import InternalLink from "./InternalLink";
@@ -31,11 +35,21 @@ const useStyles = makeStyles((theme) => ({
     overflowWrap: "anywhere",
     padding: "0 4px",
   },
+  vertIcon: {
+    marginLeft: "auto",
+    cursor: "pointer",
+    "&:hover": {
+      fill: "pink",
+    },
+  },
 }));
 
 function Chat() {
   const user = useContext(UserContext);
   const classes = useStyles();
+
+  const [showVertIconIdx, setShowVertIconIdx] = useState(null);
+  const [menuOpenIdx, setMenuOpenIdx] = useState(null);
 
   const chatEl = useRef();
   useEffect(() => {
@@ -63,6 +77,19 @@ function Chat() {
     setInput("");
   }
 
+  const [anchorEl, setAnchorEl] = React.useState(null);
+
+  const handleClickVertIcon = (event, key) => {
+    setAnchorEl(event.currentTarget);
+    setMenuOpenIdx(key);
+  };
+
+  const handleClose = () => {
+    setAnchorEl(null);
+    setMenuOpenIdx(null);
+    setShowVertIconIdx(null);
+  };
+
   return (
     <section
       className={classes.chatPanel}
@@ -71,22 +98,47 @@ function Chat() {
       <Typography variant="overline">Lobby Chat</Typography>
       <div className={classes.chat} ref={chatEl}>
         {Object.entries(messages).map(([key, msg]) => (
-          <Tooltip
+          <div
             key={key}
-            arrow
-            placement="left"
-            title={<ElapsedTime value={msg.time} />}
+            style={{ display: "flex", flexDirection: "row" }}
+            onMouseEnter={() => setShowVertIconIdx(key)}
+            onMouseLeave={() => setShowVertIconIdx(-1)}
           >
-            <Typography variant="body2" gutterBottom>
-              <User
-                id={msg.user}
-                component={InternalLink}
-                to={`/profile/${msg.user}`}
-                underline="none"
-              />
-              : {msg.message}
-            </Typography>
-          </Tooltip>
+            <Tooltip
+              arrow
+              placement="left"
+              title={<ElapsedTime value={msg.time} />}
+            >
+              <Typography variant="body2" gutterBottom>
+                <User
+                  id={msg.user}
+                  component={InternalLink}
+                  to={`/profile/${msg.user}`}
+                  underline="none"
+                />
+                : {msg.message}
+              </Typography>
+            </Tooltip>
+            <MoreVertIcon
+              aria-controls="admin-menu"
+              color="inherit"
+              className={classes.vertIcon}
+              style={{
+                opacity: `${key === showVertIconIdx ? 1 : 0}`,
+              }}
+              onClick={(e) => handleClickVertIcon(e, key)}
+            />
+
+            <Menu
+              id="admin-menu"
+              anchorEl={anchorEl}
+              open={Boolean(anchorEl) && key === menuOpenIdx}
+              onClose={handleClose}
+            >
+              {/* <MenuItem onClick={handleClose}>Reset user name</MenuItem> */}
+              <MenuItem onClick={handleClose}>Delete message</MenuItem>
+            </Menu>
+          </div>
         ))}
       </div>
       <form onSubmit={handleSubmit}>
