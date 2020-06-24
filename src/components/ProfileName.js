@@ -1,4 +1,4 @@
-import React, { memo, useState } from "react";
+import React, { memo, useState, useContext } from "react";
 
 import Typography from "@material-ui/core/Typography";
 import { useTheme } from "@material-ui/core/styles";
@@ -7,8 +7,11 @@ import MenuItem from "@material-ui/core/MenuItem";
 import Menu from "@material-ui/core/Menu";
 import { makeStyles } from "@material-ui/core/styles";
 
+import firebase from "../firebase";
 import ElapsedTime from "./ElapsedTime";
 import User from "./User";
+import { UserContext } from "../context";
+import { generateName } from "../util";
 
 const useStyles = makeStyles((theme) => ({
   vertIcon: {
@@ -22,6 +25,7 @@ const useStyles = makeStyles((theme) => ({
 
 function ProfileName({ userId }) {
   const theme = useTheme();
+  const user = useContext(UserContext);
   const classes = useStyles();
 
   const [showVertIcon, setShowVertIcon] = useState(false);
@@ -32,6 +36,11 @@ function ProfileName({ userId }) {
   const handleClickVertIcon = (event) => {
     setAnchorEl(event.currentTarget);
     setMenuOpen(true);
+  };
+
+  const handleResetName = () => {
+    firebase.database().ref(`users/${user.id}/name`).set(generateName());
+    handleClose();
   };
 
   const handleClose = () => {
@@ -75,7 +84,7 @@ function ProfileName({ userId }) {
                 open={Boolean(anchorEl) && menuOpen}
                 onClose={handleClose}
               >
-                <MenuItem>Reset username</MenuItem>
+                <MenuItem onClick={handleResetName}>Reset username</MenuItem>
               </Menu>
             </div>
 
