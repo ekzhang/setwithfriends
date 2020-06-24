@@ -125,15 +125,17 @@ function Chat() {
                   : {msg.message}
                 </Typography>
               </Tooltip>
-              <MoreVertIcon
-                aria-controls="admin-menu"
-                color="inherit"
-                className={classes.vertIcon}
-                style={{
-                  opacity: `${key === showVertIconIdx ? 1 : 0}`,
-                }}
-                onClick={(e) => handleClickVertIcon(e, key)}
-              />
+              {user.admin && (
+                <MoreVertIcon
+                  aria-controls="admin-menu"
+                  color="inherit"
+                  className={classes.vertIcon}
+                  style={{
+                    opacity: `${key === showVertIconIdx ? 1 : 0}`,
+                  }}
+                  onClick={(e) => handleClickVertIcon(e, key)}
+                />
+              )}
 
               <Menu
                 id="admin-menu"
