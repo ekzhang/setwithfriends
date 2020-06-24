@@ -29,13 +29,11 @@ function ProfileName({ userId }) {
   const classes = useStyles();
 
   const [showVertIcon, setShowVertIcon] = useState(false);
-  const [menuOpen, setMenuOpen] = useState(false);
 
   const [anchorEl, setAnchorEl] = React.useState(null);
 
   const handleClickVertIcon = (event) => {
     setAnchorEl(event.currentTarget);
-    setMenuOpen(true);
   };
 
   const handleResetName = () => {
@@ -45,7 +43,6 @@ function ProfileName({ userId }) {
 
   const handleClose = () => {
     setAnchorEl(null);
-    setMenuOpen(false);
     setShowVertIcon(false);
   };
 
@@ -77,13 +74,13 @@ function ProfileName({ userId }) {
                   style={{
                     opacity: `${showVertIcon ? 1 : 0}`,
                   }}
-                  onClick={(e) => handleClickVertIcon(e)}
+                  onClick={handleClickVertIcon}
                 />
               )}
               <Menu
                 id="admin-menu"
                 anchorEl={anchorEl}
-                open={Boolean(anchorEl) && menuOpen}
+                open={Boolean(anchorEl)}
                 onClose={handleClose}
               >
                 <MenuItem onClick={handleResetName}>Reset username</MenuItem>
