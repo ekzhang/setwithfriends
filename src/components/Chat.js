@@ -38,7 +38,7 @@ const useStyles = makeStyles((theme) => ({
     marginLeft: "auto",
     cursor: "pointer",
     "&:hover": {
-      fill: "pink",
+      fill: "#f06292",
     },
   },
 }));
@@ -108,7 +108,7 @@ function Chat() {
               key={key}
               style={{ display: "flex", flexDirection: "row" }}
               onMouseEnter={() => setShowVertIconIdx(key)}
-              onMouseLeave={() => setShowVertIconIdx(-1)}
+              onMouseLeave={() => setShowVertIconIdx(null)}
             >
               <Tooltip
                 arrow
