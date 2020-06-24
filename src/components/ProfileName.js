@@ -18,7 +18,7 @@ const useStyles = makeStyles((theme) => ({
     marginLeft: "auto",
     cursor: "pointer",
     "&:hover": {
-      fill: "pink",
+      fill: "#f06292",
     },
   },
 }));
