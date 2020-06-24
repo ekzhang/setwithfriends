@@ -69,15 +69,17 @@ function ProfileName({ userId }) {
               >
                 {userEl}
               </Typography>
-              <MoreVertIcon
-                aria-controls="admin-menu"
-                color="inherit"
-                className={classes.vertIcon}
-                style={{
-                  opacity: `${showVertIcon ? 1 : 0}`,
-                }}
-                onClick={(e) => handleClickVertIcon(e)}
-              />
+              {user.admin && (
+                <MoreVertIcon
+                  aria-controls="admin-menu"
+                  color="inherit"
+                  className={classes.vertIcon}
+                  style={{
+                    opacity: `${showVertIcon ? 1 : 0}`,
+                  }}
+                  onClick={(e) => handleClickVertIcon(e)}
+                />
+              )}
               <Menu
                 id="admin-menu"
                 anchorEl={anchorEl}
