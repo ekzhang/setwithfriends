@@ -13,7 +13,6 @@ import Tooltip from "@material-ui/core/Tooltip";
 import MoreVertIcon from "@material-ui/icons/MoreVert";
 import MenuItem from "@material-ui/core/MenuItem";
 import Menu from "@material-ui/core/Menu";
-import IconButton from "@material-ui/core/IconButton";
 
 import User from "./User";
 import InternalLink from "./InternalLink";
@@ -84,6 +83,11 @@ function Chat() {
     setMenuOpenIdx(key);
   };
 
+  const handleDelete = (key) => {
+    firebase.database().ref("lobbyChat").child(key).remove();
+    handleClose();
+  };
+
   const handleClose = () => {
     setAnchorEl(null);
     setMenuOpenIdx(null);
@@ -137,8 +141,9 @@ function Chat() {
                 open={Boolean(anchorEl) && key === menuOpenIdx}
                 onClose={handleClose}
               >
-                {/* <MenuItem onClick={handleClose}>Reset user name</MenuItem> */}
-                <MenuItem onClick={handleClose}>Delete message</MenuItem>
+                <MenuItem onClick={() => handleDelete(key)}>
+                  Delete message
+                </MenuItem>
               </Menu>
             </div>
           ))}
