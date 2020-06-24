@@ -39,7 +39,7 @@ function ProfileName({ userId }) {
   };
 
   const handleResetName = () => {
-    firebase.database().ref(`users/${user.id}/name`).set(generateName());
+    firebase.database().ref(`users/${userId}/name`).set(generateName());
     handleClose();
   };
 
@@ -52,9 +52,9 @@ function ProfileName({ userId }) {
   return (
     <User
       id={userId}
-      render={(user, userEl) => {
+      render={(player, userEl) => {
         const isOnline =
-          user.connections && Object.keys(user.connections).length > 0;
+          player.connections && Object.keys(player.connections).length > 0;
         return (
           <section>
             <div
@@ -101,7 +101,7 @@ function ProfileName({ userId }) {
                 {isOnline ? (
                   "online now"
                 ) : (
-                  <ElapsedTime value={user.lastOnline} />
+                  <ElapsedTime value={player.lastOnline} />
                 )}
               </span>
             </Typography>
