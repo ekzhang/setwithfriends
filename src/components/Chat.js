@@ -40,6 +40,12 @@ const useStyles = makeStyles((theme) => ({
     "&:hover": {
       fill: "#f06292",
     },
+    visibility: "hidden",
+  },
+  message: {
+    "&:hover > $vertIcon": {
+      visibility: "visible",
+    },
   },
 }));
 
@@ -47,7 +53,6 @@ function Chat() {
   const user = useContext(UserContext);
   const classes = useStyles();
 
-  const [showVertIconIdx, setShowVertIconIdx] = useState(null);
   const [menuOpenIdx, setMenuOpenIdx] = useState(null);
 
   const chatEl = useRef();
@@ -91,7 +96,6 @@ function Chat() {
   const handleClose = () => {
     setAnchorEl(null);
     setMenuOpenIdx(null);
-    setShowVertIconIdx(null);
   };
 
   return (
@@ -107,8 +111,7 @@ function Chat() {
             <div
               key={key}
               style={{ display: "flex", flexDirection: "row" }}
-              onMouseEnter={() => setShowVertIconIdx(key)}
-              onMouseLeave={() => setShowVertIconIdx(null)}
+              className={classes.message}
             >
               <Tooltip
                 arrow
@@ -130,9 +133,6 @@ function Chat() {
                   aria-controls="admin-menu"
                   color="inherit"
                   className={classes.vertIcon}
-                  style={{
-                    opacity: `${key === showVertIconIdx ? 1 : 0}`,
-                  }}
                   onClick={(e) => handleClickVertIcon(e, key)}
                 />
               )}
