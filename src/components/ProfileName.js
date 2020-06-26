@@ -20,6 +20,12 @@ const useStyles = makeStyles((theme) => ({
     "&:hover": {
       fill: "#f06292",
     },
+    visibility: "hidden",
+  },
+  name: {
+    "&:hover > $vertIcon": {
+      visibility: "visible",
+    },
   },
 }));
 
@@ -56,8 +62,7 @@ function ProfileName({ userId }) {
           <section>
             <div
               style={{ display: "flex", flexDirection: "row" }}
-              onMouseEnter={() => setShowVertIcon(true)}
-              onMouseLeave={() => setShowVertIcon(false)}
+              className={classes.name}
             >
               <Typography
                 variant="h4"
