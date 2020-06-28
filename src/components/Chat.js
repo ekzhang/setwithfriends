@@ -13,6 +13,7 @@ import Tooltip from "@material-ui/core/Tooltip";
 import MoreVertIcon from "@material-ui/icons/MoreVert";
 import MenuItem from "@material-ui/core/MenuItem";
 import Menu from "@material-ui/core/Menu";
+import Filter from "bad-words";
 
 import User from "./User";
 import InternalLink from "./InternalLink";
@@ -49,6 +50,8 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
+const filter = new Filter();
+
 function Chat() {
   const user = useContext(UserContext);
   const classes = useStyles();
@@ -72,13 +75,19 @@ function Chat() {
   function handleSubmit(event) {
     event.preventDefault();
     if (input) {
-      firebase.database().ref(`lobbyChat`).push({
-        user: user.id,
-        message: input,
-        time: firebase.database.ServerValue.TIMESTAMP,
-      });
+      if (filter.isProfane(input)) {
+        alert(
+          "We detected that your message contains profane language. If you think this was a mistake, please let us know!"
+        );
+      } else {
+        firebase.database().ref(`lobbyChat`).push({
+          user: user.id,
+          message: input,
+          time: firebase.database.ServerValue.TIMESTAMP,
+        });
+        setInput("");
+      }
     }
-    setInput("");
   }
 
   const [anchorEl, setAnchorEl] = React.useState(null);

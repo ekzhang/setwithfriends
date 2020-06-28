@@ -10,6 +10,7 @@ import React, {
 import Typography from "@material-ui/core/Typography";
 import { makeStyles } from "@material-ui/core/styles";
 import Tooltip from "@material-ui/core/Tooltip";
+import Filter from "bad-words";
 
 import User from "./User";
 import InternalLink from "./InternalLink";
@@ -45,6 +46,8 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
+const filter = new Filter();
+
 function GameChat({ gameId, history, startedAt }) {
   const user = useContext(UserContext);
   const classes = useStyles();
@@ -70,13 +73,19 @@ function GameChat({ gameId, history, startedAt }) {
   function handleSubmit(event) {
     event.preventDefault();
     if (input) {
-      firebase.database().ref(`chats/${gameId}`).push({
-        user: user.id,
-        message: input,
-        time: firebase.database.ServerValue.TIMESTAMP,
-      });
+      if (filter.isProfane(input)) {
+        alert(
+          "We detected that your message contains profane language. If you think this was a mistake, please let us know!"
+        );
+      } else {
+        firebase.database().ref(`chats/${gameId}`).push({
+          user: user.id,
+          message: input,
+          time: firebase.database.ServerValue.TIMESTAMP,
+        });
+        setInput("");
+      }
     }
-    setInput("");
   }
 
   const items = messages;
