@@ -1,11 +1,13 @@
 import React, { useState, useContext } from "react";
 
 import AppBar from "@material-ui/core/AppBar";
+import Menu from "@material-ui/core/Menu";
+import MenuItem from "@material-ui/core/MenuItem";
 import Toolbar from "@material-ui/core/Toolbar";
 import Tooltip from "@material-ui/core/Tooltip";
 import Typography from "@material-ui/core/Typography";
 import IconButton from "@material-ui/core/IconButton";
-import EditIcon from "@material-ui/icons/Edit";
+import SettingsIcon from "@material-ui/icons/Settings";
 import Brightness3Icon from "@material-ui/icons/Brightness3";
 import WbSunnyIcon from "@material-ui/icons/WbSunny";
 
@@ -14,10 +16,21 @@ import { UserContext } from "../context";
 import User from "./User";
 import InternalLink from "./InternalLink";
 import PromptDialog from "./PromptDialog";
+import AccountOptionsDialog from "./AccountOptionsDialog";
 
 function Navbar({ themeType, handleChangeTheme }) {
   const user = useContext(UserContext);
+  const [anchorEl, setAnchorEl] = React.useState(null);
   const [changeName, setChangeName] = useState(false);
+  const [showOptions, setShowOptions] = useState(false);
+
+  function handleMenu(event) {
+    setAnchorEl(event.currentTarget);
+  }
+
+  function handleCloseMenu() {
+    setAnchorEl(null);
+  }
 
   function handleChangeName(name) {
     setChangeName(false);
@@ -50,11 +63,6 @@ function Navbar({ themeType, handleChangeTheme }) {
             />
           </InternalLink>
         </Typography>
-        <IconButton color="inherit" onClick={() => setChangeName(true)}>
-          <Tooltip title="Change name">
-            <EditIcon />
-          </Tooltip>
-        </IconButton>
         <IconButton color="inherit" onClick={handleChangeTheme}>
           {themeType === "light" ? (
             <Tooltip title="Dark theme">
@@ -66,6 +74,43 @@ function Navbar({ themeType, handleChangeTheme }) {
             </Tooltip>
           )}
         </IconButton>
+        <IconButton color="inherit" onClick={handleMenu}>
+          <Tooltip title="Settings">
+            <SettingsIcon />
+          </Tooltip>
+        </IconButton>
+        <Menu
+          anchorEl={anchorEl}
+          getContentAnchorEl={null}
+          anchorOrigin={{
+            vertical: "bottom",
+            horizontal: "center",
+          }}
+          keepMounted
+          transformOrigin={{
+            vertical: "top",
+            horizontal: "center",
+          }}
+          open={anchorEl !== null}
+          onClose={handleCloseMenu}
+        >
+          <MenuItem
+            onClick={() => {
+              setChangeName(true);
+              handleCloseMenu();
+            }}
+          >
+            Change name
+          </MenuItem>
+          <MenuItem
+            onClick={() => {
+              setShowOptions(true);
+              handleCloseMenu();
+            }}
+          >
+            Account options
+          </MenuItem>
+        </Menu>
         <PromptDialog
           open={changeName}
           onClose={handleChangeName}
@@ -73,6 +118,10 @@ function Navbar({ themeType, handleChangeTheme }) {
           message="Enter your preferred display name below. This will be updated for all current, past, and future games."
           label="Name"
           maxLength={25}
+        />
+        <AccountOptionsDialog
+          open={showOptions}
+          onClose={() => setShowOptions(false)}
         />
       </Toolbar>
     </AppBar>
