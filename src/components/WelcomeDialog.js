@@ -6,10 +6,19 @@ import DialogActions from "@material-ui/core/DialogActions";
 import DialogContent from "@material-ui/core/DialogContent";
 import DialogTitle from "@material-ui/core/DialogTitle";
 import Typography from "@material-ui/core/Typography";
+import { makeStyles } from "@material-ui/core/styles";
 
 import useStorage from "../hooks/useStorage";
 
+const useStyles = makeStyles({
+  emoji: {
+    display: "inline-block",
+    width: "1.5em",
+  },
+});
+
 function WelcomeDialog() {
+  const classes = useStyles();
   const [visited, setVisited] = useStorage("welcome-v2", "new-user");
   const handleClose = () => setVisited("returning-user");
   return (
@@ -23,27 +32,27 @@ function WelcomeDialog() {
         </Typography>
         <Typography variant="body1" component="div" style={{ padding: 12 }}>
           <div>
-            <span role="img" aria-label="Game emoji">
+            <span className={classes.emoji} role="img" aria-label="Game emoji">
               🎮
-            </span>{" "}
+            </span>
             Join a <strong>public game</strong> in seconds.
           </div>
           <div>
-            <span role="img" aria-label="Fire emoji">
+            <span className={classes.emoji} role="img" aria-label="Fire emoji">
               🔥
-            </span>{" "}
+            </span>
             Create a <strong>private game</strong> and invite friends.
           </div>
           <div>
-            <span role="img" aria-label="Books emoji">
+            <span className={classes.emoji} role="img" aria-label="Books emoji">
               📚
-            </span>{" "}
+            </span>
             Review the <strong>rules of Set</strong> at our help page.
           </div>
           <div>
-            <span role="img" aria-label="Chat emoji">
+            <span className={classes.emoji} role="img" aria-label="Chat emoji">
               💬
-            </span>{" "}
+            </span>
             Chat with <strong>online users</strong> in the lobby.
           </div>
         </Typography>
