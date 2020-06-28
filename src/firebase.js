@@ -6,7 +6,7 @@ import "firebase/functions";
 
 const config = {
   apiKey: "AIzaSyB6jICg__HEdtZRcSoIoeUMau41jvKNwvU",
-  authDomain: "setwithfriends-dev.firebaseapp.com",
+  authDomain: "setwithfriends-dev.web.app",
   databaseURL: "https://setwithfriends-dev.firebaseio.com",
   projectId: "setwithfriends-dev",
   storageBucket: "setwithfriends-dev.appspot.com",
@@ -17,6 +17,8 @@ const config = {
 
 firebase.initializeApp(config);
 firebase.analytics();
+
+export const authProvider = new firebase.auth.GoogleAuthProvider();
 
 export const createGame = firebase.functions().httpsCallable("createGame");
 

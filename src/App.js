@@ -29,14 +29,6 @@ function App() {
   const [themeType, setThemeType] = useStorage("theme", "light");
 
   useEffect(() => {
-    if (!uid) {
-      firebase
-        .auth()
-        .signInAnonymously()
-        .catch((error) => {
-          alert("Unable to connect to the server. Please try again later.");
-        });
-    }
     return firebase.auth().onAuthStateChanged((user) => {
       if (user) {
         // User is signed in.
@@ -44,9 +36,15 @@ function App() {
       } else {
         // User is signed out.
         setUid(null);
+        firebase
+          .auth()
+          .signInAnonymously()
+          .catch((error) => {
+            alert("Unable to connect to the server. Please try again later.");
+          });
       }
     });
-  }, [uid]);
+  }, []);
 
   useEffect(() => {
     if (!uid) {
