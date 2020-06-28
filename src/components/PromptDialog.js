@@ -7,6 +7,7 @@ import DialogActions from "@material-ui/core/DialogActions";
 import DialogContent from "@material-ui/core/DialogContent";
 import DialogContentText from "@material-ui/core/DialogContentText";
 import DialogTitle from "@material-ui/core/DialogTitle";
+import Filter from "bad-words";
 
 function PromptDialog(props) {
   const { open, onClose, title, message, label, maxLength } = props;
@@ -18,8 +19,14 @@ function PromptDialog(props) {
   }
 
   function handleSubmit() {
-    onClose(value);
-    setValue("");
+    if (filter.isProfane(value)) {
+      alert(
+        "We detected that your name contains profane language. If you think this was a mistake, please let us know!"
+      );
+    } else {
+      onClose(value);
+      setValue("");
+    }
   }
 
   function handleKeyDown(event) {
@@ -28,6 +35,8 @@ function PromptDialog(props) {
       handleSubmit();
     }
   }
+
+  const filter = new Filter();
 
   return (
     <Dialog open={open} onClose={handleClose}>
