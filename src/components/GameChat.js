@@ -10,7 +10,6 @@ import React, {
 import Typography from "@material-ui/core/Typography";
 import { makeStyles } from "@material-ui/core/styles";
 import Tooltip from "@material-ui/core/Tooltip";
-import Filter from "bad-words";
 
 import User from "./User";
 import InternalLink from "./InternalLink";
@@ -20,7 +19,7 @@ import firebase from "../firebase";
 import autoscroll from "../utils/autoscroll";
 import useFirebaseQuery from "../hooks/useFirebaseQuery";
 import { UserContext } from "../context";
-import { formatTime } from "../util";
+import { formatTime, filter } from "../util";
 
 const useStyles = makeStyles((theme) => ({
   chatPanel: {
@@ -45,8 +44,6 @@ const useStyles = makeStyles((theme) => ({
     whiteSpace: "nowrap",
   },
 }));
-
-const filter = new Filter();
 
 function GameChat({ gameId, history, startedAt }) {
   const user = useContext(UserContext);
