@@ -13,12 +13,12 @@ import Tooltip from "@material-ui/core/Tooltip";
 import MoreVertIcon from "@material-ui/icons/MoreVert";
 import MenuItem from "@material-ui/core/MenuItem";
 import Menu from "@material-ui/core/Menu";
-import Filter from "bad-words";
 
 import User from "./User";
 import InternalLink from "./InternalLink";
 import SimpleInput from "./SimpleInput";
 import firebase from "../firebase";
+import { filter } from "../util";
 import autoscroll from "../utils/autoscroll";
 import useFirebaseQuery from "../hooks/useFirebaseQuery";
 import { UserContext } from "../context";
@@ -49,8 +49,6 @@ const useStyles = makeStyles((theme) => ({
     },
   },
 }));
-
-const filter = new Filter();
 
 function Chat() {
   const user = useContext(UserContext);

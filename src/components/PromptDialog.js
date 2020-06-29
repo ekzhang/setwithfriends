@@ -7,7 +7,8 @@ import DialogActions from "@material-ui/core/DialogActions";
 import DialogContent from "@material-ui/core/DialogContent";
 import DialogContentText from "@material-ui/core/DialogContentText";
 import DialogTitle from "@material-ui/core/DialogTitle";
-import Filter from "bad-words";
+
+import { filter } from "../util";
 
 function PromptDialog(props) {
   const { open, onClose, title, message, label, maxLength } = props;
@@ -35,8 +36,6 @@ function PromptDialog(props) {
       handleSubmit();
     }
   }
-
-  const filter = new Filter();
 
   return (
     <Dialog open={open} onClose={handleClose}>
