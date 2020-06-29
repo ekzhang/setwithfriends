@@ -101,8 +101,9 @@ function GameChat({ gameId, history, startedAt }) {
                 arrow
                 placement="left"
                 title={formatTime(item.time - startedAt)}
+                key={key}
               >
-                <div className={classes.logEntry} key={key}>
+                <div className={classes.logEntry}>
                   <div className={classes.logEntryText}>
                     <Typography
                       variant="subtitle2"
