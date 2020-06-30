@@ -22,7 +22,7 @@ function PromptDialog(props) {
   function handleSubmit() {
     if (filter.isProfane(value)) {
       alert(
-        "We detected that your name contains profane language. If you think this was a mistake, please let us know!"
+        "We detected that your input contains profane language. If you think this was a mistake, please let us know!"
       );
     } else {
       onClose(value);
