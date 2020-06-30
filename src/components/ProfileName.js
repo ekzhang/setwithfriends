@@ -76,9 +76,6 @@ function ProfileName({ userId }) {
                   aria-controls="admin-menu"
                   color="inherit"
                   className={classes.vertIcon}
-                  style={{
-                    opacity: `${showVertIcon ? 1 : 0}`,
-                  }}
                   onClick={handleClickVertIcon}
                 />
               )}
