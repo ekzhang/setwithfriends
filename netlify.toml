@@ -1,8 +1,13 @@
 [[redirects]]
-  from = "https://setwithfriends.netlify.app"
-  to = "https://setwithfriends.com"
+  from = "https://setwithfriends.netlify.app/*"
+  to = "https://setwithfriends.com/:splat"
   status = 301
   force = true
+
+[[redirects]]
+  from = "/__/auth/*"
+  to = "https://setwithfriends.web.app/__/auth/:splat"
+  status = 200
 
 [[redirects]]
   from = "/*"
