@@ -2,25 +2,25 @@ import { useEffect, useState } from "react";
 
 import firebase from "../firebase";
 
-function useFirebaseRef(path) {
+function useFirebaseRef(path, once = false) {
   const [value, setValue] = useState(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    function update(snapshot) {
-      setValue(snapshot.val());
-      setLoading(false);
-    }
-
     setLoading(true);
     if (path) {
       const ref = firebase.database().ref(path);
+      const update = (snapshot) => {
+        if (once) ref.off("value", update);
+        setValue(snapshot.val());
+        setLoading(false);
+      };
       ref.on("value", update);
       return () => {
         ref.off("value", update);
       };
     }
-  }, [path]);
+  }, [path, once]);
 
   return [value, loading];
 }

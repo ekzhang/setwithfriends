@@ -10,11 +10,15 @@ import React, {
 import Typography from "@material-ui/core/Typography";
 import { makeStyles } from "@material-ui/core/styles";
 import Tooltip from "@material-ui/core/Tooltip";
+import MoreVertIcon from "@material-ui/icons/MoreVert";
+import MenuItem from "@material-ui/core/MenuItem";
+import Menu from "@material-ui/core/Menu";
 
 import User from "./User";
 import InternalLink from "./InternalLink";
 import SimpleInput from "./SimpleInput";
 import firebase from "../firebase";
+import { filter } from "../util";
 import autoscroll from "../utils/autoscroll";
 import useFirebaseQuery from "../hooks/useFirebaseQuery";
 import { UserContext } from "../context";
@@ -31,11 +35,26 @@ const useStyles = makeStyles((theme) => ({
     overflowWrap: "anywhere",
     padding: "0 4px",
   },
+  vertIcon: {
+    marginLeft: "auto",
+    cursor: "pointer",
+    "&:hover": {
+      fill: "#f06292",
+    },
+    visibility: "hidden",
+  },
+  message: {
+    "&:hover > $vertIcon": {
+      visibility: "visible",
+    },
+  },
 }));
 
 function Chat() {
   const user = useContext(UserContext);
   const classes = useStyles();
+
+  const [menuOpenIdx, setMenuOpenIdx] = useState(null);
 
   const chatEl = useRef();
   useEffect(() => {
@@ -54,14 +73,37 @@ function Chat() {
   function handleSubmit(event) {
     event.preventDefault();
     if (input) {
-      firebase.database().ref(`lobbyChat`).push({
-        user: user.id,
-        message: input,
-        time: firebase.database.ServerValue.TIMESTAMP,
-      });
+      if (filter.isProfane(input)) {
+        alert(
+          "We detected that your message contains profane language. If you think this was a mistake, please let us know!"
+        );
+      } else {
+        firebase.database().ref(`lobbyChat`).push({
+          user: user.id,
+          message: input,
+          time: firebase.database.ServerValue.TIMESTAMP,
+        });
+        setInput("");
+      }
     }
-    setInput("");
   }
+
+  const [anchorEl, setAnchorEl] = React.useState(null);
+
+  const handleClickVertIcon = (event, key) => {
+    setAnchorEl(event.currentTarget);
+    setMenuOpenIdx(key);
+  };
+
+  const handleDelete = (key) => {
+    firebase.database().ref("lobbyChat").child(key).remove();
+    handleClose();
+  };
+
+  const handleClose = () => {
+    setAnchorEl(null);
+    setMenuOpenIdx(null);
+  };
 
   return (
     <section
@@ -70,24 +112,50 @@ function Chat() {
     >
       <Typography variant="overline">Lobby Chat</Typography>
       <div className={classes.chat} ref={chatEl}>
-        {Object.entries(messages).map(([key, msg]) => (
-          <Tooltip
-            key={key}
-            arrow
-            placement="left"
-            title={<ElapsedTime value={msg.time} />}
-          >
-            <Typography variant="body2" gutterBottom>
-              <User
-                id={msg.user}
-                component={InternalLink}
-                to={`/profile/${msg.user}`}
-                underline="none"
-              />
-              : {msg.message}
-            </Typography>
-          </Tooltip>
-        ))}
+        {Object.entries(messages)
+          .sort((a, b) => a[1].time - b[1].time)
+          .map(([key, msg]) => (
+            <div
+              key={key}
+              style={{ display: "flex", flexDirection: "row" }}
+              className={classes.message}
+            >
+              <Tooltip
+                arrow
+                placement="left"
+                title={<ElapsedTime value={msg.time} />}
+              >
+                <Typography variant="body2" gutterBottom>
+                  <User
+                    id={msg.user}
+                    component={InternalLink}
+                    to={`/profile/${msg.user}`}
+                    underline="none"
+                  />
+                  : {msg.message}
+                </Typography>
+              </Tooltip>
+              {user.admin && (
+                <MoreVertIcon
+                  aria-controls="admin-menu"
+                  color="inherit"
+                  className={classes.vertIcon}
+                  onClick={(e) => handleClickVertIcon(e, key)}
+                />
+              )}
+
+              <Menu
+                id="admin-menu"
+                anchorEl={anchorEl}
+                open={Boolean(anchorEl) && key === menuOpenIdx}
+                onClose={handleClose}
+              >
+                <MenuItem onClick={() => handleDelete(key)}>
+                  Delete message
+                </MenuItem>
+              </Menu>
+            </div>
+          ))}
       </div>
       <form onSubmit={handleSubmit}>
         <SimpleInput

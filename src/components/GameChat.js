@@ -19,7 +19,7 @@ import firebase from "../firebase";
 import autoscroll from "../utils/autoscroll";
 import useFirebaseQuery from "../hooks/useFirebaseQuery";
 import { UserContext } from "../context";
-import { formatTime } from "../util";
+import { formatTime, filter } from "../util";
 
 const useStyles = makeStyles((theme) => ({
   chatPanel: {
@@ -70,13 +70,19 @@ function GameChat({ gameId, history, startedAt }) {
   function handleSubmit(event) {
     event.preventDefault();
     if (input) {
-      firebase.database().ref(`chats/${gameId}`).push({
-        user: user.id,
-        message: input,
-        time: firebase.database.ServerValue.TIMESTAMP,
-      });
+      if (filter.isProfane(input)) {
+        alert(
+          "We detected that your message contains profane language. If you think this was a mistake, please let us know!"
+        );
+      } else {
+        firebase.database().ref(`chats/${gameId}`).push({
+          user: user.id,
+          message: input,
+          time: firebase.database.ServerValue.TIMESTAMP,
+        });
+        setInput("");
+      }
     }
-    setInput("");
   }
 
   const items = messages;
@@ -101,8 +107,9 @@ function GameChat({ gameId, history, startedAt }) {
                 arrow
                 placement="left"
                 title={formatTime(item.time - startedAt)}
+                key={key}
               >
-                <div className={classes.logEntry} key={key}>
+                <div className={classes.logEntry}>
                   <div className={classes.logEntryText}>
                     <Typography
                       variant="subtitle2"

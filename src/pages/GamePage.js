@@ -22,6 +22,7 @@ import NotFoundPage from "./NotFoundPage";
 import LoadingPage from "./LoadingPage";
 import GameSidebar from "../components/GameSidebar";
 import GameChat from "../components/GameChat";
+import ShareDialog from "../components/ShareDialog";
 import { UserContext } from "../context";
 
 const useStyles = makeStyles((theme) => ({
@@ -212,6 +213,7 @@ function GamePage({ match }) {
 
   return (
     <Container>
+      <ShareDialog active={game.status === "done" && !spectating} />
       <Snackbar
         anchorOrigin={{
           vertical: "bottom",

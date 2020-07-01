@@ -43,7 +43,7 @@ function ProfilePage({ match }) {
   const userId = match.params.id;
   const classes = useStyles();
 
-  const [games, loadingGames] = useFirebaseRef(`/userGames/${userId}`);
+  const [games, loadingGames] = useFirebaseRef(`/userGames/${userId}`, true);
   const [redirect, setRedirect] = useState(null);
 
   const handleClickGame = (gameId) => {

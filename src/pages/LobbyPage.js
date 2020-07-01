@@ -35,7 +35,7 @@ const useStyles = makeStyles((theme) => ({
       "--table-height": "480px",
     },
     [theme.breakpoints.up("md")]: {
-      "--table-height": "calc(100vh - 140px)",
+      "--table-height": "calc(min(100vh - 140px, 720px))",
     },
   },
   gamesTable: {
@@ -64,9 +64,17 @@ const useStyles = makeStyles((theme) => ({
     },
   },
   gameCounters: {
+    "& > p": {
+      marginBottom: "0.2em",
+    },
     [theme.breakpoints.up("sm")]: {
       position: "absolute",
-      bottom: 8,
+      bottom: 4,
+    },
+    [theme.breakpoints.down("xs")]: {
+      marginTop: 4,
+      display: "flex",
+      justifyContent: "space-between",
     },
   },
   actionButtons: {
@@ -240,13 +248,13 @@ function LobbyPage() {
               </Tooltip>
             </div>
             <div className={classes.gameCounters}>
-              <Typography variant="body2" gutterBottom>
+              <Typography variant="body2">
                 <strong>
                   {loadingStats ? "---" : stats ? stats.onlineUsers : 0}
                 </strong>{" "}
                 users online
               </Typography>
-              <Typography variant="body2" gutterBottom>
+              <Typography variant="body2">
                 <strong>
                   {loadingStats ? "-----" : stats ? stats.gameCount : 0}
                 </strong>{" "}

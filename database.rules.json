@@ -53,7 +53,7 @@
       ".indexOn": "connections",
       "$userId": {
         ".read": "auth != null",
-        ".write": "auth != null && auth.uid == $userId",
+        ".write": "auth != null && (auth.uid == $userId || root.child('users').child(auth.uid).child('admin').val() == true)",
         ".validate": "newData.hasChildren(['color', 'name'])",
         "color": {
           ".validate": "newData.isString()"
@@ -114,7 +114,7 @@
       ".read": "auth != null",
       ".indexOn": "time",
       "$messageId": {
-        ".write": "!data.exists() && newData.exists() && auth != null",
+        ".write": "auth != null && ((!data.exists() && newData.exists()) || (data.exists() && root.child('users').child(auth.uid).child('admin').val() == true))",
         ".validate": "newData.hasChildren(['user', 'message', 'time'])",
         "user": {
           ".validate": "newData.isString() && newData.val() == auth.uid"
