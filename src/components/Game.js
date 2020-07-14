@@ -9,23 +9,28 @@ import { generateCards, splitDeck } from "../util";
 import ResponsiveSetCard from "../components/ResponsiveSetCard";
 import useDimensions from "../hooks/useDimensions";
 import useKeydown from "../hooks/useKeydown";
+import useStorage from "../hooks/useStorage";
 
 const gamePadding = 8;
 const cardArray = generateCards();
 
 function Game({ deck, onClick, onClear, selected }) {
+  const [layout, setLayout] = useStorage("layout", "vertical");
+  const isHorizontal = layout === 'horizontal';
   const [gameDimensions, gameEl] = useDimensions();
+  const [board, unplayed] = splitDeck(deck);
 
   // Calculate widths and heights in pixels to fit cards in the game container
   // (The default value for `gameWidth` is a hack since we don't know the
   //  actual dimensions of the game container on initial render)
   const gameWidth = gameDimensions ? gameDimensions.width : 200;
-  const cardWidth = Math.floor((gameWidth - 2 * gamePadding) / 3);
+  const numCards = board.length;
+  const rows = isHorizontal ? 3 : numCards / 3;
+  const cols = isHorizontal ? numCards / 3 : 3;
+  const cardWidth = Math.floor((gameWidth - 2 * gamePadding) / cols);
   const cardHeight = Math.round(cardWidth / 1.6);
 
-  const [board, unplayed] = splitDeck(deck);
-  const rows = board.length / 3;
-  const gameHeight = cardHeight * Math.max(rows, 4) + 2 * gamePadding;
+  const gameHeight = cardHeight * Math.max(rows, 3) + 2 * gamePadding;
 
   // Compute coordinate positions of each card, in and out of play
   const cards = {};
@@ -39,8 +44,7 @@ function Game({ deck, onClick, onClear, selected }) {
     };
   }
   for (let i = 0; i < board.length; i++) {
-    const r = Math.floor(i / 3),
-      c = i % 3;
+    const [r, c] = isHorizontal ? [i % 3, Math.floor(i / 3)] : [Math.floor(i / 3), i % 3];
     cards[board[i]] = {
       positionX: cardWidth * c + gamePadding,
       positionY: cardHeight * r + gamePadding,
@@ -72,7 +76,9 @@ function Game({ deck, onClick, onClear, selected }) {
   );
 
   // Keyboard shortcuts
-  const shortcuts = "123qweasdzxcrtyfghvbn";
+  const verticalShortcuts = "123qweasdzxcrtyfghvbn";
+  const horizontalShortcuts = "qazwsxedcrfvtgbyhnujm";
+  const shortcuts = isHorizontal ? horizontalShortcuts : verticalShortcuts;
   useKeydown(({ key }) => {
     if (key === "Escape") {
       onClear();
@@ -81,6 +87,8 @@ function Game({ deck, onClick, onClear, selected }) {
       if (index < board.length) {
         onClick(board[index]);
       }
+    } else if (key === ";") {
+      setLayout(isHorizontal ? "vertical" : "horizontal");
     }
   });
 
