@@ -1,4 +1,5 @@
 import React, { useState, useContext } from "react";
+import { withTheme } from "@material-ui/core/styles";
 
 import AppBar from "@material-ui/core/AppBar";
 import Menu from "@material-ui/core/Menu";
@@ -16,12 +17,14 @@ import { UserContext } from "../context";
 import User from "./User";
 import InternalLink from "./InternalLink";
 import PromptDialog from "./PromptDialog";
+import ColorChoiceDialog from "./ColorChoiceDialog";
 import AccountOptionsDialog from "./AccountOptionsDialog";
 
 function Navbar({ themeType, handleChangeTheme }) {
   const user = useContext(UserContext);
   const [anchorEl, setAnchorEl] = React.useState(null);
   const [changeName, setChangeName] = useState(false);
+  const [changeColors, setChangeColors] = useState(false);
   const [showOptions, setShowOptions] = useState(false);
 
   function handleMenu(event) {
@@ -36,6 +39,15 @@ function Navbar({ themeType, handleChangeTheme }) {
     setChangeName(false);
     if (name) {
       firebase.database().ref(`users/${user.id}/name`).set(name);
+    }
+  }
+
+  function handleChangeColors(colorMap) {
+    setChangeColors(false);
+    if (colorMap) {
+      // TODO: Apply the colors throughout the app
+      // TODO: Persist user color settings
+      //firebase.database().ref(`users/${user.id}/colorMap`).set(colorMap);
     }
   }
 
@@ -104,6 +116,14 @@ function Navbar({ themeType, handleChangeTheme }) {
           </MenuItem>
           <MenuItem
             onClick={() => {
+              setChangeColors(true);
+              handleCloseMenu();
+            }}
+          >
+            Change colors
+          </MenuItem>
+          <MenuItem
+            onClick={() => {
               setShowOptions(true);
               handleCloseMenu();
             }}
@@ -118,6 +138,11 @@ function Navbar({ themeType, handleChangeTheme }) {
           message="Enter your preferred display name below. This will be updated for all current, past, and future games."
           label="Name"
           maxLength={25}
+        />
+        <ColorChoiceDialog
+          open={changeColors}
+          onClose={handleChangeColors}
+          title="Change Colors"
         />
         <AccountOptionsDialog
           open={showOptions}

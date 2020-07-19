@@ -17,6 +17,7 @@
     "project-name-generator": "^2.1.7",
     "react": "^16.13.1",
     "react-chartjs-2": "^2.9.0",
+    "react-color": "^2.18.1",
     "react-dom": "^16.13.1",
     "react-router-dom": "^5.2.0",
     "react-scripts": "^3.4.1",
