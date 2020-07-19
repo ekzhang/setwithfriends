@@ -1,9 +1,20 @@
 import { useEffect, useState } from "react";
 
+function objectOrString(possibleJson) {
+  if (!possibleJson) {
+    return possibleJson;
+  }
+  try {
+    return JSON.parse(possibleJson);
+  } catch (e) {
+      return possibleJson;
+  }
+}
+
 function useStorage(key, initialValue) {
   const [value, setValue] = useState(() => {
     const value = window.localStorage.getItem(key);
-    return value === null ? initialValue : value;
+    return value === null ? initialValue : objectOrString(value);
   });
 
   useEffect(() => {
@@ -17,7 +28,7 @@ function useStorage(key, initialValue) {
   }, [key]);
 
   useEffect(() => {
-    window.localStorage.setItem(key, value);
+    window.localStorage.setItem(key, JSON.stringify(value));
   }, [key, value]);
 
   return [value, setValue];

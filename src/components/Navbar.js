@@ -1,5 +1,5 @@
 import React, { useState, useContext } from "react";
-import { withTheme } from "@material-ui/core/styles";
+import { withTheme, createMuiTheme } from "@material-ui/core/styles";
 
 import AppBar from "@material-ui/core/AppBar";
 import Menu from "@material-ui/core/Menu";
@@ -19,13 +19,16 @@ import InternalLink from "./InternalLink";
 import PromptDialog from "./PromptDialog";
 import ColorChoiceDialog from "./ColorChoiceDialog";
 import AccountOptionsDialog from "./AccountOptionsDialog";
+import useStorage from "../hooks/useStorage";
 
-function Navbar({ themeType, handleChangeTheme }) {
+
+function Navbar({ themeType, handleChangeTheme, handleCustomTheme, theme }) {
   const user = useContext(UserContext);
   const [anchorEl, setAnchorEl] = React.useState(null);
   const [changeName, setChangeName] = useState(false);
   const [changeColors, setChangeColors] = useState(false);
   const [showOptions, setShowOptions] = useState(false);
+  const [customColors, setCustomColors] = useStorage("customColors", null);
 
   function handleMenu(event) {
     setAnchorEl(event.currentTarget);
@@ -45,9 +48,11 @@ function Navbar({ themeType, handleChangeTheme }) {
   function handleChangeColors(colorMap) {
     setChangeColors(false);
     if (colorMap) {
-      // TODO: Apply the colors throughout the app
-      // TODO: Persist user color settings
-      //firebase.database().ref(`users/${user.id}/colorMap`).set(colorMap);
+      const nextCustomColors = {...customColors};
+      nextCustomColors[themeType] = colorMap;
+      setCustomColors(nextCustomColors);
+
+      handleCustomTheme(createMuiTheme({...theme, setCard: {...theme.setCard, ...colorMap}}))
     }
   }
 
@@ -143,6 +148,7 @@ function Navbar({ themeType, handleChangeTheme }) {
           open={changeColors}
           onClose={handleChangeColors}
           title="Change Colors"
+          key={themeType}
         />
         <AccountOptionsDialog
           open={showOptions}
@@ -153,4 +159,4 @@ function Navbar({ themeType, handleChangeTheme }) {
   );
 }
 
-export default Navbar;
+export default withTheme(Navbar);
