@@ -41,6 +41,9 @@ To build the site for development:
 - Run `npm install` in the root folder
 - Run `npm start` - it should now open the site in your browser
 
+Please make all pull requests with new features or bugfixes to the `develop`
+branch. We are formatting all code using [Prettier](https://prettier.io/).
+
 ## License
 
 Built by [Eric Zhang](https://github.com/ekzhang) and
