@@ -1,5 +1,4 @@
 import React, { useState, useContext } from "react";
-import { withTheme, createMuiTheme } from "@material-ui/core/styles";
 
 import AppBar from "@material-ui/core/AppBar";
 import Menu from "@material-ui/core/Menu";
@@ -19,16 +18,18 @@ import InternalLink from "./InternalLink";
 import PromptDialog from "./PromptDialog";
 import ColorChoiceDialog from "./ColorChoiceDialog";
 import AccountOptionsDialog from "./AccountOptionsDialog";
-import useStorage from "../hooks/useStorage";
 
-
-function Navbar({ themeType, handleChangeTheme, handleCustomTheme, theme }) {
+function Navbar({
+  themeType,
+  handleChangeTheme,
+  customColors,
+  handleCustomColors,
+}) {
   const user = useContext(UserContext);
   const [anchorEl, setAnchorEl] = React.useState(null);
   const [changeName, setChangeName] = useState(false);
   const [changeColors, setChangeColors] = useState(false);
   const [showOptions, setShowOptions] = useState(false);
-  const [customColors, setCustomColors] = useStorage("customColors", null);
 
   function handleMenu(event) {
     setAnchorEl(event.currentTarget);
@@ -48,11 +49,8 @@ function Navbar({ themeType, handleChangeTheme, handleCustomTheme, theme }) {
   function handleChangeColors(colorMap) {
     setChangeColors(false);
     if (colorMap) {
-      const nextCustomColors = {...customColors};
-      nextCustomColors[themeType] = colorMap;
-      setCustomColors(nextCustomColors);
-
-      handleCustomTheme(createMuiTheme({...theme, setCard: {...theme.setCard, ...colorMap}}))
+      customColors[themeType] = colorMap;
+      handleCustomColors(customColors);
     }
   }
 
@@ -159,4 +157,4 @@ function Navbar({ themeType, handleChangeTheme, handleCustomTheme, theme }) {
   );
 }
 
-export default withTheme(Navbar);
+export default Navbar;

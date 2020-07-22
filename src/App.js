@@ -4,7 +4,7 @@ import "./styles.css";
 
 import { BrowserRouter, Switch, Route } from "react-router-dom";
 import CssBaseline from "@material-ui/core/CssBaseline";
-import { ThemeProvider, createMuiTheme } from "@material-ui/core/styles";
+import { ThemeProvider } from "@material-ui/core/styles";
 
 import { generateColor, generateName } from "./util";
 import { UserContext } from "./context";
@@ -29,18 +29,7 @@ function App() {
   const [themeType, setThemeType] = useStorage("theme", "light");
   const [customLightTheme, setCustomLightTheme] = useState(lightTheme);
   const [customDarkTheme, setCustomDarkTheme] = useState(darkTheme);
-  const [customColors] = useStorage("customColors", null);
-
-  useEffect(() => {
-    if (customColors) {
-      if (customColors.light) {
-        setCustomLightTheme(createMuiTheme({...lightTheme, setCard: {...lightTheme.setCard, ...customColors.light}}));
-      }
-      if (customColors.dark) {
-        setCustomDarkTheme(createMuiTheme({...darkTheme, setCard: {...darkTheme.setCard, ...customColors.dark}}));
-      }
-    }
-  }, [customColors]);
+  const [customColors, setCustomColors] = useStorage("customColors", "{}");
 
   useEffect(() => {
     return firebase.auth().onAuthStateChanged((user) => {
@@ -83,20 +72,34 @@ function App() {
     };
   }, [uid]);
 
+  useEffect(() => {
+    const parsedCustoms = JSON.parse(customColors);
+    if (parsedCustoms.light) {
+      setCustomLightTheme({
+        ...lightTheme,
+        setCard: { ...lightTheme.setCard, ...parsedCustoms.light },
+      });
+    }
+    if (parsedCustoms.dark) {
+      setCustomDarkTheme({
+        ...darkTheme,
+        setCard: { ...darkTheme.setCard, ...parsedCustoms.dark },
+      });
+    }
+  }, [customColors]);
+
   const handleChangeTheme = () => {
     setThemeType(themeType === "light" ? "dark" : "light");
   };
 
-  const handleCustomTheme = (custom) => {
-    if (themeType === "light") {
-      setCustomLightTheme(custom);
-    } else {
-      setCustomDarkTheme(custom);
-    }
-  }
+  const handleCustomColors = (custom) => {
+    setCustomColors(JSON.stringify(custom));
+  };
 
   return (
-    <ThemeProvider theme={themeType === "light" ? customLightTheme : customDarkTheme}>
+    <ThemeProvider
+      theme={themeType === "light" ? customLightTheme : customDarkTheme}
+    >
       <BrowserRouter>
         <CssBaseline />
         {!user ? (
@@ -108,7 +111,8 @@ function App() {
             <Navbar
               themeType={themeType}
               handleChangeTheme={handleChangeTheme}
-              handleCustomTheme={handleCustomTheme}
+              customColors={JSON.parse(customColors)}
+              handleCustomColors={handleCustomColors}
             />
             <Switch>
               <Route exact path="/help" component={HelpPage} />

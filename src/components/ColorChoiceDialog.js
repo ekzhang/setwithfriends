@@ -3,11 +3,11 @@ import { withTheme } from "@material-ui/core/styles";
 
 import Button from "@material-ui/core/Button";
 import Dialog from "@material-ui/core/Dialog";
-import Grid from '@material-ui/core/Grid';
+import Grid from "@material-ui/core/Grid";
 import DialogActions from "@material-ui/core/DialogActions";
 import DialogContent from "@material-ui/core/DialogContent";
 import DialogTitle from "@material-ui/core/DialogTitle";
-import { ChromePicker } from 'react-color'
+import { ChromePicker } from "react-color";
 import ResponsiveSetCard from "./ResponsiveSetCard";
 
 function ColorChoiceDialog(props) {
@@ -22,33 +22,45 @@ function ColorChoiceDialog(props) {
   }
 
   function handleSubmit() {
-    onClose({red: red, green: green, purple: purple});
+    onClose({ red: red, green: green, purple: purple });
   }
 
   return (
-    <Dialog open={open} onClose={handleClose} maxWidth={'xl'}>
+    <Dialog open={open} onClose={handleClose} maxWidth={"xl"}>
       <DialogTitle>{title}</DialogTitle>
-      <DialogContent style={{'height': '420px'}}>
+      <DialogContent style={{ height: "420px" }}>
         <Grid container spacing={3}>
           <Grid item xs={12} md={4}>
-            <ResponsiveSetCard width={225} value="0000" colorOverride={{red: red, green: green, purple: purple}} />
+            <ResponsiveSetCard
+              width={225}
+              value="0000"
+              colorOverride={{ red: red, green: green, purple: purple }}
+            />
             <ChromePicker
-              color={ purple }
-              onChangeComplete={ (result) => setPurple(result.hex) }
+              color={purple}
+              onChangeComplete={(result) => setPurple(result.hex)}
             />
           </Grid>
           <Grid item xs={12} md={4}>
-            <ResponsiveSetCard width={225} value="1000" colorOverride={{red: red, green: green, purple: purple}} />
+            <ResponsiveSetCard
+              width={225}
+              value="1000"
+              colorOverride={{ red: red, green: green, purple: purple }}
+            />
             <ChromePicker
-              color={ green }
-              onChangeComplete={ (result) => setGreen(result.hex) }
+              color={green}
+              onChangeComplete={(result) => setGreen(result.hex)}
             />
           </Grid>
           <Grid item xs={12} md={4}>
-            <ResponsiveSetCard width={225} value="2000" colorOverride={{red: red, green: green, purple: purple}} />
+            <ResponsiveSetCard
+              width={225}
+              value="2000"
+              colorOverride={{ red: red, green: green, purple: purple }}
+            />
             <ChromePicker
-              color={ red }
-              onChangeComplete={ (result) => setRed(result.hex) }
+              color={red}
+              onChangeComplete={(result) => setRed(result.hex)}
             />
           </Grid>
         </Grid>
