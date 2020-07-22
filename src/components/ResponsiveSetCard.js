@@ -38,9 +38,13 @@ function ResponsiveSymbol(props) {
   const theme = useTheme();
 
   // Override is used to help visualize new colors in color picker dialog.
-  const COLORS = props.colorOverride ?
-    [props.colorOverride.purple, props.colorOverride.green, props.colorOverride.red] :
-    [theme.setCard.purple, theme.setCard.green, theme.setCard.red];
+  const COLORS = props.colorOverride
+    ? [
+        props.colorOverride.purple,
+        props.colorOverride.green,
+        props.colorOverride.red,
+      ]
+    : [theme.setCard.purple, theme.setCard.green, theme.setCard.red];
 
   const color = COLORS[props.color];
   const shape = SHAPES[props.shape];
