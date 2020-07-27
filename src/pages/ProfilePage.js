@@ -7,6 +7,8 @@ import Grid from "@material-ui/core/Grid";
 import { makeStyles } from "@material-ui/core/styles";
 import Paper from "@material-ui/core/Paper";
 import Typography from "@material-ui/core/Typography";
+import TextField from "@material-ui/core/TextField";
+import MenuItem from "@material-ui/core/MenuItem";
 import EqualizerIcon from "@material-ui/icons/Equalizer";
 
 import ProfileName from "../components/ProfileName";
@@ -39,12 +41,24 @@ function mergeGameData(game, gameData) {
   };
 }
 
+const GAME_SUBSETS = [
+  { key: 'all', label: 'All Games' },
+  { key: 'solo', label: 'Solo Games' },
+  { key: 'multiplayer', label: 'Multiplayer Games' },
+];
+const GAME_SUBSET_FILTER_FUNCTIONS = {
+  all: (gameData) => true,
+  solo: (gameData) => Object.keys(gameData.scores).length === 1,
+  multiplayer: (gameData) => Object.keys(gameData.scores).length > 1,
+};
+
 function ProfilePage({ match }) {
   const userId = match.params.id;
   const classes = useStyles();
 
   const [games, loadingGames] = useFirebaseRef(`/userGames/${userId}`, true);
   const [redirect, setRedirect] = useState(null);
+  const [gameSet, setGameSet] = useState('all');
 
   const handleClickGame = (gameId) => {
     setRedirect(`/room/${gameId}`);
@@ -77,6 +91,18 @@ function ProfilePage({ match }) {
       }
     }
   }
+  let gameStatsData = Object.
+    keys(gamesData).
+    filter(gameId => GAME_SUBSET_FILTER_FUNCTIONS[gameSet](gamesData[gameId])).
+    reduce(
+      (outputData, gameId) => {
+        outputData[gameId] = gamesData[gameId];
+      },
+      {}
+    );
+  const handleGameSetChange = (event) => {
+    setGameSet(event.target.value);
+  };
 
   return (
     <Container>
@@ -96,7 +122,20 @@ function ProfilePage({ match }) {
               <Typography variant="overline">Statistics</Typography>
               <EqualizerIcon />
             </div>
-            <UserStatistics userId={userId} gamesData={gamesData} />
+            <TextField
+              select
+              label="Game Set"
+              value={gameSet}
+              onChange={handleGameSetChange}
+              helperText="Subset of games to show stats"
+            >
+              {
+                GAME_SUBSETS.map(({ key, label }) => (
+                  <MenuItem key={key} value={key}>{label}</MenuItem>
+                ))
+              }
+            </TextField>
+            <UserStatistics userId={userId} gamesData={gameStatsData} />
           </Grid>
         </Grid>
         <Typography variant="overline" component="div">
