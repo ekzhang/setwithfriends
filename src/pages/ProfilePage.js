@@ -86,18 +86,16 @@ function ProfilePage({ match }) {
   let gameStatsData = null;
   if (!loadingGameVals && !loadingGameDataVals) {
     gamesData = {};
+    gameStatsData = {};
     for (let i = 0; i < gameIds.length; i++) {
       if (gameVals[i].status === "done") {
-        gamesData[gameIds[i]] = mergeGameData(gameVals[i], gameDataVals[i]);
+        const gameData = mergeGameData(gameVals[i], gameDataVals[i]);
+        gamesData[gameIds[i]] = gameData;
+        if (GAME_SUBSET_FILTER_FUNCTIONS[gameSet](gameData)) {
+          gameStatsData[gameIds[i]] = gameData;
+        }
       }
     }
-    gameStatsData = Object.keys(gamesData)
-      .filter((gameId) =>
-        GAME_SUBSET_FILTER_FUNCTIONS[gameSet](gamesData[gameId])
-      )
-      .reduce((outputData, gameId) => {
-        outputData[gameId] = gamesData[gameId];
-      }, {});
   }
   const handleGameSetChange = (event) => {
     setGameSet(event.target.value);
