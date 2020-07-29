@@ -42,9 +42,9 @@ function mergeGameData(game, gameData) {
 }
 
 const GAME_SUBSETS = [
-  { key: 'all', label: 'All Games' },
-  { key: 'solo', label: 'Solo Games' },
-  { key: 'multiplayer', label: 'Multiplayer Games' },
+  { key: "all", label: "All Games" },
+  { key: "solo", label: "Solo Games" },
+  { key: "multiplayer", label: "Multiplayer Games" },
 ];
 const GAME_SUBSET_FILTER_FUNCTIONS = {
   all: (gameData) => true,
@@ -58,7 +58,7 @@ function ProfilePage({ match }) {
 
   const [games, loadingGames] = useFirebaseRef(`/userGames/${userId}`, true);
   const [redirect, setRedirect] = useState(null);
-  const [gameSet, setGameSet] = useState('all');
+  const [gameSet, setGameSet] = useState("all");
 
   const handleClickGame = (gameId) => {
     setRedirect(`/room/${gameId}`);
@@ -91,15 +91,13 @@ function ProfilePage({ match }) {
       }
     }
   }
-  let gameStatsData = Object.
-    keys(gamesData).
-    filter(gameId => GAME_SUBSET_FILTER_FUNCTIONS[gameSet](gamesData[gameId])).
-    reduce(
-      (outputData, gameId) => {
-        outputData[gameId] = gamesData[gameId];
-      },
-      {}
-    );
+  let gameStatsData = Object.keys(gamesData)
+    .filter((gameId) =>
+      GAME_SUBSET_FILTER_FUNCTIONS[gameSet](gamesData[gameId])
+    )
+    .reduce((outputData, gameId) => {
+      outputData[gameId] = gamesData[gameId];
+    }, {});
   const handleGameSetChange = (event) => {
     setGameSet(event.target.value);
   };
@@ -129,11 +127,11 @@ function ProfilePage({ match }) {
               onChange={handleGameSetChange}
               helperText="Subset of games to show stats"
             >
-              {
-                GAME_SUBSETS.map(({ key, label }) => (
-                  <MenuItem key={key} value={key}>{label}</MenuItem>
-                ))
-              }
+              {GAME_SUBSETS.map(({ key, label }) => (
+                <MenuItem key={key} value={key}>
+                  {label}
+                </MenuItem>
+              ))}
             </TextField>
             <UserStatistics userId={userId} gamesData={gameStatsData} />
           </Grid>
