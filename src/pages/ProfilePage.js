@@ -41,12 +41,12 @@ function mergeGameData(game, gameData) {
   };
 }
 
-const GAME_SUBSETS = [
+const DATA_SET_VARIANT = [
   { key: "all", label: "All Games" },
   { key: "solo", label: "Solo Games" },
   { key: "multiplayer", label: "Multiplayer Games" },
 ];
-const GAME_SUBSET_FILTER_FUNCTIONS = {
+const DATA_SET_VARIANT_FILTER_FUNCTIONS = {
   all: (gameData) => true,
   solo: (gameData) => Object.keys(gameData.scores).length === 1,
   multiplayer: (gameData) => Object.keys(gameData.scores).length > 1,
@@ -58,7 +58,7 @@ function ProfilePage({ match }) {
 
   const [games, loadingGames] = useFirebaseRef(`/userGames/${userId}`, true);
   const [redirect, setRedirect] = useState(null);
-  const [gameSet, setGameSet] = useState("all");
+  const [dataSetVariant, setDataSetVariant] = useState("all");
 
   const handleClickGame = (gameId) => {
     setRedirect(`/room/${gameId}`);
@@ -91,14 +91,14 @@ function ProfilePage({ match }) {
       if (gameVals[i].status === "done") {
         const gameData = mergeGameData(gameVals[i], gameDataVals[i]);
         gamesData[gameIds[i]] = gameData;
-        if (GAME_SUBSET_FILTER_FUNCTIONS[gameSet](gameData)) {
+        if (DATA_SET_VARIANT_FILTER_FUNCTIONS[dataSetVariant](gameData)) {
           gameStatsData[gameIds[i]] = gameData;
         }
       }
     }
   }
-  const handleGameSetChange = (event) => {
-    setGameSet(event.target.value);
+  const handleDataSetVariantChange = (event) => {
+    setDataSetVariant(event.target.value);
   };
 
   return (
@@ -122,11 +122,11 @@ function ProfilePage({ match }) {
             <TextField
               select
               label="Game Set"
-              value={gameSet}
-              onChange={handleGameSetChange}
+              value={dataSetVariant}
+              onChange={handleDataSetVariantChange}
               helperText="Subset of games to show stats"
             >
-              {GAME_SUBSETS.map(({ key, label }) => (
+              {DATA_SET_VARIANT.map(({ key, label }) => (
                 <MenuItem key={key} value={key}>
                   {label}
                 </MenuItem>
