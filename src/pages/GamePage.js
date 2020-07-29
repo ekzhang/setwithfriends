@@ -40,6 +40,10 @@ const useStyles = makeStyles((theme) => ({
       maxHeight: 400,
     },
   },
+  mainColumn: {
+    display: "flex",
+    alignItems: "center",
+  },
   doneOverlay: {
     position: "absolute",
     width: "calc(100% - 16px)",
@@ -242,7 +246,7 @@ function GamePage({ match }) {
           </Grid>
         </Box>
         <Box clone order={{ xs: 1, sm: 2 }} position="relative">
-          <Grid item xs={12} sm={8} md={6}>
+          <Grid item xs={12} sm={8} md={6} className={classes.mainColumn}>
             {/* Backdrop, to be active when the game ends */}
             <div
               className={classes.doneOverlay}

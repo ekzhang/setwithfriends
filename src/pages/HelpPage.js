@@ -127,6 +127,11 @@ function HelpPage() {
           </ul>
         </Typography>
         <Typography variant="body1" gutterBottom>
+          On devices with a keyboard, you can also rotate the layout of cards by
+          pressing the <code>;</code> key. This also changes the keyboard
+          shortcuts, which may be more convenient to use.
+        </Typography>
+        <Typography variant="body1" gutterBottom>
           <strong>
             That's all there are to the rules of Set, so head back and start
             playing!

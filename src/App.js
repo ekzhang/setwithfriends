@@ -27,6 +27,9 @@ function App() {
   const [uid, setUid] = useState(null);
   const [user, setUser] = useState(null);
   const [themeType, setThemeType] = useStorage("theme", "light");
+  const [customLightTheme, setCustomLightTheme] = useState(lightTheme);
+  const [customDarkTheme, setCustomDarkTheme] = useState(darkTheme);
+  const [customColors, setCustomColors] = useStorage("customColors", "{}");
 
   useEffect(() => {
     return firebase.auth().onAuthStateChanged((user) => {
@@ -69,12 +72,34 @@ function App() {
     };
   }, [uid]);
 
+  useEffect(() => {
+    const parsedCustoms = JSON.parse(customColors);
+    if (parsedCustoms.light) {
+      setCustomLightTheme({
+        ...lightTheme,
+        setCard: { ...lightTheme.setCard, ...parsedCustoms.light },
+      });
+    }
+    if (parsedCustoms.dark) {
+      setCustomDarkTheme({
+        ...darkTheme,
+        setCard: { ...darkTheme.setCard, ...parsedCustoms.dark },
+      });
+    }
+  }, [customColors]);
+
   const handleChangeTheme = () => {
     setThemeType(themeType === "light" ? "dark" : "light");
   };
 
+  const handleCustomColors = (custom) => {
+    setCustomColors(JSON.stringify(custom));
+  };
+
   return (
-    <ThemeProvider theme={themeType === "light" ? lightTheme : darkTheme}>
+    <ThemeProvider
+      theme={themeType === "light" ? customLightTheme : customDarkTheme}
+    >
       <BrowserRouter>
         <CssBaseline />
         {!user ? (
@@ -86,6 +111,8 @@ function App() {
             <Navbar
               themeType={themeType}
               handleChangeTheme={handleChangeTheme}
+              customColors={JSON.parse(customColors)}
+              handleCustomColors={handleCustomColors}
             />
             <Switch>
               <Route exact path="/help" component={HelpPage} />

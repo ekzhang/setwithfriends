@@ -8,8 +8,8 @@ import Loading from "../components/Loading";
 const useStyles = makeStyles({
   loadingContainer: {
     padding: 48,
-    textAlign: "center"
-  }
+    textAlign: "center",
+  },
 });
 
 function LoadingPage() {

@@ -18,6 +18,7 @@ import SetCard from "./SetCard";
 import firebase from "../firebase";
 import autoscroll from "../utils/autoscroll";
 import useFirebaseQuery from "../hooks/useFirebaseQuery";
+import useStorage from "../hooks/useStorage";
 import { UserContext } from "../context";
 import { formatTime, filter } from "../util";
 
@@ -25,6 +26,13 @@ const useStyles = makeStyles((theme) => ({
   chatPanel: {
     display: "flex",
     flexDirection: "column",
+  },
+  chatHeader: {
+    transition: "text-shadow 0.5s",
+    "&:hover": {
+      cursor: "pointer",
+      textShadow: "0 0 0.75px",
+    },
   },
   chat: {
     overflowY: "auto",
@@ -55,6 +63,7 @@ function GameChat({ gameId, history, startedAt }) {
   }, []);
 
   const [input, setInput] = useState("");
+  const [chatHidden, setChatHidden] = useStorage("chat-hidden", "no");
 
   const messagesQuery = useMemo(
     () =>
@@ -85,6 +94,10 @@ function GameChat({ gameId, history, startedAt }) {
     }
   }
 
+  function toggleChat() {
+    setChatHidden(chatHidden === "yes" ? "no" : "yes");
+  }
+
   const items = messages;
   if (history) {
     for (let i = 0; i < history.length; i++) {
@@ -97,7 +110,13 @@ function GameChat({ gameId, history, startedAt }) {
       className={classes.chatPanel}
       style={{ flexGrow: 1, overflowY: "hidden" }}
     >
-      <Typography variant="overline">Game Chat</Typography>
+      <Typography
+        variant="overline"
+        className={classes.chatHeader}
+        onClick={toggleChat}
+      >
+        Game Chat {chatHidden === "yes" && "(Hidden)"}
+      </Typography>
       <div className={classes.chat} ref={chatEl}>
         {Object.entries(items)
           .sort(([, a], [, b]) => a.time - b.time)
@@ -132,15 +151,17 @@ function GameChat({ gameId, history, startedAt }) {
                 </div>
               </Tooltip>
             ) : (
-              <Typography key={key} variant="body2" gutterBottom>
-                <User
-                  id={item.user}
-                  component={InternalLink}
-                  to={`/profile/${item.user}`}
-                  underline="none"
-                />
-                : {item.message}
-              </Typography>
+              chatHidden !== "yes" && (
+                <Typography key={key} variant="body2" gutterBottom>
+                  <User
+                    id={item.user}
+                    component={InternalLink}
+                    to={`/profile/${item.user}`}
+                    underline="none"
+                  />
+                  : {item.message}
+                </Typography>
+              )
             )
           )}
       </div>

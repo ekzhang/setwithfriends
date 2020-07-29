@@ -16,12 +16,19 @@ import { UserContext } from "../context";
 import User from "./User";
 import InternalLink from "./InternalLink";
 import PromptDialog from "./PromptDialog";
+import ColorChoiceDialog from "./ColorChoiceDialog";
 import AccountOptionsDialog from "./AccountOptionsDialog";
 
-function Navbar({ themeType, handleChangeTheme }) {
+function Navbar({
+  themeType,
+  handleChangeTheme,
+  customColors,
+  handleCustomColors,
+}) {
   const user = useContext(UserContext);
   const [anchorEl, setAnchorEl] = React.useState(null);
   const [changeName, setChangeName] = useState(false);
+  const [changeColors, setChangeColors] = useState(false);
   const [showOptions, setShowOptions] = useState(false);
 
   function handleMenu(event) {
@@ -36,6 +43,14 @@ function Navbar({ themeType, handleChangeTheme }) {
     setChangeName(false);
     if (name) {
       firebase.database().ref(`users/${user.id}/name`).set(name);
+    }
+  }
+
+  function handleChangeColors(colorMap) {
+    setChangeColors(false);
+    if (colorMap) {
+      customColors[themeType] = colorMap;
+      handleCustomColors(customColors);
     }
   }
 
@@ -104,6 +119,14 @@ function Navbar({ themeType, handleChangeTheme }) {
           </MenuItem>
           <MenuItem
             onClick={() => {
+              setChangeColors(true);
+              handleCloseMenu();
+            }}
+          >
+            Change colors
+          </MenuItem>
+          <MenuItem
+            onClick={() => {
               setShowOptions(true);
               handleCloseMenu();
             }}
@@ -118,6 +141,12 @@ function Navbar({ themeType, handleChangeTheme }) {
           message="Enter your preferred display name below. This will be updated for all current, past, and future games."
           label="Name"
           maxLength={25}
+        />
+        <ColorChoiceDialog
+          open={changeColors}
+          onClose={handleChangeColors}
+          title="Change Colors"
+          key={themeType}
         />
         <AccountOptionsDialog
           open={showOptions}
