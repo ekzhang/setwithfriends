@@ -83,16 +83,13 @@ function ProfilePage({ match }) {
   }
 
   let gamesData = null;
-  let gameStatsData = null;
   if (!loadingGameVals && !loadingGameDataVals) {
     gamesData = {};
-    gameStatsData = {};
     for (let i = 0; i < gameIds.length; i++) {
       if (gameVals[i].status === "done") {
         const gameData = mergeGameData(gameVals[i], gameDataVals[i]);
-        gamesData[gameIds[i]] = gameData;
         if (DATA_SET_VARIANT_FILTER_FUNCTIONS[dataSetVariant](gameData)) {
-          gameStatsData[gameIds[i]] = gameData;
+          gamesData[gameIds[i]] = gameData;
         }
       }
     }
@@ -132,7 +129,7 @@ function ProfilePage({ match }) {
                 </MenuItem>
               ))}
             </TextField>
-            <UserStatistics userId={userId} gamesData={gameStatsData} />
+            <UserStatistics userId={userId} gamesData={gamesData} />
           </Grid>
         </Grid>
         <Typography variant="overline" component="div">
