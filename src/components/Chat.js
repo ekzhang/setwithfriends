@@ -21,6 +21,7 @@ import firebase from "../firebase";
 import { filter } from "../util";
 import autoscroll from "../utils/autoscroll";
 import useFirebaseQuery from "../hooks/useFirebaseQuery";
+import useStorage from "../hooks/useStorage";
 import { UserContext } from "../context";
 import ElapsedTime from "./ElapsedTime";
 
@@ -28,6 +29,13 @@ const useStyles = makeStyles((theme) => ({
   chatPanel: {
     display: "flex",
     flexDirection: "column",
+  },
+  chatHeader: {
+    transition: "text-shadow 0.5s",
+    "&:hover": {
+      cursor: "pointer",
+      textShadow: "0 0 0.75px",
+    },
   },
   chat: {
     overflowY: "auto",
@@ -62,6 +70,7 @@ function Chat() {
   }, []);
 
   const [input, setInput] = useState("");
+  const [chatHidden, setChatHidden] = useStorage("chat-hidden", "no");
 
   const messagesQuery = useMemo(
     () =>
@@ -88,6 +97,10 @@ function Chat() {
     }
   }
 
+  function toggleChat() {
+    setChatHidden(chatHidden === "yes" ? "no" : "yes");
+  }
+
   const [anchorEl, setAnchorEl] = React.useState(null);
 
   const handleClickVertIcon = (event, key) => {
@@ -110,52 +123,59 @@ function Chat() {
       className={classes.chatPanel}
       style={{ flexGrow: 1, overflowY: "hidden" }}
     >
-      <Typography variant="overline">Lobby Chat</Typography>
+      <Typography
+        variant="overline"
+        className={classes.chatHeader}
+        onClick={toggleChat}
+      >
+        Lobby Chat {chatHidden === "yes" && "(Hidden)"}
+      </Typography>
       <div className={classes.chat} ref={chatEl}>
-        {Object.entries(messages)
-          .sort((a, b) => a[1].time - b[1].time)
-          .map(([key, msg]) => (
-            <div
-              key={key}
-              style={{ display: "flex", flexDirection: "row" }}
-              className={classes.message}
-            >
-              <Tooltip
-                arrow
-                placement="left"
-                title={<ElapsedTime value={msg.time} />}
+        {chatHidden !== "yes" &&
+          Object.entries(messages)
+            .sort((a, b) => a[1].time - b[1].time)
+            .map(([key, msg]) => (
+              <div
+                key={key}
+                style={{ display: "flex", flexDirection: "row" }}
+                className={classes.message}
               >
-                <Typography variant="body2" gutterBottom>
-                  <User
-                    id={msg.user}
-                    component={InternalLink}
-                    to={`/profile/${msg.user}`}
-                    underline="none"
+                <Tooltip
+                  arrow
+                  placement="left"
+                  title={<ElapsedTime value={msg.time} />}
+                >
+                  <Typography variant="body2" gutterBottom>
+                    <User
+                      id={msg.user}
+                      component={InternalLink}
+                      to={`/profile/${msg.user}`}
+                      underline="none"
+                    />
+                    : {msg.message}
+                  </Typography>
+                </Tooltip>
+                {user.admin && (
+                  <MoreVertIcon
+                    aria-controls="admin-menu"
+                    color="inherit"
+                    className={classes.vertIcon}
+                    onClick={(e) => handleClickVertIcon(e, key)}
                   />
-                  : {msg.message}
-                </Typography>
-              </Tooltip>
-              {user.admin && (
-                <MoreVertIcon
-                  aria-controls="admin-menu"
-                  color="inherit"
-                  className={classes.vertIcon}
-                  onClick={(e) => handleClickVertIcon(e, key)}
-                />
-              )}
+                )}
 
-              <Menu
-                id="admin-menu"
-                anchorEl={anchorEl}
-                open={Boolean(anchorEl) && key === menuOpenIdx}
-                onClose={handleClose}
-              >
-                <MenuItem onClick={() => handleDelete(key)}>
-                  Delete message
-                </MenuItem>
-              </Menu>
-            </div>
-          ))}
+                <Menu
+                  id="admin-menu"
+                  anchorEl={anchorEl}
+                  open={Boolean(anchorEl) && key === menuOpenIdx}
+                  onClose={handleClose}
+                >
+                  <MenuItem onClick={() => handleDelete(key)}>
+                    Delete message
+                  </MenuItem>
+                </Menu>
+              </div>
+            ))}
       </div>
       <form onSubmit={handleSubmit}>
         <SimpleInput
