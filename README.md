@@ -42,7 +42,8 @@ To build the site for development:
 - Run `npm start` - it should now open the site in your browser
 
 Please make all pull requests with new features or bugfixes to the `develop`
-branch. We are formatting all code using [Prettier](https://prettier.io/).
+branch. We are formatting code using [Prettier](https://prettier.io/), so you
+should run `npm run format` on your code before making a pull request.
 
 ## License
 
