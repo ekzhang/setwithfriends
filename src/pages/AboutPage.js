@@ -27,6 +27,13 @@ function AboutPage() {
           </Link>
           . We would appreciate stars, forks, and any comments or suggestions!
         </Typography>
+        <Typography variant="body1" gutterBottom>
+          Also, we would like to thank{" "}
+          <Link href="https://github.com/tarehart">Tyler Arehart</Link> and{" "}
+          <Link href="https://github.com/stevenhao">Steven Hao</Link> for
+          contributing code to this project, as well as the many others who
+          reported bugs and provided feedback to us.
+        </Typography>
       </Paper>
       <Typography variant="body1" align="center" gutterBottom>
         <InternalLink to="/">Return to home</InternalLink>
