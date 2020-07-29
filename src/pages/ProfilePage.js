@@ -83,6 +83,7 @@ function ProfilePage({ match }) {
   }
 
   let gamesData = null;
+  let gameStatsData = null;
   if (!loadingGameVals && !loadingGameDataVals) {
     gamesData = {};
     for (let i = 0; i < gameIds.length; i++) {
@@ -90,14 +91,14 @@ function ProfilePage({ match }) {
         gamesData[gameIds[i]] = mergeGameData(gameVals[i], gameDataVals[i]);
       }
     }
+    gameStatsData = Object.keys(gamesData)
+      .filter((gameId) =>
+        GAME_SUBSET_FILTER_FUNCTIONS[gameSet](gamesData[gameId])
+      )
+      .reduce((outputData, gameId) => {
+        outputData[gameId] = gamesData[gameId];
+      }, {});
   }
-  let gameStatsData = Object.keys(gamesData)
-    .filter((gameId) =>
-      GAME_SUBSET_FILTER_FUNCTIONS[gameSet](gamesData[gameId])
-    )
-    .reduce((outputData, gameId) => {
-      outputData[gameId] = gamesData[gameId];
-    }, {});
   const handleGameSetChange = (event) => {
     setGameSet(event.target.value);
   };
