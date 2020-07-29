@@ -16,7 +16,7 @@ const cardArray = generateCards();
 
 function Game({ deck, onClick, onClear, selected }) {
   const [layout, setLayout] = useStorage("layout", "vertical");
-  const isHorizontal = layout === 'horizontal';
+  const isHorizontal = layout === "horizontal";
   const [gameDimensions, gameEl] = useDimensions();
   const [board, unplayed] = splitDeck(deck);
 
@@ -30,7 +30,8 @@ function Game({ deck, onClick, onClear, selected }) {
   const cardWidth = Math.floor((gameWidth - 2 * gamePadding) / cols);
   const cardHeight = Math.round(cardWidth / 1.6);
 
-  const gameHeight = cardHeight * Math.max(rows, 3) + 2 * gamePadding;
+  const gameHeight =
+    cardHeight * Math.max(rows, isHorizontal ? 3 : 4) + 2 * gamePadding;
 
   // Compute coordinate positions of each card, in and out of play
   const cards = {};
@@ -44,7 +45,9 @@ function Game({ deck, onClick, onClear, selected }) {
     };
   }
   for (let i = 0; i < board.length; i++) {
-    const [r, c] = isHorizontal ? [i % 3, Math.floor(i / 3)] : [Math.floor(i / 3), i % 3];
+    const [r, c] = isHorizontal
+      ? [i % 3, Math.floor(i / 3)]
+      : [Math.floor(i / 3), i % 3];
     cards[board[i]] = {
       positionX: cardWidth * c + gamePadding,
       positionY: cardHeight * r + gamePadding,
