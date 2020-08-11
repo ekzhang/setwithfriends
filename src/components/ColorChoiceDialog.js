@@ -10,6 +10,8 @@ import DialogContent from "@material-ui/core/DialogContent";
 import DialogTitle from "@material-ui/core/DialogTitle";
 import { ChromePicker } from "react-color";
 import ResponsiveSetCard from "./ResponsiveSetCard";
+import { darkTheme } from "../themes";
+import { lightTheme } from "../themes";
 
 const useStyles = makeStyles({
   colorPickerColumn: {
@@ -39,14 +41,14 @@ function ColorChoiceDialog(props) {
 
   function handleReset() {
     if (theme.palette.type === "light") {
-      setRed("#ff0101");
-      setGreen("#008002");
-      setPurple("#800080");
+      setRed(lightTheme.setCard.red);
+      setGreen(lightTheme.setCard.green);
+      setPurple(lightTheme.setCard.purple);
     }
     if (theme.palette.type === "dark") {
-      setRed("#ffb047");
-      setGreen("#00b803");
-      setPurple("#ff47ff");
+      setRed(darkTheme.setCard.red);
+      setGreen(darkTheme.setCard.green);
+      setPurple(darkTheme.setCard.purple);
     }
   }
 
