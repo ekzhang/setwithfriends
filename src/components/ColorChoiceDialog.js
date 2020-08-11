@@ -21,7 +21,6 @@ const useStyles = makeStyles({
 
 function ColorChoiceDialog(props) {
   const { open, onClose, title, theme } = props;
-  console.log(theme);
   const classes = useStyles();
 
   const [red, setRed] = useState(theme.setCard.red);
@@ -40,14 +39,14 @@ function ColorChoiceDialog(props) {
 
   function handleReset() {
     if (theme.palette.type === "light") {
-      setGreen("#008002");
       setRed("#ff0101");
+      setGreen("#008002");
       setPurple("#800080");
     }
     if (theme.palette.type === "dark") {
+      setRed("#ffb047");
       setGreen("#00b803");
       setPurple("#ff47ff");
-      setRed("#ffb047");
     }
   }
 
