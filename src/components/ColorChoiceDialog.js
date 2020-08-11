@@ -21,6 +21,7 @@ const useStyles = makeStyles({
 
 function ColorChoiceDialog(props) {
   const { open, onClose, title, theme } = props;
+  console.log(theme);
   const classes = useStyles();
 
   const [red, setRed] = useState(theme.setCard.red);
@@ -32,7 +33,22 @@ function ColorChoiceDialog(props) {
   }
 
   function handleSubmit() {
-    onClose({ red: red, green: green, purple: purple });
+    if (red === green || green === purple || red === purple) {
+      alert("All colors must be unique");
+    } else onClose({ red: red, green: green, purple: purple });
+  }
+
+  function handleReset() {
+    if (theme.palette.type === "light") {
+      setGreen("#008002");
+      setRed("#ff0101");
+      setPurple("#800080");
+    }
+    if (theme.palette.type === "dark") {
+      setGreen("#00b803");
+      setPurple("#ff47ff");
+      setRed("#ffb047");
+    }
   }
 
   return (
@@ -61,6 +77,11 @@ function ColorChoiceDialog(props) {
               color={green}
               onChangeComplete={(result) => setGreen(result.hex)}
             />
+            <br />
+            <br />
+            <Button onClick={handleReset} variant="contained" color="primary">
+              Set Colors to Default
+            </Button>
           </Grid>
           <Grid item xs={12} md={4} className={classes.colorPickerColumn}>
             <ResponsiveSetCard
