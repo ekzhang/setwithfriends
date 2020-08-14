@@ -34,9 +34,7 @@ function ColorChoiceDialog(props) {
   }
 
   function handleSubmit() {
-    if (red === green || green === purple || red === purple) {
-      alert("All colors must be unique");
-    } else onClose({ red: red, green: green, purple: purple });
+    onClose({ red: red, green: green, purple: purple });
   }
 
   function handleReset() {
