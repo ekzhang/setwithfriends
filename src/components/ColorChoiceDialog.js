@@ -75,11 +75,6 @@ function ColorChoiceDialog(props) {
               color={green}
               onChangeComplete={(result) => setGreen(result.hex)}
             />
-            <br />
-            <br />
-            <Button onClick={handleReset} variant="contained" color="primary">
-              Set Colors to Default
-            </Button>
           </Grid>
           <Grid item xs={12} md={4} className={classes.colorPickerColumn}>
             <ResponsiveSetCard
@@ -92,6 +87,16 @@ function ColorChoiceDialog(props) {
               onChangeComplete={(result) => setRed(result.hex)}
             />
           </Grid>
+        </Grid>
+        <Grid container direction="row" justify="center">
+          <Button
+            onClick={handleReset}
+            variant="contained"
+            color="primary"
+            style={{ marginTop: "15px" }}
+          >
+            Set Colors to Default
+          </Button>
         </Grid>
       </DialogContent>
       <DialogActions>
