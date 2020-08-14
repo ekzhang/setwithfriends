@@ -10,8 +10,7 @@ import DialogContent from "@material-ui/core/DialogContent";
 import DialogTitle from "@material-ui/core/DialogTitle";
 import { ChromePicker } from "react-color";
 import ResponsiveSetCard from "./ResponsiveSetCard";
-import { darkTheme } from "../themes";
-import { lightTheme } from "../themes";
+import { darkTheme, lightTheme } from "../themes";
 
 const useStyles = makeStyles({
   colorPickerColumn: {
