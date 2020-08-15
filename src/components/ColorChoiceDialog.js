@@ -10,6 +10,7 @@ import DialogContent from "@material-ui/core/DialogContent";
 import DialogTitle from "@material-ui/core/DialogTitle";
 import { ChromePicker } from "react-color";
 import ResponsiveSetCard from "./ResponsiveSetCard";
+import { darkTheme, lightTheme } from "../themes";
 
 const useStyles = makeStyles({
   colorPickerColumn: {
@@ -33,6 +34,19 @@ function ColorChoiceDialog(props) {
 
   function handleSubmit() {
     onClose({ red: red, green: green, purple: purple });
+  }
+
+  function handleReset() {
+    if (theme.palette.type === "light") {
+      setRed(lightTheme.setCard.red);
+      setGreen(lightTheme.setCard.green);
+      setPurple(lightTheme.setCard.purple);
+    }
+    if (theme.palette.type === "dark") {
+      setRed(darkTheme.setCard.red);
+      setGreen(darkTheme.setCard.green);
+      setPurple(darkTheme.setCard.purple);
+    }
   }
 
   return (
@@ -73,6 +87,16 @@ function ColorChoiceDialog(props) {
               onChangeComplete={(result) => setRed(result.hex)}
             />
           </Grid>
+        </Grid>
+        <Grid container direction="row" justify="center">
+          <Button
+            onClick={handleReset}
+            variant="outlined"
+            color="secondary"
+            style={{ marginTop: "15px" }}
+          >
+            Set Colors to Default
+          </Button>
         </Grid>
       </DialogContent>
       <DialogActions>
