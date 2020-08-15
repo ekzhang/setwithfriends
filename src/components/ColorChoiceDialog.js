@@ -91,8 +91,8 @@ function ColorChoiceDialog(props) {
         <Grid container direction="row" justify="center">
           <Button
             onClick={handleReset}
-            variant="contained"
-            color="primary"
+            variant="outlined"
+            color="secondary"
             style={{ marginTop: "15px" }}
           >
             Set Colors to Default
