@@ -28,11 +28,12 @@ function AboutPage() {
           . We would appreciate stars, forks, and any comments or suggestions!
         </Typography>
         <Typography variant="body1" gutterBottom>
-          Also, we would like to thank{" "}
-          <Link href="https://github.com/tarehart">Tyler Arehart</Link> and{" "}
-          <Link href="https://github.com/stevenhao">Steven Hao</Link> for
-          contributing code to this project, as well as the many others who
-          reported bugs and provided feedback to us.
+          Also, thanks to our code contributors{" "}
+          <Link href="https://github.com/tarehart">Tyler Arehart</Link>,{" "}
+          <Link href="https://github.com/stevenhao">Steven Hao</Link>,{" "}
+          <Link href="https://github.com/eparadise">Eliza Paradise</Link>, and{" "}
+          <Link href="https://github.com/wenley">Wenley Tong</Link>, as well as
+          the many others who reported bugs and provided feedback.
         </Typography>
       </Paper>
       <Typography variant="body1" align="center" gutterBottom>
