@@ -25,13 +25,12 @@ function Game({ deck, onClick, onClear, selected }) {
   //  actual dimensions of the game container on initial render)
   const gameWidth = gameDimensions ? gameDimensions.width : 200;
   const numCards = board.length;
-  const rows = isHorizontal ? 3 : numCards / 3;
-  const cols = isHorizontal ? numCards / 3 : 3;
+  const rows = isHorizontal ? 3 : Math.max(numCards / 3, 4);
+  const cols = isHorizontal ? Math.max(numCards / 3, 4) : 3;
   const cardWidth = Math.floor((gameWidth - 2 * gamePadding) / cols);
   const cardHeight = Math.round(cardWidth / 1.6);
 
-  const gameHeight =
-    cardHeight * Math.max(rows, isHorizontal ? 3 : 4) + 2 * gamePadding;
+  const gameHeight = cardHeight * rows + 2 * gamePadding;
 
   // Compute coordinate positions of each card, in and out of play
   const cards = {};

@@ -152,16 +152,33 @@ function LobbyPage() {
   if (redirect) return <Redirect push to={redirect} />;
 
   async function newRoom(access) {
-    const gameId = generate().dashed;
-    try {
-      setWaiting(true);
-      await createGame({ gameId, access });
+    // Make several attempts to create a game with an unused ID
+    setWaiting(true);
+    let attempts = 0;
+    while (attempts < 5) {
+      const gameId = generate({ words: 3 }).dashed;
+      try {
+        await createGame({ gameId, access });
+      } catch (error) {
+        if (error.code === "already-exists") {
+          // We generated an already-used game ID
+          ++attempts;
+          continue;
+        } else {
+          // Unspecified error occurred
+          setWaiting(false);
+          alert(error.toString());
+          return;
+        }
+      }
+      // Successful game creation
       firebase.analytics().logEvent("create_game", { gameId, access });
       setRedirect(`/room/${gameId}`);
-    } catch (error) {
-      setWaiting(false);
-      alert(error.toString());
+      return;
     }
+    // Unsuccessful game creation
+    setWaiting(false);
+    alert("Error: Could not find an available game ID.");
   }
 
   return (
