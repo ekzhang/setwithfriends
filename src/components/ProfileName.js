@@ -58,14 +58,10 @@ function ProfileName({ userId }) {
         return (
           <section>
             <div
-              style={{ display: "flex", flexDirection: "row" }}
+              style={{ display: "flex", flexDirection: "row", marginBottom: 6 }}
               className={classes.name}
             >
-              <Typography
-                variant="h4"
-                gutterBottom
-                style={{ overflowWrap: "anywhere" }}
-              >
+              <Typography variant="h4" style={{ overflowWrap: "anywhere" }}>
                 {userEl}
               </Typography>
               {user.admin && (

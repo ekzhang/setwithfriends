@@ -7,7 +7,7 @@ import Grid from "@material-ui/core/Grid";
 import { makeStyles } from "@material-ui/core/styles";
 import Paper from "@material-ui/core/Paper";
 import Typography from "@material-ui/core/Typography";
-import TextField from "@material-ui/core/TextField";
+import Select from "@material-ui/core/Select";
 import MenuItem from "@material-ui/core/MenuItem";
 import EqualizerIcon from "@material-ui/icons/Equalizer";
 
@@ -113,23 +113,25 @@ function ProfilePage({ match }) {
             className={classes.divider}
           />
           <Grid item xs={12} style={{ flex: 1 }} p={1}>
-            <div style={{ display: "flex" }}>
-              <Typography variant="overline">Statistics</Typography>
-              <EqualizerIcon />
+            <div style={{ display: "flex", alignItems: "flex-end" }}>
+              <div style={{ display: "flex" }}>
+                <Typography variant="overline">Statistics</Typography>
+                <EqualizerIcon />
+              </div>
+
+              <Select
+                value={variant}
+                onChange={(event) => setVariant(event.target.value)}
+                style={{ marginLeft: "auto" }}
+                color="secondary"
+              >
+                {Object.entries(datasetVariants).map(([key, { label }]) => (
+                  <MenuItem key={key} value={key}>
+                    <Typography variant="body2">{label}</Typography>
+                  </MenuItem>
+                ))}
+              </Select>
             </div>
-            <TextField
-              select
-              label="Game Set"
-              value={variant}
-              onChange={(event) => setVariant(event.target.value)}
-              helperText="Subset of games to show stats"
-            >
-              {Object.entries(datasetVariants).map(([key, { label }]) => (
-                <MenuItem key={key} value={key}>
-                  {label}
-                </MenuItem>
-              ))}
-            </TextField>
             <UserStatistics userId={userId} gamesData={gamesData} />
           </Grid>
         </Grid>
