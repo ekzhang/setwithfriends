@@ -19,6 +19,21 @@ import useFirebaseRefs from "../hooks/useFirebaseRefs";
 import { computeState } from "../util";
 import LoadingPage from "./LoadingPage";
 
+const datasetVariants = {
+  all: {
+    label: "All Games",
+    filterFn: (gameData) => true,
+  },
+  solo: {
+    label: "Solo Games",
+    filterFn: (gameData) => Object.keys(gameData.users).length === 1,
+  },
+  multiplayer: {
+    label: "Multiplayer Games",
+    filterFn: (gameData) => Object.keys(gameData.users).length > 1,
+  },
+};
+
 const useStyles = makeStyles((theme) => ({
   divider: {
     [theme.breakpoints.down("sm")]: {
@@ -41,24 +56,13 @@ function mergeGameData(game, gameData) {
   };
 }
 
-const DATA_SET_VARIANT = [
-  { key: "all", label: "All Games" },
-  { key: "solo", label: "Solo Games" },
-  { key: "multiplayer", label: "Multiplayer Games" },
-];
-const DATA_SET_VARIANT_FILTER_FUNCTIONS = {
-  all: (gameData) => true,
-  solo: (gameData) => Object.keys(gameData.scores).length === 1,
-  multiplayer: (gameData) => Object.keys(gameData.scores).length > 1,
-};
-
 function ProfilePage({ match }) {
   const userId = match.params.id;
   const classes = useStyles();
 
   const [games, loadingGames] = useFirebaseRef(`/userGames/${userId}`, true);
   const [redirect, setRedirect] = useState(null);
-  const [dataSetVariant, setDataSetVariant] = useState("all");
+  const [variant, setVariant] = useState("all");
 
   const handleClickGame = (gameId) => {
     setRedirect(`/room/${gameId}`);
@@ -88,15 +92,12 @@ function ProfilePage({ match }) {
     for (let i = 0; i < gameIds.length; i++) {
       if (gameVals[i].status === "done") {
         const gameData = mergeGameData(gameVals[i], gameDataVals[i]);
-        if (DATA_SET_VARIANT_FILTER_FUNCTIONS[dataSetVariant](gameData)) {
+        if (datasetVariants[variant].filterFn(gameData)) {
           gamesData[gameIds[i]] = gameData;
         }
       }
     }
   }
-  const handleDataSetVariantChange = (event) => {
-    setDataSetVariant(event.target.value);
-  };
 
   return (
     <Container>
@@ -119,11 +120,11 @@ function ProfilePage({ match }) {
             <TextField
               select
               label="Game Set"
-              value={dataSetVariant}
-              onChange={handleDataSetVariantChange}
+              value={variant}
+              onChange={(event) => setVariant(event.target.value)}
               helperText="Subset of games to show stats"
             >
-              {DATA_SET_VARIANT.map(({ key, label }) => (
+              {Object.entries(datasetVariants).map(([key, { label }]) => (
                 <MenuItem key={key} value={key}>
                   {label}
                 </MenuItem>
