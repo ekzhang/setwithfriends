@@ -4,6 +4,7 @@ import * as admin from "firebase-admin";
 admin.initializeApp();
 
 const MAX_GAME_ID_LENGTH = 64;
+const MAX_UNFINISHED_GAMES_PER_HOUR = 4;
 
 /** Create a new game in the database */
 export const createGame = functions.https.onCall(async (data, context) => {
@@ -37,11 +38,47 @@ export const createGame = functions.https.onCall(async (data, context) => {
     );
   }
 
+  const userId = context.auth.uid;
+
+  const oneHourAgo = Date.now() - 3600000;
+  const recentGameIds = await admin
+    .database()
+    .ref(`userGames/${userId}`)
+    .orderByValue()
+    .startAt(oneHourAgo)
+    .once("value");
+
+  const recentGames = await Promise.all(
+    Object.keys(recentGameIds.val() || {}).map((recentGameId) =>
+      admin.database().ref(`games/${recentGameId}`).once("value")
+    )
+  );
+
+  let unfinishedGames = 0;
+  for (const snap of recentGames) {
+    if (
+      snap.child("host").val() === userId &&
+      snap.child("status").val() !== "done" &&
+      snap.child("access").val() === "public"
+    ) {
+      ++unfinishedGames;
+    }
+  }
+
   const gameRef = admin.database().ref(`games/${gameId}`);
   const { committed, snapshot } = await gameRef.transaction((currentData) => {
     if (currentData === null) {
+      if (
+        unfinishedGames >= MAX_UNFINISHED_GAMES_PER_HOUR &&
+        access === "public"
+      ) {
+        throw new functions.https.HttpsError(
+          "resource-exhausted",
+          "Too many unfinished public games were recently created."
+        );
+      }
       return {
-        host: context.auth!.uid,
+        host: userId,
         createdAt: admin.database.ServerValue.TIMESTAMP,
         status: "waiting",
         access,
