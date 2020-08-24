@@ -61,15 +61,19 @@ function RoomPage({ match, location }) {
       game.status === "waiting" &&
       (!game.users || !(user.id in game.users))
     ) {
-      firebase.analytics().logEvent("join_game", { gameId });
+      const updates = {
+        [`games/${gameId}/users/${user.id}`]: firebase.database.ServerValue
+          .TIMESTAMP,
+        [`userGames/${user.id}/${gameId}`]: game.createdAt,
+      };
       firebase
         .database()
-        .ref(`games/${gameId}/users/${user.id}`)
-        .set(firebase.database.ServerValue.TIMESTAMP);
-      firebase
-        .database()
-        .ref(`userGames/${user.id}/${gameId}`)
-        .set(game.createdAt);
+        .ref()
+        .update(updates)
+        .then(() => firebase.analytics().logEvent("join_game", { gameId }))
+        .catch((reason) => {
+          console.warn(`Failed to join game (${reason})`);
+        });
     }
   }, [user.id, game, gameId, leaving]);
 
