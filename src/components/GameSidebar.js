@@ -55,7 +55,9 @@ function GameSidebar({ game, scores, leaderboard }) {
       <div className={classes.timer} style={{ marginTop: 6 }}>
         <AlarmIcon className={classes.alarm} fontSize="large" />
         <Typography variant="h4" align="center">
-          {formatTime(gameTime - game.startedAt)}
+          {/* Hide the sub-second time resolution while game is active to
+          avoid stressing beginners. */}
+          {formatTime(gameTime - game.startedAt, game.status !== "done")}
         </Typography>
       </div>
       <Divider style={{ margin: "8px 0" }} />
