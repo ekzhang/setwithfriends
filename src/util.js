@@ -136,9 +136,10 @@ export function computeState(gameData) {
   return { current, scores, history };
 }
 
-export function formatTime(t) {
+export function formatTime(t, hideSubsecond) {
   t = Math.max(t, 0);
   const hours = Math.floor(t / (3600 * 1000));
   const rest = t % (3600 * 1000);
-  return (hours ? `${hours}:` : "") + moment(rest).format("mm:ss");
+  const format = hideSubsecond ? "mm:ss" : "mm:ss.SS";
+  return (hours ? `${hours}:` : "") + moment(rest).format(format);
 }
