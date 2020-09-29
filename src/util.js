@@ -97,9 +97,11 @@ export function computeState(gameData) {
   const history = []; // list of valid events in time order
   const current = gameData.deck.slice();
   if (gameData.events) {
-    const events = Object.values(gameData.events).sort((e1, e2) => {
-      return e1.time - e2.time;
-    });
+    const events = Object.entries(gameData.events)
+      .sort(([k1, e1], [k2, e2]) => {
+        return e1.time !== e2.time ? e1.time - e2.time : k1 < k2;
+      })
+      .map(([_k, e]) => e);
     for (const event of events) {
       const { user, c1, c2, c3 } = event;
       if (
