@@ -113,6 +113,21 @@ function Chat() {
     handleClose();
   };
 
+  const handleDeleteAll = async (uid) => {
+    const messages = await firebase
+      .database()
+      .ref("lobbyChat")
+      .orderByChild("user")
+      .equalTo(uid)
+      .once("value");
+    const updates = {};
+    messages.forEach((snap) => {
+      updates[snap.key] = null;
+    });
+    firebase.database().ref("lobbyChat").update(updates);
+    handleClose();
+  };
+
   const handleClose = () => {
     setAnchorEl(null);
     setMenuOpenIdx(null);
@@ -172,6 +187,9 @@ function Chat() {
                 >
                   <MenuItem onClick={() => handleDelete(key)}>
                     Delete message
+                  </MenuItem>
+                  <MenuItem onClick={() => handleDeleteAll(msg.user)}>
+                    Delete all from user
                   </MenuItem>
                 </Menu>
               </div>
