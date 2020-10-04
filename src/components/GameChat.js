@@ -14,6 +14,8 @@ import Tooltip from "@material-ui/core/Tooltip";
 import User from "./User";
 import InternalLink from "./InternalLink";
 import SimpleInput from "./SimpleInput";
+import Subheading from "./Subheading";
+import Scrollbox from "./Scrollbox";
 import SetCard from "./SetCard";
 import firebase from "../firebase";
 import autoscroll from "../utils/autoscroll";
@@ -110,14 +112,10 @@ function GameChat({ gameId, history, startedAt }) {
       className={classes.chatPanel}
       style={{ flexGrow: 1, overflowY: "hidden" }}
     >
-      <Typography
-        variant="overline"
-        className={classes.chatHeader}
-        onClick={toggleChat}
-      >
+      <Subheading className={classes.chatHeader} onClick={toggleChat}>
         Game Chat {chatHidden === "yes" && "(Hidden)"}
-      </Typography>
-      <div className={classes.chat} ref={chatEl}>
+      </Subheading>
+      <Scrollbox className={classes.chat} ref={chatEl}>
         {Object.entries(items)
           .sort(([, a], [, b]) => a.time - b.time)
           .map(([key, item]) =>
@@ -164,7 +162,7 @@ function GameChat({ gameId, history, startedAt }) {
               )
             )
           )}
-      </div>
+      </Scrollbox>
       <form onSubmit={handleSubmit}>
         <SimpleInput
           value={input}

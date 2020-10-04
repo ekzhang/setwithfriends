@@ -17,6 +17,8 @@ import Menu from "@material-ui/core/Menu";
 import User from "./User";
 import InternalLink from "./InternalLink";
 import SimpleInput from "./SimpleInput";
+import Subheading from "./Subheading";
+import Scrollbox from "./Scrollbox";
 import firebase from "../firebase";
 import { filter } from "../util";
 import autoscroll from "../utils/autoscroll";
@@ -138,14 +140,10 @@ function Chat() {
       className={classes.chatPanel}
       style={{ flexGrow: 1, overflowY: "hidden" }}
     >
-      <Typography
-        variant="overline"
-        className={classes.chatHeader}
-        onClick={toggleChat}
-      >
+      <Subheading className={classes.chatHeader} onClick={toggleChat}>
         Lobby Chat {chatHidden === "yes" && "(Hidden)"}
-      </Typography>
-      <div className={classes.chat} ref={chatEl}>
+      </Subheading>
+      <Scrollbox className={classes.chat} ref={chatEl}>
         {chatHidden !== "yes" &&
           Object.entries(messages)
             .sort((a, b) => a[1].time - b[1].time)
@@ -194,7 +192,7 @@ function Chat() {
                 </Menu>
               </div>
             ))}
-      </div>
+      </Scrollbox>
       <form onSubmit={handleSubmit}>
         <SimpleInput
           value={input}
