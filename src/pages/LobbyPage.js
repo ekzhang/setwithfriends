@@ -288,7 +288,7 @@ function LobbyPage() {
                 <strong>
                   {loadingStats
                     ? "---,---"
-                    : humanize((stats && stats.gameCount) * 76 || 0)}
+                    : humanize((stats && stats.gameCount) || 0)}
                 </strong>{" "}
                 games played
               </Typography>
