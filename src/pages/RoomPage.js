@@ -18,6 +18,7 @@ import LoadingPage from "./LoadingPage";
 import NotFoundPage from "./NotFoundPage";
 import SimpleInput from "../components/SimpleInput";
 import RoomUserList from "../components/RoomUserList";
+import Subheading from "../components/Subheading";
 import GameChat from "../components/GameChat";
 import firebase from "../firebase";
 import { UserContext } from "../context";
@@ -151,13 +152,13 @@ function RoomPage({ match, location }) {
               <Grid container spacing={1}>
                 <Grid item xs={12} md={6}>
                   <div className={classes.subpanel}>
-                    <Typography variant="overline">Players</Typography>
+                    <Subheading>Players</Subheading>
                     <RoomUserList game={game} gameId={gameId} />
                   </div>
                 </Grid>
                 <Grid item xs={12} md={6}>
                   <div className={classes.subpanel}>
-                    <Typography variant="overline">Inviting Friends</Typography>
+                    <Subheading>Inviting Friends</Subheading>
                     <Typography variant="body1">
                       To invite someone to play, share this URL:
                       <span className={classes.shareLink}>

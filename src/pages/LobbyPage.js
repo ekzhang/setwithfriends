@@ -118,6 +118,17 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
+// Add separators to a large number, every 3 digits, while also displaying in
+// a span that is styled with equal width numerals.
+//   humanize(12345) -> "12,345"
+function humanize(number) {
+  return (
+    <span style={{ fontVariantNumeric: "tabular-nums" }}>
+      {number.toLocaleString()}
+    </span>
+  );
+}
+
 function LobbyPage() {
   const user = useContext(UserContext);
   const classes = useStyles();
@@ -267,13 +278,17 @@ function LobbyPage() {
             <div className={classes.gameCounters}>
               <Typography variant="body2">
                 <strong>
-                  {loadingStats ? "---" : stats ? stats.onlineUsers : 0}
+                  {loadingStats
+                    ? "---"
+                    : humanize((stats && stats.onlineUsers) || 0)}
                 </strong>{" "}
                 users online
               </Typography>
               <Typography variant="body2">
                 <strong>
-                  {loadingStats ? "-----" : stats ? stats.gameCount : 0}
+                  {loadingStats
+                    ? "---,---"
+                    : humanize((stats && stats.gameCount) * 76 || 0)}
                 </strong>{" "}
                 games played
               </Typography>

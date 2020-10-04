@@ -112,7 +112,7 @@
     },
     "lobbyChat": {
       ".read": "auth != null",
-      ".indexOn": "time",
+      ".indexOn": ["time", "user"],
       "$messageId": {
         ".write": "auth != null && ((!data.exists() && newData.exists()) || (data.exists() && root.child('users').child(auth.uid).child('admin').val() == true))",
         ".validate": "newData.hasChildren(['user', 'message', 'time'])",

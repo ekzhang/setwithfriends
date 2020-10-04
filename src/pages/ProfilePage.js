@@ -14,6 +14,7 @@ import EqualizerIcon from "@material-ui/icons/Equalizer";
 import ProfileName from "../components/ProfileName";
 import UserStatistics from "../components/UserStatistics";
 import ProfileGamesTable from "../components/ProfileGamesTable";
+import Subheading from "../components/Subheading";
 import useFirebaseRef from "../hooks/useFirebaseRef";
 import useFirebaseRefs from "../hooks/useFirebaseRefs";
 import { computeState } from "../util";
@@ -35,6 +36,13 @@ const datasetVariants = {
 };
 
 const useStyles = makeStyles((theme) => ({
+  statsHeading: {
+    // Pixel-perfect corrections for icon alignment
+    paddingTop: 4,
+    [theme.breakpoints.down("xs")]: {
+      paddingTop: 3,
+    },
+  },
   divider: {
     [theme.breakpoints.down("sm")]: {
       display: "none",
@@ -115,7 +123,9 @@ function ProfilePage({ match }) {
           <Grid item xs={12} style={{ flex: 1 }} p={1}>
             <div style={{ display: "flex", alignItems: "flex-end" }}>
               <div style={{ display: "flex" }}>
-                <Typography variant="overline">Statistics</Typography>
+                <Subheading className={classes.statsHeading}>
+                  Statistics
+                </Subheading>
                 <EqualizerIcon />
               </div>
 
@@ -135,9 +145,7 @@ function ProfilePage({ match }) {
             <UserStatistics userId={userId} gamesData={gamesData} />
           </Grid>
         </Grid>
-        <Typography variant="overline" component="div">
-          Finished Games
-        </Typography>
+        <Subheading style={{ textAlign: "left" }}>Finished Games</Subheading>
         <ProfileGamesTable
           userId={userId}
           handleClickGame={handleClickGame}

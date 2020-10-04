@@ -15,6 +15,7 @@ import SnoozeIcon from "@material-ui/icons/Snooze";
 import { useLocation, Link as RouterLink } from "react-router-dom";
 
 import User from "./User";
+import Subheading from "./Subheading";
 import useMoment from "../hooks/useMoment";
 import { formatTime } from "../util";
 
@@ -63,7 +64,7 @@ function GameSidebar({ game, scores, leaderboard }) {
       <Divider style={{ margin: "8px 0" }} />
       {/* Scoreboard */}
       <div className={classes.panel}>
-        <Typography variant="overline">Scoreboard</Typography>
+        <Subheading>Scoreboard</Subheading>
         <List dense disablePadding style={{ overflowY: "auto" }}>
           {leaderboard.map((uid) => (
             <User

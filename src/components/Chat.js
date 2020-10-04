@@ -17,6 +17,8 @@ import Menu from "@material-ui/core/Menu";
 import User from "./User";
 import InternalLink from "./InternalLink";
 import SimpleInput from "./SimpleInput";
+import Subheading from "./Subheading";
+import Scrollbox from "./Scrollbox";
 import firebase from "../firebase";
 import { filter } from "../util";
 import autoscroll from "../utils/autoscroll";
@@ -113,6 +115,21 @@ function Chat() {
     handleClose();
   };
 
+  const handleDeleteAll = async (uid) => {
+    const messages = await firebase
+      .database()
+      .ref("lobbyChat")
+      .orderByChild("user")
+      .equalTo(uid)
+      .once("value");
+    const updates = {};
+    messages.forEach((snap) => {
+      updates[snap.key] = null;
+    });
+    firebase.database().ref("lobbyChat").update(updates);
+    handleClose();
+  };
+
   const handleClose = () => {
     setAnchorEl(null);
     setMenuOpenIdx(null);
@@ -123,14 +140,10 @@ function Chat() {
       className={classes.chatPanel}
       style={{ flexGrow: 1, overflowY: "hidden" }}
     >
-      <Typography
-        variant="overline"
-        className={classes.chatHeader}
-        onClick={toggleChat}
-      >
+      <Subheading className={classes.chatHeader} onClick={toggleChat}>
         Lobby Chat {chatHidden === "yes" && "(Hidden)"}
-      </Typography>
-      <div className={classes.chat} ref={chatEl}>
+      </Subheading>
+      <Scrollbox className={classes.chat} ref={chatEl}>
         {chatHidden !== "yes" &&
           Object.entries(messages)
             .sort((a, b) => a[1].time - b[1].time)
@@ -173,10 +186,13 @@ function Chat() {
                   <MenuItem onClick={() => handleDelete(key)}>
                     Delete message
                   </MenuItem>
+                  <MenuItem onClick={() => handleDeleteAll(msg.user)}>
+                    Delete all from user
+                  </MenuItem>
                 </Menu>
               </div>
             ))}
-      </div>
+      </Scrollbox>
       <form onSubmit={handleSubmit}>
         <SimpleInput
           value={input}
