@@ -20,15 +20,31 @@ function AboutPage() {
           <Link href="https://github.com/cynthiakedu">Cynthia Du</Link> as a
           side project in early 2020. We love the game, and our goal was to
           bridge the distance between friends by creating the simplest interface
-          for playing Set online. The source code and technical details are
-          available on GitHub at{" "}
-          <Link href="https://github.com/ekzhang/setwithfriends">
-            ekzhang/setwithfriends
-          </Link>
-          . We would appreciate stars, forks, and any comments or suggestions!
+          for playing Set online.
         </Typography>
         <Typography variant="body1" gutterBottom>
-          Also, thanks to our code contributors{" "}
+          The source code and technical details are available on{" "}
+          <Link href="https://github.com/ekzhang/setwithfriends">GitHub</Link>.
+          We are open to contributors from all backgrounds, whether you're a
+          seasoned programmer or just want to learn more about web development.
+          Please see the repository for detailed instructions.
+        </Typography>
+        <Typography variant="body1" gutterBottom>
+          <strong>
+            If you have comments or suggestions, the best way to reach us is by{" "}
+            <Link href="https://github.com/ekzhang/setwithfriends/issues">
+              filing an issue
+            </Link>
+            .
+          </strong>{" "}
+          You can also contact the authors by email at{" "}
+          <Link href="mailto:ekzhang1@gmail.com">ekzhang1@gmail.com</Link> and{" "}
+          <Link href="mailto:cynthiakedu@gmail.com">cynthiakedu@gmail.com</Link>
+          .
+        </Typography>
+        <hr style={{ margin: "1em 0" }} />
+        <Typography variant="body1" gutterBottom>
+          Thanks to our code contributors{" "}
           <Link href="https://github.com/tarehart">Tyler Arehart</Link>,{" "}
           <Link href="https://github.com/stevenhao">Steven Hao</Link>,{" "}
           <Link href="https://github.com/eparadise">Eliza Paradise</Link>, and{" "}
