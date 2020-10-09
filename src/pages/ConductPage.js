@@ -80,7 +80,7 @@ function ConductPage() {
           and contact a moderator.
         </Typography>
       </Paper>
-      <Typography variant="body1" align="center">
+      <Typography variant="body1" align="center" style={{ margin: 12 }}>
         <InternalLink to="/">Return to home</InternalLink>
       </Typography>
     </Container>

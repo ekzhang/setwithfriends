@@ -52,7 +52,7 @@ function AboutPage() {
           the many others who reported bugs and provided feedback.
         </Typography>
       </Paper>
-      <Typography variant="body1" align="center" gutterBottom>
+      <Typography variant="body1" align="center" style={{ margin: 12 }}>
         <InternalLink to="/">Return to home</InternalLink>
       </Typography>
     </Container>
