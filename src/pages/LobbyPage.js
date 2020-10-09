@@ -299,7 +299,7 @@ function LobbyPage() {
       <Typography variant="body1" align="center" style={{ padding: "16px 0" }}>
         <InternalLink to="/help">Help</InternalLink> •{" "}
         <InternalLink to="/about">About</InternalLink> •{" "}
-        <InternalLink to="/contact">Contact</InternalLink> •{" "}
+        <InternalLink to="/conduct">Conduct</InternalLink> •{" "}
         <Link target="_blank" rel="noopener" href="https://discord.gg/XbjJyc9">
           Discord
         </Link>

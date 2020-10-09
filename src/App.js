@@ -19,7 +19,7 @@ import LoadingPage from "./pages/LoadingPage";
 import NotFoundPage from "./pages/NotFoundPage";
 import HelpPage from "./pages/HelpPage";
 import AboutPage from "./pages/AboutPage";
-import ContactPage from "./pages/ContactPage";
+import ConductPage from "./pages/ConductPage";
 import ProfilePage from "./pages/ProfilePage";
 import { lightTheme, darkTheme } from "./themes";
 
@@ -117,7 +117,7 @@ function App() {
             <Switch>
               <Route exact path="/help" component={HelpPage} />
               <Route exact path="/about" component={AboutPage} />
-              <Route exact path="/contact" component={ContactPage} />
+              <Route exact path="/conduct" component={ConductPage} />
               <Route exact path="/" component={LobbyPage} />
               <Route exact path="/room/:id" component={RoomPage} />
               <Route exact path="/game/:id" component={GamePage} />
