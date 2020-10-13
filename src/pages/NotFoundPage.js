@@ -15,10 +15,8 @@ function NotFoundPage() {
         alt="404"
         style={{ display: "block", maxWidth: "100%", margin: "0 auto 8px" }}
       />
-      <Typography variant="body1" align="center">
-        <InternalLink to="/" gutterBottom>
-          Return to home
-        </InternalLink>
+      <Typography variant="body1" align="center" style={{ margin: 12 }}>
+        <InternalLink to="/">Return to home</InternalLink>
       </Typography>
     </Container>
   );
