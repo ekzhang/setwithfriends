@@ -9,7 +9,7 @@ const MAX_UNFINISHED_GAMES_PER_HOUR = 4;
 /** Ends the game with the correct time */
 export const finishGame = functions.https.onCall(async (data, context) => {
   const gameId = data.gameId;
-  if(
+  if (
     !(typeof gameId === "string") ||
     gameId.length === 0 ||
     gameId.length > MAX_GAME_ID_LENGTH
@@ -29,17 +29,20 @@ export const finishGame = functions.https.onCall(async (data, context) => {
 
   let finalTime = 0;
   await admin
-  .database()
-  .ref(`gameData/${gameId}/events`)
-  .limitToLast(1)
-  .once("value", function(snapshot){
-    for(const p in snapshot.val())
-      finalTime = snapshot.val()[p].time;
-  }, function(err){
-    console.error(err);
-  });
+    .database()
+    .ref(`gameData/${gameId}/events`)
+    .limitToLast(1)
+    .once(
+      "value",
+      function (snapshot) {
+        for (const p in snapshot.val()) finalTime = snapshot.val()[p].time;
+      },
+      function (err) {
+        console.error(err);
+      }
+    );
 
-  return {"endedAt":finalTime};
+  return { endedAt: finalTime };
 });
 
 /** Create a new game in the database */

@@ -139,22 +139,27 @@ function GamePage({ match }) {
     });
   }
 
-  async function callFinishGame(){
-      let timeDataRef = await finishGame({"gameId":gameId});
-      let endTime = timeDataRef.data.endedAt;
-      if(game.status === "ingame"){
-        firebase.database().ref(`games/${gameId}`).update({
-          status: "done",
-          endedAt: endTime
-        }, (err)=>{
-          if(err){
-            console.log("Already updated the game's status");
+  async function callFinishGame() {
+    let timeDataRef = await finishGame({ gameId: gameId });
+    let endTime = timeDataRef.data.endedAt;
+    if (game.status === "ingame") {
+      firebase
+        .database()
+        .ref(`games/${gameId}`)
+        .update(
+          {
+            status: "done",
+            endedAt: endTime,
+          },
+          (err) => {
+            if (err) {
+              console.log("Already updated the game's status");
+            } else {
+              console.log("Successfully updated the database");
+            }
           }
-          else{
-            console.log("Successfully updated the database");
-          }
-        });
-      }
+        );
+    }
   }
 
   function handleClick(card) {
