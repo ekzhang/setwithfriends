@@ -13,7 +13,7 @@ import { Redirect } from "react-router-dom";
 import { removeCard, checkSet } from "../util";
 import SnackContent from "../components/SnackContent";
 import { findSet, computeState } from "../util";
-import firebase, { createGame } from "../firebase";
+import firebase, { createGame, finishGame } from "../firebase";
 import useFirebaseRef from "../hooks/useFirebaseRef";
 import Game from "../components/Game";
 import User from "../components/User";
@@ -92,10 +92,7 @@ function GamePage({ match }) {
         current.length <= 20 &&
         !findSet(current)
       ) {
-        firebase.database().ref(`games/${gameId}`).update({
-          status: "done",
-          endedAt: firebase.database.ServerValue.TIMESTAMP,
-        });
+        callFinishGame();
       }
     }
   });
@@ -140,6 +137,24 @@ function GamePage({ match }) {
       user: user.id,
       time: firebase.database.ServerValue.TIMESTAMP,
     });
+  }
+
+  async function callFinishGame(){
+      let timeDataRef = await finishGame({"gameId":gameId});
+      let endTime = timeDataRef.data.endedAt;
+      if(game.status === "ingame"){
+        firebase.database().ref(`games/${gameId}`).update({
+          status: "done",
+          endedAt: endTime
+        }, (err)=>{
+          if(err){
+            console.log("Already updated the game's status");
+          }
+          else{
+            console.log("Successfully updated the database");
+          }
+        });
+      }
   }
 
   function handleClick(card) {
