@@ -9,7 +9,7 @@
         },
         "endedAt": {
           ".write": "auth != null && data.parent().child('users/' + auth.uid).exists() && !data.exists() && newData.exists()",
-          ".validate": "newData.isNumber() && newData.val() == now"
+          ".validate": "newData.isNumber() && newData.val() <= now"
         },
         "status": {
           ".write": "auth != null && data.parent().child('users/' + auth.uid).exists() && data.exists() && newData.exists()",
