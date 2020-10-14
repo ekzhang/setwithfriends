@@ -6,6 +6,42 @@ admin.initializeApp();
 const MAX_GAME_ID_LENGTH = 64;
 const MAX_UNFINISHED_GAMES_PER_HOUR = 4;
 
+/** Ends the game with the correct time */
+export const finishGame = functions.https.onCall(async (data, context) => {
+  const gameId = data.gameId;
+  if(
+    !(typeof gameId === "string") ||
+    gameId.length === 0 ||
+    gameId.length > MAX_GAME_ID_LENGTH
+  ) {
+    throw new functions.https.HttpsError(
+      "invalid-argument",
+      "The function must be called with " +
+        "argument `gameId` to be created at `/games/:gameId`."
+    );
+  }
+  if (!context.auth) {
+    throw new functions.https.HttpsError(
+      "failed-precondition",
+      "The function must be called while authenticated."
+    );
+  }
+
+  let finalTime = 0;
+  await admin
+  .database()
+  .ref(`gameData/${gameId}/events`)
+  .limitToLast(1)
+  .once("value", function(snapshot){
+    for(const p in snapshot.val())
+      finalTime = snapshot.val()[p].time;
+  }, function(err){
+    console.error(err);
+  });
+
+  return {"endedAt":finalTime};
+});
+
 /** Create a new game in the database */
 export const createGame = functions.https.onCall(async (data, context) => {
   const gameId = data.gameId;
