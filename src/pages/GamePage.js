@@ -92,7 +92,7 @@ function GamePage({ match }) {
         current.length <= 20 &&
         !findSet(current)
       ) {
-        callFinishGame();
+        finishGame({ gameId: gameId });
       }
     }
   });
@@ -137,29 +137,6 @@ function GamePage({ match }) {
       user: user.id,
       time: firebase.database.ServerValue.TIMESTAMP,
     });
-  }
-
-  async function callFinishGame() {
-    let timeDataRef = await finishGame({ gameId: gameId });
-    let endTime = timeDataRef.data.endedAt;
-    if (game.status === "ingame") {
-      firebase
-        .database()
-        .ref(`games/${gameId}`)
-        .update(
-          {
-            status: "done",
-            endedAt: endTime,
-          },
-          (err) => {
-            if (err) {
-              console.log("Already updated the game's status");
-            } else {
-              console.log("Successfully updated the database");
-            }
-          }
-        );
-    }
   }
 
   function handleClick(card) {

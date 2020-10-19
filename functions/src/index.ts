@@ -28,21 +28,18 @@ export const finishGame = functions.https.onCall(async (data, context) => {
   }
 
   let finalTime = 0;
-  await admin
+  const lastEventRef = await admin
     .database()
     .ref(`gameData/${gameId}/events`)
     .limitToLast(1)
-    .once(
-      "value",
-      function (snapshot) {
-        for (const p in snapshot.val()) finalTime = snapshot.val()[p].time;
-      },
-      function (err) {
-        console.error(err);
-      }
-    );
+    .once("value");
 
-  return { endedAt: finalTime };
+  for (const p in lastEventRef.val()) finalTime = lastEventRef.val()[p].time;
+
+  await admin.database().ref(`games/${gameId}`).update({
+    status: "done",
+    endedAt: finalTime,
+  });
 });
 
 /** Create a new game in the database */
