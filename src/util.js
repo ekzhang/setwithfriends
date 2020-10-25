@@ -19,6 +19,9 @@ import deepOrange from "@material-ui/core/colors/deepOrange";
 
 export const filter = new Filter();
 
+// See: https://github.com/ekzhang/setwithfriends/issues/49
+filter.removeWords("queer", "queers", "queerz", "qweers", "qweerz", "lesbian");
+
 export const colors = {
   red,
   pink,
