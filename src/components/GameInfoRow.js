@@ -1,5 +1,3 @@
-import React from "react";
-
 import ExitToAppIcon from "@material-ui/icons/ExitToApp";
 import SnoozeIcon from "@material-ui/icons/Snooze";
 import VisibilityIcon from "@material-ui/icons/Visibility";

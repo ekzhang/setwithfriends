@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from "react";
+import { useState, useMemo } from "react";
 import { Redirect } from "react-router-dom";
 
 import Container from "@material-ui/core/Container";

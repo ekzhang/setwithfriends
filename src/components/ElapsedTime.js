@@ -1,5 +1,3 @@
-import React from "react";
-
 import useMoment from "../hooks/useMoment";
 
 // Wrapper around useMoment, since state hooks cause rerender of component
