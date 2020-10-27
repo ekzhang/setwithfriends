@@ -1,4 +1,4 @@
-import React, { memo, useContext } from "react";
+import { useState, memo, useContext } from "react";
 
 import Typography from "@material-ui/core/Typography";
 import { useTheme } from "@material-ui/core/styles";
@@ -34,7 +34,7 @@ function ProfileName({ userId }) {
   const user = useContext(UserContext);
   const classes = useStyles();
 
-  const [anchorEl, setAnchorEl] = React.useState(null);
+  const [anchorEl, setAnchorEl] = useState(null);
 
   const handleClickVertIcon = (event) => {
     setAnchorEl(event.currentTarget);

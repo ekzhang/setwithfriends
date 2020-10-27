@@ -1,4 +1,4 @@
-import React, { forwardRef } from "react";
+import { forwardRef } from "react";
 
 import Link from "@material-ui/core/Link";
 import { Link as RouterLink } from "react-router-dom";

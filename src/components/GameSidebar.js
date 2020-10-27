@@ -1,5 +1,3 @@
-import React from "react";
-
 import AlarmIcon from "@material-ui/icons/Alarm";
 import Divider from "@material-ui/core/Divider";
 import List from "@material-ui/core/List";
