@@ -9,7 +9,7 @@
         },
         "status": {
           ".write": "auth != null && data.parent().child('users/' + auth.uid).exists() && data.exists() && newData.exists()",
-          ".validate": "newData.isString() && ((data.val() == 'waiting' && newData.val() == 'ingame' && auth.uid == data.parent().child('host').val()) || (data.val() == 'ingame' && newData.val() == 'done'))"
+          ".validate": "newData.isString() && (data.val() == 'waiting' && newData.val() == 'ingame' && auth.uid == data.parent().child('host').val())"
         },
         "users": {
           "$userId": {
