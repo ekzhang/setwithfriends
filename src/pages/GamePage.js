@@ -1,4 +1,4 @@
-import { useState, useEffect, useContext } from "react";
+import { useState, useEffect, useContext, useRef } from "react";
 
 import { makeStyles } from "@material-ui/core/styles";
 import Grid from "@material-ui/core/Grid";
@@ -81,6 +81,7 @@ function GamePage({ match }) {
   }, [gameData]);
 
   // Terminate the game if no sets are remaining
+  const finishing = useRef(false);
   useEffect(() => {
     if (!loadingGame && !loadingGameData && game && gameData) {
       const { current } = computeState(gameData);
@@ -90,9 +91,11 @@ function GamePage({ match }) {
         user.id in game.users &&
         game.status === "ingame" &&
         current.length <= 20 &&
-        !findSet(current)
+        !findSet(current) &&
+        !finishing.current
       ) {
-        finishGame({ gameId: gameId });
+        finishing.current = true;
+        finishGame({ gameId }).finally(() => (finishing.current = false));
       }
     }
   });
