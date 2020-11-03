@@ -1,4 +1,3 @@
-import React from "react";
 import clsx from "clsx";
 import CheckCircleIcon from "@material-ui/icons/CheckCircle";
 import ErrorIcon from "@material-ui/icons/Error";

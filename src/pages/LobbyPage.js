@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useContext } from "react";
+import { useState, useMemo, useContext } from "react";
 
 import generate from "project-name-generator";
 import { Redirect } from "react-router-dom";

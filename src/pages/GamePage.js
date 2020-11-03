@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from "react";
+import { useState, useEffect, useContext, useRef } from "react";
 
 import { makeStyles } from "@material-ui/core/styles";
 import Grid from "@material-ui/core/Grid";
@@ -13,7 +13,7 @@ import { Redirect } from "react-router-dom";
 import { removeCard, checkSet } from "../util";
 import SnackContent from "../components/SnackContent";
 import { findSet, computeState } from "../util";
-import firebase, { createGame } from "../firebase";
+import firebase, { createGame, finishGame } from "../firebase";
 import useFirebaseRef from "../hooks/useFirebaseRef";
 import Game from "../components/Game";
 import User from "../components/User";
@@ -81,6 +81,7 @@ function GamePage({ match }) {
   }, [gameData]);
 
   // Terminate the game if no sets are remaining
+  const finishing = useRef(false);
   useEffect(() => {
     if (!loadingGame && !loadingGameData && game && gameData) {
       const { current } = computeState(gameData);
@@ -90,12 +91,11 @@ function GamePage({ match }) {
         user.id in game.users &&
         game.status === "ingame" &&
         current.length <= 20 &&
-        !findSet(current)
+        !findSet(current) &&
+        !finishing.current
       ) {
-        firebase.database().ref(`games/${gameId}`).update({
-          status: "done",
-          endedAt: firebase.database.ServerValue.TIMESTAMP,
-        });
+        finishing.current = true;
+        finishGame({ gameId }).finally(() => (finishing.current = false));
       }
     }
   });

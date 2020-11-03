@@ -1,5 +1,3 @@
-import React from "react";
-
 import useFirebaseRef from "../hooks/useFirebaseRef";
 import { useTheme } from "@material-ui/core/styles";
 import { colors } from "../util";

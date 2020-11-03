@@ -21,5 +21,6 @@ firebase.analytics();
 export const authProvider = new firebase.auth.GoogleAuthProvider();
 
 export const createGame = firebase.functions().httpsCallable("createGame");
+export const finishGame = firebase.functions().httpsCallable("finishGame");
 
 export default firebase;

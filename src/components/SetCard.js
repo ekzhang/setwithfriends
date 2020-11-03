@@ -1,4 +1,4 @@
-import React, { memo } from "react";
+import { memo } from "react";
 
 import { makeStyles, useTheme } from "@material-ui/core/styles";
 

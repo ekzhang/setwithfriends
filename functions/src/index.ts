@@ -1,10 +1,53 @@
 import * as functions from "firebase-functions";
-
 import * as admin from "firebase-admin";
 admin.initializeApp();
 
+import { generateDeck, replayEvents, findSet } from "./game";
+
 const MAX_GAME_ID_LENGTH = 64;
 const MAX_UNFINISHED_GAMES_PER_HOUR = 4;
+
+/** Ends the game with the correct time */
+export const finishGame = functions.https.onCall(async (data, context) => {
+  const gameId = data.gameId;
+  if (
+    !(typeof gameId === "string") ||
+    gameId.length === 0 ||
+    gameId.length > MAX_GAME_ID_LENGTH
+  ) {
+    throw new functions.https.HttpsError(
+      "invalid-argument",
+      "The function must be called with " +
+        "argument `gameId` to be finished at `/games/:gameId`."
+    );
+  }
+  if (!context.auth) {
+    throw new functions.https.HttpsError(
+      "failed-precondition",
+      "The function must be called while authenticated."
+    );
+  }
+
+  const gameData = await admin
+    .database()
+    .ref(`gameData/${gameId}`)
+    .once("value");
+  const { deck, finalTime } = replayEvents(gameData);
+
+  // Maximal cap set has size 20 (see: https://en.wikipedia.org/wiki/Cap_set)
+  if (deck.size > 20 || findSet(Array.from(deck))) {
+    throw new functions.https.HttpsError(
+      "failed-precondition",
+      "The requested game has not yet ended."
+    );
+  }
+
+  // Success! The game has ended, so we do an idempotent update.
+  await admin.database().ref(`games/${gameId}`).update({
+    status: "done",
+    endedAt: finalTime,
+  });
+});
 
 /** Create a new game in the database */
 export const createGame = functions.https.onCall(async (data, context) => {
@@ -124,27 +167,6 @@ export const createGame = functions.https.onCall(async (data, context) => {
   await Promise.all(updates);
   return snapshot?.val();
 });
-
-function generateDeck() {
-  const deck: Array<string> = [];
-  for (let i = 0; i < 3; i++) {
-    for (let j = 0; j < 3; j++) {
-      for (let k = 0; k < 3; k++) {
-        for (let l = 0; l < 3; l++) {
-          deck.push(`${i}${j}${k}${l}`);
-        }
-      }
-    }
-  }
-  // Fisher-Yates
-  for (let i = deck.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    const temp = deck[i];
-    deck[i] = deck[j];
-    deck[j] = temp;
-  }
-  return deck;
-}
 
 /** Periodically remove stale user connections */
 export const clearConnections = functions.pubsub
