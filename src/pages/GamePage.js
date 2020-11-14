@@ -95,7 +95,18 @@ function GamePage({ match }) {
         !finishing.current
       ) {
         finishing.current = true;
-        finishGame({ gameId }).finally(() => (finishing.current = false));
+        // Attempt to finish the game up to 5 times, before giving up
+        (async () => {
+          for (let i = 0; i < 5; i++) {
+            try {
+              await finishGame({ gameId });
+              break;
+            } catch (error) {
+              await new Promise((resolve) => setTimeout(resolve, 200));
+            }
+          }
+          finishing.current = false;
+        })();
       }
     }
   });
