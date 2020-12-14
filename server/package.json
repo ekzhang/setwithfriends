@@ -10,10 +10,10 @@
   "type": "module",
   "scripts": {
     "test": "npm run lint && npm run jest",
-    "lint": "eslint src/. test/. --config .eslintrc.json --fix",
+    "lint": "eslint src/ test/",
     "dev": "nodemon src/",
     "start": "node src/",
-    "jest": "jest  --forceExit"
+    "jest": "jest --forceExit"
   },
   "dependencies": {
     "@feathersjs/authentication": "^4.5.11",
@@ -26,7 +26,7 @@
     "@feathersjs/primus": "^4.5.11",
     "@feathersjs/transport-commons": "^4.5.11",
     "compression": "^1.7.4",
-    "feathers-objection": "^6.3.0",
+    "feathers-objection": "^7.0.0",
     "helmet": "^4.2.0",
     "knex": "^0.21.13",
     "objection": "^2.2.3",
