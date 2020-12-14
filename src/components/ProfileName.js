@@ -45,6 +45,15 @@ function ProfileName({ userId }) {
     handleClose();
   };
 
+  const handleBan = (minutes) => {
+    const endTime = Date.now() + minutes * 60000;
+    firebase.database().ref(`users/${userId}/banned`).set(endTime);
+  };
+
+  const handleUnban = () => {
+    firebase.database().ref(`users/${userId}/banned`).remove();
+  };
+
   const handleClose = () => {
     setAnchorEl(null);
   };
@@ -79,6 +88,21 @@ function ProfileName({ userId }) {
                 onClose={handleClose}
               >
                 <MenuItem onClick={handleResetName}>Reset username</MenuItem>
+                {player.banned && Date.now() < player.banned ? (
+                  <MenuItem onClick={() => handleUnban()}>Unban</MenuItem>
+                ) : (
+                  [
+                    <MenuItem key={1} onClick={() => handleBan(30)}>
+                      Ban for 30 minutes
+                    </MenuItem>,
+                    <MenuItem key={2} onClick={() => handleBan(24 * 60)}>
+                      Ban for 1 day
+                    </MenuItem>,
+                    <MenuItem key={3} onClick={() => handleBan(7 * 24 * 60)}>
+                      Ban for 1 week
+                    </MenuItem>,
+                  ]
+                )}
               </Menu>
             </div>
 

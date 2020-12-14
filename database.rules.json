@@ -65,6 +65,9 @@
             ".validate": "newData.isString() || !newData.exists()"
           }
         },
+        "banned": {
+          ".validate": "newData.isNumber()"
+        },
         "$other": {
           ".validate": false
         }

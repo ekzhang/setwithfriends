@@ -17,6 +17,7 @@ import GamePage from "./pages/GamePage";
 import LobbyPage from "./pages/LobbyPage";
 import LoadingPage from "./pages/LoadingPage";
 import NotFoundPage from "./pages/NotFoundPage";
+import BannedPage from "./pages/BannedPage";
 import HelpPage from "./pages/HelpPage";
 import AboutPage from "./pages/AboutPage";
 import ConductPage from "./pages/ConductPage";
@@ -104,6 +105,8 @@ function App() {
         <CssBaseline />
         {!user ? (
           <LoadingPage />
+        ) : user.banned && Date.now() < user.banned ? (
+          <BannedPage time={user.banned} />
         ) : (
           <UserContext.Provider value={user}>
             <ConnectionsTracker />
