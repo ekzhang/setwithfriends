@@ -1,0 +1,6 @@
+{
+  "port": "PORT",
+  "postgres": {
+    "connection": "DATABASE_URL"
+  }
+}

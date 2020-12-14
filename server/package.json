@@ -1,0 +1,43 @@
+{
+  "name": "setwithfriends-server",
+  "version": "1.0.0",
+  "repository": "https://github.com/ekzhang/setwithfriends",
+  "homepage": "https://setwithfriends.com/",
+  "license": "MIT",
+  "description": "Backend for Set with Friends",
+  "private": true,
+  "main": "src",
+  "type": "module",
+  "scripts": {
+    "test": "npm run lint && npm run jest",
+    "lint": "eslint src/. test/. --config .eslintrc.json --fix",
+    "dev": "nodemon src/",
+    "start": "node src/",
+    "jest": "jest  --forceExit"
+  },
+  "dependencies": {
+    "@feathersjs/authentication": "^4.5.11",
+    "@feathersjs/authentication-local": "^4.5.11",
+    "@feathersjs/authentication-oauth": "^4.5.11",
+    "@feathersjs/configuration": "^4.5.11",
+    "@feathersjs/errors": "^4.5.11",
+    "@feathersjs/express": "^4.5.11",
+    "@feathersjs/feathers": "^4.5.11",
+    "@feathersjs/primus": "^4.5.11",
+    "@feathersjs/transport-commons": "^4.5.11",
+    "compression": "^1.7.4",
+    "feathers-objection": "^6.3.0",
+    "helmet": "^4.2.0",
+    "knex": "^0.21.13",
+    "objection": "^2.2.3",
+    "pg": "^8.5.1",
+    "winston": "^3.3.3",
+    "ws": "^7.4.1"
+  },
+  "devDependencies": {
+    "axios": "^0.21.0",
+    "eslint": "^7.15.0",
+    "jest": "^26.6.3",
+    "nodemon": "^2.0.6"
+  }
+}
