@@ -8,6 +8,11 @@
   force = true
 
 [[redirects]]
+  from = "/__/auth/*"
+  to = "https://setwithfriends.web.app/__/auth/:splat"
+  status = 200
+
+[[redirects]]
   from = "/*"
   to = "/index.html"
   status = 200

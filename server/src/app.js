@@ -1,4 +1,5 @@
 import compress from "compression";
+import cors from "cors";
 import helmet from "helmet";
 import logger from "./logger";
 
@@ -17,6 +18,7 @@ const app = express(feathers());
 // Load app configuration
 app.configure(configuration());
 // Enable security, compression, and body parsing
+app.use(cors());
 app.use(helmet());
 app.use(compress());
 app.use(express.json());
@@ -32,8 +34,7 @@ app.configure(services);
 // Set up event channels (see channels.js)
 app.configure(channels);
 
-// Configure a middleware for 404s and the error handler
-app.use(express.notFound());
+// Configure a middleware for the error handler
 app.use(express.errorHandler({ logger }));
 
 export default app;

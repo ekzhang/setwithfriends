@@ -8,32 +8,7 @@
   "authentication": {
     "entity": "user",
     "service": "users",
-    "secret": "pNGG1qI4moBhh99BPCtAQrEa8C8=",
-    "authStrategies": ["jwt", "local"],
-    "jwtOptions": {
-      "header": {
-        "typ": "access"
-      },
-      "audience": "https://setwithfriends.com",
-      "issuer": "Set with Friends",
-      "algorithm": "HS256",
-      "expiresIn": "1d"
-    },
-    "local": {
-      "usernameField": "email",
-      "passwordField": "password"
-    },
-    "oauth": {
-      "redirect": "/",
-      "google": {
-        "key": "<google oauth key>",
-        "secret": "<google oauth secret>",
-        "scope": ["email", "profile", "openid"]
-      }
-    }
-  },
-  "postgres": {
-    "client": "pg",
-    "connection": "postgres://localhost:5432/setwithfriends"
+    "authStrategies": ["firebase"],
+    "secret": "pNGG1qI4moBhh99BPCtAQrEa8C8="
   }
 }

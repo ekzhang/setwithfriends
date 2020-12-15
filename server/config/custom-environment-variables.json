@@ -1,6 +1,4 @@
 {
   "port": "PORT",
-  "postgres": {
-    "connection": "DATABASE_URL"
-  }
+  "firebase": "FIREBASE_CREDENTIAL"
 }

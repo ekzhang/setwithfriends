@@ -1,32 +1,35 @@
 // Initializes the `users` service on path `/users`
 import createService from "feathers-objection";
-import createModel from "../models/users";
-import { hooks as authenticate } from "@feathersjs/authentication";
-import { hooks as localHooks } from "@feathersjs/authentication-local";
+import Users from "../models/users";
+
+import { authenticate } from "@feathersjs/authentication";
+import { disallow } from "feathers-hooks-common";
+import { setField } from "feathers-authentication-hooks";
 
 const hooks = {
   before: {
     all: [],
-    find: [authenticate("jwt")],
-    get: [authenticate("jwt")],
-    create: [localHooks.hashPassword("password")],
-    update: [localHooks.hashPassword("password"), authenticate("jwt")],
-    patch: [localHooks.hashPassword("password"), authenticate("jwt")],
-    remove: [authenticate("jwt")],
-  },
-
-  after: {
-    all: [
-      // Make sure the password field is never sent to the client
-      // Always must be the last hook
-      localHooks.protect("password"),
+    find: [],
+    get: [],
+    create: [disallow()],
+    update: [
+      authenticate("firebase"),
+      setField({ from: "params.user.id", as: "params.query.id" }),
+    ],
+    patch: [
+      authenticate("firebase"),
+      setField({ from: "params.user.id", as: "params.query.id" }),
+    ],
+    remove: [
+      authenticate("firebase"),
+      setField({ from: "params.user.id", as: "params.query.id" }),
     ],
   },
 };
 
 function users(app) {
   const options = {
-    model: createModel(app),
+    model: Users,
     paginate: app.get("paginate"),
   };
 

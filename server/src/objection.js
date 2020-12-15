@@ -1,9 +1,11 @@
 import { Model } from "objection";
 import knex from "knex";
 
+import knexfile from "../knexfile";
+
 function objection(app) {
-  const { client, connection } = app.get("postgres");
-  const db = knex({ client, connection, useNullAsDefault: false });
+  const environment = process.env.NODE_ENV || "development";
+  const db = knex(knexfile[environment]);
 
   Model.knex(db);
   app.set("knex", db);

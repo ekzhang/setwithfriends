@@ -7,7 +7,7 @@
   "description": "Set with Friends - an online, real-time multiplayer card game",
   "private": true,
   "scripts": {
-    "start": "concurrently -n client,server -c blue,red \"npm --prefix client start\" \"npm --prefix server dev\"",
+    "start": "concurrently -n client,server -c blue,red \"npm --prefix client start\" \"npm --prefix server run dev\"",
     "format": "prettier --write ."
   },
   "devDependencies": {
