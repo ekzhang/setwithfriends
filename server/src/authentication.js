@@ -9,12 +9,15 @@ import logger from "./logger";
 
 function initializeFirebase(app) {
   try {
-    const firebaseConfig = JSON.parse(app.get("firebase"));
+    const firebaseConfig = app.get("firebase");
+    if (!firebaseConfig) {
+      throw new Error("firebase config not found");
+    }
     firebase.initializeApp({
-      credential: firebase.credential.cert(firebaseConfig),
+      credential: firebase.credential.cert(JSON.parse(firebaseConfig)),
     });
   } catch (error) {
-    logger.error("error initializing firebase", error);
+    logger.error("error initializing firebase:", error);
   }
 }
 

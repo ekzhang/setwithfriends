@@ -1,0 +1,11 @@
+import knex from "knex";
+
+/** @param {knex} knex */
+export async function up(knex) {
+  return;
+}
+
+/** @param {knex} knex */
+export async function down(knex) {
+  return;
+}

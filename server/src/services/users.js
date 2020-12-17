@@ -1,6 +1,6 @@
 // Initializes the `users` service on path `/users`
 import createService from "feathers-objection";
-import Users from "../models/users";
+import User from "../models/User";
 
 import { authenticate } from "@feathersjs/authentication";
 import { disallow } from "feathers-hooks-common";
@@ -29,7 +29,7 @@ const hooks = {
 
 function users(app) {
   const options = {
-    model: Users,
+    model: User,
     paginate: app.get("paginate"),
   };
 
