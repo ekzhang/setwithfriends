@@ -3,7 +3,7 @@ import Typography from "@material-ui/core/Typography";
 import { lightGreen } from "@material-ui/core/colors";
 import { animated, useSprings } from "react-spring";
 
-import { generateCards, splitDeck } from "../util";
+import { generateCards, splitDeck } from "../utils";
 import ResponsiveSetCard from "../components/ResponsiveSetCard";
 import useDimensions from "../hooks/useDimensions";
 import useKeydown from "../hooks/useKeydown";

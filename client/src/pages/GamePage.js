@@ -10,9 +10,9 @@ import Box from "@material-ui/core/Box";
 import Snackbar from "@material-ui/core/Snackbar";
 import { Redirect } from "react-router-dom";
 
-import { removeCard, checkSet } from "../util";
+import { removeCard, checkSet } from "../utils";
 import SnackContent from "../components/SnackContent";
-import { findSet, computeState } from "../util";
+import { findSet, computeState } from "../utils";
 import firebase, { createGame, finishGame } from "../firebase";
 import useFirebaseRef from "../hooks/useFirebaseRef";
 import Game from "../components/Game";

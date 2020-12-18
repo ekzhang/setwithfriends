@@ -4,7 +4,7 @@ import { makeStyles, useTheme } from "@material-ui/core/styles";
 import { Pie } from "react-chartjs-2";
 
 import Loading from "./Loading";
-import { formatTime } from "../util";
+import { formatTime } from "../utils";
 
 const useStyles = makeStyles((theme) => ({
   statisticsPanel: {

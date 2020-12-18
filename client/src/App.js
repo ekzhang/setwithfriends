@@ -9,7 +9,6 @@ import { UserContext } from "./context";
 import client from "./feathers";
 import firebase from "./firebase";
 import { lightTheme, darkTheme } from "./themes";
-import { generateColor, generateName } from "./util";
 import useStorage from "./hooks/useStorage";
 import ConnectionsTracker from "./components/ConnectionsTracker";
 import WelcomeDialog from "./components/WelcomeDialog";

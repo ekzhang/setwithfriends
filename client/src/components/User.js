@@ -1,6 +1,6 @@
 import useFirebaseRef from "../hooks/useFirebaseRef";
 import { useTheme } from "@material-ui/core/styles";
-import { colors } from "../util";
+import { colors } from "../utils";
 
 function User(props) {
   const theme = useTheme();

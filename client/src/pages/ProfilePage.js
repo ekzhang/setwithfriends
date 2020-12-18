@@ -17,7 +17,7 @@ import ProfileGamesTable from "../components/ProfileGamesTable";
 import Subheading from "../components/Subheading";
 import useFirebaseRef from "../hooks/useFirebaseRef";
 import useFirebaseRefs from "../hooks/useFirebaseRefs";
-import { computeState } from "../util";
+import { computeState } from "../utils";
 import LoadingPage from "./LoadingPage";
 
 const datasetVariants = {

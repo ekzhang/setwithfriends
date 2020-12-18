@@ -15,7 +15,7 @@ import { useLocation, Link as RouterLink } from "react-router-dom";
 import User from "./User";
 import Subheading from "./Subheading";
 import useMoment from "../hooks/useMoment";
-import { formatTime } from "../util";
+import { formatTime } from "../utils";
 
 const useStyles = makeStyles((theme) => ({
   sidebar: {

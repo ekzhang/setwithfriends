@@ -15,7 +15,7 @@ import autoscroll from "../utils/autoscroll";
 import useFirebaseQuery from "../hooks/useFirebaseQuery";
 import useStorage from "../hooks/useStorage";
 import { UserContext } from "../context";
-import { formatTime, filter } from "../util";
+import { formatTime, filter } from "../utils";
 
 const useStyles = makeStyles((theme) => ({
   chatPanel: {

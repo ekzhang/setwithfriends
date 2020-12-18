@@ -14,7 +14,7 @@ import SimpleInput from "./SimpleInput";
 import Subheading from "./Subheading";
 import Scrollbox from "./Scrollbox";
 import firebase from "../firebase";
-import { filter } from "../util";
+import { filter } from "../utils";
 import autoscroll from "../utils/autoscroll";
 import useFirebaseQuery from "../hooks/useFirebaseQuery";
 import useStorage from "../hooks/useStorage";

@@ -1,6 +1,7 @@
 import { Model } from "objection";
 import Game from "./Game";
 import Chat from "./Chat";
+import { generateName, generateColor } from "../utils";
 
 class User extends Model {
   static tableName = "users";
@@ -59,8 +60,21 @@ class User extends Model {
   };
 
   $beforeInsert() {
-    this.name = "Anonymous";
-    this.color = "blue";
+    if (!this.name) {
+      this.name = generateName();
+    }
+    if (!this.color) {
+      this.color = generateColor();
+    }
+  }
+
+  $beforeUpdate() {
+    if ("name" in this && !this.name) {
+      this.name = generateName();
+    }
+    if ("color" in this && !this.color) {
+      this.color = generateColor();
+    }
   }
 }
 

@@ -11,7 +11,6 @@ import firebase from "../firebase";
 import ElapsedTime from "./ElapsedTime";
 import User from "./User";
 import { UserContext } from "../context";
-import { generateName } from "../util";
 
 const useStyles = makeStyles((theme) => ({
   vertIcon: {
@@ -41,7 +40,7 @@ function ProfileName({ userId }) {
   };
 
   const handleResetName = () => {
-    firebase.database().ref(`users/${userId}/name`).set(generateName());
+    firebase.database().ref(`users/${userId}/name`).set("Anonymous");
     handleClose();
   };
 

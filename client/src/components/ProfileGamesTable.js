@@ -14,7 +14,7 @@ import grey from "@material-ui/core/colors/grey";
 import ElapsedTime from "./ElapsedTime";
 import User from "./User";
 import Loading from "./Loading";
-import { formatTime } from "../util";
+import { formatTime } from "../utils";
 
 const useStyles = makeStyles((theme) => ({
   gamesTable: {

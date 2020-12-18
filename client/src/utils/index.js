@@ -1,4 +1,3 @@
-import animals from "./utils/animals.json";
 import moment from "moment";
 import Filter from "bad-words";
 import red from "@material-ui/core/colors/red";
@@ -54,11 +53,6 @@ export function generateCards() {
   return deck;
 }
 
-export function generateColor() {
-  const colorsArray = Object.keys(colors);
-  return colorsArray[Math.floor(Math.random() * colorsArray.length)];
-}
-
 export function checkSet(a, b, c) {
   for (let i = 0; i < 4; i++) {
     if ((a.charCodeAt(i) + b.charCodeAt(i) + c.charCodeAt(i)) % 3 !== 0)
@@ -88,10 +82,6 @@ export function splitDeck(deck) {
 export function removeCard(deck, c) {
   let i = deck.indexOf(c);
   return [...deck.slice(0, i), ...deck.slice(i + 1)];
-}
-
-export function generateName() {
-  return "Anonymous " + animals[Math.floor(Math.random() * animals.length)];
 }
 
 export function computeState(gameData) {

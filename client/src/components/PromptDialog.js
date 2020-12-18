@@ -8,7 +8,7 @@ import DialogContent from "@material-ui/core/DialogContent";
 import DialogContentText from "@material-ui/core/DialogContentText";
 import DialogTitle from "@material-ui/core/DialogTitle";
 
-import { filter } from "../util";
+import { filter } from "../utils";
 
 function PromptDialog(props) {
   const { open, onClose, title, message, label, maxLength } = props;
