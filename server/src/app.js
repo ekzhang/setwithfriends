@@ -1,31 +1,19 @@
-import compress from "compression";
-import cors from "cors";
-import helmet from "helmet";
-import logger from "./logger";
-
 import feathers from "@feathersjs/feathers";
 import configuration from "@feathersjs/configuration";
-import express from "@feathersjs/express";
 import primus from "@feathersjs/primus";
 
 import objection from "./objection";
 import authentication from "./authentication";
 import services from "./services";
 import channels from "./channels";
+import hooks from "./hooks";
 
-const app = express(feathers());
+const app = feathers();
 
 // Load app configuration
 app.configure(configuration());
-// Enable security, compression, and body parsing
-app.use(cors());
-app.use(helmet());
-app.use(compress());
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
 
 // Set up plugins and providers
-app.configure(express.rest());
 app.configure(primus({ transformer: "websockets" }));
 app.configure(objection);
 app.configure(authentication);
@@ -34,7 +22,7 @@ app.configure(services);
 // Set up event channels (see channels.js)
 app.configure(channels);
 
-// Configure a middleware for the error handler
-app.use(express.errorHandler({ logger }));
+// Configure app-level hooks
+app.hooks(hooks);
 
 export default app;

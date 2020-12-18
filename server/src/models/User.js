@@ -7,18 +7,21 @@ class User extends Model {
 
   static jsonSchema = {
     type: "object",
-    required: ["name", "color"],
     properties: {
       id: { type: "string", minLength: 1, maxLength: 255 },
       name: { type: "string", minLength: 1, maxLength: 255 },
+      email: { type: "string", minLength: 1, maxLength: 255 },
       color: { type: "string", minLength: 1, maxLength: 255 },
-      lastOnline: { type: ["string", "null"], format: "date-time" },
+      lastOnline: { type: "string", format: "date-time" },
       connections: {
         type: "object",
         additionalProperties: { type: "string" },
       },
-      role: { type: "string", pattern: "^(regular|admin)$" },
-      banned: { type: ["string", "null"], format: "date-time" },
+      permissions: {
+        type: "array",
+        items: { type: "string" },
+      },
+      banned: { type: "string", format: "date-time" },
     },
   };
 
@@ -54,6 +57,11 @@ class User extends Model {
       },
     },
   };
+
+  $beforeInsert() {
+    this.name = "Anonymous";
+    this.color = "blue";
+  }
 }
 
 export default User;

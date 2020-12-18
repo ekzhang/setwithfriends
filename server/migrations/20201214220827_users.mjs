@@ -5,10 +5,11 @@ export function up(knex) {
   return knex.schema.createTable("users", (table) => {
     table.string("id").primary();
     table.string("name").notNullable();
+    table.string("email");
     table.string("color").notNullable();
     table.timestamp("lastOnline");
     table.jsonb("connections").notNullable().defaultTo({});
-    table.enu("role", ["regular", "admin"]).notNullable().defaultTo("regular");
+    table.jsonb("permissions").notNullable().defaultTo([]);
     table.timestamp("banned");
   });
 }

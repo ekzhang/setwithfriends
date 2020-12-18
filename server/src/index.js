@@ -11,13 +11,13 @@ async function main() {
     logger.error("Unhandled Rejection at: Promise ", p, reason)
   );
 
-  server.on("listening", () =>
+  server.on("listening", () => {
     logger.info(
       "Feathers application started on http://%s:%d",
       app.get("host"),
       port
-    )
-  );
+    );
+  });
 }
 
 main().catch((error) => {

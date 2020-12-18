@@ -12,7 +12,7 @@ class Chat extends Model {
       userId: { type: "string", minLength: 1, maxLength: 255 },
       message: { type: "string", minLength: 1 },
       time: { type: "string", format: "date-time" },
-      roomId: { type: ["string", "null"], minLength: 1, maxLength: 255 },
+      roomId: { type: "string", minLength: 1, maxLength: 255 },
     },
   };
 

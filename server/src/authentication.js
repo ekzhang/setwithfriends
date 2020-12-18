@@ -1,5 +1,5 @@
 import { AuthenticationService } from "@feathersjs/authentication";
-import { OAuthStrategy, expressOauth } from "@feathersjs/authentication-oauth";
+import { OAuthStrategy } from "@feathersjs/authentication-oauth";
 import { NotAuthenticated } from "@feathersjs/errors";
 
 import firebase from "firebase-admin";
@@ -46,12 +46,13 @@ class FirebaseStrategy extends OAuthStrategy {
     }
   }
 
+  async getEntityQuery(profile) {
+    return { id: profile.id };
+  }
+
   async getEntityData(profile) {
-    const baseData = await super.getEntityData(profile);
-    return {
-      ...baseData,
-      email: profile.email,
-    };
+    logger.debug("firebase:strategy:getEntityData");
+    return profile;
   }
 }
 
@@ -72,7 +73,6 @@ function authentication(app) {
   authentication.register("firebase", new FirebaseStrategy());
 
   app.use("/authentication", authentication);
-  app.configure(expressOauth());
 }
 
 export default authentication;

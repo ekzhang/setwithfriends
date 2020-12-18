@@ -10,9 +10,9 @@ class Game extends Model {
     properties: {
       id: { type: "string", minLength: 1, maxLength: 255 },
       hostId: { type: "string", minLength: 1, maxLength: 255 },
-      createdAt: { type: ["string", "null"], format: "date-time" },
-      startedAt: { type: ["string", "null"], format: "date-time" },
-      endedAt: { type: ["string", "null"], format: "date-time" },
+      createdAt: { type: "string", format: "date-time" },
+      startedAt: { type: "string", format: "date-time" },
+      endedAt: { type: "string", format: "date-time" },
       status: { type: "string", enum: ["waiting", "ingame", "done"] },
       access: { type: "string", enum: ["public", "private"] },
       deck: { type: "array", items: { type: "string" } },

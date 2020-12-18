@@ -8,6 +8,7 @@
   "authentication": {
     "entity": "user",
     "service": "users",
+    "oauth": {},
     "authStrategies": ["firebase"],
     "secret": "pNGG1qI4moBhh99BPCtAQrEa8C8="
   }

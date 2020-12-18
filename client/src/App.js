@@ -1,13 +1,15 @@
 import { useState, useEffect } from "react";
-import firebase from "./firebase";
 import "./styles.css";
 
 import { BrowserRouter, Switch, Route } from "react-router-dom";
 import CssBaseline from "@material-ui/core/CssBaseline";
 import { ThemeProvider } from "@material-ui/core/styles";
 
-import { generateColor, generateName } from "./util";
 import { UserContext } from "./context";
+import client from "./feathers";
+import firebase from "./firebase";
+import { lightTheme, darkTheme } from "./themes";
+import { generateColor, generateName } from "./util";
 import useStorage from "./hooks/useStorage";
 import ConnectionsTracker from "./components/ConnectionsTracker";
 import WelcomeDialog from "./components/WelcomeDialog";
@@ -22,10 +24,8 @@ import HelpPage from "./pages/HelpPage";
 import AboutPage from "./pages/AboutPage";
 import ConductPage from "./pages/ConductPage";
 import ProfilePage from "./pages/ProfilePage";
-import { lightTheme, darkTheme } from "./themes";
 
 function App() {
-  const [uid, setUid] = useState(null);
   const [user, setUser] = useState(null);
   const [themeType, setThemeType] = useStorage("theme", "light");
   const [customLightTheme, setCustomLightTheme] = useState(lightTheme);
@@ -33,13 +33,18 @@ function App() {
   const [customColors, setCustomColors] = useStorage("customColors", "{}");
 
   useEffect(() => {
-    return firebase.auth().onAuthStateChanged((user) => {
-      if (user) {
+    return firebase.auth().onAuthStateChanged(async (firebaseUser) => {
+      if (firebaseUser) {
         // User is signed in.
-        setUid(user.uid);
+        const access_token = await firebaseUser.getIdToken();
+        const { user } = await client.authenticate({
+          strategy: "firebase",
+          access_token,
+        });
+        setUser(user);
       } else {
         // User is signed out.
-        setUid(null);
+        setUser(null);
         firebase
           .auth()
           .signInAnonymously()
@@ -50,28 +55,7 @@ function App() {
     });
   }, []);
 
-  useEffect(() => {
-    if (!uid) {
-      setUser(null);
-      return;
-    }
-    const userRef = firebase.database().ref(`/users/${uid}`);
-    function update(snapshot) {
-      if (snapshot.child("name").exists()) {
-        setUser({ ...snapshot.val(), id: uid });
-      } else {
-        userRef.update({
-          games: {},
-          color: generateColor(),
-          name: generateName(),
-        });
-      }
-    }
-    userRef.on("value", update);
-    return () => {
-      userRef.off("value", update);
-    };
-  }, [uid]);
+  console.log(user);
 
   useEffect(() => {
     const parsedCustoms = JSON.parse(customColors);

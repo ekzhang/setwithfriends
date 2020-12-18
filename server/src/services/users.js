@@ -3,27 +3,28 @@ import createService from "feathers-objection";
 import User from "../models/User";
 
 import { authenticate } from "@feathersjs/authentication";
-import { disallow } from "feathers-hooks-common";
+import { disallow, iff, preventChanges } from "feathers-hooks-common";
 import { setField } from "feathers-authentication-hooks";
+import checkPermissions from "feathers-permissions";
 
 const hooks = {
   before: {
-    all: [],
+    all: [authenticate("firebase")],
     find: [],
     get: [],
-    create: [disallow()],
-    update: [
-      authenticate("firebase"),
-      setField({ from: "params.user.id", as: "params.query.id" }),
-    ],
+    create: [disallow("external")],
+    update: [checkPermissions({ roles: ["admin"] })],
     patch: [
-      authenticate("firebase"),
-      setField({ from: "params.user.id", as: "params.query.id" }),
+      checkPermissions({ roles: ["admin"], error: false }),
+      // If not an admin, only allow user to patch their own data,
+      // except for the `permissions` and `banned` columns.
+      iff(
+        (context) => !context.params.permitted,
+        setField({ from: "params.user.id", as: "params.query.id" }),
+        preventChanges(true, "permissions", "banned")
+      ),
     ],
-    remove: [
-      authenticate("firebase"),
-      setField({ from: "params.user.id", as: "params.query.id" }),
-    ],
+    remove: [disallow()],
   },
 };
 
