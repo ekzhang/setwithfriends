@@ -55,9 +55,13 @@ function ConductPage() {
             </li>
             <li>
               Remember that you share the public chat with many others. It is a
-              good place to find people, but if you want to have longer,
-              drawn-out conversations, you are encouraged to do so in private
-              messages.
+              good place to find people, but if you want to have one-on-one
+              conversations, you are encouraged to do so in game chat rooms.
+            </li>
+            <li>
+              Do not use computer-aided tools (i.e., bots) for finding sets
+              except in private rooms, with other players who specifically agree
+              to it.
             </li>
             <li>
               Content is moderated at our discretion; this applies both to the
