@@ -14,9 +14,8 @@ function HelpPage() {
       </Typography>
       <Paper style={{ padding: "1rem", maxWidth: 720, margin: "12px auto" }}>
         <Typography variant="body1" gutterBottom>
-          Welcome to Set with Friends! This web app allows you to play{" "}
-          <strong>Set</strong>, the popular real-time card game designed by
-          Marsha Falco in 1974 (
+          Welcome to Set with Friends! This web app allows you to play Set, the
+          popular real-time card game designed by Marsha Falco in 1974 (
           <Link href="https://en.wikipedia.org/wiki/Set_(card_game)">
             Wikipedia
           </Link>
