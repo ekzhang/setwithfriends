@@ -275,7 +275,7 @@ function GamePage({ match }) {
                 </Typography>
                 {leaderboard.length >= 2 && (
                   <Typography variant="body2">
-                    Runner-up: <User id={leaderboard[1]} />{" (Score: "}{scores[leaderboard[0]]}{")"}
+                    Runner-up: <User id={leaderboard[1]} />{" (Score: "}{scores[leaderboard[1]]}{")"}
                   </Typography>
                 )}
                 {!spectating && (
