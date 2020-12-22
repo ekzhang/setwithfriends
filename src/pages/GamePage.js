@@ -271,11 +271,11 @@ function GamePage({ match }) {
                   The game has ended.
                 </Typography>
                 <Typography variant="body1">
-                  Winner: <User id={leaderboard[0]} />
+                  Winner: <User id={leaderboard[0]} />{" (Score: "}{scores[leaderboard[0]]}{")"}
                 </Typography>
                 {leaderboard.length >= 2 && (
                   <Typography variant="body2">
-                    Runner-up: <User id={leaderboard[1]} />
+                    Runner-up: <User id={leaderboard[1]} />{" (Score: "}{scores[leaderboard[0]]}{")"}
                   </Typography>
                 )}
                 {!spectating && (
