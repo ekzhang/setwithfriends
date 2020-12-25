@@ -37,13 +37,24 @@ set up a time to chat!
 To build the site for development:
 
 - Install Node.js and npm
-- **Important:** `git checkout` the `develop` branch of this repository
 - Run `npm install` in the root folder
 - Run `npm start` - it should now open the site in your browser
 
 Please make all pull requests with new features or bugfixes to the `develop`
 branch. We are formatting code using [Prettier](https://prettier.io/), so you
 should run `npm run format` on your code before making a pull request.
+
+## Deployment
+
+As mentioned above, the latest changes to the `master` branch are deployed
+automatically to Netlify using the `npm run build` script. If you try to run
+this locally, it will not work due to protections on the production database.
+Instead, you can preview a release build with development configuration using
+the `npm run build:dev` script.
+
+The other parts of the app (serverless functions, database rules) are deployed
+to production using GitHub Actions on the master branch. They must be manually
+deployed to the development environment using the Firebase CLI.
 
 ## License
 
