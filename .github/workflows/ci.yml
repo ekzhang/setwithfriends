@@ -1,0 +1,48 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - develop
+  pull_request:
+    branches:
+      - develop
+
+jobs:
+  lint:
+    name: Format and Lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - uses: actions/setup-node@v2
+        with:
+          node-version: "14"
+
+      - run: npm ci
+
+      - uses: wearerequired/lint-action@v1
+        with:
+          github_token: ${{ secrets.github_token }}
+          prettier: true
+          eslint: true
+          eslint_args: src
+
+  functions:
+    name: Cloud Functions
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - uses: actions/setup-node@v2
+        with:
+          node-version: "14"
+
+      - run: npm ci
+        working-directory: functions
+
+      - run: npm run lint
+        working-directory: functions
+
+      - run: npm run build
+        working-directory: functions

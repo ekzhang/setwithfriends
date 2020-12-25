@@ -2,8 +2,8 @@
 
 ![Logo](https://i.imgur.com/YTldFYX.png)
 
-This is the source code for [Set with Friends](https://setwithfriends.com/),
-an online, multiplayer implementation of the real-time card game
+This is the source code for [Set with Friends](https://setwithfriends.com/), an
+online, multiplayer implementation of the real-time card game
 [Set](<https://en.wikipedia.org/wiki/Set_(card_game)>). Your goal is to find
 triplets of cards that follow a certain pattern as quickly as possible.
 
@@ -19,20 +19,20 @@ more complex or sensitive operations. The frontend was built with
 [React](https://reactjs.org/), with components from
 [Material UI](https://material-ui.com/).
 
-Code for the frontend is written in JavaScript and located in the `src/`
-folder, while serverless functions are written in TypeScript and located in the
+Code for the frontend is written in JavaScript and located in the `src/` folder,
+while serverless functions are written in TypeScript and located in the
 `functions/` folder.
 
-The production site is built and hosted on Netlify from the `master` branch.
-The latest development version of the code is in the `develop` branch.
+The production site is built and hosted on Netlify from the `master` branch. The
+latest development version of the code is in the `develop` branch.
 
 ## Contributing
 
-This game is in active development, and we welcome contributions from
-developers of all backgrounds. I would recommend talking to us on Discord (link
-above) or submitting an issue if you want to see a new feature added. If you
-would like to help by contributing code, that's great – we would be happy to
-set up a time to chat!
+This game is in active development, and we welcome contributions from developers
+of all backgrounds. I would recommend talking to us on Discord (link above) or
+submitting an issue if you want to see a new feature added. If you would like to
+help by contributing code, that's great – we would be happy to set up a time to
+chat!
 
 To build the site for development:
 
