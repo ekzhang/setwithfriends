@@ -21,6 +21,7 @@ import BannedPage from "./pages/BannedPage";
 import HelpPage from "./pages/HelpPage";
 import AboutPage from "./pages/AboutPage";
 import ConductPage from "./pages/ConductPage";
+import PatronPage from "./pages/PatronPage";
 import ProfilePage from "./pages/ProfilePage";
 import { lightTheme, darkTheme } from "./themes";
 
@@ -121,6 +122,7 @@ function App() {
               <Route exact path="/help" component={HelpPage} />
               <Route exact path="/about" component={AboutPage} />
               <Route exact path="/conduct" component={ConductPage} />
+              <Route exact path="/patron" component={PatronPage} />
               <Route exact path="/" component={LobbyPage} />
               <Route exact path="/room/:id" component={RoomPage} />
               <Route exact path="/game/:id" component={GamePage} />
