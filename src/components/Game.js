@@ -16,7 +16,15 @@ import { standardLayouts } from "../util";
 const gamePadding = 8;
 const cardArray = generateCards();
 
-function Game({ deck, onClick, onClear, selected }) {
+function Game({
+  deck,
+  onClick,
+  onClear,
+  selected,
+  gameMode,
+  answer,
+  lastSetCards,
+}) {
   const [layoutOrientation, setLayoutOrientation] = useStorage(
     "layout",
     "vertical"
@@ -24,7 +32,7 @@ function Game({ deck, onClick, onClear, selected }) {
   const keyboardLayout = standardLayouts[useContext(KeyboardContext)[0]];
   const isHorizontal = layoutOrientation === "horizontal";
   const [gameDimensions, gameEl] = useDimensions();
-  const [board, unplayed] = splitDeck(deck);
+  const [board, unplayed] = splitDeck(deck, gameMode, lastSetCards);
 
   // Calculate widths and heights in pixels to fit cards in the game container
   // (The default value for `gameWidth` is a hack since we don't know the
@@ -49,6 +57,7 @@ function Game({ deck, onClick, onClear, selected }) {
       inplay: false,
     };
   }
+
   for (let i = 0; i < board.length; i++) {
     const [r, c] = isHorizontal
       ? [i % 3, Math.floor(i / 3)]
@@ -56,6 +65,7 @@ function Game({ deck, onClick, onClear, selected }) {
     cards[board[i]] = {
       positionX: cardWidth * c + gamePadding,
       positionY: cardHeight * r + gamePadding,
+      background: answer && answer.includes(board[i]) ? "lightBlue" : " ",
       opacity: 1,
       inplay: true,
     };

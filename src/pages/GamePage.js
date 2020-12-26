@@ -10,7 +10,7 @@ import Box from "@material-ui/core/Box";
 import Snackbar from "@material-ui/core/Snackbar";
 import { Redirect } from "react-router-dom";
 
-import { removeCard, checkSet } from "../util";
+import { removeCard, checkSet, splitDeck, checkSetUltra } from "../util";
 import SnackContent from "../components/SnackContent";
 import { findSet, computeState } from "../util";
 import firebase, { createGame, finishGame } from "../firebase";
@@ -24,6 +24,7 @@ import GameSidebar from "../components/GameSidebar";
 import GameChat from "../components/GameChat";
 import DonateDialog from "../components/DonateDialog";
 import { UserContext } from "../context";
+import LastSet from "../components/LastSet";
 
 const useStyles = makeStyles((theme) => ({
   sideColumn: {
@@ -84,14 +85,19 @@ function GamePage({ match }) {
   const finishing = useRef(false);
   useEffect(() => {
     if (!loadingGame && !loadingGameData && game && gameData) {
-      const { current } = computeState(gameData, game.mode);
+      const { current, history } = computeState(gameData, game.mode);
       // Maximal cap set has size 20 (see: https://en.wikipedia.org/wiki/Cap_set)
+      const lastEvent = history[history.length - 1];
       if (
         game.users &&
         user.id in game.users &&
         game.status === "ingame" &&
         current.length <= 20 &&
-        !findSet(current) &&
+        !findSet(current, game.mode, [
+          lastEvent.c1,
+          lastEvent.c2,
+          lastEvent.c3,
+        ]) &&
         !finishing.current
       ) {
         finishing.current = true;
@@ -142,12 +148,13 @@ function GamePage({ match }) {
     return u1 < u2 ? -1 : 1;
   });
 
-  function handleSet([c1, c2, c3]) {
-    firebase.analytics().logEvent("find_set", { c1, c2, c3 });
+  function handleSet([c1, c2, c3, c4 = ""]) {
+    firebase.analytics().logEvent("find_set", { c1, c2, c3, c4 });
     firebase.database().ref(`gameData/${gameId}/events`).push({
       c1,
       c2,
       c3,
+      c4,
       user: user.id,
       time: firebase.database.ServerValue.TIMESTAMP,
     });
@@ -169,25 +176,89 @@ function GamePage({ match }) {
       if (selected.includes(card)) {
         return removeCard(selected, card);
       } else {
-        const vals = [...selected, card];
-        if (vals.length === 3) {
-          if (checkSet(...vals)) {
-            handleSet(vals);
-            setSnack({
-              open: true,
-              variant: "success",
-              message: "Found a set!",
-            });
+        if (game.mode === "normal") {
+          const vals = [...selected, card];
+          if (vals.length === 3) {
+            if (checkSet(...vals)) {
+              handleSet(vals);
+              setSnack({
+                open: true,
+                variant: "success",
+                message: "Found a set!",
+              });
+            } else {
+              setSnack({
+                open: true,
+                variant: "error",
+                message: "Not a set!",
+              });
+            }
+            return [];
           } else {
-            setSnack({
-              open: true,
-              variant: "error",
-              message: "Not a set!",
-            });
+            return vals;
           }
-          return [];
-        } else {
-          return vals;
+        } else if (game.mode === "ultraset") {
+          const vals = [...selected, card];
+          if (vals.length === 4) {
+            let res = checkSetUltra(...vals);
+            if (res) {
+              handleSet(res);
+              setSnack({
+                open: true,
+                variant: "success",
+                message: "Found an UltraSet!",
+              });
+            } else {
+              setSnack({
+                open: true,
+                variant: "error",
+                message: "Not an UltraSet!",
+              });
+            }
+            return [];
+          } else {
+            return vals;
+          }
+        } else if (game.mode === "setchain") {
+          let vals = [];
+          if (lastSetCards.includes(card)) {
+            if (selected.length > 0 && lastSetCards.includes(selected[0])) {
+              return [card, ...selected.slice(1)];
+            } else {
+              vals = [card, ...selected];
+            }
+          } else {
+            vals = [...selected, card];
+          }
+          if (vals.length === 3) {
+            if (
+              lastSetCards &&
+              lastSetCards.length > 0 &&
+              !lastSetCards.includes(vals[0])
+            ) {
+              setSnack({
+                open: true,
+                variant: "error",
+                message: "At least one card should be from the previous set!",
+              });
+            } else if (checkSet(...vals)) {
+              handleSet(vals);
+              setSnack({
+                open: true,
+                variant: "success",
+                message: "Found a set chain!",
+              });
+            } else {
+              setSnack({
+                open: true,
+                variant: "error",
+                message: "Not a set!",
+              });
+            }
+            return [];
+          } else {
+            return vals;
+          }
         }
       }
     });
@@ -226,6 +297,11 @@ function GamePage({ match }) {
     setRedirect(`/room/${newId}`);
   }
 
+  const lastSet = history[history.length - 1];
+  const lastSetCards = lastSet ? [lastSet.c1, lastSet.c2, lastSet.c3] : [];
+  //temporary for testing
+  const [board] = splitDeck(current, game.mode, lastSetCards);
+  const answer = findSet(board, game.mode, lastSetCards);
   return (
     <Container>
       <DonateDialog
@@ -254,6 +330,7 @@ function GamePage({ match }) {
                 gameId={gameId}
                 history={history}
                 startedAt={game.startedAt}
+                gameMode={game.mode}
               />
             </Paper>
           </Grid>
@@ -300,11 +377,22 @@ function GamePage({ match }) {
               selected={selected}
               onClick={handleClick}
               onClear={handleClear}
+              gameMode={game.mode}
+              answer={answer}
+              lastSetCards={lastSetCards}
             />
           </Grid>
         </Box>
         <Box clone order={{ xs: 2, sm: 3 }}>
           <Grid item xs={12} md={3} className={classes.sideColumn}>
+            {game.mode === "setchain" && (
+              <LastSet
+                history={history}
+                answer={answer ? answer[0] : ""}
+                selected={selected}
+                onClick={handleClick}
+              />
+            )}
             <GameSidebar
               game={game}
               scores={scores}
