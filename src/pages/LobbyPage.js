@@ -228,6 +228,7 @@ function LobbyPage() {
                   <TableRow>
                     <TableCell>Host</TableCell>
                     <TableCell>Players</TableCell>
+                    <TableCell>Mode</TableCell>
                     <TableCell>Status</TableCell>
                     <TableCell>Created</TableCell>
                   </TableRow>

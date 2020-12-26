@@ -5,11 +5,13 @@ import DoneIcon from "@material-ui/icons/Done";
 import TableCell from "@material-ui/core/TableCell";
 import TableRow from "@material-ui/core/TableRow";
 import Tooltip from "@material-ui/core/Tooltip";
+import { useTheme } from "@material-ui/core/styles";
 
 import ElapsedTime from "./ElapsedTime";
 import User from "./User";
 import useFirebaseRef from "../hooks/useFirebaseRef";
 import { makeStyles } from "@material-ui/core/styles";
+import { colors } from "../util";
 
 const useStyles = makeStyles({
   host: {
@@ -19,8 +21,25 @@ const useStyles = makeStyles({
   },
 });
 
+const modeMapping = {
+  normal: {
+    displayName: "Normal",
+    color: "purple",
+  },
+  setchain: {
+    displayName: "Set-Chain",
+    color: "teal",
+  },
+  ultraset: {
+    displayName: "UltraSet",
+    color: "pink",
+  },
+};
+
 function GameInfoRow({ gameId, onClick }) {
   const classes = useStyles();
+  const theme = useTheme();
+
   const [game, loading] = useFirebaseRef(`/games/${gameId}`);
   if (loading) {
     return null;
@@ -66,6 +85,16 @@ function GameInfoRow({ gameId, onClick }) {
           {hostEl}
           <TableCell>
             {game.users ? Object.keys(game.users).length : 0}
+          </TableCell>
+          <TableCell
+            style={{
+              color:
+                colors[modeMapping[game.mode].color][
+                  theme.palette.type === "dark" ? 100 : 900
+                ],
+            }}
+          >
+            {modeMapping[game.mode].displayName}
           </TableCell>
           <TableCell>{actionIcon(host)}</TableCell>
           <TableCell>
