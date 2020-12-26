@@ -186,6 +186,7 @@ function RoomPage({ match, location }) {
                               ["setchain", "Set-Chain"],
                             ].map(([value, label]) => (
                               <FormControlLabel
+                                key={value}
                                 value={value}
                                 control={<Radio />}
                                 disabled={user.id !== game.host}

@@ -84,7 +84,7 @@ function GamePage({ match }) {
   const finishing = useRef(false);
   useEffect(() => {
     if (!loadingGame && !loadingGameData && game && gameData) {
-      const { current } = computeState(gameData);
+      const { current } = computeState(gameData, game.mode);
       // Maximal cap set has size 20 (see: https://en.wikipedia.org/wiki/Cap_set)
       if (
         game.users &&
@@ -134,7 +134,7 @@ function GamePage({ match }) {
   }
 
   const spectating = !game.users || !(user.id in game.users);
-  const { current, scores, history } = computeState(gameData);
+  const { current, scores, history } = computeState(gameData, game.mode);
   const leaderboard = Object.keys(game.users).sort((u1, u2) => {
     const s1 = scores[u1] || 0;
     const s2 = scores[u2] || 0;
