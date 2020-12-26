@@ -130,6 +130,7 @@ export const createGame = functions.https.onCall(async (data, context) => {
         createdAt: admin.database.ServerValue.TIMESTAMP,
         status: "waiting",
         access,
+        mode: "normal"
       };
     } else {
       return;

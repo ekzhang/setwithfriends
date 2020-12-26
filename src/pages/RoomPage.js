@@ -11,6 +11,10 @@ import Grid from "@material-ui/core/Grid";
 import Box from "@material-ui/core/Box";
 import LinkIcon from "@material-ui/icons/Link";
 import DoneIcon from "@material-ui/icons/Done";
+import FormControl from "@material-ui/core/FormControl";
+import FormControlLabel from "@material-ui/core/FormControlLabel";
+import Radio from "@material-ui/core/Radio";
+import RadioGroup from "@material-ui/core/RadioGroup";
 import { Redirect, useHistory } from "react-router-dom";
 
 import useFirebaseRef from "../hooks/useFirebaseRef";
@@ -42,6 +46,11 @@ const useStyles = makeStyles((theme) => ({
     flexDirection: "column",
     height: 400,
     padding: 8,
+  },
+  modeSelection: {
+    display: "flex",
+    flexDirection: "row",
+    justifyContent: "space-around",
   },
 }));
 
@@ -95,6 +104,10 @@ function RoomPage({ match, location }) {
 
   function handleCopy() {
     navigator.clipboard.writeText(link).then(() => setCopiedLink(true));
+  }
+
+  function handleChangeMode(event) {
+    firebase.database().ref(`games/${gameId}/mode`).set(event.target.value);
   }
 
   function startGame() {
@@ -157,27 +170,56 @@ function RoomPage({ match, location }) {
                   </div>
                 </Grid>
                 <Grid item xs={12} md={6}>
-                  <div className={classes.subpanel}>
-                    <Subheading>Inviting Friends</Subheading>
-                    <Typography variant="body1">
-                      To invite someone to play, share this URL:
-                      <span className={classes.shareLink}>
-                        <SimpleInput
-                          readOnly
-                          value={link}
-                          onFocus={(event) => event.target.select()}
-                        />
-                        <Tooltip
-                          placement="top"
-                          title={copiedLink ? "Link copied" : "Copy link"}
-                        >
-                          <IconButton onClick={handleCopy}>
-                            {copiedLink ? <DoneIcon /> : <LinkIcon />}
-                          </IconButton>
-                        </Tooltip>
-                      </span>
-                    </Typography>
-                  </div>
+                  <Grid container spacing={1}>
+                    <Grid item xs={12}>
+                      <div className={classes.subpanel}>
+                        <Subheading>Game Settings</Subheading>
+                        <FormControl className={classes.modeSelection}>
+                          <RadioGroup
+                            value={game.mode}
+                            onChange={handleChangeMode}
+                            row
+                          >
+                            {[
+                              ["normal", "Normal"],
+                              ["ultraset", "UltraSet"],
+                              ["setchain", "Set-Chain"],
+                            ].map(([value, label]) => (
+                              <FormControlLabel
+                                value={value}
+                                control={<Radio />}
+                                disabled={user.id !== game.host}
+                                label={label}
+                              />
+                            ))}
+                          </RadioGroup>
+                        </FormControl>
+                      </div>
+                    </Grid>
+                    <Grid item xs={12}>
+                      <div className={classes.subpanel}>
+                        <Subheading>Inviting Friends</Subheading>
+                        <Typography variant="body1">
+                          To invite someone to play, share this URL:
+                          <span className={classes.shareLink}>
+                            <SimpleInput
+                              readOnly
+                              value={link}
+                              onFocus={(event) => event.target.select()}
+                            />
+                            <Tooltip
+                              placement="top"
+                              title={copiedLink ? "Link copied" : "Copy link"}
+                            >
+                              <IconButton onClick={handleCopy}>
+                                {copiedLink ? <DoneIcon /> : <LinkIcon />}
+                              </IconButton>
+                            </Tooltip>
+                          </span>
+                        </Typography>
+                      </div>
+                    </Grid>
+                  </Grid>
                 </Grid>
               </Grid>
               <Box marginTop={2}>
