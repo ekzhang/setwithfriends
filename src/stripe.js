@@ -10,7 +10,7 @@ export async function patronCheckout() {
     lineItems: [{ price: config.stripe.priceId, quantity: 1 }],
     mode: "subscription",
     successUrl: origin + "/thanks",
-    cancelUrl: origin + "/patron",
+    cancelUrl: origin,
   });
 }
 
