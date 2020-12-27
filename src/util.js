@@ -104,7 +104,7 @@ export function checkSetUltra(a, b, c, d) {
   for (let i = 1; i < 4; i++) {
     let ok = true;
     for (let j = 0; j < 4; j++) {
-      let mod = [0, 0];
+      const mod = [0, 0];
       for (let k = 0; k < 4; k++) {
         if (k === 0 || k === i) mod[0] += arguments[k].charCodeAt(j);
         else mod[1] += arguments[k].charCodeAt(j);
@@ -112,7 +112,7 @@ export function checkSetUltra(a, b, c, d) {
       if (mod[0] % 3 !== mod[1] % 3) ok = false;
     }
     if (ok) {
-      let ret = [a, arguments[i]];
+      const ret = [a, arguments[i]];
       for (let j = 1; j < 4; j++) {
         if (j !== i) ret.push(arguments[j]);
       }
@@ -126,9 +126,9 @@ export function findSet(deck, gameMode = "normal", old = []) {
   for (let i = 0; i < deck.length; i++) {
     for (let j = i + 1; j < deck.length; j++) {
       if (gameMode === "setchain") {
-        for (let k = 0; k < old.length; k++) {
-          if (checkSet(deck[i], deck[j], old[k])) {
-            return [old[k], deck[i], deck[j]];
+        for (let k of old) {
+          if (checkSet(deck[i], deck[j], k)) {
+            return [k, deck[i], deck[j]];
           }
         }
       }
@@ -171,17 +171,74 @@ export function generateName() {
   return "Anonymous " + animals[Math.floor(Math.random() * animals.length)];
 }
 
+function isValid(used, cards) {
+  for (let i = 0; i < cards.length; i++) {
+    for (let j = i + 1; j < cards.length; j++) {
+      if (cards[i] === cards[j]) return false;
+    }
+    if (used[cards[i]]) return false;
+  }
+  return true;
+}
+
+function removeCards({ current, used }, cards) {
+  let canPreserve = true;
+  for (let c of cards) {
+    if (current.indexOf(c) >= 12) canPreserve = false;
+    used[c] = true;
+  }
+  if (current.length < 12 + cards.length) canPreserve = false;
+
+  if (canPreserve) {
+    // Try to preserve card locations, if possible
+    const d = current.splice(12, cards.length);
+    for (let i = 0; i < cards.length; i++) {
+      current[current.indexOf(cards[i])] = d[i];
+    }
+  } else {
+    // Otherwise, just remove the cards
+    for (let card of cards) {
+      current.splice(current.indexOf(card), 1);
+    }
+  }
+}
+
+function processValidEvent({ used, current, scores, history }, event, cards) {
+  scores[event.user] = (scores[event.user] || 0) + 1;
+  history.push(event);
+  removeCards({ current, used }, cards);
+}
+
+function processEventNormal({ used, current, scores, history }, event) {
+  const cards = [event.c1, event.c2, event.c3];
+  if (!isValid(used, cards)) return;
+  processValidEvent({ used, current, scores, history }, event, cards);
+}
+
+function processEventChain({ used, current, scores, history }, event) {
+  const { c1, c2, c3 } = event;
+
+  let ok = c1 !== c2 && c2 !== c3 && c1 !== c3;
+  ok &&= !used[c2] && !used[c3];
+  if (history.length) {
+    //One card (c1) should be taken from the previous set
+    const prevEvent = history[history.length - 1];
+    const prev = [prevEvent.c1, prevEvent.c2, prevEvent.c3];
+    ok &&= prev.includes(c1);
+  }
+  if (!ok) return;
+
+  const cards = history.length === 0 ? [c1, c2, c3] : [c2, c3];
+  processValidEvent({ used, current, scores, history }, event, cards);
+}
+
+function processEventUltra({ used, current, scores, history }, event) {
+  const cards = [event.c1, event.c2, event.c3, event.c4];
+  if (!isValid(used, cards)) return;
+  processValidEvent({ used, current, scores, history }, event, cards);
+}
+
 export function computeState(gameData, gameMode = "normal") {
-  if (gameMode === "normal") {
-    return computeStateNormal(gameData);
-  } else if (gameMode === "ultraset") {
-    return computeStateUltra(gameData);
-  } else if (gameMode === "setchain") {
-    return computeStateChain(gameData);
-  }
-}
-
-function computeStateNormal(gameData) {
   const scores = {}; // scores of all users
   const used = {}; // set of cards that have been taken
   const history = []; // list of valid events in time order
@@ -193,137 +250,10 @@ function computeStateNormal(gameData) {
       })
       .map(([_k, e]) => e);
     for (const event of events) {
-      const { user, c1, c2, c3 } = event;
-      if (
-        c1 !== c2 &&
-        c2 !== c3 &&
-        c3 !== c1 &&
-        !used[c1] &&
-        !used[c2] &&
-        !used[c3]
-      ) {
-        used[c1] = used[c2] = used[c3] = true;
-        scores[user] = (scores[user] || 0) + 1;
-        history.push(event);
-        if (
-          current.indexOf(c1) < 12 &&
-          current.indexOf(c2) < 12 &&
-          current.indexOf(c3) < 12 &&
-          current.length >= 15
-        ) {
-          // Try to preserve card locations, if possible
-          const [d1, d2, d3] = current.splice(12, 3);
-          current[current.indexOf(c1)] = d1;
-          current[current.indexOf(c2)] = d2;
-          current[current.indexOf(c3)] = d3;
-        } else {
-          // Otherwise, just remove the cards
-          current.splice(current.indexOf(c1), 1);
-          current.splice(current.indexOf(c2), 1);
-          current.splice(current.indexOf(c3), 1);
-        }
-      }
-    }
-  }
-  return { current, scores, history };
-}
-
-function computeStateChain(gameData) {
-  const scores = {}; // scores of all users
-  const used = {}; // set of cards that have been taken
-  const history = []; // list of valid events in time order
-  const current = gameData.deck.slice();
-  if (gameData.events) {
-    const events = Object.entries(gameData.events)
-      .sort(([k1, e1], [k2, e2]) => {
-        return e1.time !== e2.time ? e1.time - e2.time : k1 < k2;
-      })
-      .map(([_k, e]) => e);
-
-    for (const event of events) {
-      const { user, c1, c2, c3 } = event;
-      let isFirst = history.length === 0;
-
-      let ok = c1 !== c2 && c2 !== c3 && c1 !== c3;
-      ok &&= !used[c2] && !used[c3];
-      if (history.length) {
-        //One card (c1) should be taken from the previous set
-        const prevEvent = history[history.length - 1];
-        const prev = [prevEvent.c1, prevEvent.c2, prevEvent.c3];
-        ok &&= prev.includes(c1);
-      }
-
-      if (ok) {
-        used[c1] = used[c2] = used[c3] = true;
-        scores[user] = (scores[user] || 0) + 1;
-        history.push(event);
-        if (
-          (isFirst || current.indexOf(c1) < 12) &&
-          current.indexOf(c2) < 12 &&
-          current.indexOf(c3) < 12 &&
-          current.length >= 15
-        ) {
-          // Try to preserve card locations, if possible
-          if (isFirst) {
-            const [d1] = current.splice(12, 1);
-            current[current.indexOf(c1)] = d1;
-          }
-          const [d2, d3] = current.splice(12, 2);
-          current[current.indexOf(c2)] = d2;
-          current[current.indexOf(c3)] = d3;
-        } else {
-          // Otherwise, just remove the cards
-          if (isFirst) current.splice(current.indexOf(c1), 1);
-          current.splice(current.indexOf(c2), 1);
-          current.splice(current.indexOf(c3), 1);
-        }
-      }
-    }
-  }
-  return { current, scores, history };
-}
-
-function computeStateUltra(gameData) {
-  const scores = {}; //scores of all users
-  const used = {}; //set of cards that have been taken
-  const history = []; //list of valid events in time order
-  const current = gameData.deck.slice();
-  if (gameData.events) {
-    const events = Object.entries(gameData.events)
-      .sort(([k1, e1], [k2, e2]) => {
-        return e1.time !== e2.time ? e1.time - e2.time : k1 < k2;
-      })
-      .map(([_k, e]) => e);
-    for (const event of events) {
-      const { user, c1, c2, c3, c4 } = event;
-      let ok = c1 !== c2 && c2 !== c3 && c1 !== c3;
-      ok &&= c1 !== c4 && c2 !== c4 && c3 !== c4;
-      ok &&= !used[c1] && !used[c2] && !used[c3] && !used[c4];
-      if (ok) {
-        used[c1] = used[c2] = used[c3] = used[c4] = true;
-        scores[user] = (scores[user] || 0) + 1;
-        history.push(event);
-        if (
-          current.indexOf(c1) < 12 &&
-          current.indexOf(c2) < 12 &&
-          current.indexOf(c3) < 12 &&
-          current.indexOf(c4) < 12 &&
-          current.length >= 16
-        ) {
-          // Try to preserve card locations, if possible
-          const [d1, d2, d3, d4] = current.splice(12, 4);
-          current[current.indexOf(c1)] = d1;
-          current[current.indexOf(c2)] = d2;
-          current[current.indexOf(c3)] = d3;
-          current[current.indexOf(c4)] = d4;
-        } else {
-          // Otherwise, just remove the cards
-          current.splice(current.indexOf(c1), 1);
-          current.splice(current.indexOf(c2), 1);
-          current.splice(current.indexOf(c3), 1);
-          current.splice(current.indexOf(c4), 1);
-        }
-      }
+      const gameState = { used, current, scores, history };
+      if (gameMode === "normal") processEventNormal(gameState, event);
+      if (gameMode === "setchain") processEventChain(gameState, event);
+      if (gameMode === "ultraset") processEventUltra(gameState, event);
     }
   }
   return { current, scores, history };
