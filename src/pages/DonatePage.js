@@ -7,6 +7,7 @@ import Typography from "@material-ui/core/Typography";
 import WhatshotIcon from "@material-ui/icons/Whatshot";
 
 import InternalLink from "../components/InternalLink";
+import User from "../components/User";
 import firebase from "../firebase";
 import useFirebaseRef from "../hooks/useFirebaseRef";
 import { UserContext } from "../context";
@@ -41,16 +42,16 @@ function DonatePage() {
         </Typography>
         <Typography variant="body1" gutterBottom>
           <em>Set with Friends</em> is an online, real-time multiplayer card
-          game. It's <strong>free, forever, for everyone</strong>
+          game. It's <strong>free, forever, for everyone</strong>. We want to
+          make it as easy as possible to have fun playing Set online{" "}
           {!loadingGameCount && (
             <>
-              , and over <strong>{gameCount.toLocaleString()}</strong> games
-              have been played
+              (over <strong>{gameCount.toLocaleString()}</strong> games have
+              been played)
             </>
           )}
-          . We want to make it as easy as possible to have fun playing Set
-          online, and we don't run ads. All of our code is open source and
-          developed entirely by volunteers.
+          , and we don't run ads. All of our code is open source and developed
+          entirely by volunteers.
         </Typography>
         <Typography variant="body1" gutterBottom>
           If you enjoy using this site, please consider supporting us by
@@ -66,25 +67,15 @@ function DonatePage() {
               joining your family game night!
             </li>
             <li>
-              Bragging rights with a <em>hot icon</em> next to your name (e.g.,{" "}
-              <span
-                style={{
-                  fontWeight: 500,
-                }}
-              >
-                <WhatshotIcon
-                  fontSize="inherit"
-                  style={{ marginBottom: "-0.2rem" }}
-                />{" "}
-                {user.name}
-              </span>
+              Bragging rights with a <em>cool icon</em> next to your name (e.g.,{" "}
+              <User id={user.id} forcePatron />
               ).
             </li>
           </ul>
         </Typography>
         <Typography variant="body1" gutterBottom>
-          If you have any questions or need assistance with payment, reach out
-          to us.
+          If you have any questions or need assistance with payment,{" "}
+          <InternalLink to="/about">reach out to us</InternalLink>.
         </Typography>
         {email ? (
           <Button

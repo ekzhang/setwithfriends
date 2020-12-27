@@ -45,7 +45,7 @@ function AboutPage() {
             </Link>
             .
           </strong>{" "}
-          You can also contact the lead developers by email at{" "}
+          For questions about payment, please email us at{" "}
           <Link href="mailto:ekzhang1@gmail.com">ekzhang1@gmail.com</Link> and{" "}
           <Link href="mailto:cynthiakedu@gmail.com">cynthiakedu@gmail.com</Link>
           .

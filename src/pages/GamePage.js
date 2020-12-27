@@ -228,7 +228,9 @@ function GamePage({ match }) {
 
   return (
     <Container>
-      <DonateDialog active={game.status === "done" && !spectating} />
+      <DonateDialog
+        active={game.status === "done" && !spectating && !user.patron}
+      />
       <Snackbar
         anchorOrigin={{
           vertical: "bottom",
