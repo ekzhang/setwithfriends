@@ -19,6 +19,10 @@ function DonatePage() {
   const [gameCount, loadingGameCount] = useFirebaseRef("/stats/gameCount");
 
   const handleDonate = async () => {
+    firebase.analytics().logEvent("begin_checkout", {
+      currency: "USD",
+      value: 5.0,
+    });
     const result = await patronCheckout();
     if (result.error) {
       alert(result.error.message);

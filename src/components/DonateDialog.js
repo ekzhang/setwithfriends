@@ -6,12 +6,15 @@ import DialogTitle from "@material-ui/core/DialogTitle";
 import Link from "@material-ui/core/Link";
 import Typography from "@material-ui/core/Typography";
 import WhatshotIcon from "@material-ui/icons/Whatshot";
+import { useHistory } from "react-router-dom";
 
 import useStorage from "../hooks/useStorage";
 import useMoment from "../hooks/useMoment";
 import firebase from "../firebase";
 
 function DonateDialog({ active }) {
+  const history = useHistory();
+
   const [viewed, setViewed] = useStorage("donate-time", "0");
   const time = useMoment(30000);
   const recentlyViewed = time
@@ -20,17 +23,16 @@ function DonateDialog({ active }) {
     .isBefore(Number(viewed));
   const handleClose = () => setViewed(time.valueOf().toString());
   const handleDonate = () => {
-    firebase.analytics().logEvent("donate");
-    window.open("https://www.patreon.com/setwithfriends", "_blank");
+    firebase.analytics().logEvent("donate_dialog_click");
+    history.push("/donate");
   };
   return (
     <Dialog open={active && !recentlyViewed} onClose={handleClose}>
       <DialogTitle>Support Set with Friends!</DialogTitle>
       <DialogContent dividers>
         <Typography variant="body1" gutterBottom>
-          We want to make it as easy as possible to have fun playing Set online,
-          and we don't run ads or subscriptions. All of our code is open source
-          and developed entirely by volunteers.
+          Set with Friends is free for everyone. We want to make it as easy as
+          possible to have fun playing Set online, and we don't run ads.
         </Typography>
         <Typography variant="body1" gutterBottom>
           <strong>
@@ -38,7 +40,7 @@ function DonateDialog({ active }) {
             costs are getting expensive.
           </strong>{" "}
           If you enjoy using Set with Friends, please consider donating to help
-          keep our site running.
+          keep our site running. Plus, supporters get perks!
         </Typography>
         <Typography variant="body1" gutterBottom component="div">
           <Button
