@@ -72,13 +72,15 @@ function GamePage({ match }) {
   const [redirect, setRedirect] = useState(null);
   const [selected, setSelected] = useState([]);
   const [snack, setSnack] = useState({ open: false });
+  const [numHints, setNumHints] = useState(0);
 
   const [game, loadingGame] = useFirebaseRef(`games/${gameId}`);
   const [gameData, loadingGameData] = useFirebaseRef(`gameData/${gameId}`);
 
-  // Reset card selection on update to game data
+  // Reset card selection and number of hints on update to game data
   useEffect(() => {
     setSelected([]);
+    setNumHints(0);
   }, [gameData]);
 
   // Terminate the game if no sets are remaining
@@ -273,6 +275,15 @@ function GamePage({ match }) {
     setSnack({ ...snack, open: false });
   }
 
+  function handleAddHint() {
+    setNumHints((numHints) => {
+      if (numHints === 3) {
+        return numHints;
+      }
+      return numHints + 1;
+    });
+  }
+
   async function handlePlayAgain() {
     const idx = gameId.lastIndexOf("-");
     let id = gameId,
@@ -302,6 +313,7 @@ function GamePage({ match }) {
   //temporary for testing
   const [board] = splitDeck(current, game.mode, lastSetCards);
   const answer = findSet(board, game.mode, lastSetCards);
+
   return (
     <Container>
       <DonateDialog
@@ -378,7 +390,9 @@ function GamePage({ match }) {
               onClick={handleClick}
               onClear={handleClear}
               gameMode={game.mode}
-              answer={answer}
+              answer={
+                game.mode === "normal" ? answer.slice(0, numHints) : answer
+              }
               lastSetCards={lastSetCards}
             />
           </Grid>
@@ -398,6 +412,7 @@ function GamePage({ match }) {
               scores={scores}
               leaderboard={leaderboard}
             />
+            <Button onClick={handleAddHint}>Add hint: {numHints}</Button>
           </Grid>
         </Box>
       </Grid>
