@@ -11,10 +11,6 @@ import Grid from "@material-ui/core/Grid";
 import Box from "@material-ui/core/Box";
 import LinkIcon from "@material-ui/icons/Link";
 import DoneIcon from "@material-ui/icons/Done";
-import FormControl from "@material-ui/core/FormControl";
-import FormControlLabel from "@material-ui/core/FormControlLabel";
-import Radio from "@material-ui/core/Radio";
-import RadioGroup from "@material-ui/core/RadioGroup";
 import { Redirect, useHistory } from "react-router-dom";
 
 import useFirebaseRef from "../hooks/useFirebaseRef";
@@ -26,6 +22,7 @@ import Subheading from "../components/Subheading";
 import GameChat from "../components/GameChat";
 import firebase from "../firebase";
 import { UserContext } from "../context";
+import GameSettings from "../components/GameSettings";
 
 const useStyles = makeStyles((theme) => ({
   subpanel: {
@@ -106,10 +103,6 @@ function RoomPage({ match, location }) {
     navigator.clipboard.writeText(link).then(() => setCopiedLink(true));
   }
 
-  function handleChangeMode(event) {
-    firebase.database().ref(`games/${gameId}/mode`).set(event.target.value);
-  }
-
   function startGame() {
     firebase.database().ref(`games/${gameId}`).update({
       status: "ingame",
@@ -174,27 +167,11 @@ function RoomPage({ match, location }) {
                     <Grid item xs={12}>
                       <div className={classes.subpanel}>
                         <Subheading>Game Settings</Subheading>
-                        <FormControl className={classes.modeSelection}>
-                          <RadioGroup
-                            value={game.mode}
-                            onChange={handleChangeMode}
-                            row
-                          >
-                            {[
-                              ["normal", "Normal"],
-                              ["ultraset", "UltraSet"],
-                              ["setchain", "Set-Chain"],
-                            ].map(([value, label]) => (
-                              <FormControlLabel
-                                key={value}
-                                value={value}
-                                control={<Radio />}
-                                disabled={user.id !== game.host}
-                                label={label}
-                              />
-                            ))}
-                          </RadioGroup>
-                        </FormControl>
+                        <GameSettings
+                          game={game}
+                          gameId={gameId}
+                          userId={user.id}
+                        />
                       </div>
                     </Grid>
                     <Grid item xs={12}>
