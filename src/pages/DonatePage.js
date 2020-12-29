@@ -30,10 +30,19 @@ function DonatePage() {
     }
   };
 
+  const handleUnsubscribe = async () => {
+    // TODO: Better confirm dialog, and integrate with backend function
+    if (window.confirm("Are you sure?")) {
+      firebase.analytics().logEvent("unsubscribe");
+    }
+  };
+
+  user.patron = true;
+
   return (
     <Container>
       <Typography variant="h4" align="center" style={{ marginTop: 24 }}>
-        Become a Patron
+        {user.patron ? "Thanks for donating!" : "Become a Patron"}
       </Typography>
       <Paper style={{ padding: "1rem", maxWidth: 720, margin: "12px auto" }}>
         <Typography variant="body1" gutterBottom>
@@ -77,7 +86,29 @@ function DonatePage() {
           If you have any questions or need assistance with payment,{" "}
           <InternalLink to="/about">reach out to us</InternalLink>.
         </Typography>
-        {email ? (
+        {user.patron ? (
+          <>
+            <hr />
+            <Typography
+              variant="body1"
+              style={{ fontStyle: "italic", fontWeight: "bold" }}
+              gutterBottom
+            >
+              Thank you for your support! We have successfully processed your
+              payment; your account ({email}) is now registered as a patron. If
+              you would like to unsubscribe at any time, please use the button
+              below.
+            </Typography>
+            <Button
+              variant="outlined"
+              onClick={handleUnsubscribe}
+              fullWidth
+              style={{ marginTop: 8 }}
+            >
+              Unsubscribe
+            </Button>
+          </>
+        ) : email ? (
           <Button
             variant="contained"
             color="secondary"

@@ -9,7 +9,7 @@ export async function patronCheckout(email) {
   return (await stripe).redirectToCheckout({
     lineItems: [{ price: config.stripe.priceId, quantity: 1 }],
     mode: "subscription",
-    successUrl: origin + "/thanks",
+    successUrl: origin + "/donate",
     cancelUrl: origin,
     customerEmail: email,
   });
