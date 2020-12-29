@@ -2,6 +2,11 @@ import * as functions from "firebase-functions";
 import * as admin from "firebase-admin";
 admin.initializeApp();
 
+import Stripe from "stripe";
+const stripe = new Stripe(functions.config().stripe.secret, {
+  apiVersion: "2020-08-27",
+});
+
 import { generateDeck, replayEvents, findSet } from "./game";
 
 const MAX_GAME_ID_LENGTH = 64;
@@ -190,3 +195,46 @@ export const clearConnections = functions.pubsub
     actions.push(admin.database().ref("stats/onlineUsers").set(numUsers));
     await Promise.all(actions);
   });
+
+/** Webhook that handles events from Stripe Checkout. */
+export const onPayment = functions.https.onRequest(async (req, res) => {
+  const payload = req.body;
+  const sig = req.headers["stripe-signature"];
+
+  if (!sig) {
+    res.status(400).send("Webhook Error: Missing stripe-signature");
+    return;
+  }
+
+  const { endpoint_secret } = functions.config().stripe;
+  let event;
+  try {
+    event = stripe.webhooks.constructEvent(payload, sig, endpoint_secret);
+  } catch (error) {
+    res.status(400).send(`Webhook Error: ${error.message}`);
+    return;
+  }
+
+  console.log(`Received event: ${event.type}`);
+  if (event.type === "checkout.session.completed") {
+    const session = event.data.object as Stripe.Checkout.Session;
+    const email = session.customer_email;
+    if (email) {
+      const user = await admin
+        .auth()
+        .getUserByEmail(email)
+        .catch(() => null);
+
+      if (user) {
+        await admin.database().ref(`users/${user.uid}/patron`).set(true);
+        console.log(`Processed payment: ${email}, uid = ${user.uid}`);
+      } else {
+        console.log(`Failed to find user: ${email}`);
+      }
+    } else {
+      console.log("Checkout payment received with no email, ignoring");
+    }
+  }
+
+  res.status(200);
+});

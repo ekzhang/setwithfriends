@@ -24,7 +24,7 @@ function DonatePage() {
       currency: "USD",
       value: 5.0,
     });
-    const result = await patronCheckout();
+    const result = await patronCheckout(email);
     if (result.error) {
       alert(result.error.message);
     }
