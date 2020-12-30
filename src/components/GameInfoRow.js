@@ -44,6 +44,7 @@ function GameInfoRow({ gameId, onClick }) {
   if (loading) {
     return null;
   }
+  game.mode = game.mode || "normal";
 
   const actionIcon = (host) => {
     let title, Icon;

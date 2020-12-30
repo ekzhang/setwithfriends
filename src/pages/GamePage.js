@@ -24,7 +24,6 @@ import GameSidebar from "../components/GameSidebar";
 import GameChat from "../components/GameChat";
 import DonateDialog from "../components/DonateDialog";
 import { UserContext } from "../context";
-import LastSet from "../components/LastSet";
 
 const useStyles = makeStyles((theme) => ({
   sideColumn: {
@@ -42,7 +41,6 @@ const useStyles = makeStyles((theme) => ({
     },
   },
   mainColumn: {
-    display: "flex",
     alignItems: "center",
   },
   doneOverlay: {
@@ -310,9 +308,11 @@ function GamePage({ match }) {
 
   const lastSet = history[history.length - 1];
   const lastSetCards = lastSet ? [lastSet.c1, lastSet.c2, lastSet.c3] : [];
-  //temporary for testing
+
   const [board] = splitDeck(current, game.mode, lastSetCards);
-  const answer = findSet(board, game.mode, lastSetCards);
+  let answer = findSet(board, game.mode, lastSetCards);
+  if (game.mode === "normal" && game.enableHint)
+    answer = answer.slice(0, numHints);
 
   return (
     <Container>
@@ -382,7 +382,17 @@ function GamePage({ match }) {
                 )}
               </Paper>
             </div>
-
+            {game.mode === "setchain" && (
+              <Box mb={1}>
+                <Game
+                  deck={lastSetCards}
+                  selected={selected}
+                  onClick={handleClick}
+                  isLastSet={true}
+                  answer={answer}
+                />
+              </Box>
+            )}
             {/* Game area itself */}
             <Game
               deck={current}
@@ -390,31 +400,32 @@ function GamePage({ match }) {
               onClick={handleClick}
               onClear={handleClear}
               gameMode={game.mode}
-              answer={
-                game.mode === "normal" ? answer.slice(0, numHints) : answer
-              }
               lastSetCards={lastSetCards}
+              answer={answer}
             />
           </Grid>
         </Box>
         <Box clone order={{ xs: 2, sm: 3 }}>
           <Grid item xs={12} md={3} className={classes.sideColumn}>
-            {game.mode === "setchain" && (
-              <LastSet
-                history={history}
-                answer={answer ? answer[0] : ""}
-                selected={selected}
-                onClick={handleClick}
-              />
-            )}
             <GameSidebar
               game={game}
               scores={scores}
               leaderboard={leaderboard}
             />
-            {game.mode === "normal" && game.enableHint && (
-              <Button onClick={handleAddHint}>Add hint: {numHints}</Button>
-            )}
+            <Box mt={1}>
+              {game.mode === "normal" && game.enableHint && (
+                <Button
+                  size="large"
+                  variant="outlined"
+                  color="primary"
+                  fullWidth
+                  disabled={numHints === 3}
+                  onClick={handleAddHint}
+                >
+                  Add hint: {numHints}
+                </Button>
+              )}
+            </Box>
           </Grid>
         </Box>
       </Grid>

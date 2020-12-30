@@ -24,6 +24,7 @@ function Game({
   gameMode,
   answer,
   lastSetCards,
+  isLastSet,
 }) {
   const [layoutOrientation, setLayoutOrientation] = useStorage(
     "layout",
@@ -39,7 +40,7 @@ function Game({
   //  actual dimensions of the game container on initial render)
   const gameWidth = gameDimensions ? gameDimensions.width : 200;
   const numCards = board.length;
-  const rows = isHorizontal ? 3 : Math.max(numCards / 3, 4);
+  const rows = isLastSet ? 1 : isHorizontal ? 3 : Math.max(numCards / 3, 4);
   const cols = isHorizontal ? Math.max(numCards / 3, 4) : 3;
   const cardWidth = Math.floor((gameWidth - 2 * gamePadding) / cols);
   const cardHeight = Math.round(cardWidth / 1.6);
@@ -130,7 +131,13 @@ function Game({
           width: "100%",
         }}
       >
-        <strong>{unplayed.length}</strong> cards remaining in the deck
+        {isLastSet ? (
+          <div>Previous Set</div>
+        ) : (
+          <div>
+            <strong>{unplayed.length}</strong> cards remaining in the deck
+          </div>
+        )}
       </Typography>
       {cardArray.map((card, idx) => (
         <animated.div
