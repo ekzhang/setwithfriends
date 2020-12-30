@@ -6,7 +6,7 @@ interface GameEvent {
   c1: string;
   c2: string;
   c3: string;
-  c4:string;
+  c4: string;
 }
 
 /** Generates a random 81-card deck using a Fisher-Yates shuffle. */
@@ -31,7 +31,6 @@ export function generateDeck() {
   return deck;
 }
 
-
 /** Check if three cards form a set. */
 export function checkSet(a: string, b: string, c: string) {
   for (let i = 0; i < 4; i++) {
@@ -42,7 +41,7 @@ export function checkSet(a: string, b: string, c: string) {
 }
 
 /** Check if four cards form an ultraset */
-export function checkSetUltra(a: string, b:string, c:string, d:string) {
+export function checkSetUltra(a: string, b: string, c: string, d: string) {
   for (let i = 1; i < 4; i++) {
     let ok = true;
     for (let j = 0; j < 4; j++) {
@@ -65,7 +64,11 @@ export function checkSetUltra(a: string, b:string, c:string, d:string) {
 }
 
 /** Find a set in an unordered collection of cards, if any, depending on mode. */
-export function findSet(deck: string[], gameMode = "normal", old :string[]= []) {
+export function findSet(
+  deck: string[],
+  gameMode = "normal",
+  old: string[] = []
+) {
   for (let i = 0; i < deck.length; i++) {
     for (let j = i + 1; j < deck.length; j++) {
       if (gameMode === "setchain") {
@@ -99,9 +102,9 @@ export function findSet(deck: string[], gameMode = "normal", old :string[]= []) 
 }
 
 /** Check if cards are valid (all distinct and exist in deck) */
-function isValid(deck: Set<string>, cards: string[]){
-  for (let i = 0; i < cards.length; i++){
-    for (let j = i+1; j < cards.length; j++){
+function isValid(deck: Set<string>, cards: string[]) {
+  for (let i = 0; i < cards.length; i++) {
+    for (let j = i + 1; j < cards.length; j++) {
       if (cards[i] === cards[j]) return false;
     }
     if (!deck.has(cards[i])) return false;
@@ -110,12 +113,12 @@ function isValid(deck: Set<string>, cards: string[]){
 }
 
 /** Delete cards from deck */
-function deleteCards(deck: Set<string>,  cards:string[]){
+function deleteCards(deck: Set<string>, cards: string[]) {
   for (let c of cards) deck.delete(c);
 }
 
 /** Replay game event for normal mode*/
-function replayEventNormal(deck: Set<string>, event: GameEvent){
+function replayEventNormal(deck: Set<string>, event: GameEvent) {
   const cards = [event.c1, event.c2, event.c3];
   if (!isValid(deck, cards)) return false;
   deleteCards(deck, cards);
@@ -123,8 +126,12 @@ function replayEventNormal(deck: Set<string>, event: GameEvent){
 }
 
 /** Replay game event for setchain mode */
-function replayEventChain(history:GameEvent[], deck: Set<string>, event: GameEvent){
-  const {c1, c2, c3} = event;
+function replayEventChain(
+  history: GameEvent[],
+  deck: Set<string>,
+  event: GameEvent
+) {
+  const { c1, c2, c3 } = event;
 
   //Check validity
   let ok = c1 !== c2 && c2 !== c3 && c1 !== c3;
@@ -143,7 +150,7 @@ function replayEventChain(history:GameEvent[], deck: Set<string>, event: GameEve
 }
 
 /** Replay game event for ultraset mode*/
-function replayEventUltra(deck: Set<string>, event: GameEvent){
+function replayEventUltra(deck: Set<string>, event: GameEvent) {
   const cards = [event.c1, event.c2, event.c3, event.c4];
   if (!isValid(deck, cards)) return false;
   deleteCards(deck, cards);
@@ -154,7 +161,10 @@ function replayEventUltra(deck: Set<string>, event: GameEvent){
  * Compute remaining cards (arbitrary order) left in the deck after some
  * events, as well as the time of the final valid event.
  */
-export function replayEvents(gameData: admin.database.DataSnapshot, gameMode = "normal") {
+export function replayEvents(
+  gameData: admin.database.DataSnapshot,
+  gameMode = "normal"
+) {
   const events: GameEvent[] = [];
   gameData.child("events").forEach((e) => {
     events.push(e.val());
@@ -167,18 +177,21 @@ export function replayEvents(gameData: admin.database.DataSnapshot, gameMode = "
   let finalTime = 0;
   for (const event of events) {
     let eventValid = false;
-    if (gameMode === "normal" && replayEventNormal(deck, event)) eventValid = true;
-    if (gameMode === "setchain" && replayEventChain(history, deck, event)) eventValid = true;
-    if (gameMode === "ultraset" && replayEventUltra(deck, event)) eventValid = true;
-    if (eventValid){
+    if (gameMode === "normal" && replayEventNormal(deck, event))
+      eventValid = true;
+    if (gameMode === "setchain" && replayEventChain(history, deck, event))
+      eventValid = true;
+    if (gameMode === "ultraset" && replayEventUltra(deck, event))
+      eventValid = true;
+    if (eventValid) {
       history.push(event);
       finalTime = event.time;
     }
   }
 
-  let lastSet : string[]= [];
-  if (gameMode === "setchain" && history.length > 0){
-    const lastEvent = history[history.length-1];
+  let lastSet: string[] = [];
+  if (gameMode === "setchain" && history.length > 0) {
+    const lastEvent = history[history.length - 1];
     lastSet = [lastEvent.c1, lastEvent.c2, lastEvent.c3];
   }
 

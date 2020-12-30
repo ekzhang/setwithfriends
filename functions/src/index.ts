@@ -41,7 +41,10 @@ export const finishGame = functions.https.onCall(async (data, context) => {
     .database()
     .ref(`games/${gameId}/mode`)
     .once("value");
-  const { lastSet, deck, finalTime } = replayEvents(gameData, gameModeRef.val());
+  const { lastSet, deck, finalTime } = replayEvents(
+    gameData,
+    gameModeRef.val()
+  );
 
   // Maximal cap set has size 20 (see: https://en.wikipedia.org/wiki/Cap_set)
   if (deck.size > 20 || findSet(Array.from(deck), gameModeRef.val(), lastSet)) {
@@ -134,7 +137,7 @@ export const createGame = functions.https.onCall(async (data, context) => {
         createdAt: admin.database.ServerValue.TIMESTAMP,
         status: "waiting",
         access,
-        mode: "normal", 
+        mode: "normal",
         enableHint: false,
       };
     } else {
