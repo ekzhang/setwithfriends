@@ -274,5 +274,5 @@ export const handleStripe = functions.https.onRequest(async (req, res) => {
     }
   }
 
-  res.status(200);
+  res.status(200).end();
 });
