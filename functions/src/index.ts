@@ -229,8 +229,8 @@ export const clearConnections = functions.pubsub
 
 /** Webhook that handles Stripe customer events. */
 export const handleStripe = functions.https.onRequest(async (req, res) => {
-  const payload = req.body;
-  const sig = req.headers["stripe-signature"];
+  const payload = req.rawBody;
+  const sig = req.get("stripe-signature");
 
   if (!sig) {
     res.status(400).send("Webhook Error: Missing stripe-signature");
