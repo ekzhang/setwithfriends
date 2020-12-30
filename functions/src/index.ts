@@ -173,6 +173,37 @@ export const createGame = functions.https.onCall(async (data, context) => {
   return snapshot?.val();
 });
 
+export const customerPortal = functions.https.onCall(async (data, context) => {
+  if (!context.auth) {
+    throw new functions.https.HttpsError(
+      "failed-precondition",
+      "This function must be called while authenticated."
+    );
+  }
+
+  const user = await admin.auth().getUser(context.auth.uid);
+  if (!user.email) {
+    throw new functions.https.HttpsError(
+      "failed-precondition",
+      "This function must be called by an authenticated user with email."
+    );
+  }
+
+  const customerResponse = await stripe.customers.list({ email: user.email });
+  if (!customerResponse.data.length) {
+    throw new functions.https.HttpsError(
+      "not-found",
+      `A subscription with email ${user.email} was not found.`
+    );
+  }
+
+  const portalResponse = await stripe.billingPortal.sessions.create({
+    customer: customerResponse.data[0].id,
+    return_url: data.returnUrl,
+  });
+  return portalResponse.url;
+});
+
 /** Periodically remove stale user connections */
 export const clearConnections = functions.pubsub
   .schedule("every 1 minutes")
@@ -196,8 +227,8 @@ export const clearConnections = functions.pubsub
     await Promise.all(actions);
   });
 
-/** Webhook that handles events from Stripe Checkout. */
-export const onPayment = functions.https.onRequest(async (req, res) => {
+/** Webhook that handles Stripe customer events. */
+export const handleStripe = functions.https.onRequest(async (req, res) => {
   const payload = req.body;
   const sig = req.headers["stripe-signature"];
 
@@ -215,10 +246,16 @@ export const onPayment = functions.https.onRequest(async (req, res) => {
     return;
   }
 
-  console.log(`Received event: ${event.type}`);
-  if (event.type === "checkout.session.completed") {
-    const session = event.data.object as Stripe.Checkout.Session;
-    const email = session.customer_email;
+  console.log(`Received ${event.type}: ${JSON.stringify(event.data)}`);
+  if (
+    event.type === "customer.subscription.created" ||
+    event.type === "customer.subscription.deleted"
+  ) {
+    const subscription = event.data.object as Stripe.Subscription;
+    const { email } = (await stripe.customers.retrieve(
+      subscription.customer as string
+    )) as Stripe.Response<Stripe.Customer>;
+
     if (email) {
       const user = await admin
         .auth()
@@ -226,13 +263,14 @@ export const onPayment = functions.https.onRequest(async (req, res) => {
         .catch(() => null);
 
       if (user) {
-        await admin.database().ref(`users/${user.uid}/patron`).set(true);
-        console.log(`Processed payment: ${email}, uid = ${user.uid}`);
+        const newState = event.type === "customer.subscription.created";
+        await admin.database().ref(`users/${user.uid}/patron`).set(newState);
+        console.log(`Processed ${email} (${user.uid}): newState = ${newState}`);
       } else {
         console.log(`Failed to find user: ${email}`);
       }
     } else {
-      console.log("Checkout payment received with no email, ignoring");
+      console.log("Subscription event received with no email, ignoring");
     }
   }
 

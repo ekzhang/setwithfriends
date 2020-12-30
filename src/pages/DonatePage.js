@@ -8,7 +8,7 @@ import WhatshotIcon from "@material-ui/icons/Whatshot";
 
 import InternalLink from "../components/InternalLink";
 import User from "../components/User";
-import firebase from "../firebase";
+import firebase, { customerPortal } from "../firebase";
 import useFirebaseRef from "../hooks/useFirebaseRef";
 import { UserContext } from "../context";
 import { patronCheckout } from "../stripe";
@@ -30,14 +30,10 @@ function DonatePage() {
     }
   };
 
-  const handleUnsubscribe = async () => {
-    // TODO: Better confirm dialog, and integrate with backend function
-    if (window.confirm("Are you sure?")) {
-      firebase.analytics().logEvent("unsubscribe");
-    }
+  const handlePortal = async () => {
+    const redirect = await customerPortal({ returnUrl: window.location.href });
+    window.location = redirect.data;
   };
-
-  user.patron = true;
 
   return (
     <Container>
@@ -95,17 +91,15 @@ function DonatePage() {
               gutterBottom
             >
               Thank you for your support! We have successfully processed your
-              payment; your account ({email}) is now registered as a patron. If
-              you would like to unsubscribe at any time, please use the button
-              below.
+              payment; your account ({email}) is now registered as a patron.
             </Typography>
             <Button
               variant="outlined"
-              onClick={handleUnsubscribe}
+              onClick={handlePortal}
               fullWidth
               style={{ marginTop: 8 }}
             >
-              Unsubscribe
+              Manage billing
             </Button>
           </>
         ) : email ? (
