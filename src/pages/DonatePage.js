@@ -1,4 +1,4 @@
-import { useContext } from "react";
+import { useContext, useState } from "react";
 
 import Button from "@material-ui/core/Button";
 import Container from "@material-ui/core/Container";
@@ -17,6 +17,7 @@ function DonatePage() {
   const user = useContext(UserContext);
   const email = firebase.auth().currentUser.email;
 
+  const [loadingPortal, setLoadingPortal] = useState(false);
   const [gameCount, loadingGameCount] = useFirebaseRef("/stats/gameCount");
 
   const handleDonate = async () => {
@@ -31,8 +32,16 @@ function DonatePage() {
   };
 
   const handlePortal = async () => {
-    const redirect = await customerPortal({ returnUrl: window.location.href });
-    window.location = redirect.data;
+    setLoadingPortal(true);
+    try {
+      const redirect = await customerPortal({
+        returnUrl: window.location.href,
+      });
+      window.location = redirect.data;
+    } catch (error) {
+      alert(error.toString());
+      setLoadingPortal(false);
+    }
   };
 
   return (
@@ -60,7 +69,7 @@ function DonatePage() {
         </Typography>
         <Typography variant="body1" gutterBottom>
           If you enjoy using this site, please consider supporting us by
-          donating and becoming a patron! In addition to helping us pay for
+          donating and becoming a patron. In addition to helping us pay for
           ultra-fast servers and ongoing development, you'll gain access to some{" "}
           <strong>awesome perks</strong>:
         </Typography>
@@ -98,6 +107,7 @@ function DonatePage() {
               onClick={handlePortal}
               fullWidth
               style={{ marginTop: 8 }}
+              disabled={loadingPortal}
             >
               Manage billing
             </Button>
