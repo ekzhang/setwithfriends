@@ -163,6 +163,13 @@ function LobbyPage() {
   if (redirect) return <Redirect push to={redirect} />;
 
   async function newRoom(access) {
+    // Only patrons can create new private games
+    if (access === "private" && !user.patron) {
+      firebase.analytics().logEvent("donate_private_game");
+      setRedirect("/donate");
+      return;
+    }
+
     // Make several attempts to create a game with an unused ID
     setWaiting(true);
     let attempts = 0;
