@@ -124,8 +124,8 @@ const TermsOfService = () => (
     <Typography variant="h6">8. Governing Law</Typography>
     <Typography variant="body1" gutterBottom>
       These terms and conditions are governed by and construed in accordance
-      with the laws of United States and you irrevocably submit to the exclusive
-      jurisdiction of the courts in that State or location.
+      with the laws of the United States and you irrevocably submit to the
+      exclusive jurisdiction of the courts in that State or location.
     </Typography>
   </>
 );
