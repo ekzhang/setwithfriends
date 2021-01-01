@@ -22,6 +22,7 @@ import HelpPage from "./pages/HelpPage";
 import AboutPage from "./pages/AboutPage";
 import ConductPage from "./pages/ConductPage";
 import DonatePage from "./pages/DonatePage";
+import LegalPage from "./pages/LegalPage";
 import ProfilePage from "./pages/ProfilePage";
 import { lightTheme, darkTheme } from "./themes";
 
@@ -128,6 +129,7 @@ function App() {
               <Route exact path="/about" component={AboutPage} />
               <Route exact path="/conduct" component={ConductPage} />
               <Route exact path="/donate" component={DonatePage} />
+              <Route exact path="/legal" component={LegalPage} />
               <Route exact path="/" component={LobbyPage} />
               <Route exact path="/room/:id" component={RoomPage} />
               <Route exact path="/game/:id" component={GamePage} />
