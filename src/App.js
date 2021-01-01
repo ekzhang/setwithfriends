@@ -26,7 +26,7 @@ import ProfilePage from "./pages/ProfilePage";
 import { lightTheme, darkTheme } from "./themes";
 
 function App() {
-  const [uid, setUid] = useState(null);
+  const [authUser, setAuthUser] = useState(null);
   const [user, setUser] = useState(null);
   const [themeType, setThemeType] = useStorage("theme", "light");
   const [customLightTheme, setCustomLightTheme] = useState(lightTheme);
@@ -37,10 +37,10 @@ function App() {
     return firebase.auth().onAuthStateChanged((user) => {
       if (user) {
         // User is signed in.
-        setUid(user.uid);
+        setAuthUser({ ...user });
       } else {
         // User is signed out.
-        setUid(null);
+        setAuthUser(null);
         firebase
           .auth()
           .signInAnonymously()
@@ -52,14 +52,19 @@ function App() {
   }, []);
 
   useEffect(() => {
-    if (!uid) {
+    if (!authUser) {
       setUser(null);
       return;
     }
-    const userRef = firebase.database().ref(`/users/${uid}`);
+    const userRef = firebase.database().ref(`/users/${authUser.uid}`);
     function update(snapshot) {
       if (snapshot.child("name").exists()) {
-        setUser({ ...snapshot.val(), id: uid });
+        setUser({
+          ...snapshot.val(),
+          id: authUser.uid,
+          authUser,
+          setAuthUser,
+        });
       } else {
         userRef.update({
           games: {},
@@ -72,7 +77,7 @@ function App() {
     return () => {
       userRef.off("value", update);
     };
-  }, [uid]);
+  }, [authUser]);
 
   useEffect(() => {
     const parsedCustoms = JSON.parse(customColors);

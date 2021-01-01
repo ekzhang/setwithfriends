@@ -15,7 +15,7 @@ import { patronCheckout } from "../stripe";
 
 function DonatePage() {
   const user = useContext(UserContext);
-  const email = firebase.auth().currentUser.email;
+  const email = user.authUser.email;
 
   const [loadingPortal, setLoadingPortal] = useState(false);
   const [gameCount, loadingGameCount] = useFirebaseRef("/stats/gameCount");
