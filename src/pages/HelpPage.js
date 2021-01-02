@@ -136,7 +136,11 @@ function HelpPage() {
           </strong>
         </Typography>
       </Paper>
-      <Typography variant="body1" align="center" style={{ margin: 12 }}>
+      <Typography
+        variant="body1"
+        align="center"
+        style={{ marginTop: 12, paddingBottom: 12 }}
+      >
         <InternalLink to="/">Return to home</InternalLink>
       </Typography>
     </Container>
