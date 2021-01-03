@@ -85,7 +85,8 @@ function GamePage({ match }) {
   const finishing = useRef(false);
   useEffect(() => {
     if (!loadingGame && !loadingGameData && game && gameData) {
-      const { current, history } = computeState(gameData, game.mode);
+      const gameMode = game.mode || "normal";
+      const { current, history } = computeState(gameData, gameMode);
       // Maximal cap set has size 20 (see: https://en.wikipedia.org/wiki/Cap_set)
       const lastEvent = history[history.length - 1];
       if (
@@ -93,7 +94,7 @@ function GamePage({ match }) {
         user.id in game.users &&
         game.status === "ingame" &&
         current.length <= 20 &&
-        !findSet(current, game.mode, [
+        !findSet(current, gameMode, [
           lastEvent.c1,
           lastEvent.c2,
           lastEvent.c3,
@@ -139,8 +140,9 @@ function GamePage({ match }) {
     );
   }
 
+  const gameMode = game.mode || "normal";
   const spectating = !game.users || !(user.id in game.users);
-  const { current, scores, history } = computeState(gameData, game.mode);
+  const { current, scores, history } = computeState(gameData, gameMode);
   const leaderboard = Object.keys(game.users).sort((u1, u2) => {
     const s1 = scores[u1] || 0;
     const s2 = scores[u2] || 0;
@@ -160,6 +162,9 @@ function GamePage({ match }) {
     });
   }
 
+  const lastSet = history[history.length - 1];
+  const lastSetCards = lastSet ? [lastSet.c1, lastSet.c2, lastSet.c3] : [];
+
   function handleClick(card) {
     if (game.status !== "ingame") {
       return;
@@ -176,7 +181,7 @@ function GamePage({ match }) {
       if (selected.includes(card)) {
         return removeCard(selected, card);
       } else {
-        if (game.mode === "normal") {
+        if (gameMode === "normal") {
           const vals = [...selected, card];
           if (vals.length === 3) {
             if (checkSet(...vals)) {
@@ -197,7 +202,7 @@ function GamePage({ match }) {
           } else {
             return vals;
           }
-        } else if (game.mode === "ultraset") {
+        } else if (gameMode === "ultraset") {
           const vals = [...selected, card];
           if (vals.length === 4) {
             let res = checkSetUltra(...vals);
@@ -219,7 +224,7 @@ function GamePage({ match }) {
           } else {
             return vals;
           }
-        } else if (game.mode === "setchain") {
+        } else if (gameMode === "setchain") {
           let vals = [];
           if (lastSetCards.includes(card)) {
             if (selected.length > 0 && lastSetCards.includes(selected[0])) {
@@ -306,12 +311,9 @@ function GamePage({ match }) {
     setRedirect(`/room/${newId}`);
   }
 
-  const lastSet = history[history.length - 1];
-  const lastSetCards = lastSet ? [lastSet.c1, lastSet.c2, lastSet.c3] : [];
-
-  const [board] = splitDeck(current, game.mode, lastSetCards);
-  let answer = findSet(board, game.mode, lastSetCards);
-  if (game.mode === "normal" && game.enableHint)
+  const [board] = splitDeck(current, gameMode, lastSetCards);
+  let answer = findSet(board, gameMode, lastSetCards);
+  if (gameMode === "normal" && game.enableHint)
     answer = answer.slice(0, numHints);
 
   return (
@@ -342,7 +344,7 @@ function GamePage({ match }) {
                 gameId={gameId}
                 history={history}
                 startedAt={game.startedAt}
-                gameMode={game.mode}
+                gameMode={gameMode}
               />
             </Paper>
           </Grid>
@@ -382,7 +384,7 @@ function GamePage({ match }) {
                 )}
               </Paper>
             </div>
-            {game.mode === "setchain" && (
+            {gameMode === "setchain" && (
               <Box mb={1}>
                 <Game
                   deck={lastSetCards}
@@ -399,7 +401,7 @@ function GamePage({ match }) {
               selected={selected}
               onClick={handleClick}
               onClear={handleClear}
-              gameMode={game.mode}
+              gameMode={gameMode}
               lastSetCards={lastSetCards}
               answer={answer}
             />
@@ -413,7 +415,7 @@ function GamePage({ match }) {
               leaderboard={leaderboard}
             />
             <Box mt={1}>
-              {game.mode === "normal" && game.enableHint && (
+              {gameMode === "normal" && game.enableHint && (
                 <Button
                   size="large"
                   variant="outlined"

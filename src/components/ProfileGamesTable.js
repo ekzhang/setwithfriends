@@ -101,6 +101,7 @@ function ProfileGamesTable({ userId, gamesData, handleClickGame }) {
           {Object.entries(gamesData)
             .sort(([, g1], [, g2]) => g2.createdAt - g1.createdAt)
             .map(([gameId, game]) => {
+              const modeInfo = modeMapping[game.mode || "normal"];
               return (
                 <TableRow key={gameId} onClick={() => handleClickGame(gameId)}>
                   <TableCell>
@@ -110,12 +111,12 @@ function ProfileGamesTable({ userId, gamesData, handleClickGame }) {
                   <TableCell
                     style={{
                       color:
-                        colors[modeMapping[game.mode].color][
+                        colors[modeInfo.color][
                           theme.palette.type === "dark" ? 100 : 900
                         ],
                     }}
                   >
-                    {modeMapping[game.mode].displayName}
+                    {modeInfo.displayName}
                   </TableCell>
                   <TableCell>{game.scores[userId] || 0}</TableCell>
                   <TableCell>

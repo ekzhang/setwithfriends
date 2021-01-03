@@ -16,24 +16,31 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
+const normalTip = "Find 3 cards that form a Set";
+const setchainTip =
+  "In every next Set you have to use 1 card from the previously found Set";
+const ultrasetTip =
+  "Find 4 cards such that the first pair of them makes Set" +
+  "with the card that makes Set with the second pair";
+const hintTip =
+  "Practice mode where you can get hint for finding Sets." +
+  "Only available in private game with a single player. Not counted in total stats.";
+
 const modeInfo = {
   normal: {
     displayName: "Normal",
-    description: "Find 3 cards that form a Set",
+    description: normalTip,
   },
   setchain: {
     displayName: "Set-Chain",
-    description:
-      "In every next Set you have to use 1 card from the previously found Set",
+    description: setchainTip,
   },
   ultraset: {
     displayName: "Ultra Set",
-    description:
-      "Find 4 cards such that the first pair of them makes Set with the card that makes Set with the second pair",
+    description: ultrasetTip,
   },
   enableHint: {
-    description:
-      "Practice mode where you can get hint for finding Sets. Only available in private game with a single player. Not counted in total stats.",
+    description: hintTip,
   },
 };
 
@@ -48,12 +55,14 @@ function GameSettings({ game, gameId, userId }) {
     firebase.database().ref(`games/${gameId}/enableHint`).set(!game.enableHint);
   }
 
+  const gameMode = game.mode || "normal";
+
   return (
     <Box>
       <Box>
         <RadioGroup
           className={classes.modeSelection}
-          value={game.mode}
+          value={gameMode}
           onChange={handleChangeMode}
           row
         >
@@ -71,7 +80,7 @@ function GameSettings({ game, gameId, userId }) {
         </RadioGroup>
       </Box>
       <Box pl={2}>
-        {game.mode === "normal" && (
+        {gameMode === "normal" && (
           <Tooltip
             arrow
             placement="left"

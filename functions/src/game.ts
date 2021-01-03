@@ -6,8 +6,10 @@ interface GameEvent {
   c1: string;
   c2: string;
   c3: string;
-  c4: string;
+  c4?: string;
 }
+
+type GameMode = "normal" | "setchain" | "ultraset";
 
 /** Generates a random 81-card deck using a Fisher-Yates shuffle. */
 export function generateDeck() {
@@ -64,15 +66,11 @@ export function checkSetUltra(a: string, b: string, c: string, d: string) {
 }
 
 /** Find a set in an unordered collection of cards, if any, depending on mode. */
-export function findSet(
-  deck: string[],
-  gameMode = "normal",
-  old: string[] = []
-) {
+export function findSet(deck: string[], gameMode: GameMode, old?: string[]) {
   for (let i = 0; i < deck.length; i++) {
     for (let j = i + 1; j < deck.length; j++) {
       if (gameMode === "setchain") {
-        for (let k of old) {
+        for (const k of old!) {
           if (checkSet(deck[i], deck[j], k)) {
             return [k, deck[i], deck[j]];
           }
@@ -81,7 +79,7 @@ export function findSet(
       for (let k = j + 1; k < deck.length; k++) {
         if (
           gameMode === "normal" ||
-          (gameMode === "setchain" && old.length === 0)
+          (gameMode === "setchain" && old!.length === 0)
         ) {
           if (checkSet(deck[i], deck[j], deck[k])) {
             return [deck[i], deck[j], deck[k]];
@@ -114,7 +112,7 @@ function isValid(deck: Set<string>, cards: string[]) {
 
 /** Delete cards from deck */
 function deleteCards(deck: Set<string>, cards: string[]) {
-  for (let c of cards) deck.delete(c);
+  for (const c of cards) deck.delete(c);
 }
 
 /** Replay game event for normal mode*/
@@ -151,7 +149,7 @@ function replayEventChain(
 
 /** Replay game event for ultraset mode*/
 function replayEventUltra(deck: Set<string>, event: GameEvent) {
-  const cards = [event.c1, event.c2, event.c3, event.c4];
+  const cards = [event.c1, event.c2, event.c3, event.c4!];
   if (!isValid(deck, cards)) return false;
   deleteCards(deck, cards);
   return true;
@@ -163,7 +161,7 @@ function replayEventUltra(deck: Set<string>, event: GameEvent) {
  */
 export function replayEvents(
   gameData: admin.database.DataSnapshot,
-  gameMode = "normal"
+  gameMode: GameMode
 ) {
   const events: GameEvent[] = [];
   gameData.child("events").forEach((e) => {

@@ -122,11 +122,11 @@ export function checkSetUltra(a, b, c, d) {
   return null;
 }
 
-export function findSet(deck, gameMode = "normal", old = []) {
+export function findSet(deck, gameMode = "normal", old) {
   for (let i = 0; i < deck.length; i++) {
     for (let j = i + 1; j < deck.length; j++) {
       if (gameMode === "setchain") {
-        for (let k of old) {
+        for (const k of old) {
           if (checkSet(deck[i], deck[j], k)) {
             return [k, deck[i], deck[j]];
           }
@@ -155,7 +155,7 @@ export function findSet(deck, gameMode = "normal", old = []) {
   return null;
 }
 
-export function splitDeck(deck, gameMode = "normal", old = []) {
+export function splitDeck(deck, gameMode = "normal", old) {
   let len = Math.min(deck.length, 12);
   while (len < deck.length && !findSet(deck.slice(0, len), gameMode, old))
     len += 3;
@@ -183,7 +183,7 @@ function isValid(used, cards) {
 
 function removeCards({ current, used }, cards) {
   let canPreserve = true;
-  for (let c of cards) {
+  for (const c of cards) {
     if (current.indexOf(c) >= 12) canPreserve = false;
     used[c] = true;
   }
@@ -197,7 +197,7 @@ function removeCards({ current, used }, cards) {
     }
   } else {
     // Otherwise, just remove the cards
-    for (let card of cards) {
+    for (const card of cards) {
       current.splice(current.indexOf(card), 1);
     }
   }

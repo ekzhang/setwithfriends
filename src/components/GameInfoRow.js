@@ -44,7 +44,7 @@ function GameInfoRow({ gameId, onClick }) {
   if (loading) {
     return null;
   }
-  game.mode = game.mode || "normal";
+  const gameMode = game.mode || "normal";
 
   const actionIcon = (host) => {
     let title, Icon;
@@ -90,12 +90,12 @@ function GameInfoRow({ gameId, onClick }) {
           <TableCell
             style={{
               color:
-                colors[modeMapping[game.mode].color][
+                colors[modeMapping[gameMode].color][
                   theme.palette.type === "dark" ? 100 : 900
                 ],
             }}
           >
-            {modeMapping[game.mode].displayName}
+            {modeMapping[gameMode].displayName}
           </TableCell>
           <TableCell>{actionIcon(host)}</TableCell>
           <TableCell>

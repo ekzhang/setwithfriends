@@ -66,7 +66,8 @@ function Game({
     cards[board[i]] = {
       positionX: cardWidth * c + gamePadding,
       positionY: cardHeight * r + gamePadding,
-      background: answer && answer.includes(board[i]) ? "lightBlue" : " ",
+      background:
+        answer && answer.includes(board[i]) ? "rgb(0,0,255, 0.15)" : "initial",
       opacity: 1,
       inplay: true,
     };

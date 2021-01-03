@@ -69,7 +69,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 function mergeGameData(game, gameData) {
-  const { scores } = computeState(gameData, game.mode);
+  const { scores } = computeState(gameData, game.mode || "normal");
   const topScore = Math.max(0, ...Object.values(scores));
   return {
     ...game,
