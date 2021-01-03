@@ -13,8 +13,13 @@ const gamePadding = 8;
 const cardArray = generateCards();
 
 function Game({ deck, onClick, onClear, selected }) {
-  const [layout, setLayout] = useStorage("layout", "vertical");
-  const isHorizontal = layout === "horizontal";
+  const [layoutOrientation, setLayoutOrientation] = useStorage(
+    "layoutOrientation",
+    "vertical"
+  );
+  const [keyboardLayout, setKeyboardLayout] = useStorage("keyboardLayout");
+  const parsedKeyboardLayout = JSON.parse(keyboardLayout);
+  const isHorizontal = layoutOrientation === "horizontal";
   const [gameDimensions, gameEl] = useDimensions();
   const [board, unplayed] = splitDeck(deck);
 
@@ -76,9 +81,9 @@ function Game({ deck, onClick, onClear, selected }) {
   );
 
   // Keyboard shortcuts
-  const verticalShortcuts = "123qweasdzxcrtyfghvbn";
-  const horizontalShortcuts = "qazwsxedcrfvtgbyhnujm";
-  const shortcuts = isHorizontal ? horizontalShortcuts : verticalShortcuts;
+  const shortcuts = isHorizontal
+    ? parsedKeyboardLayout.horizontalLayout
+    : parsedKeyboardLayout.verticalLayout;
   useKeydown(({ key }) => {
     if (key === "Escape") {
       onClear();
@@ -87,8 +92,8 @@ function Game({ deck, onClick, onClear, selected }) {
       if (index < board.length) {
         onClick(board[index]);
       }
-    } else if (key === ";") {
-      setLayout(isHorizontal ? "vertical" : "horizontal");
+    } else if (key === parsedKeyboardLayout.orientationChangeKey) {
+      setLayoutOrientation(isHorizontal ? "vertical" : "horizontal");
     }
   });
 

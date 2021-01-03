@@ -18,6 +18,7 @@ import User from "./User";
 import InternalLink from "./InternalLink";
 import PromptDialog from "./PromptDialog";
 import ColorChoiceDialog from "./ColorChoiceDialog";
+import KeyboardLayoutDialog from "./KeyboardLayoutDialog";
 import AccountOptionsDialog from "./AccountOptionsDialog";
 
 function Navbar({
@@ -25,11 +26,13 @@ function Navbar({
   handleChangeTheme,
   customColors,
   handleCustomColors,
+  handleKeyboardLayout,
 }) {
   const user = useContext(UserContext);
   const [anchorEl, setAnchorEl] = React.useState(null);
   const [changeName, setChangeName] = useState(false);
   const [changeColors, setChangeColors] = useState(false);
+  const [changeKeyboardLayout, setChangeKeyboardLayout] = useState(false);
   const [showOptions, setShowOptions] = useState(false);
 
   function handleMenu(event) {
@@ -52,6 +55,13 @@ function Navbar({
     if (colorMap) {
       customColors[themeType] = colorMap;
       handleCustomColors(customColors);
+    }
+  }
+
+  function handleChangeKeyboardLayout(layout) {
+    setChangeKeyboardLayout(false);
+    if (layout) {
+      handleKeyboardLayout(layout);
     }
   }
 
@@ -128,6 +138,14 @@ function Navbar({
           </MenuItem>
           <MenuItem
             onClick={() => {
+              setChangeKeyboardLayout(true);
+              handleCloseMenu();
+            }}
+          >
+            Change keyboard layout
+          </MenuItem>
+          <MenuItem
+            onClick={() => {
               setShowOptions(true);
               handleCloseMenu();
             }}
@@ -148,6 +166,11 @@ function Navbar({
           onClose={handleChangeColors}
           title="Change Colors"
           key={themeType}
+        />
+        <KeyboardLayoutDialog
+          open={changeKeyboardLayout}
+          onClose={handleChangeKeyboardLayout}
+          title="Change Keyboard Layout"
         />
         <AccountOptionsDialog
           open={showOptions}

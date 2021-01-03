@@ -33,6 +33,14 @@ function App() {
   const [customLightTheme, setCustomLightTheme] = useState(lightTheme);
   const [customDarkTheme, setCustomDarkTheme] = useState(darkTheme);
   const [customColors, setCustomColors] = useStorage("customColors", "{}");
+  const [keyboardLayout, setKeyboardLayout] = useStorage(
+    "keyboardLayout",
+    JSON.stringify({
+      verticalLayout: "123qweasdzxcrtyfghvbn",
+      horizontalLayout: "qazwsxedcrfvtgbyhnujm",
+      orientationChangeKey: ";",
+    })
+  );
 
   useEffect(() => {
     return firebase.auth().onAuthStateChanged((user) => {
@@ -104,6 +112,10 @@ function App() {
     setCustomColors(JSON.stringify(custom));
   };
 
+  const handleKeyboardLayout = (layout) => {
+    setKeyboardLayout(JSON.stringify(layout));
+  };
+
   return (
     <ThemeProvider
       theme={themeType === "light" ? customLightTheme : customDarkTheme}
@@ -123,6 +135,7 @@ function App() {
               handleChangeTheme={handleChangeTheme}
               customColors={JSON.parse(customColors)}
               handleCustomColors={handleCustomColors}
+              handleKeyboardLayout={handleKeyboardLayout}
             />
             <Switch>
               <Route exact path="/help" component={HelpPage} />

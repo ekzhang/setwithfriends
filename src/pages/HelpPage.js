@@ -130,6 +130,11 @@ function HelpPage() {
           shortcuts, which may be more convenient to use.
         </Typography>
         <Typography variant="body1" gutterBottom>
+          If you are using a different keyboard layout than QWERTY, you can
+          enjoy using the same key shortcuts listed above by selecting your
+          keyboard layout in the settings.
+        </Typography>
+        <Typography variant="body1" gutterBottom>
           <strong>
             That's all there are to the rules of Set, so head back and start
             playing!
