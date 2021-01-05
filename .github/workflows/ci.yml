@@ -9,8 +9,8 @@ on:
       - develop
 
 jobs:
-  lint:
-    name: Format and Lint
+  format:
+    name: Format
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -21,12 +21,21 @@ jobs:
 
       - run: npm ci
 
-      - uses: wearerequired/lint-action@v1
+      - run: npx prettier --check .
+
+  lint:
+    name: Lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - uses: actions/setup-node@v2
         with:
-          github_token: ${{ secrets.github_token }}
-          prettier: true
-          eslint: true
-          eslint_args: src
+          node-version: "14"
+
+      - run: npm ci
+
+      - run: npx eslint src
 
   functions:
     name: Cloud Functions
