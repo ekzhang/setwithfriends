@@ -7,7 +7,7 @@ import CssBaseline from "@material-ui/core/CssBaseline";
 import { ThemeProvider } from "@material-ui/core/styles";
 
 import { generateColor, generateName } from "./util";
-import { UserContext } from "./context";
+import { UserContext, KeyboardContext } from "./context";
 import useStorage from "./hooks/useStorage";
 import ConnectionsTracker from "./components/ConnectionsTracker";
 import WelcomeDialog from "./components/WelcomeDialog";
@@ -35,11 +35,7 @@ function App() {
   const [customColors, setCustomColors] = useStorage("customColors", "{}");
   const [keyboardLayout, setKeyboardLayout] = useStorage(
     "keyboardLayout",
-    JSON.stringify({
-      verticalLayout: "123qweasdzxcrtyfghvbn",
-      horizontalLayout: "qazwsxedcrfvtgbyhnujm",
-      orientationChangeKey: ";",
-    })
+    "QWERTY"
   );
 
   useEffect(() => {
@@ -113,7 +109,7 @@ function App() {
   };
 
   const handleKeyboardLayout = (layout) => {
-    setKeyboardLayout(JSON.stringify(layout));
+    setKeyboardLayout(layout);
   };
 
   return (
@@ -128,27 +124,31 @@ function App() {
           <BannedPage time={user.banned} />
         ) : (
           <UserContext.Provider value={user}>
-            <ConnectionsTracker />
-            <WelcomeDialog />
-            <Navbar
-              themeType={themeType}
-              handleChangeTheme={handleChangeTheme}
-              customColors={JSON.parse(customColors)}
-              handleCustomColors={handleCustomColors}
-              handleKeyboardLayout={handleKeyboardLayout}
-            />
-            <Switch>
-              <Route exact path="/help" component={HelpPage} />
-              <Route exact path="/about" component={AboutPage} />
-              <Route exact path="/conduct" component={ConductPage} />
-              <Route exact path="/donate" component={DonatePage} />
-              <Route exact path="/legal" component={LegalPage} />
-              <Route exact path="/" component={LobbyPage} />
-              <Route exact path="/room/:id" component={RoomPage} />
-              <Route exact path="/game/:id" component={GamePage} />
-              <Route exact path="/profile/:id" component={ProfilePage} />
-              <Route component={NotFoundPage} />
-            </Switch>
+            <KeyboardContext.Provider
+              value={[keyboardLayout, setKeyboardLayout]}
+            >
+              <ConnectionsTracker />
+              <WelcomeDialog />
+              <Navbar
+                themeType={themeType}
+                handleChangeTheme={handleChangeTheme}
+                customColors={JSON.parse(customColors)}
+                handleCustomColors={handleCustomColors}
+                handleKeyboardLayout={handleKeyboardLayout}
+              />
+              <Switch>
+                <Route exact path="/help" component={HelpPage} />
+                <Route exact path="/about" component={AboutPage} />
+                <Route exact path="/conduct" component={ConductPage} />
+                <Route exact path="/donate" component={DonatePage} />
+                <Route exact path="/legal" component={LegalPage} />
+                <Route exact path="/" component={LobbyPage} />
+                <Route exact path="/room/:id" component={RoomPage} />
+                <Route exact path="/game/:id" component={GamePage} />
+                <Route exact path="/profile/:id" component={ProfilePage} />
+                <Route component={NotFoundPage} />
+              </Switch>
+            </KeyboardContext.Provider>
           </UserContext.Provider>
         )}
       </BrowserRouter>

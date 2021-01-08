@@ -2,23 +2,26 @@ import Paper from "@material-ui/core/Paper";
 import Typography from "@material-ui/core/Typography";
 import { lightGreen } from "@material-ui/core/colors";
 import { animated, useSprings } from "react-spring";
+import { useContext } from "react";
 
 import { generateCards, splitDeck } from "../util";
 import ResponsiveSetCard from "../components/ResponsiveSetCard";
 import useDimensions from "../hooks/useDimensions";
 import useKeydown from "../hooks/useKeydown";
 import useStorage from "../hooks/useStorage";
+import { KeyboardContext } from "../context";
+import { standardLayouts } from "../util";
 
 const gamePadding = 8;
 const cardArray = generateCards();
 
 function Game({ deck, onClick, onClear, selected }) {
   const [layoutOrientation, setLayoutOrientation] = useStorage(
-    "layoutOrientation",
+    "layout",
     "vertical"
   );
-  const [keyboardLayout, setKeyboardLayout] = useStorage("keyboardLayout");
-  const parsedKeyboardLayout = JSON.parse(keyboardLayout);
+  const keyboardLayout = standardLayouts[useContext(KeyboardContext)[0]];
+  // const parsedKeyboardLayout = standardLayouts[keyboardLayout];
   const isHorizontal = layoutOrientation === "horizontal";
   const [gameDimensions, gameEl] = useDimensions();
   const [board, unplayed] = splitDeck(deck);
@@ -82,8 +85,8 @@ function Game({ deck, onClick, onClear, selected }) {
 
   // Keyboard shortcuts
   const shortcuts = isHorizontal
-    ? parsedKeyboardLayout.horizontalLayout
-    : parsedKeyboardLayout.verticalLayout;
+    ? keyboardLayout.horizontalLayout
+    : keyboardLayout.verticalLayout;
   useKeydown(({ key }) => {
     if (key === "Escape") {
       onClear();
@@ -92,7 +95,7 @@ function Game({ deck, onClick, onClear, selected }) {
       if (index < board.length) {
         onClick(board[index]);
       }
-    } else if (key === parsedKeyboardLayout.orientationChangeKey) {
+    } else if (key === keyboardLayout.orientationChangeKey) {
       setLayoutOrientation(isHorizontal ? "vertical" : "horizontal");
     }
   });

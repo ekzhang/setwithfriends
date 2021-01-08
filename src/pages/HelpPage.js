@@ -5,6 +5,8 @@ import Paper from "@material-ui/core/Paper";
 
 import InternalLink from "../components/InternalLink";
 import SetCard from "../components/SetCard";
+import { KeyboardContext } from "../context";
+import { standardLayouts } from "../util";
 
 function HelpPage() {
   return (
@@ -117,22 +119,50 @@ function HelpPage() {
         <Typography component="div" variant="body1" gutterBottom>
           <ul>
             <li>
-              Select the first twelve cards with keys <code>123qweasdzxc</code>.
+              Select the first twelve cards with keys{" "}
+              <code>
+                <KeyboardContext.Consumer>
+                  {(value) =>
+                    standardLayouts[value[0]].verticalLayout.slice(0, 12)
+                  }
+                </KeyboardContext.Consumer>
+              </code>
+              .
             </li>
             <li>
-              Select any additional cards with keys <code>rtyfghvbn</code>.
+              Select any additional cards with keys{" "}
+              <code>
+                <KeyboardContext.Consumer>
+                  {(value) =>
+                    standardLayouts[value[0]].verticalLayout.slice(12, 21)
+                  }
+                </KeyboardContext.Consumer>
+              </code>
+              .
             </li>
           </ul>
         </Typography>
         <Typography variant="body1" gutterBottom>
           On devices with a keyboard, you can also rotate the layout of cards by
-          pressing the <code>;</code> key. This also changes the keyboard
-          shortcuts, which may be more convenient to use.
+          pressing the{" "}
+          <code>
+            <KeyboardContext.Consumer>
+              {(value) => standardLayouts[value[0]].orientationChangeKey}
+            </KeyboardContext.Consumer>
+          </code>{" "}
+          key. This also changes the keyboard shortcuts, which may be more
+          convenient to use.
         </Typography>
         <Typography variant="body1" gutterBottom>
-          If you are using a different keyboard layout than QWERTY, you can
-          enjoy using the same key shortcuts listed above by selecting your
-          keyboard layout in the settings.
+          If you are using a different keyboard layout than{" "}
+          <code>
+            <KeyboardContext.Consumer>
+              {(value) => value[0]}
+            </KeyboardContext.Consumer>
+          </code>
+          , you can enjoy using the same keyboard shortcuts by selecting your
+          keyboard layout in the settings. The shortcuts specific to your layout
+          will then be reflected here.
         </Typography>
         <Typography variant="body1" gutterBottom>
           <strong>

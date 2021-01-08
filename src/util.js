@@ -40,6 +40,39 @@ export const colors = {
   deepOrange,
 };
 
+export const standardLayouts = {
+  QWERTY: {
+    verticalLayout: "123qweasdzxcrtyfghvbn",
+    horizontalLayout: "qazwsxedcrfvtgbyhnujm",
+    orientationChangeKey: ";",
+  },
+  AZERTY: {
+    verticalLayout: '1é"azeqsdwxcrtyfghvbn',
+    horizontalLayout: "aqwzsxedcrfvtgbyhnuj;",
+    orientationChangeKey: "m",
+  },
+  QWERTZ: {
+    verticalLayout: "123qweasdyxcrtzfghvbn",
+    horizontalLayout: "qaywsxedcrfvtgbzhnujm",
+    orientationChangeKey: "p",
+  },
+  Dvorak: {
+    verticalLayout: "123',.aoe;qjpyfuidkxb",
+    horizontalLayout: "'a;,oq.ejpukyixfdbghm",
+    orientationChangeKey: "s",
+  },
+  Colemak: {
+    verticalLayout: "123qwfarszxcpgjtdhvbk",
+    horizontalLayout: "qazwrxfscptvgdbjhklnm",
+    orientationChangeKey: "o",
+  },
+  Workman: {
+    verticalLayout: "123qdrashzxmwbjtgycvk",
+    horizontalLayout: "qazdsxrhmwtcbgvjykfnl",
+    orientationChangeKey: "i",
+  },
+};
+
 export function generateCards() {
   const deck = [];
   for (let i = 0; i < 3; i++) {

@@ -1,70 +1,53 @@
-import { withTheme } from "@material-ui/core/styles";
-
 import Button from "@material-ui/core/Button";
 import Dialog from "@material-ui/core/Dialog";
 import Select from "@material-ui/core/Select";
 import DialogActions from "@material-ui/core/DialogActions";
 import DialogContent from "@material-ui/core/DialogContent";
 import DialogTitle from "@material-ui/core/DialogTitle";
-import useStorage from "../hooks/useStorage";
-import { MenuItem } from "@material-ui/core";
+import InputLabel from "@material-ui/core/InputLabel";
+import FormControl from "@material-ui/core/FormControl";
+import MenuItem from "@material-ui/core/MenuItem";
 import DialogContentText from "@material-ui/core/DialogContentText";
+import { makeStyles } from "@material-ui/core/styles";
+
+import useStorage from "../hooks/useStorage";
+import { standardLayouts } from "../util";
+import { KeyboardContext } from "../context";
+
+const useStyles = makeStyles({
+  formControl: {
+    minWidth: 120,
+  },
+});
 
 function KeyboardLayoutDialog(props) {
   const { open, onClose, title } = props;
+  const classes = useStyles();
 
   const [generalLayout, setGeneralLayout] = useStorage(
     "generalKeyboardLayout",
-    "QWERTY"
+    ""
   );
 
-  const standardLayouts = {
-    QWERTY: {
-      verticalLayout: "123qweasdzxcrtyfghvbn",
-      horizontalLayout: "qazwsxedcrfvtgbyhnujm",
-      orientationChangeKey: ";",
-    },
-    AZERTY: {
-      verticalLayout: '1é"azeqsdwxcrtyfghvbn',
-      horizontalLayout: "aqwzsxedcrfvtgbyhnuj;",
-      orientationChangeKey: "m",
-    },
-    QWERTZ: {
-      verticalLayout: "123qweasdyxcrtzfghvbn",
-      horizontalLayout: "qaywsxedcrfvtgbzhnujm",
-      orientationChangeKey: "p",
-    },
-    Dvorak: {
-      verticalLayout: "123',.aoe;qjpyfuidkxb",
-      horizontalLayout: "'a;,oq.ejpukyixfdbghm",
-      orientationChangeKey: "s",
-    },
-    Colemak: {
-      verticalLayout: "123qwfarszxcpgjtdhvbk",
-      horizontalLayout: "qazwrxfscptvgdbjhklnm",
-      orientationChangeKey: "o",
-    },
-    Workman: {
-      verticalLayout: "123qdrashzxmwbjtgycvk",
-      horizontalLayout: "qazdsxrhmwtcbgvjykfnl",
-      orientationChangeKey: "i",
-    },
-  };
-
-  const previousLayout = generalLayout;
-
   function handleClose() {
-    setGeneralLayout(previousLayout);
+    setGeneralLayout("");
     onClose(null);
   }
 
   function handleSubmit() {
-    onClose(standardLayouts[generalLayout]);
+    setGeneralLayout("");
+    onClose(generalLayout);
   }
 
   const handleChange = (event) => {
     setGeneralLayout(event.target.value);
   };
+
+  const menuItems = Object.keys(standardLayouts).map((layoutName) => (
+    <MenuItem key={layoutName} value={layoutName}>
+      {layoutName}
+    </MenuItem>
+  ));
 
   return (
     <Dialog open={open} onClose={handleClose}>
@@ -73,17 +56,22 @@ function KeyboardLayoutDialog(props) {
         <DialogContentText>
           Select your keyboard layout below. The layout will determine the keys
           used for selecting cards in both the vertical and horizontal
-          orientations. The changes will take effect in the next game or upon
-          reloading the page.
+          orientations. The layout is currently set to{" "}
+          <b>
+            <code>
+              <KeyboardContext.Consumer>
+                {(value) => value[0]}
+              </KeyboardContext.Consumer>
+            </code>
+          </b>
+          .
         </DialogContentText>
-        <Select value={generalLayout} onChange={handleChange}>
-          <MenuItem value={"QWERTY"}>QWERTY</MenuItem>
-          <MenuItem value={"AZERTY"}>AZERTY</MenuItem>
-          <MenuItem value={"QWERTZ"}>QWERTZ</MenuItem>
-          <MenuItem value={"Dvorak"}>Dvorak</MenuItem>
-          <MenuItem value={"Colemak"}>Colemak</MenuItem>
-          <MenuItem value={"Workman"}>Workman</MenuItem>
-        </Select>
+        <FormControl className={classes.formControl}>
+          <InputLabel>Layout</InputLabel>
+          <Select value={generalLayout} onChange={handleChange}>
+            {menuItems}
+          </Select>
+        </FormControl>
       </DialogContent>
       <DialogActions>
         <Button onClick={handleClose} color="primary">
@@ -97,4 +85,4 @@ function KeyboardLayoutDialog(props) {
   );
 }
 
-export default withTheme(KeyboardLayoutDialog);
+export default KeyboardLayoutDialog;
