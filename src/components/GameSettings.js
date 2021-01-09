@@ -2,7 +2,7 @@ import { makeStyles } from "@material-ui/core/styles";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
 import Radio from "@material-ui/core/Radio";
 import RadioGroup from "@material-ui/core/RadioGroup";
-import { Box } from "@material-ui/core";
+import Box from "@material-ui/core/Box";
 import Switch from "@material-ui/core/Switch";
 import Tooltip from "@material-ui/core/Tooltip";
 
@@ -16,15 +16,14 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-const normalTip = "Find 3 cards that form a Set";
+const normalTip = "Find 3 cards that form a Set.";
 const setchainTip =
-  "In every next Set you have to use 1 card from the previously found Set";
+  "In every Set, you have to use 1 card from the previous Set.";
 const ultrasetTip =
-  "Find 4 cards such that the first pair of them makes Set" +
-  "with the card that makes Set with the second pair";
+  "Find 4 cards such that the first pair and the second pair form a Set with the same additional card.";
 const hintTip =
-  "Practice mode where you can get hint for finding Sets." +
-  "Only available in private game with a single player. Not counted in total stats.";
+  "Practice mode where you can get hints to help you find Sets. " +
+  "Only available in private games with a single player, and not counted in total stats.";
 
 const modeInfo = {
   normal: {
@@ -36,7 +35,7 @@ const modeInfo = {
     description: setchainTip,
   },
   ultraset: {
-    displayName: "Ultra Set",
+    displayName: "UltraSet",
     description: ultrasetTip,
   },
   enableHint: {
@@ -67,9 +66,13 @@ function GameSettings({ game, gameId, userId }) {
           row
         >
           {["normal", "setchain", "ultraset"].map((mode) => (
-            <Tooltip arrow placement="left" title={modeInfo[mode].description}>
+            <Tooltip
+              key={mode}
+              arrow
+              placement="left"
+              title={modeInfo[mode].description}
+            >
               <FormControlLabel
-                key={mode}
                 value={mode}
                 control={<Radio />}
                 disabled={userId !== game.host}

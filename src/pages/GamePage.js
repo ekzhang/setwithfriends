@@ -24,6 +24,7 @@ import GameSidebar from "../components/GameSidebar";
 import GameChat from "../components/GameChat";
 import DonateDialog from "../components/DonateDialog";
 import { UserContext } from "../context";
+import LastSet from "../components/LastSet";
 
 const useStyles = makeStyles((theme) => ({
   sideColumn: {
@@ -386,11 +387,10 @@ function GamePage({ match }) {
             </div>
             {gameMode === "setchain" && (
               <Box mb={1}>
-                <Game
+                <LastSet
                   deck={lastSetCards}
                   selected={selected}
                   onClick={handleClick}
-                  isLastSet={true}
                   answer={answer}
                 />
               </Box>
