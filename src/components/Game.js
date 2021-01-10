@@ -1,8 +1,9 @@
+import { useContext } from "react";
+
 import Paper from "@material-ui/core/Paper";
 import Typography from "@material-ui/core/Typography";
 import { lightGreen } from "@material-ui/core/colors";
 import { animated, useSprings } from "react-spring";
-import { useContext } from "react";
 
 import { generateCards, splitDeck } from "../util";
 import ResponsiveSetCard from "../components/ResponsiveSetCard";
@@ -21,7 +22,6 @@ function Game({ deck, onClick, onClear, selected }) {
     "vertical"
   );
   const keyboardLayout = standardLayouts[useContext(KeyboardContext)[0]];
-  // const parsedKeyboardLayout = standardLayouts[keyboardLayout];
   const isHorizontal = layoutOrientation === "horizontal";
   const [gameDimensions, gameEl] = useDimensions();
   const [board, unplayed] = splitDeck(deck);

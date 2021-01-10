@@ -1,3 +1,5 @@
+import { useContext } from "react";
+
 import Button from "@material-ui/core/Button";
 import Dialog from "@material-ui/core/Dialog";
 import Select from "@material-ui/core/Select";
@@ -10,7 +12,6 @@ import MenuItem from "@material-ui/core/MenuItem";
 import DialogContentText from "@material-ui/core/DialogContentText";
 import { makeStyles } from "@material-ui/core/styles";
 
-import useStorage from "../hooks/useStorage";
 import { standardLayouts } from "../util";
 import { KeyboardContext } from "../context";
 
@@ -24,23 +25,10 @@ function KeyboardLayoutDialog(props) {
   const { open, onClose, title } = props;
   const classes = useStyles();
 
-  const [generalLayout, setGeneralLayout] = useStorage(
-    "generalKeyboardLayout",
-    ""
-  );
-
-  function handleClose() {
-    setGeneralLayout("");
-    onClose(null);
-  }
-
-  function handleSubmit() {
-    setGeneralLayout("");
-    onClose(generalLayout);
-  }
+  const [keyboardLayout, setKeyboardLayout] = useContext(KeyboardContext);
 
   const handleChange = (event) => {
-    setGeneralLayout(event.target.value);
+    setKeyboardLayout(event.target.value);
   };
 
   const menuItems = Object.keys(standardLayouts).map((layoutName) => (
@@ -50,7 +38,7 @@ function KeyboardLayoutDialog(props) {
   ));
 
   return (
-    <Dialog open={open} onClose={handleClose}>
+    <Dialog open={open} onClose={onClose}>
       <DialogTitle>{title}</DialogTitle>
       <DialogContent>
         <DialogContentText>
@@ -58,27 +46,20 @@ function KeyboardLayoutDialog(props) {
           used for selecting cards in both the vertical and horizontal
           orientations. The layout is currently set to{" "}
           <b>
-            <code>
-              <KeyboardContext.Consumer>
-                {(value) => value[0]}
-              </KeyboardContext.Consumer>
-            </code>
+            <code>{keyboardLayout}</code>
           </b>
           .
         </DialogContentText>
         <FormControl className={classes.formControl}>
           <InputLabel>Layout</InputLabel>
-          <Select value={generalLayout} onChange={handleChange}>
+          <Select value={keyboardLayout} onChange={handleChange}>
             {menuItems}
           </Select>
         </FormControl>
       </DialogContent>
       <DialogActions>
-        <Button onClick={handleClose} color="primary">
-          Cancel
-        </Button>
-        <Button onClick={handleSubmit} variant="contained" color="primary">
-          Ok
+        <Button onClick={onClose} color="primary">
+          Close
         </Button>
       </DialogActions>
     </Dialog>

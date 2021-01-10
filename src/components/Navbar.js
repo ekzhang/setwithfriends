@@ -1,5 +1,4 @@
 import { useState, useContext } from "react";
-import * as React from "react";
 
 import AppBar from "@material-ui/core/AppBar";
 import Menu from "@material-ui/core/Menu";
@@ -26,10 +25,9 @@ function Navbar({
   handleChangeTheme,
   customColors,
   handleCustomColors,
-  handleKeyboardLayout,
 }) {
   const user = useContext(UserContext);
-  const [anchorEl, setAnchorEl] = React.useState(null);
+  const [anchorEl, setAnchorEl] = useState(null);
   const [changeName, setChangeName] = useState(false);
   const [changeColors, setChangeColors] = useState(false);
   const [changeKeyboardLayout, setChangeKeyboardLayout] = useState(false);
@@ -55,13 +53,6 @@ function Navbar({
     if (colorMap) {
       customColors[themeType] = colorMap;
       handleCustomColors(customColors);
-    }
-  }
-
-  function handleChangeKeyboardLayout(layout) {
-    setChangeKeyboardLayout(false);
-    if (layout) {
-      handleKeyboardLayout(layout);
     }
   }
 
@@ -169,7 +160,7 @@ function Navbar({
         />
         <KeyboardLayoutDialog
           open={changeKeyboardLayout}
-          onClose={handleChangeKeyboardLayout}
+          onClose={() => setChangeKeyboardLayout(false)}
           title="Change Keyboard Layout"
         />
         <AccountOptionsDialog

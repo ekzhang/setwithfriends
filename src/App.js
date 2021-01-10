@@ -108,10 +108,6 @@ function App() {
     setCustomColors(JSON.stringify(custom));
   };
 
-  const handleKeyboardLayout = (layout) => {
-    setKeyboardLayout(layout);
-  };
-
   return (
     <ThemeProvider
       theme={themeType === "light" ? customLightTheme : customDarkTheme}
@@ -134,7 +130,6 @@ function App() {
                 handleChangeTheme={handleChangeTheme}
                 customColors={JSON.parse(customColors)}
                 handleCustomColors={handleCustomColors}
-                handleKeyboardLayout={handleKeyboardLayout}
               />
               <Switch>
                 <Route exact path="/help" component={HelpPage} />
