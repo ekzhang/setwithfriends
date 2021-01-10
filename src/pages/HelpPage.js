@@ -1,3 +1,5 @@
+import { useContext } from "react";
+
 import Typography from "@material-ui/core/Typography";
 import Link from "@material-ui/core/Link";
 import Container from "@material-ui/core/Container";
@@ -5,8 +7,12 @@ import Paper from "@material-ui/core/Paper";
 
 import InternalLink from "../components/InternalLink";
 import SetCard from "../components/SetCard";
+import { KeyboardContext } from "../context";
+import { standardLayouts } from "../util";
 
 function HelpPage() {
+  const [keyboardLayout] = useContext(KeyboardContext);
+
   return (
     <Container>
       <Typography variant="h4" align="center" style={{ marginTop: 24 }}>
@@ -117,17 +123,33 @@ function HelpPage() {
         <Typography component="div" variant="body1" gutterBottom>
           <ul>
             <li>
-              Select the first twelve cards with keys <code>123qweasdzxc</code>.
+              Select the first twelve cards with keys{" "}
+              <code>
+                {standardLayouts[keyboardLayout].verticalLayout.slice(0, 12)}
+              </code>
+              .
             </li>
             <li>
-              Select any additional cards with keys <code>rtyfghvbn</code>.
+              Select any additional cards with keys{" "}
+              <code>
+                {standardLayouts[keyboardLayout].verticalLayout.slice(12, 21)}
+              </code>
+              .
             </li>
           </ul>
         </Typography>
         <Typography variant="body1" gutterBottom>
           On devices with a keyboard, you can also rotate the layout of cards by
-          pressing the <code>;</code> key. This also changes the keyboard
-          shortcuts, which may be more convenient to use.
+          pressing the{" "}
+          <code>{standardLayouts[keyboardLayout].orientationChangeKey}</code>{" "}
+          key. This also changes the keyboard shortcuts, which may be more
+          convenient to use.
+        </Typography>
+        <Typography variant="body1" gutterBottom>
+          If you are using a different keyboard layout than{" "}
+          <code>{keyboardLayout}</code>, you can enjoy using the same keyboard
+          shortcuts by selecting your keyboard layout in the settings. The
+          shortcuts specific to your layout will then be reflected here.
         </Typography>
         <Typography variant="body1" gutterBottom>
           <strong>

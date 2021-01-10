@@ -1,3 +1,5 @@
+import { useContext } from "react";
+
 import Paper from "@material-ui/core/Paper";
 import Typography from "@material-ui/core/Typography";
 import { lightGreen } from "@material-ui/core/colors";
@@ -8,13 +10,19 @@ import ResponsiveSetCard from "../components/ResponsiveSetCard";
 import useDimensions from "../hooks/useDimensions";
 import useKeydown from "../hooks/useKeydown";
 import useStorage from "../hooks/useStorage";
+import { KeyboardContext } from "../context";
+import { standardLayouts } from "../util";
 
 const gamePadding = 8;
 const cardArray = generateCards();
 
 function Game({ deck, onClick, onClear, selected }) {
-  const [layout, setLayout] = useStorage("layout", "vertical");
-  const isHorizontal = layout === "horizontal";
+  const [layoutOrientation, setLayoutOrientation] = useStorage(
+    "layout",
+    "vertical"
+  );
+  const keyboardLayout = standardLayouts[useContext(KeyboardContext)[0]];
+  const isHorizontal = layoutOrientation === "horizontal";
   const [gameDimensions, gameEl] = useDimensions();
   const [board, unplayed] = splitDeck(deck);
 
@@ -76,9 +84,9 @@ function Game({ deck, onClick, onClear, selected }) {
   );
 
   // Keyboard shortcuts
-  const verticalShortcuts = "123qweasdzxcrtyfghvbn";
-  const horizontalShortcuts = "qazwsxedcrfvtgbyhnujm";
-  const shortcuts = isHorizontal ? horizontalShortcuts : verticalShortcuts;
+  const shortcuts = isHorizontal
+    ? keyboardLayout.horizontalLayout
+    : keyboardLayout.verticalLayout;
   useKeydown(({ key }) => {
     if (key === "Escape") {
       onClear();
@@ -87,8 +95,8 @@ function Game({ deck, onClick, onClear, selected }) {
       if (index < board.length) {
         onClick(board[index]);
       }
-    } else if (key === ";") {
-      setLayout(isHorizontal ? "vertical" : "horizontal");
+    } else if (key === keyboardLayout.orientationChangeKey) {
+      setLayoutOrientation(isHorizontal ? "vertical" : "horizontal");
     }
   });
 
