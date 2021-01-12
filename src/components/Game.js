@@ -4,6 +4,7 @@ import Paper from "@material-ui/core/Paper";
 import Typography from "@material-ui/core/Typography";
 import { lightGreen } from "@material-ui/core/colors";
 import { animated, useSprings } from "react-spring";
+import Divider from "@material-ui/core/Divider";
 
 import { generateCards, splitDeck } from "../util";
 import ResponsiveSetCard from "../components/ResponsiveSetCard";
@@ -32,7 +33,10 @@ function Game({
   const keyboardLayout = standardLayouts[useContext(KeyboardContext)[0]];
   const isHorizontal = layoutOrientation === "horizontal";
   const [gameDimensions, gameEl] = useDimensions();
-  const [board, unplayed] = splitDeck(deck, gameMode, lastSetCards);
+  const [boardTemp, unplayed] = splitDeck(deck, gameMode, lastSetCards);
+  const board = [...lastSetCards, ...boardTemp];
+
+  const lineSpacing = lastSetCards.length ? 2 * gamePadding : 0;
 
   // Calculate widths and heights in pixels to fit cards in the game container
   // (The default value for `gameWidth` is a hack since we don't know the
@@ -41,10 +45,13 @@ function Game({
   const numCards = board.length;
   const rows = isHorizontal ? 3 : Math.max(numCards / 3, 4);
   const cols = isHorizontal ? Math.max(numCards / 3, 4) : 3;
-  const cardWidth = Math.floor((gameWidth - 2 * gamePadding) / cols);
+  const cardWidth = Math.floor(
+    (gameWidth - 2 * gamePadding - (isHorizontal ? lineSpacing : 0)) / cols
+  );
   const cardHeight = Math.round(cardWidth / 1.6);
 
-  const gameHeight = cardHeight * rows + 2 * gamePadding;
+  const gameHeight =
+    cardHeight * rows + 2 * gamePadding + (!isHorizontal ? lineSpacing : 0);
 
   // Compute coordinate positions of each card, in and out of play
   const cards = {};
@@ -63,8 +70,14 @@ function Game({
       ? [i % 3, Math.floor(i / 3)]
       : [Math.floor(i / 3), i % 3];
     cards[board[i]] = {
-      positionX: cardWidth * c + gamePadding,
-      positionY: cardHeight * r + gamePadding,
+      positionX:
+        cardWidth * c +
+        gamePadding +
+        (isHorizontal && i >= 3 ? lineSpacing : 0),
+      positionY:
+        cardHeight * r +
+        gamePadding +
+        (!isHorizontal && i >= 3 ? lineSpacing : 0),
       background:
         answer && answer.includes(board[i]) ? "rgb(0,0,255, 0.15)" : "initial",
       opacity: 1,
@@ -111,6 +124,10 @@ function Game({
     }
   });
 
+  const lastSetLineStyle = isHorizontal
+    ? { left: `${cardWidth + gamePadding + lineSpacing / 2}px` }
+    : { top: `${cardHeight + gamePadding + lineSpacing / 2}px` };
+
   return (
     <Paper
       style={{
@@ -127,12 +144,21 @@ function Game({
         align="center"
         style={{
           position: "absolute",
+          left: `${isHorizontal ? gamePadding + cardWidth / 2 : 0}px`,
           bottom: gamePadding,
           width: "100%",
         }}
       >
         <strong>{unplayed.length}</strong> cards remaining in the deck
       </Typography>
+      {lastSetCards.length && (
+        <Divider
+          orientation={isHorizontal ? "vertical" : "horizontal"}
+          variant="fullWidth"
+          absolute={true}
+          style={{ ...lastSetLineStyle }}
+        />
+      )}
       {cardArray.map((card, idx) => (
         <animated.div
           key={card}

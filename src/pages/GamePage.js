@@ -24,7 +24,6 @@ import GameSidebar from "../components/GameSidebar";
 import GameChat from "../components/GameChat";
 import DonateDialog from "../components/DonateDialog";
 import { UserContext } from "../context";
-import LastSet from "../components/LastSet";
 
 const useStyles = makeStyles((theme) => ({
   sideColumn: {
@@ -385,16 +384,6 @@ function GamePage({ match }) {
                 )}
               </Paper>
             </div>
-            {gameMode === "setchain" && (
-              <Box mb={1}>
-                <LastSet
-                  deck={lastSetCards}
-                  selected={selected}
-                  onClick={handleClick}
-                  answer={answer}
-                />
-              </Box>
-            )}
             {/* Game area itself */}
             <Game
               deck={current}
