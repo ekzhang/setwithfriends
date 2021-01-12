@@ -34,9 +34,13 @@ function Game({
   const isHorizontal = layoutOrientation === "horizontal";
   const [gameDimensions, gameEl] = useDimensions();
   const [boardTemp, unplayed] = splitDeck(deck, gameMode, lastSetCards);
-  const board = [...lastSetCards, ...boardTemp];
+  const board = [
+    ...(gameMode === "setchain" ? lastSetCards : []),
+    ...boardTemp,
+  ];
 
-  const lineSpacing = lastSetCards.length ? 2 * gamePadding : 0;
+  const lineSpacing =
+    gameMode === "setchain" && lastSetCards.length ? 2 * gamePadding : 0;
 
   // Calculate widths and heights in pixels to fit cards in the game container
   // (The default value for `gameWidth` is a hack since we don't know the
@@ -151,14 +155,14 @@ function Game({
       >
         <strong>{unplayed.length}</strong> cards remaining in the deck
       </Typography>
-      {lastSetCards.length && (
+      {gameMode === "setchain" && lastSetCards.length ? (
         <Divider
           orientation={isHorizontal ? "vertical" : "horizontal"}
           variant="fullWidth"
           absolute={true}
           style={{ ...lastSetLineStyle }}
         />
-      )}
+      ) : null}
       {cardArray.map((card, idx) => (
         <animated.div
           key={card}
