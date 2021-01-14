@@ -301,7 +301,7 @@ function GamePage({ match }) {
       .analytics()
       .logEvent("play_again", { gameId: newId, access: game.access });
     try {
-      await createGame({ gameId: newId, access: game.access });
+      await createGame({ gameId: newId, access: game.access, mode: game.mode });
     } catch (error) {
       if (error.code !== "already-exists") {
         alert(error.toString());

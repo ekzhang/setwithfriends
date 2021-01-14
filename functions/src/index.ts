@@ -65,6 +65,7 @@ export const finishGame = functions.https.onCall(async (data, context) => {
 export const createGame = functions.https.onCall(async (data, context) => {
   const gameId = data.gameId;
   const access = data.access || "public";
+  const mode = data.mode || "normal";
   if (
     !(typeof gameId === "string") ||
     gameId.length === 0 ||
@@ -137,7 +138,7 @@ export const createGame = functions.https.onCall(async (data, context) => {
         createdAt: admin.database.ServerValue.TIMESTAMP,
         status: "waiting",
         access,
-        mode: "normal",
+        mode,
         enableHint: false,
       };
     } else {
