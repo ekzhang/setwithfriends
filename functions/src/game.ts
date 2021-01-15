@@ -42,57 +42,52 @@ export function checkSet(a: string, b: string, c: string) {
   return true;
 }
 
+/** Returns the unique card c such that {a, b, c} form a set. */
+function conjugateCard(a: string, b: string) {
+  const zeroCode = "0".charCodeAt(0);
+  let c = "";
+  for (let i = 0; i < 4; i++) {
+    const sum = a.charCodeAt(i) - zeroCode + b.charCodeAt(i) - zeroCode;
+    const lastNum = (3 - (sum % 3)) % 3;
+    c += String.fromCharCode(zeroCode + lastNum);
+  }
+  return c;
+}
+
 /** Check if four cards form an ultraset */
 export function checkSetUltra(a: string, b: string, c: string, d: string) {
-  for (let i = 1; i < 4; i++) {
-    let ok = true;
-    for (let j = 0; j < 4; j++) {
-      const mod = [0, 0];
-      for (let k = 0; k < 4; k++) {
-        if (k === 0 || k === i) mod[0] += arguments[k].charCodeAt(j);
-        else mod[1] += arguments[k].charCodeAt(j);
-      }
-      if (mod[0] % 3 !== mod[1] % 3) ok = false;
-    }
-    if (ok) {
-      const ret = [a, arguments[i]];
-      for (let j = 1; j < 4; j++) {
-        if (j !== i) ret.push(arguments[j]);
-      }
-      return ret;
-    }
-  }
+  if (conjugateCard(a, b) === conjugateCard(c, d)) return [a, b, c, d];
+  if (conjugateCard(a, c) === conjugateCard(b, d)) return [a, c, b, d];
+  if (conjugateCard(a, d) === conjugateCard(b, c)) return [a, d, b, c];
   return null;
 }
 
 /** Find a set in an unordered collection of cards, if any, depending on mode. */
 export function findSet(deck: string[], gameMode: GameMode, old?: string[]) {
+  const ultraConjugates: Record<string, [string, string]> = {};
   for (let i = 0; i < deck.length; i++) {
     for (let j = i + 1; j < deck.length; j++) {
-      if (gameMode === "setchain") {
+      if (
+        gameMode === "normal" ||
+        (gameMode === "setchain" && old!.length === 0)
+      ) {
+        for (let k = j + 1; k < deck.length; k++) {
+          if (checkSet(deck[i], deck[j], deck[k])) {
+            return [deck[i], deck[j], deck[k]];
+          }
+        }
+      } else if (gameMode === "setchain") {
         for (const k of old!) {
           if (checkSet(deck[i], deck[j], k)) {
             return [k, deck[i], deck[j]];
           }
         }
-      }
-      for (let k = j + 1; k < deck.length; k++) {
-        if (
-          gameMode === "normal" ||
-          (gameMode === "setchain" && old!.length === 0)
-        ) {
-          if (checkSet(deck[i], deck[j], deck[k])) {
-            return [deck[i], deck[j], deck[k]];
-          }
-          continue;
+      } else if (gameMode === "ultraset") {
+        const c = conjugateCard(deck[i], deck[j]);
+        if (c in ultraConjugates) {
+          return [...ultraConjugates[c], deck[i], deck[j]];
         }
-        if (gameMode === "ultraset") {
-          for (let l = k + 1; l < deck.length; l++) {
-            if (checkSetUltra(deck[i], deck[j], deck[k], deck[l])) {
-              return [deck[i], deck[j], deck[k], deck[l]];
-            }
-          }
-        }
+        ultraConjugates[c] = [deck[i], deck[j]];
       }
     }
   }

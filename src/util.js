@@ -131,7 +131,6 @@ export function findSet(deck, gameMode = "normal", old) {
           if (checkSet(deck[i], deck[j], deck[k])) {
             return [deck[i], deck[j], deck[k]];
           }
-          continue;
         }
       } else if (gameMode === "setchain") {
         for (const k of old) {
