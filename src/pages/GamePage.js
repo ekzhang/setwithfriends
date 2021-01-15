@@ -102,7 +102,8 @@ function GamePage({ match }) {
               await finishGame({ gameId });
               break;
             } catch (error) {
-              await new Promise((resolve) => setTimeout(resolve, 200));
+              const delay = 200 * (i + 1);
+              await new Promise((resolve) => setTimeout(resolve, delay));
             }
           }
           finishing.current = false;
