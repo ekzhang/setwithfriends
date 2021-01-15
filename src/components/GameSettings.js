@@ -16,11 +16,6 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-const normalTip = "Find 3 cards that form a Set.";
-const setchainTip =
-  "In every Set, you have to use 1 card from the previous Set.";
-const ultrasetTip =
-  "Find 4 cards such that the first pair and the second pair form a Set with the same additional card.";
 const hintTip =
   "Practice mode where you can get hints to help you find Sets. " +
   "Only available in private games with a single player, and not counted in total stats.";
@@ -28,18 +23,16 @@ const hintTip =
 const modeInfo = {
   normal: {
     displayName: "Normal",
-    description: normalTip,
+    description: "Find 3 cards that form a Set.",
   },
   setchain: {
     displayName: "Set-Chain",
-    description: setchainTip,
+    description: "In every Set, you have to use 1 card from the previous Set.",
   },
   ultraset: {
     displayName: "UltraSet",
-    description: ultrasetTip,
-  },
-  enableHint: {
-    description: hintTip,
+    description:
+      "Find 4 cards such that the first pair and the second pair form a Set with the same additional card.",
   },
 };
 
@@ -84,11 +77,7 @@ function GameSettings({ game, gameId, userId }) {
       </Box>
       <Box pl={2}>
         {gameMode === "normal" && (
-          <Tooltip
-            arrow
-            placement="left"
-            title={modeInfo["enableHint"].description}
-          >
+          <Tooltip arrow placement="left" title={hintTip}>
             <FormControlLabel
               control={
                 <Switch
