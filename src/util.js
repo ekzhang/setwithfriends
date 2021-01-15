@@ -100,25 +100,22 @@ export function checkSet(a, b, c) {
   return true;
 }
 
-export function checkSetUltra(a, b, c, d) {
-  for (let i = 1; i < 4; i++) {
-    let ok = true;
-    for (let j = 0; j < 4; j++) {
-      const mod = [0, 0];
-      for (let k = 0; k < 4; k++) {
-        if (k === 0 || k === i) mod[0] += arguments[k].charCodeAt(j);
-        else mod[1] += arguments[k].charCodeAt(j);
-      }
-      if (mod[0] % 3 !== mod[1] % 3) ok = false;
-    }
-    if (ok) {
-      const ret = [a, arguments[i]];
-      for (let j = 1; j < 4; j++) {
-        if (j !== i) ret.push(arguments[j]);
-      }
-      return ret;
-    }
+/** Returns the unique card c such that {a, b, c} form a set. */
+export function conjugateCard(a, b) {
+  const zeroCode = "0".charCodeAt(0);
+  let c = "";
+  for (let i = 0; i < 4; i++) {
+    const sum = a.charCodeAt(i) - zeroCode + b.charCodeAt(i) - zeroCode;
+    const lastNum = (3 - (sum % 3)) % 3;
+    c += String.fromCharCode(zeroCode + lastNum);
   }
+  return c;
+}
+
+export function checkSetUltra(a, b, c, d) {
+  if (conjugateCard(a, b) === conjugateCard(c, d)) return [a, b, c, d];
+  if (conjugateCard(a, c) === conjugateCard(b, d)) return [a, c, b, d];
+  if (conjugateCard(a, d) === conjugateCard(b, c)) return [a, d, b, c];
   return null;
 }
 
