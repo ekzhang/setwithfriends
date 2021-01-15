@@ -120,26 +120,23 @@ export function checkSetUltra(a, b, c, d) {
 }
 
 export function findSet(deck, gameMode = "normal", old) {
+  const deckSet = new Set(deck);
   const ultraConjugates = {};
   for (let i = 0; i < deck.length; i++) {
     for (let j = i + 1; j < deck.length; j++) {
+      const c = conjugateCard(deck[i], deck[j]);
       if (
         gameMode === "normal" ||
         (gameMode === "setchain" && old.length === 0)
       ) {
-        for (let k = j + 1; k < deck.length; k++) {
-          if (checkSet(deck[i], deck[j], deck[k])) {
-            return [deck[i], deck[j], deck[k]];
-          }
+        if (deckSet.has(c)) {
+          return [deck[i], deck[j], c];
         }
       } else if (gameMode === "setchain") {
-        for (const k of old) {
-          if (checkSet(deck[i], deck[j], k)) {
-            return [k, deck[i], deck[j]];
-          }
+        if (old.includes(c)) {
+          return [c, deck[i], deck[j]];
         }
       } else if (gameMode === "ultraset") {
-        const c = conjugateCard(deck[i], deck[j]);
         if (c in ultraConjugates) {
           return [...ultraConjugates[c], deck[i], deck[j]];
         }
