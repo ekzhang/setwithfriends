@@ -65,7 +65,7 @@ export const createGame = functions.https.onCall(async (data, context) => {
   const gameId = data.gameId;
   const access = data.access || "public";
   const mode = data.mode || "normal";
-  const enableHint = data.enableHint || false; 
+  const enableHint = data.enableHint || false;
 
   if (
     !(typeof gameId === "string") ||
