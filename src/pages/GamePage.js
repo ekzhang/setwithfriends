@@ -93,7 +93,7 @@ function GamePage({ match }) {
         game.users &&
         user.id in game.users &&
         game.status === "ingame" &&
-        current.length <= 20 &&
+        lastEvent &&
         !findSet(current, gameMode, [
           lastEvent.c1,
           lastEvent.c2,
@@ -297,11 +297,19 @@ function GamePage({ match }) {
     }
     setWaiting(true);
     const newId = `${id}-${num + 1}`;
-    firebase
-      .analytics()
-      .logEvent("play_again", { gameId: newId, access: game.access });
+    firebase.analytics().logEvent("play_again", {
+      gameId: newId,
+      access: game.access,
+      mode: game.mode,
+      enableHint: game.enableHint,
+    });
     try {
-      await createGame({ gameId: newId, access: game.access, mode: game.mode });
+      await createGame({
+        gameId: newId,
+        access: game.access,
+        mode: game.mode,
+        enableHint: game.enableHint,
+      });
     } catch (error) {
       if (error.code !== "already-exists") {
         alert(error.toString());
@@ -313,8 +321,11 @@ function GamePage({ match }) {
 
   const [board] = splitDeck(current, gameMode, lastSetCards);
   let answer = findSet(board, gameMode, lastSetCards);
-  if (gameMode === "normal" && game.enableHint)
+  if (gameMode === "normal" && game.enableHint && answer)
     answer = answer.slice(0, numHints);
+  else {
+    answer = null;
+  }
 
   return (
     <Container>
@@ -410,7 +421,7 @@ function GamePage({ match }) {
                   variant="outlined"
                   color="primary"
                   fullWidth
-                  disabled={numHints === 3}
+                  disabled={numHints === 3 || !answer}
                   onClick={handleAddHint}
                 >
                   Add hint: {numHints}

@@ -46,8 +46,7 @@ export const finishGame = functions.https.onCall(async (data, context) => {
     gameModeRef.val()
   );
 
-  // Maximal cap set has size 20 (see: https://en.wikipedia.org/wiki/Cap_set)
-  if (deck.size > 20 || findSet(Array.from(deck), gameModeRef.val(), lastSet)) {
+  if (findSet(Array.from(deck), gameModeRef.val(), lastSet)) {
     throw new functions.https.HttpsError(
       "failed-precondition",
       "The requested game has not yet ended."
@@ -66,6 +65,8 @@ export const createGame = functions.https.onCall(async (data, context) => {
   const gameId = data.gameId;
   const access = data.access || "public";
   const mode = data.mode || "normal";
+  const enableHint = data.enableHint || false; 
+
   if (
     !(typeof gameId === "string") ||
     gameId.length === 0 ||
@@ -139,7 +140,7 @@ export const createGame = functions.https.onCall(async (data, context) => {
         status: "waiting",
         access,
         mode,
-        enableHint: false,
+        enableHint,
       };
     } else {
       return;

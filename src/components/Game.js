@@ -48,8 +48,8 @@ function Game({
   const gameWidth = gameDimensions ? gameDimensions.width : 200;
   const numCards = board.length;
 
-  const rows = isHorizontal ? 3 : Math.max((numCards + 2) / 3, 4);
-  const cols = isHorizontal ? Math.max((numCards + 2) / 3, 4) : 3;
+  const rows = isHorizontal ? 3 : Math.max(Math.floor((numCards + 2) / 3), 4);
+  const cols = isHorizontal ? Math.max(Math.floor((numCards + 2) / 3), 4) : 3;
   const cardWidth = Math.floor(
     (gameWidth - 2 * gamePadding - (isHorizontal ? lineSpacing : 0)) / cols
   );
