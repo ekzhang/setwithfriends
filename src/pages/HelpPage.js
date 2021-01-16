@@ -1,14 +1,16 @@
-import { useContext } from "react";
+import { useContext, useState } from "react";
 
 import Typography from "@material-ui/core/Typography";
 import Link from "@material-ui/core/Link";
 import Container from "@material-ui/core/Container";
 import Paper from "@material-ui/core/Paper";
+import Divider from "@material-ui/core/Divider";
 
 import InternalLink from "../components/InternalLink";
 import SetCard from "../components/SetCard";
 import { KeyboardContext } from "../context";
 import { standardLayouts } from "../util";
+import { Box } from "@material-ui/core";
 
 function HelpPage() {
   const [keyboardLayout] = useContext(KeyboardContext);
@@ -18,6 +20,7 @@ function HelpPage() {
       <Typography variant="h4" align="center" style={{ marginTop: 24 }}>
         Help
       </Typography>
+
       <Paper style={{ padding: "1rem", maxWidth: 720, margin: "12px auto" }}>
         <Typography variant="body1" gutterBottom>
           Welcome to Set with Friends! This web app allows you to play Set, the
@@ -157,9 +160,92 @@ function HelpPage() {
             playing!
           </strong>
         </Typography>
+        <Box mb={1}>
+          <Divider variant="middle" mb={1} gutterBottom />
+        </Box>
+        <Typography variant="body1" gutterBottom>
+          In addition, there are many interesting variants to the standard Set
+          game. Currently this web app lets you play two of these &mdash;
+          Set-Chain and UltraSet. Here's how to play them:
+        </Typography>
+        <Typography variant="body1" gutterBottom>
+          <strong>Set-Chain</strong>
+        </Typography>
+        <Typography variant="body1" gutterBottom>
+          Playing Set-Chain is almost the same as playing Set normally. The only
+          difference is that after you pick the first <em>set</em>, every new{" "}
+          <em>set</em> should include exactly one card from the previous{" "}
+          <em>set</em>. One example of the first three <em>sets</em> is the
+          following (the first card in the second <em>set</em> is the one card
+          from the first <em>set</em>, and the first card in the third{" "}
+          <em>set</em> is the one card from the second):
+        </Typography>
+        <Typography component="div" align="center" gutterBottom>
+          <SetCard value="1210" />
+          <SetCard value="0101" />
+          <SetCard value="2022" />
+        </Typography>
+        <Typography component="div" align="center" gutterBottom>
+          <SetCard value="2022" />
+          <SetCard value="0011" />
+          <SetCard value="1000" />
+        </Typography>
+        <Typography component="div" align="center" gutterBottom>
+          <SetCard value="0011" />
+          <SetCard value="0212" />
+          <SetCard value="0110" />
+        </Typography>
+        <Typography variant="body1" gutterBottom>
+          <strong>UltraSet</strong>
+        </Typography>
+        <Typography variant="body1" gutterBottom>
+          In UltraSet, you should pick out four cards (instead of three) at a
+          time. The first pair and the second pair of these four cards should
+          form a <em>set</em> with the same additional card. For example, one
+          valid choice of the four cards could be:
+        </Typography>
+        <Typography component="div" align="center" gutterBottom>
+          <SetCard value="1202" />
+          <SetCard value="1122" />
+        </Typography>
+        <Typography component="div" align="center" gutterBottom>
+          <SetCard value="0212" />
+          <SetCard value="2112" />
+        </Typography>
+        <Typography variant="body1" gutterBottom>
+          The first pair consists of the two cards in the first row, and the
+          second pair consists of the two cards in the second row. And the fifth
+          additional cards would be
+        </Typography>
+        <Typography component="div" align="center" gutterBottom>
+          <SetCard value="1012" />
+        </Typography>
+        <Typography variant="body1" gutterBottom>
+          This is because both
+        </Typography>
+        <Typography component="div" align="center" gutterBottom>
+          <SetCard value="1202" />
+          <SetCard value="1122" />
+          <SetCard value="1012" />
+        </Typography>
+        <Typography variant="body1" gutterBottom>
+          and
+        </Typography>
+        <Typography component="div" align="center" gutterBottom>
+          <SetCard value="0212" />
+          <SetCard value="2112" />
+          <SetCard value="1012" />
+        </Typography>
+        <Typography variant="body1" gutterBottom>
+          are valid <em>sets</em>.
+        </Typography>
+        <Typography variant="body1" gutterBottom>
+          Note that you do not necessarily have to click the four cards in any
+          particular order while playing.
+        </Typography>
       </Paper>
       <Typography
-        variant="body1"
+        variant="h6"
         align="center"
         style={{ marginTop: 12, paddingBottom: 12 }}
       >
