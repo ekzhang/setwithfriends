@@ -87,33 +87,35 @@ function GamePage({ match }) {
     if (!loadingGame && !loadingGameData && game && gameData) {
       const gameMode = game.mode || "normal";
       const { current, history } = computeState(gameData, gameMode);
-      // Maximal cap set has size 20 (see: https://en.wikipedia.org/wiki/Cap_set)
-      const lastEvent = history[history.length - 1];
       if (
         game.users &&
         user.id in game.users &&
         game.status === "ingame" &&
-        lastEvent &&
-        !findSet(current, gameMode, [
-          lastEvent.c1,
-          lastEvent.c2,
-          lastEvent.c3,
-        ]) &&
         !finishing.current
       ) {
-        finishing.current = true;
-        // Attempt to finish the game up to 5 times, before giving up
-        (async () => {
-          for (let i = 0; i < 5; i++) {
-            try {
-              await finishGame({ gameId });
-              break;
-            } catch (error) {
-              await new Promise((resolve) => setTimeout(resolve, 200));
+        let hasSet = false;
+        if (gameMode === "setchain" && history.length > 0) {
+          const { c1, c2, c3 } = history[history.length - 1];
+          hasSet = findSet(current, gameMode, [c1, c2, c3]);
+        } else {
+          hasSet = findSet(current, gameMode, []);
+        }
+
+        if (!hasSet) {
+          finishing.current = true;
+          // Attempt to finish the game up to 5 times, before giving up
+          (async () => {
+            for (let i = 0; i < 5; i++) {
+              try {
+                await finishGame({ gameId });
+                break;
+              } catch (error) {
+                await new Promise((resolve) => setTimeout(resolve, 200));
+              }
             }
-          }
-          finishing.current = false;
-        })();
+            finishing.current = false;
+          })();
+        }
       }
     }
   });
@@ -150,20 +152,27 @@ function GamePage({ match }) {
     return u1 < u2 ? -1 : 1;
   });
 
-  function handleSet([c1, c2, c3, c4 = ""]) {
-    firebase.analytics().logEvent("find_set", { c1, c2, c3, c4 });
-    firebase.database().ref(`gameData/${gameId}/events`).push({
-      c1,
-      c2,
-      c3,
-      c4,
-      user: user.id,
-      time: firebase.database.ServerValue.TIMESTAMP,
-    });
+  function handleSet(cards) {
+    const event =
+      gameMode === "ultraset"
+        ? { c1: cards[0], c2: cards[1], c3: cards[2], c4: cards[3] }
+        : { c1: cards[0], c2: cards[1], c3: cards[2] };
+    firebase.analytics().logEvent("find_set", event);
+    firebase
+      .database()
+      .ref(`gameData/${gameId}/events`)
+      .push({
+        ...event,
+        user: user.id,
+        time: firebase.database.ServerValue.TIMESTAMP,
+      });
   }
 
-  const lastSet = history[history.length - 1];
-  const lastSetCards = lastSet ? [lastSet.c1, lastSet.c2, lastSet.c3] : [];
+  let lastSet = [];
+  if (gameMode === "setchain" && history.length > 0) {
+    const { c1, c2, c3 } = history[history.length - 1];
+    lastSet = [c1, c2, c3];
+  }
 
   function handleClick(card) {
     if (game.status !== "ingame") {
@@ -226,8 +235,8 @@ function GamePage({ match }) {
           }
         } else if (gameMode === "setchain") {
           let vals = [];
-          if (lastSetCards.includes(card)) {
-            if (selected.length > 0 && lastSetCards.includes(selected[0])) {
+          if (lastSet.includes(card)) {
+            if (selected.length > 0 && lastSet.includes(selected[0])) {
               return [card, ...selected.slice(1)];
             } else {
               vals = [card, ...selected];
@@ -236,11 +245,7 @@ function GamePage({ match }) {
             vals = [...selected, card];
           }
           if (vals.length === 3) {
-            if (
-              lastSetCards &&
-              lastSetCards.length > 0 &&
-              !lastSetCards.includes(vals[0])
-            ) {
+            if (lastSet.length > 0 && !lastSet.includes(vals[0])) {
               setSnack({
                 open: true,
                 variant: "error",
@@ -297,19 +302,15 @@ function GamePage({ match }) {
     }
     setWaiting(true);
     const newId = `${id}-${num + 1}`;
-    firebase.analytics().logEvent("play_again", {
+    const newGame = {
       gameId: newId,
       access: game.access,
       mode: game.mode,
       enableHint: game.enableHint,
-    });
+    };
+    firebase.analytics().logEvent("play_again", newGame);
     try {
-      await createGame({
-        gameId: newId,
-        access: game.access,
-        mode: game.mode,
-        enableHint: game.enableHint,
-      });
+      await createGame(newGame);
     } catch (error) {
       if (error.code !== "already-exists") {
         alert(error.toString());
@@ -319,8 +320,8 @@ function GamePage({ match }) {
     setRedirect(`/room/${newId}`);
   }
 
-  const [board] = splitDeck(current, gameMode, lastSetCards);
-  let answer = findSet(board, gameMode, lastSetCards);
+  const [board] = splitDeck(current, gameMode, lastSet);
+  let answer = findSet(board, gameMode, lastSet);
   if (gameMode === "normal" && game.enableHint && answer)
     answer = answer.slice(0, numHints);
   else {
@@ -395,6 +396,7 @@ function GamePage({ match }) {
                 )}
               </Paper>
             </div>
+
             {/* Game area itself */}
             <Game
               deck={current}
@@ -402,7 +404,7 @@ function GamePage({ match }) {
               onClick={handleClick}
               onClear={handleClear}
               gameMode={gameMode}
-              lastSetCards={lastSetCards}
+              lastSet={lastSet}
               answer={answer}
             />
           </Grid>

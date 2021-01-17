@@ -1,16 +1,14 @@
-import { useContext, useState } from "react";
+import { useContext } from "react";
 
 import Typography from "@material-ui/core/Typography";
 import Link from "@material-ui/core/Link";
 import Container from "@material-ui/core/Container";
 import Paper from "@material-ui/core/Paper";
-import Divider from "@material-ui/core/Divider";
 
 import InternalLink from "../components/InternalLink";
 import SetCard from "../components/SetCard";
 import { KeyboardContext } from "../context";
 import { standardLayouts } from "../util";
-import { Box } from "@material-ui/core";
 
 function HelpPage() {
   const [keyboardLayout] = useContext(KeyboardContext);
@@ -160,25 +158,22 @@ function HelpPage() {
             playing!
           </strong>
         </Typography>
-        <Box mb={1}>
-          <Divider variant="middle" mb={1} gutterBottom />
-        </Box>
+
+        <hr />
+
         <Typography variant="body1" gutterBottom>
-          In addition, there are many interesting variants to the standard Set
-          game. Currently this web app lets you play two of these &mdash;
-          Set-Chain and UltraSet. Here's how to play them:
+          For experienced players, there are many interesting variations on the
+          standard Set game. Currently this site lets you play two of these
+          variants: <em>Set-Chain</em> and <em>UltraSet</em>. Here's how.
         </Typography>
-        <Typography variant="body1" gutterBottom>
-          <strong>Set-Chain</strong>
+        <Typography variant="h6" gutterBottom>
+          Set-Chain
         </Typography>
         <Typography variant="body1" gutterBottom>
           Playing Set-Chain is almost the same as playing Set normally. The only
-          difference is that after you pick the first <em>set</em>, every new{" "}
-          <em>set</em> should include exactly one card from the previous{" "}
-          <em>set</em>. One example of the first three <em>sets</em> is the
-          following (the first card in the second <em>set</em> is the one card
-          from the first <em>set</em>, and the first card in the third{" "}
-          <em>set</em> is the one card from the second):
+          difference is that after you pick the first set, every new set should
+          include <strong>exactly one card from the previous set</strong>. For
+          example, the first three sets of a game might look as follows:
         </Typography>
         <Typography component="div" align="center" gutterBottom>
           <SetCard value="1210" />
@@ -196,13 +191,18 @@ function HelpPage() {
           <SetCard value="0110" />
         </Typography>
         <Typography variant="body1" gutterBottom>
-          <strong>UltraSet</strong>
+          In this case, the first card in the second set is the third card from
+          the first set, and the first card in the third set is the second card
+          from the second set.
+        </Typography>
+        <Typography variant="h6" gutterBottom>
+          UltraSet
         </Typography>
         <Typography variant="body1" gutterBottom>
           In UltraSet, you should pick out four cards (instead of three) at a
           time. The first pair and the second pair of these four cards should
-          form a <em>set</em> with the same additional card. For example, one
-          valid choice of the four cards could be:
+          form a set <strong>with the same additional card</strong>. For
+          example, one valid choice of the four cards could be:
         </Typography>
         <Typography component="div" align="center" gutterBottom>
           <SetCard value="1202" />
@@ -214,14 +214,14 @@ function HelpPage() {
         </Typography>
         <Typography variant="body1" gutterBottom>
           The first pair consists of the two cards in the first row, and the
-          second pair consists of the two cards in the second row. And the fifth
-          additional cards would be
+          second pair consists of the two cards in the second row. The "fifth"
+          card, which does not need to be present on the board, is drawn below.
         </Typography>
         <Typography component="div" align="center" gutterBottom>
           <SetCard value="1012" />
         </Typography>
         <Typography variant="body1" gutterBottom>
-          This is because both
+          These four cards form an ultraset, because both
         </Typography>
         <Typography component="div" align="center" gutterBottom>
           <SetCard value="1202" />
@@ -237,15 +237,15 @@ function HelpPage() {
           <SetCard value="1012" />
         </Typography>
         <Typography variant="body1" gutterBottom>
-          are valid <em>sets</em>.
+          are valid sets.
         </Typography>
         <Typography variant="body1" gutterBottom>
-          Note that you do not necessarily have to click the four cards in any
+          Note that you do not necessarily have to select the four cards in any
           particular order while playing.
         </Typography>
       </Paper>
       <Typography
-        variant="h6"
+        variant="body1"
         align="center"
         style={{ marginTop: 12, paddingBottom: 12 }}
       >

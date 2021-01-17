@@ -1,31 +1,22 @@
 import { useContext } from "react";
 
+import Divider from "@material-ui/core/Divider";
 import Paper from "@material-ui/core/Paper";
 import Typography from "@material-ui/core/Typography";
 import { lightGreen } from "@material-ui/core/colors";
 import { animated, useSprings } from "react-spring";
-import Divider from "@material-ui/core/Divider";
 
-import { generateCards, splitDeck } from "../util";
+import { generateCards, splitDeck, standardLayouts } from "../util";
 import ResponsiveSetCard from "../components/ResponsiveSetCard";
 import useDimensions from "../hooks/useDimensions";
 import useKeydown from "../hooks/useKeydown";
 import useStorage from "../hooks/useStorage";
 import { KeyboardContext } from "../context";
-import { standardLayouts } from "../util";
 
 const gamePadding = 8;
 const cardArray = generateCards();
 
-function Game({
-  deck,
-  onClick,
-  onClear,
-  selected,
-  gameMode,
-  answer,
-  lastSetCards,
-}) {
+function Game({ deck, onClick, onClear, selected, gameMode, answer, lastSet }) {
   const [layoutOrientation, setLayoutOrientation] = useStorage(
     "layout",
     "vertical"
@@ -33,14 +24,13 @@ function Game({
   const keyboardLayout = standardLayouts[useContext(KeyboardContext)[0]];
   const isHorizontal = layoutOrientation === "horizontal";
   const [gameDimensions, gameEl] = useDimensions();
-  const [boardTemp, unplayed] = splitDeck(deck, gameMode, lastSetCards);
-  const board = [
-    ...(gameMode === "setchain" ? lastSetCards : []),
-    ...boardTemp,
-  ];
+  const [board, unplayed] = splitDeck(deck, gameMode, lastSet);
+  if (gameMode === "setchain") {
+    board.splice(0, 0, ...lastSet);
+  }
 
   const lineSpacing =
-    gameMode === "setchain" && lastSetCards.length ? 2 * gamePadding : 0;
+    gameMode === "setchain" && lastSet.length ? 2 * gamePadding : 0;
 
   // Calculate widths and heights in pixels to fit cards in the game container
   // (The default value for `gameWidth` is a hack since we don't know the
@@ -156,12 +146,12 @@ function Game({
       >
         <strong>{unplayed.length}</strong> cards remaining in the deck
       </Typography>
-      {gameMode === "setchain" && lastSetCards.length ? (
+      {gameMode === "setchain" && lastSet.length ? (
         <Divider
           orientation={isHorizontal ? "vertical" : "horizontal"}
           variant="fullWidth"
           absolute={true}
-          style={{ ...lastSetLineStyle }}
+          style={lastSetLineStyle}
         />
       ) : null}
       {cardArray.map((card, idx) => (
