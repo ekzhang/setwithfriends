@@ -48,6 +48,7 @@ const useStyles = makeStyles((theme) => ({
     },
   },
   mainColumn: {
+    display: "flex",
     alignItems: "center",
   },
   doneOverlay: {

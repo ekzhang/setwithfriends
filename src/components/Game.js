@@ -74,7 +74,9 @@ function Game({ deck, onClick, onClear, selected, gameMode, answer, lastSet }) {
         gamePadding +
         (!isHorizontal && i >= 3 ? lineSpacing : 0),
       background:
-        answer && answer.includes(board[i]) ? "rgb(0,0,255, 0.15)" : "initial",
+        answer && answer.includes(board[i])
+          ? "rgba(0, 0, 255, 0.15)"
+          : "initial",
       opacity: 1,
       inplay: true,
     };
@@ -139,7 +141,10 @@ function Game({ deck, onClick, onClear, selected, gameMode, answer, lastSet }) {
         align="center"
         style={{
           position: "absolute",
-          left: `${isHorizontal ? gamePadding + cardWidth / 2 : 0}px`,
+          left:
+            isHorizontal && lastSet.length
+              ? `${gamePadding + cardWidth / 2}px`
+              : 0,
           bottom: gamePadding,
           width: "100%",
         }}

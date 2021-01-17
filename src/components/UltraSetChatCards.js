@@ -3,6 +3,7 @@ import { memo } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 
 import SetCard from "./SetCard";
+import { conjugateCard } from "../util";
 
 const useStyles = makeStyles(() => ({
   cards: {
@@ -15,11 +16,7 @@ const useStyles = makeStyles(() => ({
 function UltraSetChatCards({ item }) {
   const classes = useStyles();
 
-  let fifth = "";
-  for (let i = 0; i < 4; i++) {
-    let mod = item.c1.charCodeAt(i) + item.c2.charCodeAt(i);
-    fifth += String.fromCharCode(48 + ((3 - (mod % 3)) % 3));
-  }
+  let fifth = conjugateCard(item.c1, item.c2);
   return (
     <div className={classes.cards}>
       <div style={{ display: "flex", flexDirection: "column" }}>
