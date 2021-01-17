@@ -2,18 +2,13 @@ import { makeStyles } from "@material-ui/core/styles";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
 import Radio from "@material-ui/core/Radio";
 import RadioGroup from "@material-ui/core/RadioGroup";
-import Box from "@material-ui/core/Box";
 import Switch from "@material-ui/core/Switch";
 import Tooltip from "@material-ui/core/Tooltip";
 
 import firebase from "../firebase";
 
 const useStyles = makeStyles(() => ({
-  modeSelection: {
-    display: "flex",
-    flexDirection: "row",
-    justifyContent: "space-around",
-  },
+  settings: { display: "flex", flexDirection: "column", alignItems: "center" },
 }));
 
 const hintTip =
@@ -50,55 +45,46 @@ function GameSettings({ game, gameId, userId }) {
   const gameMode = game.mode || "normal";
 
   return (
-    <Box>
-      <Box>
-        <RadioGroup
-          className={classes.modeSelection}
-          value={gameMode}
-          onChange={handleChangeMode}
-          row
-        >
-          {["normal", "setchain", "ultraset"].map((mode) => (
-            <Tooltip
-              key={mode}
-              arrow
-              placement="left"
-              title={modeInfo[mode].description}
-            >
-              <FormControlLabel
-                value={mode}
-                control={<Radio />}
-                disabled={userId !== game.host}
-                label={modeInfo[mode].displayName}
-              />
-            </Tooltip>
-          ))}
-        </RadioGroup>
-      </Box>
-      <Box pl={2}>
-        {gameMode === "normal" && (
-          <Tooltip arrow placement="left" title={hintTip}>
+    <div className={classes.settings}>
+      <RadioGroup row value={gameMode} onChange={handleChangeMode}>
+        {["normal", "setchain", "ultraset"].map((mode) => (
+          <Tooltip
+            key={mode}
+            arrow
+            placement="left"
+            title={modeInfo[mode].description}
+          >
             <FormControlLabel
-              control={
-                <Switch
-                  checked={
-                    game.enableHint &&
-                    Object.keys(game.users || {}).length <= 1 &&
-                    game.access === "private"
-                  }
-                  onChange={toggleHint}
-                />
-              }
-              label="Enable Hint"
-              disabled={
-                Object.keys(game.users || {}).length > 1 ||
-                game.access !== "private"
-              }
+              value={mode}
+              control={<Radio />}
+              disabled={userId !== game.host}
+              label={modeInfo[mode].displayName}
             />
           </Tooltip>
-        )}
-      </Box>
-    </Box>
+        ))}
+      </RadioGroup>
+      {gameMode === "normal" && (
+        <Tooltip arrow placement="left" title={hintTip}>
+          <FormControlLabel
+            control={
+              <Switch
+                checked={
+                  game.enableHint &&
+                  Object.keys(game.users || {}).length <= 1 &&
+                  game.access === "private"
+                }
+                onChange={toggleHint}
+              />
+            }
+            label="Enable Hints"
+            disabled={
+              Object.keys(game.users || {}).length > 1 ||
+              game.access !== "private"
+            }
+          />
+        </Tooltip>
+      )}
+    </div>
   );
 }
 
