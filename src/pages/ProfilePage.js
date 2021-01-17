@@ -17,7 +17,7 @@ import ProfileGamesTable from "../components/ProfileGamesTable";
 import Subheading from "../components/Subheading";
 import useFirebaseRef from "../hooks/useFirebaseRef";
 import useFirebaseRefs from "../hooks/useFirebaseRefs";
-import { computeState } from "../util";
+import { computeState, hasHint } from "../util";
 import LoadingPage from "./LoadingPage";
 
 const datasetVariants = {
@@ -38,7 +38,7 @@ const datasetVariants = {
 const modeVariants = {
   normal: {
     label: "Normal",
-    filterFn: (gameData) => gameData.mode === "normal" && !gameData.enableHint,
+    filterFn: (gameData) => gameData.mode === "normal" && !hasHint(gameData),
   },
   setchain: {
     label: "Set-Chain",

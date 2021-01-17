@@ -10,9 +10,7 @@ import Box from "@material-ui/core/Box";
 import Snackbar from "@material-ui/core/Snackbar";
 import { Redirect } from "react-router-dom";
 
-import { removeCard, checkSet, splitDeck, checkSetUltra } from "../util";
 import SnackContent from "../components/SnackContent";
-import { findSet, computeState } from "../util";
 import firebase, { createGame, finishGame } from "../firebase";
 import useFirebaseRef from "../hooks/useFirebaseRef";
 import Game from "../components/Game";
@@ -24,6 +22,15 @@ import GameSidebar from "../components/GameSidebar";
 import GameChat from "../components/GameChat";
 import DonateDialog from "../components/DonateDialog";
 import { UserContext } from "../context";
+import {
+  removeCard,
+  checkSet,
+  splitDeck,
+  checkSetUltra,
+  findSet,
+  computeState,
+  hasHint,
+} from "../util";
 
 const useStyles = makeStyles((theme) => ({
   sideColumn: {
@@ -323,7 +330,7 @@ function GamePage({ match }) {
 
   const [board] = splitDeck(current, gameMode, lastSet);
   let answer = findSet(board, gameMode, lastSet);
-  if (gameMode === "normal" && game.enableHint && answer)
+  if (gameMode === "normal" && hasHint(game) && answer)
     answer = answer.slice(0, numHints);
   else {
     answer = null;
@@ -418,7 +425,7 @@ function GamePage({ match }) {
               leaderboard={leaderboard}
             />
             <Box mt={1}>
-              {gameMode === "normal" && game.enableHint && (
+              {gameMode === "normal" && hasHint(game) && (
                 <Button
                   size="large"
                   variant="outlined"

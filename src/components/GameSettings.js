@@ -6,6 +6,7 @@ import Switch from "@material-ui/core/Switch";
 import Tooltip from "@material-ui/core/Tooltip";
 
 import firebase from "../firebase";
+import { hasHint } from "../util";
 
 const useStyles = makeStyles(() => ({
   settings: { display: "flex", flexDirection: "column", alignItems: "center" },
@@ -66,16 +67,7 @@ function GameSettings({ game, gameId, userId }) {
       {gameMode === "normal" && (
         <Tooltip arrow placement="left" title={hintTip}>
           <FormControlLabel
-            control={
-              <Switch
-                checked={
-                  game.enableHint &&
-                  Object.keys(game.users || {}).length <= 1 &&
-                  game.access === "private"
-                }
-                onChange={toggleHint}
-              />
-            }
+            control={<Switch checked={hasHint(game)} onChange={toggleHint} />}
             label="Enable Hints"
             disabled={
               Object.keys(game.users || {}).length > 1 ||

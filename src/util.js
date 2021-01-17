@@ -258,3 +258,14 @@ export function formatTime(t, hideSubsecond) {
   const format = hideSubsecond ? "mm:ss" : "mm:ss.SS";
   return (hours ? `${hours}:` : "") + moment(rest).format(format);
 }
+
+/** Returns true if a game actually has hints enabled. */
+export function hasHint(game) {
+  return (
+    game.enableHint &&
+    game.users &&
+    Object.keys(game.users).length === 1 &&
+    game.access === "private" &&
+    (game.mode || "normal") === "normal"
+  );
+}
