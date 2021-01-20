@@ -22,6 +22,7 @@ import Subheading from "../components/Subheading";
 import GameChat from "../components/GameChat";
 import firebase from "../firebase";
 import { UserContext } from "../context";
+import GameSettings from "../components/GameSettings";
 
 const useStyles = makeStyles((theme) => ({
   subpanel: {
@@ -42,6 +43,11 @@ const useStyles = makeStyles((theme) => ({
     flexDirection: "column",
     height: 400,
     padding: 8,
+  },
+  modeSelection: {
+    display: "flex",
+    flexDirection: "row",
+    justifyContent: "space-around",
   },
 }));
 
@@ -157,27 +163,41 @@ function RoomPage({ match, location }) {
                   </div>
                 </Grid>
                 <Grid item xs={12} md={6}>
-                  <div className={classes.subpanel}>
-                    <Subheading>Inviting Friends</Subheading>
-                    <Typography variant="body1">
-                      To invite someone to play, share this URL:
-                      <span className={classes.shareLink}>
-                        <SimpleInput
-                          readOnly
-                          value={link}
-                          onFocus={(event) => event.target.select()}
+                  <Grid container spacing={1}>
+                    <Grid item xs={12}>
+                      <div className={classes.subpanel}>
+                        <Subheading>Game Settings</Subheading>
+                        <GameSettings
+                          game={game}
+                          gameId={gameId}
+                          userId={user.id}
                         />
-                        <Tooltip
-                          placement="top"
-                          title={copiedLink ? "Link copied" : "Copy link"}
-                        >
-                          <IconButton onClick={handleCopy}>
-                            {copiedLink ? <DoneIcon /> : <LinkIcon />}
-                          </IconButton>
-                        </Tooltip>
-                      </span>
-                    </Typography>
-                  </div>
+                      </div>
+                    </Grid>
+                    <Grid item xs={12}>
+                      <div className={classes.subpanel}>
+                        <Subheading>Inviting Friends</Subheading>
+                        <Typography variant="body1">
+                          To invite someone to play, share this URL:
+                          <span className={classes.shareLink}>
+                            <SimpleInput
+                              readOnly
+                              value={link}
+                              onFocus={(event) => event.target.select()}
+                            />
+                            <Tooltip
+                              placement="top"
+                              title={copiedLink ? "Link copied" : "Copy link"}
+                            >
+                              <IconButton onClick={handleCopy}>
+                                {copiedLink ? <DoneIcon /> : <LinkIcon />}
+                              </IconButton>
+                            </Tooltip>
+                          </span>
+                        </Typography>
+                      </div>
+                    </Grid>
+                  </Grid>
                 </Grid>
               </Grid>
               <Box marginTop={2}>

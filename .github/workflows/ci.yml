@@ -23,8 +23,8 @@ jobs:
 
       - run: npx prettier --check .
 
-  lint:
-    name: Lint
+  lint_test:
+    name: Lint and Test
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -36,6 +36,8 @@ jobs:
       - run: npm ci
 
       - run: npx eslint src
+
+      - run: npm test
 
   functions:
     name: Cloud Functions

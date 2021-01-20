@@ -10,9 +10,7 @@ import Box from "@material-ui/core/Box";
 import Snackbar from "@material-ui/core/Snackbar";
 import { Redirect } from "react-router-dom";
 
-import { removeCard, checkSet } from "../util";
 import SnackContent from "../components/SnackContent";
-import { findSet, computeState } from "../util";
 import firebase, { createGame, finishGame } from "../firebase";
 import useFirebaseRef from "../hooks/useFirebaseRef";
 import Game from "../components/Game";
@@ -24,6 +22,15 @@ import GameSidebar from "../components/GameSidebar";
 import GameChat from "../components/GameChat";
 import DonateDialog from "../components/DonateDialog";
 import { UserContext } from "../context";
+import {
+  removeCard,
+  checkSet,
+  splitDeck,
+  checkSetUltra,
+  findSet,
+  computeState,
+  hasHint,
+} from "../util";
 
 const useStyles = makeStyles((theme) => ({
   sideColumn: {
@@ -71,43 +78,53 @@ function GamePage({ match }) {
   const [redirect, setRedirect] = useState(null);
   const [selected, setSelected] = useState([]);
   const [snack, setSnack] = useState({ open: false });
+  const [numHints, setNumHints] = useState(0);
 
   const [game, loadingGame] = useFirebaseRef(`games/${gameId}`);
   const [gameData, loadingGameData] = useFirebaseRef(`gameData/${gameId}`);
 
-  // Reset card selection on update to game data
+  // Reset card selection and number of hints on update to game data
   useEffect(() => {
     setSelected([]);
+    setNumHints(0);
   }, [gameData]);
 
   // Terminate the game if no sets are remaining
   const finishing = useRef(false);
   useEffect(() => {
     if (!loadingGame && !loadingGameData && game && gameData) {
-      const { current } = computeState(gameData);
-      // Maximal cap set has size 20 (see: https://en.wikipedia.org/wiki/Cap_set)
+      const gameMode = game.mode || "normal";
+      const { current, history } = computeState(gameData, gameMode);
       if (
         game.users &&
         user.id in game.users &&
         game.status === "ingame" &&
-        current.length <= 20 &&
-        !findSet(current) &&
         !finishing.current
       ) {
-        finishing.current = true;
-        // Attempt to finish the game up to 5 times, before giving up
-        (async () => {
-          for (let i = 0; i < 5; i++) {
-            try {
-              await finishGame({ gameId });
-              break;
-            } catch (error) {
-              const delay = 200 * (i + 1);
-              await new Promise((resolve) => setTimeout(resolve, delay));
+        let hasSet = false;
+        if (gameMode === "setchain" && history.length > 0) {
+          const { c1, c2, c3 } = history[history.length - 1];
+          hasSet = findSet(current, gameMode, [c1, c2, c3]);
+        } else {
+          hasSet = findSet(current, gameMode, []);
+        }
+
+        if (!hasSet) {
+          finishing.current = true;
+          // Attempt to finish the game up to 5 times, before giving up
+          (async () => {
+            for (let i = 0; i < 5; i++) {
+              try {
+                await finishGame({ gameId });
+                break;
+              } catch (error) {
+                const delay = 200 * (i + 1);
+                await new Promise((resolve) => setTimeout(resolve, delay));
+              }
             }
-          }
-          finishing.current = false;
-        })();
+            finishing.current = false;
+          })();
+        }
       }
     }
   });
@@ -134,8 +151,9 @@ function GamePage({ match }) {
     );
   }
 
+  const gameMode = game.mode || "normal";
   const spectating = !game.users || !(user.id in game.users);
-  const { current, scores, history } = computeState(gameData);
+  const { current, scores, history } = computeState(gameData, gameMode);
   const leaderboard = Object.keys(game.users).sort((u1, u2) => {
     const s1 = scores[u1] || 0;
     const s2 = scores[u2] || 0;
@@ -143,15 +161,26 @@ function GamePage({ match }) {
     return u1 < u2 ? -1 : 1;
   });
 
-  function handleSet([c1, c2, c3]) {
-    firebase.analytics().logEvent("find_set", { c1, c2, c3 });
-    firebase.database().ref(`gameData/${gameId}/events`).push({
-      c1,
-      c2,
-      c3,
-      user: user.id,
-      time: firebase.database.ServerValue.TIMESTAMP,
-    });
+  function handleSet(cards) {
+    const event =
+      gameMode === "ultraset"
+        ? { c1: cards[0], c2: cards[1], c3: cards[2], c4: cards[3] }
+        : { c1: cards[0], c2: cards[1], c3: cards[2] };
+    firebase.analytics().logEvent("find_set", event);
+    firebase
+      .database()
+      .ref(`gameData/${gameId}/events`)
+      .push({
+        ...event,
+        user: user.id,
+        time: firebase.database.ServerValue.TIMESTAMP,
+      });
+  }
+
+  let lastSet = [];
+  if (gameMode === "setchain" && history.length > 0) {
+    const { c1, c2, c3 } = history[history.length - 1];
+    lastSet = [c1, c2, c3];
   }
 
   function handleClick(card) {
@@ -170,25 +199,85 @@ function GamePage({ match }) {
       if (selected.includes(card)) {
         return removeCard(selected, card);
       } else {
-        const vals = [...selected, card];
-        if (vals.length === 3) {
-          if (checkSet(...vals)) {
-            handleSet(vals);
-            setSnack({
-              open: true,
-              variant: "success",
-              message: "Found a set!",
-            });
+        if (gameMode === "normal") {
+          const vals = [...selected, card];
+          if (vals.length === 3) {
+            if (checkSet(...vals)) {
+              handleSet(vals);
+              setSnack({
+                open: true,
+                variant: "success",
+                message: "Found a set!",
+              });
+            } else {
+              setSnack({
+                open: true,
+                variant: "error",
+                message: "Not a set!",
+              });
+            }
+            return [];
           } else {
-            setSnack({
-              open: true,
-              variant: "error",
-              message: "Not a set!",
-            });
+            return vals;
           }
-          return [];
-        } else {
-          return vals;
+        } else if (gameMode === "ultraset") {
+          const vals = [...selected, card];
+          if (vals.length === 4) {
+            let res = checkSetUltra(...vals);
+            if (res) {
+              handleSet(res);
+              setSnack({
+                open: true,
+                variant: "success",
+                message: "Found an UltraSet!",
+              });
+            } else {
+              setSnack({
+                open: true,
+                variant: "error",
+                message: "Not an UltraSet!",
+              });
+            }
+            return [];
+          } else {
+            return vals;
+          }
+        } else if (gameMode === "setchain") {
+          let vals = [];
+          if (lastSet.includes(card)) {
+            if (selected.length > 0 && lastSet.includes(selected[0])) {
+              return [card, ...selected.slice(1)];
+            } else {
+              vals = [card, ...selected];
+            }
+          } else {
+            vals = [...selected, card];
+          }
+          if (vals.length === 3) {
+            if (lastSet.length > 0 && !lastSet.includes(vals[0])) {
+              setSnack({
+                open: true,
+                variant: "error",
+                message: "At least one card should be from the previous set!",
+              });
+            } else if (checkSet(...vals)) {
+              handleSet(vals);
+              setSnack({
+                open: true,
+                variant: "success",
+                message: "Found a set chain!",
+              });
+            } else {
+              setSnack({
+                open: true,
+                variant: "error",
+                message: "Not a set!",
+              });
+            }
+            return [];
+          } else {
+            return vals;
+          }
         }
       }
     });
@@ -203,6 +292,15 @@ function GamePage({ match }) {
     setSnack({ ...snack, open: false });
   }
 
+  function handleAddHint() {
+    setNumHints((numHints) => {
+      if (numHints === 3) {
+        return numHints;
+      }
+      return numHints + 1;
+    });
+  }
+
   async function handlePlayAgain() {
     const idx = gameId.lastIndexOf("-");
     let id = gameId,
@@ -213,11 +311,15 @@ function GamePage({ match }) {
     }
     setWaiting(true);
     const newId = `${id}-${num + 1}`;
-    firebase
-      .analytics()
-      .logEvent("play_again", { gameId: newId, access: game.access });
+    const newGame = {
+      gameId: newId,
+      access: game.access,
+      mode: game.mode,
+      enableHint: game.enableHint,
+    };
+    firebase.analytics().logEvent("play_again", newGame);
     try {
-      await createGame({ gameId: newId, access: game.access });
+      await createGame(newGame);
     } catch (error) {
       if (error.code !== "already-exists") {
         alert(error.toString());
@@ -225,6 +327,14 @@ function GamePage({ match }) {
       }
     }
     setRedirect(`/room/${newId}`);
+  }
+
+  const [board] = splitDeck(current, gameMode, lastSet);
+  let answer = findSet(board, gameMode, lastSet);
+  if (gameMode === "normal" && hasHint(game) && answer)
+    answer = answer.slice(0, numHints);
+  else {
+    answer = null;
   }
 
   return (
@@ -255,6 +365,7 @@ function GamePage({ match }) {
                 gameId={gameId}
                 history={history}
                 startedAt={game.startedAt}
+                gameMode={gameMode}
               />
             </Paper>
           </Grid>
@@ -301,6 +412,9 @@ function GamePage({ match }) {
               selected={selected}
               onClick={handleClick}
               onClear={handleClear}
+              gameMode={gameMode}
+              lastSet={lastSet}
+              answer={answer}
             />
           </Grid>
         </Box>
@@ -311,6 +425,20 @@ function GamePage({ match }) {
               scores={scores}
               leaderboard={leaderboard}
             />
+            <Box mt={1}>
+              {gameMode === "normal" && hasHint(game) && (
+                <Button
+                  size="large"
+                  variant="outlined"
+                  color="primary"
+                  fullWidth
+                  disabled={numHints === 3 || !answer}
+                  onClick={handleAddHint}
+                >
+                  Add hint: {numHints}
+                </Button>
+              )}
+            </Box>
           </Grid>
         </Box>
       </Grid>

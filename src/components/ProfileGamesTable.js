@@ -10,11 +10,12 @@ import Typography from "@material-ui/core/Typography";
 import StarIcon from "@material-ui/icons/Star";
 import amber from "@material-ui/core/colors/amber";
 import grey from "@material-ui/core/colors/grey";
+import { useTheme } from "@material-ui/core/styles";
 
 import ElapsedTime from "./ElapsedTime";
 import User from "./User";
 import Loading from "./Loading";
-import { formatTime } from "../util";
+import { formatTime, colors } from "../util";
 
 const useStyles = makeStyles((theme) => ({
   gamesTable: {
@@ -51,8 +52,25 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
+const modeMapping = {
+  normal: {
+    displayName: "Normal",
+    color: "purple",
+  },
+  setchain: {
+    displayName: "Set-Chain",
+    color: "teal",
+  },
+  ultraset: {
+    displayName: "UltraSet",
+    color: "pink",
+  },
+};
+
 function ProfileGamesTable({ userId, gamesData, handleClickGame }) {
   const classes = useStyles();
+  const theme = useTheme();
+
   if (!gamesData) {
     return <Loading />;
   }
@@ -70,6 +88,7 @@ function ProfileGamesTable({ userId, gamesData, handleClickGame }) {
           <TableRow>
             <TableCell>Host</TableCell>
             <TableCell>Players</TableCell>
+            <TableCell>Mode</TableCell>
             <TableCell>Num. Sets</TableCell>
             <TableCell>Length</TableCell>
             <TableCell className={classes.vanishingTableCell}>
@@ -82,12 +101,23 @@ function ProfileGamesTable({ userId, gamesData, handleClickGame }) {
           {Object.entries(gamesData)
             .sort(([, g1], [, g2]) => g2.createdAt - g1.createdAt)
             .map(([gameId, game]) => {
+              const modeInfo = modeMapping[game.mode || "normal"];
               return (
                 <TableRow key={gameId} onClick={() => handleClickGame(gameId)}>
                   <TableCell>
                     <User id={game.host} />
                   </TableCell>
                   <TableCell>{Object.keys(game.users).length}</TableCell>
+                  <TableCell
+                    style={{
+                      color:
+                        colors[modeInfo.color][
+                          theme.palette.type === "dark" ? 100 : 900
+                        ],
+                    }}
+                  >
+                    {modeInfo.displayName}
+                  </TableCell>
                   <TableCell>{game.scores[userId] || 0}</TableCell>
                   <TableCell>
                     {formatTime(game.endedAt - game.startedAt)}

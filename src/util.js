@@ -100,21 +100,57 @@ export function checkSet(a, b, c) {
   return true;
 }
 
-export function findSet(deck) {
+/** Returns the unique card c such that {a, b, c} form a set. */
+export function conjugateCard(a, b) {
+  const zeroCode = "0".charCodeAt(0);
+  let c = "";
+  for (let i = 0; i < 4; i++) {
+    const sum = a.charCodeAt(i) - zeroCode + b.charCodeAt(i) - zeroCode;
+    const lastNum = (3 - (sum % 3)) % 3;
+    c += String.fromCharCode(zeroCode + lastNum);
+  }
+  return c;
+}
+
+export function checkSetUltra(a, b, c, d) {
+  if (conjugateCard(a, b) === conjugateCard(c, d)) return [a, b, c, d];
+  if (conjugateCard(a, c) === conjugateCard(b, d)) return [a, c, b, d];
+  if (conjugateCard(a, d) === conjugateCard(b, c)) return [a, d, b, c];
+  return null;
+}
+
+export function findSet(deck, gameMode = "normal", old) {
+  const deckSet = new Set(deck);
+  const ultraConjugates = {};
   for (let i = 0; i < deck.length; i++) {
     for (let j = i + 1; j < deck.length; j++) {
-      for (let k = j + 1; k < deck.length; k++) {
-        if (checkSet(deck[i], deck[j], deck[k]))
-          return [deck[i], deck[j], deck[k]];
+      const c = conjugateCard(deck[i], deck[j]);
+      if (
+        gameMode === "normal" ||
+        (gameMode === "setchain" && old.length === 0)
+      ) {
+        if (deckSet.has(c)) {
+          return [deck[i], deck[j], c];
+        }
+      } else if (gameMode === "setchain") {
+        if (old.includes(c)) {
+          return [c, deck[i], deck[j]];
+        }
+      } else if (gameMode === "ultraset") {
+        if (c in ultraConjugates) {
+          return [...ultraConjugates[c], deck[i], deck[j]];
+        }
+        ultraConjugates[c] = [deck[i], deck[j]];
       }
     }
   }
   return null;
 }
 
-export function splitDeck(deck) {
+export function splitDeck(deck, gameMode = "normal", old) {
   let len = Math.min(deck.length, 12);
-  while (len < deck.length && !findSet(deck.slice(0, len))) len += 3;
+  while (len < deck.length && !findSet(deck.slice(0, len), gameMode, old))
+    len += 3;
   return [deck.slice(0, len), deck.slice(len)];
 }
 
@@ -127,7 +163,74 @@ export function generateName() {
   return "Anonymous " + animals[Math.floor(Math.random() * animals.length)];
 }
 
-export function computeState(gameData) {
+function isValid(used, cards) {
+  for (let i = 0; i < cards.length; i++) {
+    for (let j = i + 1; j < cards.length; j++) {
+      if (cards[i] === cards[j]) return false;
+    }
+    if (used[cards[i]]) return false;
+  }
+  return true;
+}
+
+function removeCards({ current, used }, cards) {
+  let canPreserve = true;
+  for (const c of cards) {
+    if (current.indexOf(c) >= 12) canPreserve = false;
+    used[c] = true;
+  }
+  if (current.length < 12 + cards.length) canPreserve = false;
+
+  if (canPreserve) {
+    // Try to preserve card locations, if possible
+    const d = current.splice(12, cards.length);
+    for (let i = 0; i < cards.length; i++) {
+      current[current.indexOf(cards[i])] = d[i];
+    }
+  } else {
+    // Otherwise, just remove the cards
+    for (const card of cards) {
+      current.splice(current.indexOf(card), 1);
+    }
+  }
+}
+
+function processValidEvent({ used, current, scores, history }, event, cards) {
+  scores[event.user] = (scores[event.user] || 0) + 1;
+  history.push(event);
+  removeCards({ current, used }, cards);
+}
+
+function processEventNormal({ used, current, scores, history }, event) {
+  const cards = [event.c1, event.c2, event.c3];
+  if (!isValid(used, cards)) return;
+  processValidEvent({ used, current, scores, history }, event, cards);
+}
+
+function processEventChain({ used, current, scores, history }, event) {
+  const { c1, c2, c3 } = event;
+
+  let ok = c1 !== c2 && c2 !== c3 && c1 !== c3;
+  ok &&= !used[c2] && !used[c3];
+  if (history.length) {
+    //One card (c1) should be taken from the previous set
+    const prevEvent = history[history.length - 1];
+    const prev = [prevEvent.c1, prevEvent.c2, prevEvent.c3];
+    ok &&= prev.includes(c1);
+  }
+  if (!ok) return;
+
+  const cards = history.length === 0 ? [c1, c2, c3] : [c2, c3];
+  processValidEvent({ used, current, scores, history }, event, cards);
+}
+
+function processEventUltra({ used, current, scores, history }, event) {
+  const cards = [event.c1, event.c2, event.c3, event.c4];
+  if (!isValid(used, cards)) return;
+  processValidEvent({ used, current, scores, history }, event, cards);
+}
+
+export function computeState(gameData, gameMode = "normal") {
   const scores = {}; // scores of all users
   const used = {}; // set of cards that have been taken
   const history = []; // list of valid events in time order
@@ -139,36 +242,10 @@ export function computeState(gameData) {
       })
       .map(([_k, e]) => e);
     for (const event of events) {
-      const { user, c1, c2, c3 } = event;
-      if (
-        c1 !== c2 &&
-        c2 !== c3 &&
-        c3 !== c1 &&
-        !used[c1] &&
-        !used[c2] &&
-        !used[c3]
-      ) {
-        used[c1] = used[c2] = used[c3] = true;
-        scores[user] = (scores[user] || 0) + 1;
-        history.push(event);
-        if (
-          current.indexOf(c1) < 12 &&
-          current.indexOf(c2) < 12 &&
-          current.indexOf(c3) < 12 &&
-          current.length >= 15
-        ) {
-          // Try to preserve card locations, if possible
-          const [d1, d2, d3] = current.splice(12, 3);
-          current[current.indexOf(c1)] = d1;
-          current[current.indexOf(c2)] = d2;
-          current[current.indexOf(c3)] = d3;
-        } else {
-          // Otherwise, just remove the cards
-          current.splice(current.indexOf(c1), 1);
-          current.splice(current.indexOf(c2), 1);
-          current.splice(current.indexOf(c3), 1);
-        }
-      }
+      const gameState = { used, current, scores, history };
+      if (gameMode === "normal") processEventNormal(gameState, event);
+      if (gameMode === "setchain") processEventChain(gameState, event);
+      if (gameMode === "ultraset") processEventUltra(gameState, event);
     }
   }
   return { current, scores, history };
@@ -180,4 +257,15 @@ export function formatTime(t, hideSubsecond) {
   const rest = t % (3600 * 1000);
   const format = hideSubsecond ? "mm:ss" : "mm:ss.SS";
   return (hours ? `${hours}:` : "") + moment(rest).format(format);
+}
+
+/** Returns true if a game actually has hints enabled. */
+export function hasHint(game) {
+  return (
+    game.enableHint &&
+    game.users &&
+    Object.keys(game.users).length === 1 &&
+    game.access === "private" &&
+    (game.mode || "normal") === "normal"
+  );
 }

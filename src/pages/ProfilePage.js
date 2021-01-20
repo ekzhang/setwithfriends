@@ -17,7 +17,7 @@ import ProfileGamesTable from "../components/ProfileGamesTable";
 import Subheading from "../components/Subheading";
 import useFirebaseRef from "../hooks/useFirebaseRef";
 import useFirebaseRefs from "../hooks/useFirebaseRefs";
-import { computeState } from "../util";
+import { computeState, hasHint } from "../util";
 import LoadingPage from "./LoadingPage";
 
 const datasetVariants = {
@@ -32,6 +32,21 @@ const datasetVariants = {
   multiplayer: {
     label: "Multiplayer Games",
     filterFn: (gameData) => Object.keys(gameData.users).length > 1,
+  },
+};
+
+const modeVariants = {
+  normal: {
+    label: "Normal",
+    filterFn: (gameData) => gameData.mode === "normal" && !hasHint(gameData),
+  },
+  setchain: {
+    label: "Set-Chain",
+    filterFn: (gameData) => gameData.mode === "setchain",
+  },
+  ultraset: {
+    label: "UltraSet",
+    filterFn: (gameData) => gameData.mode === "ultraset",
   },
 };
 
@@ -54,7 +69,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 function mergeGameData(game, gameData) {
-  const { scores } = computeState(gameData);
+  const { scores } = computeState(gameData, game.mode || "normal");
   const topScore = Math.max(0, ...Object.values(scores));
   return {
     ...game,
@@ -71,6 +86,7 @@ function ProfilePage({ match }) {
   const [games, loadingGames] = useFirebaseRef(`/userGames/${userId}`, true);
   const [redirect, setRedirect] = useState(null);
   const [variant, setVariant] = useState("all");
+  const [modeVariant, setModeVariant] = useState("normal");
 
   const handleClickGame = (gameId) => {
     setRedirect(`/room/${gameId}`);
@@ -100,7 +116,10 @@ function ProfilePage({ match }) {
     for (let i = 0; i < gameIds.length; i++) {
       if (gameVals[i].status === "done") {
         const gameData = mergeGameData(gameVals[i], gameDataVals[i]);
-        if (datasetVariants[variant].filterFn(gameData)) {
+        if (
+          datasetVariants[variant].filterFn(gameData) &&
+          modeVariants[modeVariant].filterFn(gameData)
+        ) {
           gamesData[gameIds[i]] = gameData;
         }
       }
@@ -128,19 +147,31 @@ function ProfilePage({ match }) {
                 </Subheading>
                 <EqualizerIcon />
               </div>
-
-              <Select
-                value={variant}
-                onChange={(event) => setVariant(event.target.value)}
-                style={{ marginLeft: "auto" }}
-                color="secondary"
-              >
-                {Object.entries(datasetVariants).map(([key, { label }]) => (
-                  <MenuItem key={key} value={key}>
-                    <Typography variant="body2">{label}</Typography>
-                  </MenuItem>
-                ))}
-              </Select>
+              <div style={{ marginLeft: "auto" }}>
+                <Select
+                  value={modeVariant}
+                  onChange={(event) => setModeVariant(event.target.value)}
+                  style={{ marginRight: "1em" }}
+                  color="secondary"
+                >
+                  {Object.entries(modeVariants).map(([key, { label }]) => (
+                    <MenuItem key={key} value={key}>
+                      <Typography variant="body2">{label}</Typography>
+                    </MenuItem>
+                  ))}
+                </Select>
+                <Select
+                  value={variant}
+                  onChange={(event) => setVariant(event.target.value)}
+                  color="secondary"
+                >
+                  {Object.entries(datasetVariants).map(([key, { label }]) => (
+                    <MenuItem key={key} value={key}>
+                      <Typography variant="body2">{label}</Typography>
+                    </MenuItem>
+                  ))}
+                </Select>
+              </div>
             </div>
             <UserStatistics userId={userId} gamesData={gamesData} />
           </Grid>

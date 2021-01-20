@@ -18,6 +18,7 @@ function HelpPage() {
       <Typography variant="h4" align="center" style={{ marginTop: 24 }}>
         Help
       </Typography>
+
       <Paper style={{ padding: "1rem", maxWidth: 720, margin: "12px auto" }}>
         <Typography variant="body1" gutterBottom>
           Welcome to Set with Friends! This web app allows you to play Set, the
@@ -156,6 +157,91 @@ function HelpPage() {
             That's all there are to the rules of Set, so head back and start
             playing!
           </strong>
+        </Typography>
+
+        <hr />
+
+        <Typography variant="body1" gutterBottom>
+          For experienced players, there are many interesting variations on the
+          standard Set game. Currently this site lets you play two of these
+          variants: <em>Set-Chain</em> and <em>UltraSet</em>. Here's how.
+        </Typography>
+        <Typography variant="h6" gutterBottom>
+          Set-Chain
+        </Typography>
+        <Typography variant="body1" gutterBottom>
+          Playing Set-Chain is almost the same as playing Set normally. The only
+          difference is that after you pick the first set, every new set should
+          include <strong>exactly one card from the previous set</strong>. For
+          example, the first three sets of a game might look as follows:
+        </Typography>
+        <Typography component="div" align="center" gutterBottom>
+          <SetCard value="1210" />
+          <SetCard value="0101" />
+          <SetCard value="2022" />
+        </Typography>
+        <Typography component="div" align="center" gutterBottom>
+          <SetCard value="2022" />
+          <SetCard value="0011" />
+          <SetCard value="1000" />
+        </Typography>
+        <Typography component="div" align="center" gutterBottom>
+          <SetCard value="0011" />
+          <SetCard value="0212" />
+          <SetCard value="0110" />
+        </Typography>
+        <Typography variant="body1" gutterBottom>
+          In this case, the first card in the second set is the third card from
+          the first set, and the first card in the third set is the second card
+          from the second set.
+        </Typography>
+        <Typography variant="h6" gutterBottom>
+          UltraSet
+        </Typography>
+        <Typography variant="body1" gutterBottom>
+          In UltraSet, you should pick out four cards (instead of three) at a
+          time. The first pair and the second pair of these four cards should
+          form a set <strong>with the same additional card</strong>. For
+          example, one valid choice of the four cards could be:
+        </Typography>
+        <Typography component="div" align="center" gutterBottom>
+          <SetCard value="1202" />
+          <SetCard value="1122" />
+        </Typography>
+        <Typography component="div" align="center" gutterBottom>
+          <SetCard value="0212" />
+          <SetCard value="2112" />
+        </Typography>
+        <Typography variant="body1" gutterBottom>
+          The first pair consists of the two cards in the first row, and the
+          second pair consists of the two cards in the second row. The "fifth"
+          card, which does not need to be present on the board, is drawn below.
+        </Typography>
+        <Typography component="div" align="center" gutterBottom>
+          <SetCard value="1012" />
+        </Typography>
+        <Typography variant="body1" gutterBottom>
+          These four cards form an ultraset, because both
+        </Typography>
+        <Typography component="div" align="center" gutterBottom>
+          <SetCard value="1202" />
+          <SetCard value="1122" />
+          <SetCard value="1012" />
+        </Typography>
+        <Typography variant="body1" gutterBottom>
+          and
+        </Typography>
+        <Typography component="div" align="center" gutterBottom>
+          <SetCard value="0212" />
+          <SetCard value="2112" />
+          <SetCard value="1012" />
+        </Typography>
+        <Typography variant="body1" gutterBottom>
+          are valid sets.
+        </Typography>
+        <Typography variant="body1" gutterBottom>
+          Note that you do not necessarily have to select the four cards in any
+          particular order while playing.
         </Typography>
       </Paper>
       <Typography
