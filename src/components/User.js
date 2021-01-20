@@ -27,7 +27,12 @@ function User(props) {
       {(user.patron || forcePatron) && (
         <WhatshotIcon
           fontSize="inherit"
-          style={{ marginBottom: "-0.125em", marginRight: "0.1em" }}
+          style={{
+            float: "left",
+            position: "relative",
+            left: "-0.1em",
+            top: "0.15em",
+          }}
         />
       )}
       {user.name}
