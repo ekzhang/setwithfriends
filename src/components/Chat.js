@@ -1,5 +1,4 @@
 import { useEffect, useRef, useState, useMemo, useContext, memo } from "react";
-import * as React from "react";
 
 import Typography from "@material-ui/core/Typography";
 import { makeStyles } from "@material-ui/core/styles";
@@ -97,7 +96,7 @@ function Chat() {
     setChatHidden(chatHidden === "yes" ? "no" : "yes");
   }
 
-  const [anchorEl, setAnchorEl] = React.useState(null);
+  const [anchorEl, setAnchorEl] = useState(null);
 
   const handleClickVertIcon = (event, key) => {
     setAnchorEl(event.currentTarget);
