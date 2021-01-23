@@ -28,7 +28,7 @@ function User(props) {
         <WhatshotIcon
           fontSize="inherit"
           style={{
-            float: "left",
+            display: "inline",
             position: "relative",
             left: "-0.1em",
             top: "0.15em",
