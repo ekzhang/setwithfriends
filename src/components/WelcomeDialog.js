@@ -6,6 +6,7 @@ import DialogTitle from "@material-ui/core/DialogTitle";
 import Typography from "@material-ui/core/Typography";
 import { makeStyles } from "@material-ui/core/styles";
 
+import InternalLink from "./InternalLink";
 import useStorage from "../hooks/useStorage";
 
 const useStyles = makeStyles({
@@ -45,7 +46,8 @@ function WelcomeDialog() {
             <span className={classes.emoji} role="img" aria-label="Books emoji">
               📚
             </span>
-            Review the <strong>rules of Set</strong> at our help page.
+            Review the <strong>rules of Set</strong> at our{" "}
+            <InternalLink to="/help">help page</InternalLink>.
           </div>
           <div>
             <span className={classes.emoji} role="img" aria-label="Chat emoji">
