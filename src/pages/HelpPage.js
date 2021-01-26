@@ -221,15 +221,13 @@ function HelpPage() {
           <SetCard value="1012" />
         </Typography>
         <Typography variant="body1" gutterBottom>
-          These four cards form an ultraset, because both
+          These four cards form an ultraset, because both of the following are
+          valid regular sets.
         </Typography>
         <Typography component="div" align="center" gutterBottom>
           <SetCard value="1202" />
           <SetCard value="1122" />
           <SetCard value="1012" />
-        </Typography>
-        <Typography variant="body1" gutterBottom>
-          and
         </Typography>
         <Typography component="div" align="center" gutterBottom>
           <SetCard value="0212" />
@@ -237,11 +235,8 @@ function HelpPage() {
           <SetCard value="1012" />
         </Typography>
         <Typography variant="body1" gutterBottom>
-          are valid sets.
-        </Typography>
-        <Typography variant="body1" gutterBottom>
-          Note that you do not necessarily have to select the four cards in any
-          particular order while playing.
+          Note that you do not have to select the four cards in any particular
+          order while playing.
         </Typography>
       </Paper>
       <Typography

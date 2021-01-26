@@ -47,7 +47,10 @@ function WelcomeDialog() {
               📚
             </span>
             Review the <strong>rules of Set</strong> at our{" "}
-            <InternalLink to="/help">help page</InternalLink>.
+            <InternalLink to="/help" onClick={handleClose}>
+              help page
+            </InternalLink>
+            .
           </div>
           <div>
             <span className={classes.emoji} role="img" aria-label="Chat emoji">
