@@ -56,7 +56,18 @@ function ConductPage() {
             <li>
               Remember that you share the public chat with many others. It is a
               good place to find people, but if you want to have one-on-one
-              conversations, you are encouraged to do so in game chat rooms.
+              conversations or small talk, you are encouraged to do so in game
+              chat rooms.
+            </li>
+            <li>
+              A public chat is not a good place to post any personal
+              information; neither here, nor on other websites on the internet.
+              Please make sure you only share personal information in private
+              with people you know and trust.
+            </li>
+            <li>
+              Only links to games on this site are appropriate in the public
+              chat. Links to any other website should be shared in private.
             </li>
             <li>
               Do not use computer-aided tools (i.e., bots) for finding sets
