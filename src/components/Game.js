@@ -6,7 +6,7 @@ import Typography from "@material-ui/core/Typography";
 import { lightGreen } from "@material-ui/core/colors";
 import { animated, useSprings } from "react-spring";
 
-import { generateCards, splitDeck, standardLayouts } from "../util";
+import { generateCards, standardLayouts } from "../util";
 import ResponsiveSetCard from "../components/ResponsiveSetCard";
 import useDimensions from "../hooks/useDimensions";
 import useKeydown from "../hooks/useKeydown";
@@ -16,7 +16,16 @@ import { KeyboardContext } from "../context";
 const gamePadding = 8;
 const cardArray = generateCards();
 
-function Game({ deck, onClick, onClear, selected, gameMode, answer, lastSet }) {
+function Game({
+  onClick,
+  onClear,
+  selected,
+  gameMode,
+  answer,
+  lastSet,
+  board: plainBoard,
+  unplayed,
+}) {
   const [layoutOrientation, setLayoutOrientation] = useStorage(
     "layout",
     "vertical"
@@ -24,10 +33,8 @@ function Game({ deck, onClick, onClear, selected, gameMode, answer, lastSet }) {
   const keyboardLayout = standardLayouts[useContext(KeyboardContext)[0]];
   const isHorizontal = layoutOrientation === "horizontal";
   const [gameDimensions, gameEl] = useDimensions();
-  const [board, unplayed] = splitDeck(deck, gameMode, lastSet);
-  if (gameMode === "setchain") {
-    board.splice(0, 0, ...lastSet);
-  }
+  const board =
+    gameMode === "setchain" ? [...lastSet, ...plainBoard] : [...plainBoard];
 
   const lineSpacing =
     gameMode === "setchain" && lastSet.length ? 2 * gamePadding : 0;

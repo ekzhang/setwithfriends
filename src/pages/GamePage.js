@@ -25,7 +25,6 @@ import { UserContext } from "../context";
 import {
   removeCard,
   checkSet,
-  splitDeck,
   checkSetUltra,
   findSet,
   computeState,
@@ -153,7 +152,10 @@ function GamePage({ match }) {
 
   const gameMode = game.mode || "normal";
   const spectating = !game.users || !(user.id in game.users);
-  const { current, scores, history } = computeState(gameData, gameMode);
+  const { current, scores, history, board, unplayed } = computeState(
+    gameData,
+    gameMode
+  );
   const leaderboard = Object.keys(game.users).sort((u1, u2) => {
     const s1 = scores[u1] || 0;
     const s2 = scores[u2] || 0;
@@ -329,7 +331,6 @@ function GamePage({ match }) {
     setRedirect(`/room/${newId}`);
   }
 
-  const [board] = splitDeck(current, gameMode, lastSet);
   let answer = findSet(board, gameMode, lastSet);
   if (gameMode === "normal" && hasHint(game) && answer)
     answer = answer.slice(0, numHints);
@@ -415,6 +416,8 @@ function GamePage({ match }) {
               gameMode={gameMode}
               lastSet={lastSet}
               answer={answer}
+              board={board}
+              unplayed={unplayed}
             />
           </Grid>
         </Box>

@@ -147,8 +147,8 @@ export function findSet(deck, gameMode = "normal", old) {
   return null;
 }
 
-export function splitDeck(deck, gameMode = "normal", old) {
-  let len = Math.min(deck.length, 12);
+export function splitDeck(deck, gameMode = "normal", mnAmt = 12, old) {
+  let len = Math.min(deck.length, mnAmt);
   while (len < deck.length && !findSet(deck.slice(0, len), gameMode, old))
     len += 3;
   return [deck.slice(0, len), deck.slice(len)];
@@ -173,17 +173,18 @@ function isValid(used, cards) {
   return true;
 }
 
-function removeCards({ current, used }, cards) {
+function removeCards(gameState, cards) {
+  const { current, used } = gameState;
   let canPreserve = true;
   for (const c of cards) {
     if (current.indexOf(c) >= 12) canPreserve = false;
     used[c] = true;
   }
-  if (current.length < 12 + cards.length) canPreserve = false;
+  if (current.length < gameState.boardSz + cards.length) canPreserve = false;
 
   if (canPreserve) {
     // Try to preserve card locations, if possible
-    const d = current.splice(12, cards.length);
+    const d = current.splice(gameState.boardSz, cards.length);
     for (let i = 0; i < cards.length; i++) {
       current[current.indexOf(cards[i])] = d[i];
     }
@@ -191,23 +192,28 @@ function removeCards({ current, used }, cards) {
     // Otherwise, just remove the cards
     for (const card of cards) {
       current.splice(current.indexOf(card), 1);
+      gameState.boardSz--;
     }
   }
 }
 
-function processValidEvent({ used, current, scores, history }, event, cards) {
+function processValidEvent(gameState, event, cards) {
+  const { scores, history } = gameState;
   scores[event.user] = (scores[event.user] || 0) + 1;
   history.push(event);
-  removeCards({ current, used }, cards);
+  removeCards(gameState, cards);
 }
 
-function processEventNormal({ used, current, scores, history }, event) {
+function processEventNormal(gameState, event) {
+  const { used } = gameState;
   const cards = [event.c1, event.c2, event.c3];
-  if (!isValid(used, cards)) return;
-  processValidEvent({ used, current, scores, history }, event, cards);
+  if (!isValid(used, cards)) return false;
+  processValidEvent(gameState, event, cards);
+  return true;
 }
 
-function processEventChain({ used, current, scores, history }, event) {
+function processEventChain(gameState, event) {
+  const { used, history } = gameState;
   const { c1, c2, c3 } = event;
 
   let ok = c1 !== c2 && c2 !== c3 && c1 !== c3;
@@ -218,37 +224,65 @@ function processEventChain({ used, current, scores, history }, event) {
     const prev = [prevEvent.c1, prevEvent.c2, prevEvent.c3];
     ok &&= prev.includes(c1);
   }
-  if (!ok) return;
+  if (!ok) return false;
 
   const cards = history.length === 0 ? [c1, c2, c3] : [c2, c3];
-  processValidEvent({ used, current, scores, history }, event, cards);
+  processValidEvent(gameState, event, cards);
+  return true;
 }
 
-function processEventUltra({ used, current, scores, history }, event) {
+function processEventUltra(gameState, event) {
+  const { used } = gameState;
   const cards = [event.c1, event.c2, event.c3, event.c4];
-  if (!isValid(used, cards)) return;
-  processValidEvent({ used, current, scores, history }, event, cards);
+  if (!isValid(used, cards)) return false;
+  processValidEvent(gameState, event, cards);
+  return true;
 }
 
-export function computeState(gameData, gameMode = "normal") {
+export function computeState(gameData, gameMode = "normal", step = -1) {
   const scores = {}; // scores of all users
   const used = {}; // set of cards that have been taken
   const history = []; // list of valid events in time order
   const current = gameData.deck.slice();
+  let board, unplayed;
+  const gameState = { used, current, scores, history, boardSz: 12 };
+  [board, unplayed] = splitDeck(current, gameMode, gameState.boardSz, []);
+  gameState.boardSz = board.length;
+
   if (gameData.events) {
     const events = Object.entries(gameData.events)
       .sort(([k1, e1], [k2, e2]) => {
         return e1.time !== e2.time ? e1.time - e2.time : k1 < k2;
       })
       .map(([_k, e]) => e);
+    let idx = 0;
     for (const event of events) {
-      const gameState = { used, current, scores, history };
-      if (gameMode === "normal") processEventNormal(gameState, event);
-      if (gameMode === "setchain") processEventChain(gameState, event);
-      if (gameMode === "ultraset") processEventUltra(gameState, event);
+      if (idx === step) break;
+
+      let isValid;
+      if (gameMode === "normal") isValid = processEventNormal(gameState, event);
+      if (gameMode === "setchain")
+        isValid = processEventChain(gameState, event);
+      if (gameMode === "ultraset")
+        isValid = processEventUltra(gameState, event);
+      if (isValid) {
+        idx++;
+        const { c1, c2, c3 } = event;
+
+        gameState.boardSz = Math.max(
+          12,
+          3 * Math.ceil(gameState.boardSz / 3.0)
+        );
+        [board, unplayed] = splitDeck(current, gameMode, gameState.boardSz, [
+          c1,
+          c2,
+          c3,
+        ]);
+        gameState.boardSz = board.length;
+      }
     }
   }
-  return { current, scores, history };
+  return { current, scores, history, board, unplayed };
 }
 
 export function formatTime(t, hideSubsecond) {
