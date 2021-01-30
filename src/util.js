@@ -42,33 +42,33 @@ export const colors = {
 
 export const standardLayouts = {
   QWERTY: {
-    verticalLayout: "123qweasdzxcrtyfghvbn",
-    horizontalLayout: "qazwsxedcrfvtgbyhnujm",
+    verticalLayout: "123qweasdzxcrtyfghvbnuiojkl",
+    horizontalLayout: "qazwsxedcrfvtgbyhnujmik,ol.",
     orientationChangeKey: ";",
   },
   AZERTY: {
-    verticalLayout: '1é"azeqsdwxcrtyfghvbn',
-    horizontalLayout: "aqwzsxedcrfvtgbyhnuj;",
+    verticalLayout: '&é"azeqsdwxcrtyfghvbnuiojkl',
+    horizontalLayout: "aqwzsxedcrfvtgbyhnuj,ik;ol:",
     orientationChangeKey: "m",
   },
   QWERTZ: {
-    verticalLayout: "123qweasdyxcrtzfghvbn",
-    horizontalLayout: "qaywsxedcrfvtgbzhnujm",
+    verticalLayout: "123qweasdyxcrtzfghvbnuiojkl",
+    horizontalLayout: "qaywsxedcrfvtgbzhnujmik,ol.",
     orientationChangeKey: "p",
   },
   Dvorak: {
-    verticalLayout: "123',.aoe;qjpyfuidkxb",
-    horizontalLayout: "'a;,oq.ejpukyixfdbghm",
+    verticalLayout: "123',.aoe;qjpyfuidkxbgcrhtn",
+    horizontalLayout: "'a;,oq.ejpukyixfdbghmctwrnv",
     orientationChangeKey: "s",
   },
   Colemak: {
-    verticalLayout: "123qwfarszxcpgjtdhvbk",
-    horizontalLayout: "qazwrxfscptvgdbjhklnm",
+    verticalLayout: "123qwfarszxcpgjtdhvbkluynei",
+    horizontalLayout: "qazwrxfscptvgdbjhklnmue,yi.",
     orientationChangeKey: "o",
   },
   Workman: {
-    verticalLayout: "123qdrashzxmwbjtgycvk",
-    horizontalLayout: "qazdsxrhmwtcbgvjykfnl",
+    verticalLayout: "123qdrashzxmwbjtgycvkfupneo",
+    horizontalLayout: "qazdsxrhmwtcbgvjykfnlue,po.",
     orientationChangeKey: "i",
   },
 };
