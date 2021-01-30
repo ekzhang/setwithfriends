@@ -126,7 +126,7 @@ function GameChat({ gameId, history, startedAt, gameMode }) {
                       variant="subtitle2"
                       style={{ marginRight: "0.2em" }}
                     >
-                      Set found by
+                      {gameMode === "ultraset" ? "UltraSet" : "Set"} found by
                     </Typography>
                     <User
                       component={Typography}
