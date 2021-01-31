@@ -133,7 +133,7 @@ function HelpPage() {
             <li>
               Select any additional cards with keys{" "}
               <code>
-                {standardLayouts[keyboardLayout].verticalLayout.slice(12, 21)}
+                {standardLayouts[keyboardLayout].verticalLayout.slice(12)}
               </code>
               .
             </li>
