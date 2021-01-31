@@ -1,4 +1,10 @@
-import { conjugateCard, checkSet, checkSetUltra, findSet } from "./util";
+import {
+  conjugateCard,
+  checkSet,
+  checkSetUltra,
+  findSet,
+  filter,
+} from "./util";
 
 it("computes conjugate cards", () => {
   expect(conjugateCard("0001", "0002")).toBe("0000");
@@ -65,5 +71,12 @@ describe("findSet()", () => {
     verifyUltra(findSet(["1202", "0001", "0002", "2101"], "ultraset"));
     verifyUltra(findSet(["1202", "0000", "0001", "0002", "2101"], "ultraset"));
     expect(findSet(["1202", "0000", "0001", "0002"], "ultraset")).toBe(null);
+  });
+});
+
+describe("bad-words filter", () => {
+  it("does not trigger on 'wang'", () => {
+    expect(filter.isProfane("Rona Wang")).toBe(false);
+    expect(filter.isProfane("wang")).toBe(false);
   });
 });
