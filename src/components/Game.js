@@ -40,11 +40,16 @@ function Game({ deck, onClick, onClear, selected, gameMode, answer, lastSet }) {
 
   const rows = isHorizontal ? 3 : Math.max(Math.ceil(numCards / 3), 4);
   const cols = isHorizontal ? Math.max(Math.ceil(numCards / 3), 4) : 3;
-  const cardWidth =  Math.floor((gameWidth - 2 * gamePadding - (isHorizontal ? lineSpacing : 0)) / cols);
-  const cardHeight = !isHorizontal? Math.round(cardWidth / 1.6) : Math.round(cardWidth / 1);
+  const cardWidth = Math.floor(
+    (gameWidth - 2 * gamePadding - (isHorizontal ? lineSpacing : 0)) / cols
+  );
+  const cardHeight = !isHorizontal
+    ? Math.round(cardWidth / 1.6)
+    : Math.round(cardWidth / 1);
 
-  const gameHeight = !isHorizontal?
-    cardHeight * rows + 2 * gamePadding + (!isHorizontal ? lineSpacing : 0) :cardHeight * rows + 8* gamePadding ;
+  const gameHeight = !isHorizontal
+    ? cardHeight * rows + 2 * gamePadding + (!isHorizontal ? lineSpacing : 0)
+    : cardHeight * rows + 8 * gamePadding;
 
   // Compute coordinate positions of each card, in and out of play
   const cards = {};
