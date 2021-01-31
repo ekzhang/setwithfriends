@@ -52,7 +52,9 @@ function ResponsiveSymbol(props) {
 
   return (
     <svg
+      
       className={classes.symbol}
+      //style={{transform:`rotate(90deg)`}}
       width={props.size}
       height={2 * props.size}
       viewBox="0 0 200 400"
@@ -71,10 +73,10 @@ function ResponsiveSetCard(props) {
   const classes = useStyles();
 
   // Black magic below to scale cards given any width
-  const { width, value, onClick, background, active } = props;
+  const { width, value, onClick, background, active,isHorizontal } = props;
   const height = Math.round(width / 1.6);
-  const margin = Math.round(width * 0.035);
-  const contentWidth = width - 2 * margin;
+  const margin = Math.round(width * 0.0315);
+  const contentWidth = width - (2+isHorizontal) * margin;
   const contentHeight = height - 2 * margin;
 
   // 4-character string of 0..2
@@ -95,6 +97,8 @@ function ResponsiveSetCard(props) {
         margin: margin,
         borderRadius: margin,
         background,
+        transform:`rotate(${isHorizontal? '90deg':'0deg'}) scale(${isHorizontal ? 1.05 : 1}) translate(${isHorizontal? '50px': '0px'},0px)`,
+        marginBottom:isHorizontal?"0px":"10px"
       }}
       onClick={onClick}
     >
@@ -104,7 +108,8 @@ function ResponsiveSetCard(props) {
           color={color}
           shape={shape}
           shade={shade}
-          size={Math.round(contentHeight * 0.36)}
+          isHorizontal={isHorizontal}
+          size={Math.round(contentHeight * 0.36)} ///
           colorOverride={props.colorOverride}
         />
       ))}
