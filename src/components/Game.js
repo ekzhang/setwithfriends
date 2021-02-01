@@ -17,7 +17,7 @@ const gamePadding = 8;
 const cardArray = generateCards();
 
 function Game({
-  current,
+  deck,
   boardSize,
   onClick,
   onClear,
@@ -34,8 +34,8 @@ function Game({
   const isHorizontal = layoutOrientation === "horizontal";
   const [gameDimensions, gameEl] = useDimensions();
 
-  let board = current.slice(0, boardSize);
-  const unplayed = current.slice(boardSize);
+  let board = deck.slice(0, boardSize);
+  const unplayed = deck.slice(boardSize);
   if (gameMode === "setchain") {
     board = [...lastSet, ...board];
   }

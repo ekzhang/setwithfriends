@@ -410,7 +410,7 @@ function GamePage({ match }) {
 
             {/* Game area itself */}
             <Game
-              current={current}
+              deck={current}
               boardSize={boardSize}
               selected={selected}
               onClick={handleClick}
