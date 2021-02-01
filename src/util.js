@@ -232,7 +232,7 @@ function processValidEvent(internalGameState, event, cards) {
 function processEventNormal(internalGameState, event) {
   const { current, used } = internalGameState;
   const cards = [event.c1, event.c2, event.c3];
-  if (hasDuplicates(used, cards)) return false;
+  if (hasDuplicates(used, cards)) return;
   processValidEvent(internalGameState, event, cards);
 
   const minSize = roundUp3(Math.max(internalGameState.boardSize - 3, 12));
@@ -252,7 +252,7 @@ function processEventChain(internalGameState, event) {
   } else {
     ok &&= !used[c1];
   }
-  if (!ok) return false;
+  if (!ok) return;
 
   const cards = history.length === 0 ? [c1, c2, c3] : [c2, c3];
   processValidEvent(internalGameState, event, cards);
@@ -268,7 +268,7 @@ function processEventChain(internalGameState, event) {
 function processEventUltra(internalGameState, event) {
   const { used, current } = internalGameState;
   const cards = [event.c1, event.c2, event.c3, event.c4];
-  if (hasDuplicates(used, cards)) return false;
+  if (hasDuplicates(used, cards)) return;
   processValidEvent(internalGameState, event, cards);
 
   const minSize = roundUp3(Math.max(internalGameState.boardSize - 4, 12));
