@@ -9,7 +9,6 @@ import Button from "@material-ui/core/Button";
 import Box from "@material-ui/core/Box";
 import Snackbar from "@material-ui/core/Snackbar";
 import { Redirect } from "react-router-dom";
-import Slider from "@material-ui/core/Slider";
 
 import SnackContent from "../components/SnackContent";
 import firebase, { createGame, finishGame } from "../firebase";
@@ -79,7 +78,6 @@ function GamePage({ match }) {
   const [selected, setSelected] = useState([]);
   const [snack, setSnack] = useState({ open: false });
   const [numHints, setNumHints] = useState(0);
-  const [numEvents, setNumEvents] = useState(-1);
 
   const [game, loadingGame] = useFirebaseRef(`games/${gameId}`);
   const [gameData, loadingGameData] = useFirebaseRef(`gameData/${gameId}`);
@@ -155,26 +153,10 @@ function GamePage({ match }) {
   const gameMode = game.mode || "normal";
   const spectating = !game.users || !(user.id in game.users);
 
-  const {
-    current: currentReal,
-    scores: scoresReal,
-    history: historyReal,
-    board: boardReal,
-    unplayed: unplayedReal,
-  } = computeState(gameData, gameMode);
-  const {
-    current: currentFake,
-    scores: scoresFake,
-    history: historyFake,
-    board: boardFake,
-    unplayed: unplayedFake,
-  } = computeState(gameData, gameMode, numEvents);
-
-  const current = game.status !== "done" ? currentReal : currentFake;
-  const scores = game.status !== "done" ? scoresReal : scoresFake;
-  const history = game.status !== "done" ? historyReal : historyFake;
-  const board = game.status !== "done" ? boardReal : boardFake;
-  const unplayed = game.status !== "done" ? unplayedReal : unplayedFake;
+  const { current, scores, history, boardSize } = computeState(
+    gameData,
+    gameMode
+  );
 
   const leaderboard = Object.keys(game.users).sort((u1, u2) => {
     const s1 = scores[u1] || 0;
@@ -204,7 +186,7 @@ function GamePage({ match }) {
     const { c1, c2, c3 } = history[history.length - 1];
     lastSet = [c1, c2, c3];
   }
-  let answer = findSet(board, gameMode, lastSet);
+  let answer = findSet(current.slice(0, boardSize), gameMode, lastSet);
   if (gameMode === "normal" && hasHint(game) && answer)
     answer = answer.slice(0, numHints);
   else {
@@ -383,7 +365,7 @@ function GamePage({ match }) {
             <Paper style={{ display: "flex", height: "100%", padding: 8 }}>
               <GameChat
                 gameId={gameId}
-                history={historyReal}
+                history={history}
                 startedAt={game.startedAt}
                 gameMode={gameMode}
               />
@@ -400,47 +382,42 @@ function GamePage({ match }) {
                 visibility: game.status === "done" ? "visible" : "hidden",
               }}
             >
-              {numEvents === historyReal.length || numEvents === -1 ? (
-                <Paper elevation={3} className={classes.doneModal}>
-                  <Typography variant="h5" gutterBottom>
-                    The game has ended.
+              <Paper elevation={3} className={classes.doneModal}>
+                <Typography variant="h5" gutterBottom>
+                  The game has ended.
+                </Typography>
+                <Typography variant="body1">
+                  Winner: <User id={leaderboard[0]} />
+                </Typography>
+                {leaderboard.length >= 2 && (
+                  <Typography variant="body2">
+                    Runner-up: <User id={leaderboard[1]} />
                   </Typography>
-                  <Typography variant="body1">
-                    Winner: <User id={leaderboard[0]} />
-                  </Typography>
-                  {leaderboard.length >= 2 && (
-                    <Typography variant="body2">
-                      Runner-up: <User id={leaderboard[1]} />
-                    </Typography>
-                  )}
-                  {!spectating && (
-                    <Button
-                      variant="contained"
-                      color="primary"
-                      onClick={handlePlayAgain}
-                      style={{ marginTop: 12 }}
-                      disabled={waiting}
-                    >
-                      {waiting ? <Loading /> : "Play Again"}
-                    </Button>
-                  )}
-                </Paper>
-              ) : (
-                <></>
-              )}
+                )}
+                {!spectating && (
+                  <Button
+                    variant="contained"
+                    color="primary"
+                    onClick={handlePlayAgain}
+                    style={{ marginTop: 12 }}
+                    disabled={waiting}
+                  >
+                    {waiting ? <Loading /> : "Play Again"}
+                  </Button>
+                )}
+              </Paper>
             </div>
 
             {/* Game area itself */}
             <Game
-              deck={current}
+              current={current}
+              boardSize={boardSize}
               selected={selected}
               onClick={handleClick}
               onClear={handleClear}
               gameMode={gameMode}
               lastSet={lastSet}
               answer={answer}
-              board={board}
-              unplayed={unplayed}
             />
           </Grid>
         </Box>
@@ -467,19 +444,6 @@ function GamePage({ match }) {
             </Box>
           </Grid>
         </Box>
-        {game.status === "done" ? (
-          <Slider
-            defaultValue={historyReal.length}
-            onChange={(e, val) => setNumEvents(val)}
-            valueLabelDisplay="auto"
-            step={1}
-            marks
-            min={0}
-            max={historyReal.length}
-          />
-        ) : (
-          <></>
-        )}
       </Grid>
     </Container>
   );

@@ -17,14 +17,14 @@ const gamePadding = 8;
 const cardArray = generateCards();
 
 function Game({
+  current,
+  boardSize,
   onClick,
   onClear,
   selected,
   gameMode,
   answer,
   lastSet,
-  board: plainBoard,
-  unplayed,
 }) {
   const [layoutOrientation, setLayoutOrientation] = useStorage(
     "layout",
@@ -33,8 +33,12 @@ function Game({
   const keyboardLayout = standardLayouts[useContext(KeyboardContext)[0]];
   const isHorizontal = layoutOrientation === "horizontal";
   const [gameDimensions, gameEl] = useDimensions();
-  const board =
-    gameMode === "setchain" ? [...lastSet, ...plainBoard] : [...plainBoard];
+
+  let board = current.slice(0, boardSize);
+  const unplayed = current.slice(boardSize);
+  if (gameMode === "setchain") {
+    board = [...lastSet, ...board];
+  }
 
   const lineSpacing =
     gameMode === "setchain" && lastSet.length ? 2 * gamePadding : 0;

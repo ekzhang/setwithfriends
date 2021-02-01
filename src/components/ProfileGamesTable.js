@@ -15,7 +15,7 @@ import { useTheme } from "@material-ui/core/styles";
 import ElapsedTime from "./ElapsedTime";
 import User from "./User";
 import Loading from "./Loading";
-import { formatTime, colors } from "../util";
+import { formatTime, colors, modes } from "../util";
 
 const useStyles = makeStyles((theme) => ({
   gamesTable: {
@@ -52,21 +52,6 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const modeMapping = {
-  normal: {
-    displayName: "Normal",
-    color: "purple",
-  },
-  setchain: {
-    displayName: "Set-Chain",
-    color: "teal",
-  },
-  ultraset: {
-    displayName: "UltraSet",
-    color: "pink",
-  },
-};
-
 function ProfileGamesTable({ userId, gamesData, handleClickGame }) {
   const classes = useStyles();
   const theme = useTheme();
@@ -101,7 +86,7 @@ function ProfileGamesTable({ userId, gamesData, handleClickGame }) {
           {Object.entries(gamesData)
             .sort(([, g1], [, g2]) => g2.createdAt - g1.createdAt)
             .map(([gameId, game]) => {
-              const modeInfo = modeMapping[game.mode || "normal"];
+              const modeInfo = modes[game.mode || "normal"];
               return (
                 <TableRow key={gameId} onClick={() => handleClickGame(gameId)}>
                   <TableCell>
@@ -116,7 +101,7 @@ function ProfileGamesTable({ userId, gamesData, handleClickGame }) {
                         ],
                     }}
                   >
-                    {modeInfo.displayName}
+                    {modeInfo.name}
                   </TableCell>
                   <TableCell>{game.scores[userId] || 0}</TableCell>
                   <TableCell>
