@@ -215,13 +215,6 @@ function removeCards(internalGameState, cards) {
   }
 }
 
-/** Rounds a number up to the nearest multiple of 3. */
-function roundUp3(x) {
-  const mod = x % 3;
-  if (mod) x += 3 - mod;
-  return x;
-}
-
 function processValidEvent(internalGameState, event, cards) {
   const { scores, history } = internalGameState;
   scores[event.user] = (scores[event.user] || 0) + 1;
@@ -235,7 +228,7 @@ function processEventNormal(internalGameState, event) {
   if (hasDuplicates(used, cards)) return;
   processValidEvent(internalGameState, event, cards);
 
-  const minSize = roundUp3(Math.max(internalGameState.boardSize - 3, 12));
+  const minSize = Math.max(internalGameState.boardSize - 3, 12);
   const boardSize = splitDeck(current, "normal", minSize)[0].length;
   internalGameState.boardSize = boardSize;
 }
@@ -257,9 +250,7 @@ function processEventChain(internalGameState, event) {
   const cards = history.length === 0 ? [c1, c2, c3] : [c2, c3];
   processValidEvent(internalGameState, event, cards);
 
-  const minSize = roundUp3(
-    Math.max(internalGameState.boardSize - cards.length, 12)
-  );
+  const minSize = Math.max(internalGameState.boardSize - cards.length, 12);
   const old = [c1, c2, c3];
   const boardSize = splitDeck(current, "setchain", minSize, old)[0].length;
   internalGameState.boardSize = boardSize;
@@ -271,7 +262,7 @@ function processEventUltra(internalGameState, event) {
   if (hasDuplicates(used, cards)) return;
   processValidEvent(internalGameState, event, cards);
 
-  const minSize = roundUp3(Math.max(internalGameState.boardSize - 4, 12));
+  const minSize = Math.max(internalGameState.boardSize - 4, 12);
   const boardSize = splitDeck(current, "ultraset", minSize)[0].length;
   internalGameState.boardSize = boardSize;
 }
