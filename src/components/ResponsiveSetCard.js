@@ -71,7 +71,7 @@ function ResponsiveSetCard(props) {
   const classes = useStyles();
 
   // Black magic below to scale cards given any width
-  const { width, value, onClick, background, active } = props;
+  const { width, value, onClick, background, active, rotate } = props;
   const height = Math.round(width / 1.6);
   const margin = Math.round(width * 0.035);
   const contentWidth = width - 2 * margin;
@@ -95,6 +95,7 @@ function ResponsiveSetCard(props) {
         margin: margin,
         borderRadius: margin,
         background,
+        transform: rotate ? "rotate(90deg)" : "none",
       }}
       onClick={onClick}
     >
