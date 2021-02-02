@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import { useState, useEffect, useContext, useRef } from "react";
 
 import { makeStyles } from "@material-ui/core/styles";
@@ -9,6 +10,9 @@ import Button from "@material-ui/core/Button";
 import Box from "@material-ui/core/Box";
 import Snackbar from "@material-ui/core/Snackbar";
 import { Redirect } from "react-router-dom";
+
+import useSound from 'use-sound';
+import boopSfx from '../assets/mySound.mp3';
 
 import SnackContent from "../components/SnackContent";
 import firebase, { createGame, finishGame } from "../firebase";
@@ -31,7 +35,6 @@ import {
   computeState,
   hasHint,
 } from "../util";
-
 const useStyles = makeStyles((theme) => ({
   sideColumn: {
     display: "flex",
@@ -82,6 +85,7 @@ function GamePage({ match }) {
 
   const [game, loadingGame] = useFirebaseRef(`games/${gameId}`);
   const [gameData, loadingGameData] = useFirebaseRef(`gameData/${gameId}`);
+  const [play] = useSound(boopSfx);
 
   // Reset card selection and number of hints on update to game data
   useEffect(() => {
@@ -204,6 +208,7 @@ function GamePage({ match }) {
           if (vals.length === 3) {
             if (checkSet(...vals)) {
               handleSet(vals);
+              play();
               setSnack({
                 open: true,
                 variant: "success",
