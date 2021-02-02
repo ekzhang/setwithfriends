@@ -40,16 +40,17 @@ function Game({ deck, onClick, onClear, selected, gameMode, answer, lastSet }) {
 
   const rows = isHorizontal ? 3 : Math.max(Math.ceil(numCards / 3), 4);
   const cols = isHorizontal ? Math.max(Math.ceil(numCards / 3), 4) : 3;
-  const cardWidth = Math.floor(
-    (gameWidth - 2 * gamePadding - (isHorizontal ? lineSpacing : 0)) / cols
-  );
-  const cardHeight = !isHorizontal
-    ? Math.round(cardWidth / 1.6)
-    : Math.round(cardWidth / 1);
 
-  const gameHeight = !isHorizontal
-    ? cardHeight * rows + 2 * gamePadding + (!isHorizontal ? lineSpacing : 0)
-    : cardHeight * rows + 8 * gamePadding;
+  let cardWidth, cardHeight, gameHeight;
+  if (!isHorizontal) {
+    cardWidth = Math.floor((gameWidth - 2 * gamePadding) / cols);
+    cardHeight = Math.round(cardWidth / 1.6);
+    gameHeight = cardHeight * rows + 2 * gamePadding + lineSpacing;
+  } else {
+    cardHeight = Math.floor((gameWidth - 2 * gamePadding - lineSpacing) / cols);
+    cardWidth = Math.round(cardHeight * 1.6);
+    gameHeight = cardWidth * rows + 2 * gamePadding;
+  }
 
   // Compute coordinate positions of each card, in and out of play
   const cards = {};
@@ -64,18 +65,21 @@ function Game({ deck, onClick, onClear, selected, gameMode, answer, lastSet }) {
   }
 
   for (let i = 0; i < board.length; i++) {
-    const [r, c] = isHorizontal
-      ? [i % 3, Math.floor(i / 3)]
-      : [Math.floor(i / 3), i % 3];
+    let positionX, positionY;
+    if (!isHorizontal) {
+      const [r, c] = [Math.floor(i / 3), i % 3];
+      positionX = cardWidth * c + gamePadding;
+      positionY = cardHeight * r + gamePadding + (i >= 3 ? lineSpacing : 0);
+    } else {
+      const [r, c] = [i % 3, Math.floor(i / 3)];
+      const delta = (cardWidth - cardHeight) / 2; // accounting for rotation
+      positionX =
+        cardHeight * c + gamePadding + (i >= 3 ? lineSpacing : 0) - delta;
+      positionY = cardWidth * r + gamePadding + delta;
+    }
     cards[board[i]] = {
-      positionX:
-        cardWidth * c +
-        gamePadding +
-        (isHorizontal && i >= 3 ? lineSpacing : 0),
-      positionY:
-        cardHeight * r +
-        gamePadding +
-        (!isHorizontal && i >= 3 ? lineSpacing : 0),
+      positionX,
+      positionY,
       background:
         answer && answer.includes(board[i])
           ? "rgba(0, 0, 255, 0.15)"
@@ -125,7 +129,7 @@ function Game({ deck, onClick, onClear, selected, gameMode, answer, lastSet }) {
   });
 
   const lastSetLineStyle = isHorizontal
-    ? { left: `${cardWidth + gamePadding + lineSpacing / 2}px` }
+    ? { left: `${cardHeight + gamePadding + lineSpacing / 2}px` }
     : { top: `${cardHeight + gamePadding + lineSpacing / 2}px` };
 
   return (
@@ -146,7 +150,7 @@ function Game({ deck, onClick, onClear, selected, gameMode, answer, lastSet }) {
           position: "absolute",
           left:
             isHorizontal && lastSet.length
-              ? `${gamePadding + cardWidth / 2}px`
+              ? `${gamePadding + cardHeight / 2}px`
               : 0,
           bottom: gamePadding,
           width: "100%",
@@ -174,9 +178,9 @@ function Game({ deck, onClick, onClear, selected, gameMode, answer, lastSet }) {
           }}
         >
           <ResponsiveSetCard
-            isHorizontal={isHorizontal}
             value={card}
             width={cardWidth}
+            rotate={isHorizontal}
             background={cards[card].background}
             active={selected.includes(card)}
             onClick={cards[card].inplay ? () => onClick(card) : null}
