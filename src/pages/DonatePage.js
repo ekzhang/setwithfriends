@@ -71,20 +71,16 @@ function DonatePage() {
           If you enjoy using this site, please consider supporting us by
           donating and becoming a patron. In addition to helping us pay for
           ultra-fast servers and ongoing development, you'll gain access to some{" "}
-          <strong>awesome perks</strong>:
+          cosmetic perks:
         </Typography>
         <Typography variant="body1" gutterBottom component="div">
           <ul>
             <li>
-              Ability to create <em>private rooms</em>. These are invite-only
-              and don't show up in the lobby &mdash; no more random people
-              joining your family game night!
-            </li>
-            <li>
-              Bragging rights with a <em>cool icon</em> next to your name (e.g.,{" "}
+              Bragging rights with a patron icon next to your name (e.g.,{" "}
               <User id={user.id} forcePatron />
               ).
             </li>
+            <li>More to come soon!</li>
           </ul>
         </Typography>
         <Typography variant="body1" gutterBottom>
