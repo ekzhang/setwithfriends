@@ -169,7 +169,7 @@ export function findSet(deck, gameMode = "normal", old) {
 export function splitDeck(deck, gameMode = "normal", minBoardSize = 12, old) {
   let len = Math.min(deck.length, minBoardSize);
   while (len < deck.length && !findSet(deck.slice(0, len), gameMode, old))
-    len += 3;
+    len += 3 - (len % 3);
   return [deck.slice(0, len), deck.slice(len)];
 }
 
