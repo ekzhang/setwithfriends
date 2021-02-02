@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 import { useState, useEffect, useContext, useRef } from "react";
 
 import { makeStyles } from "@material-ui/core/styles";
@@ -11,8 +10,8 @@ import Box from "@material-ui/core/Box";
 import Snackbar from "@material-ui/core/Snackbar";
 import { Redirect } from "react-router-dom";
 
-import useSound from 'use-sound';
-import boopSfx from '../assets/mySound.mp3';
+import useSound from "use-sound";
+import boopSfx from "../assets/mySound.mp3";
 
 import SnackContent from "../components/SnackContent";
 import firebase, { createGame, finishGame } from "../firebase";
