@@ -22,6 +22,9 @@ export const filter = new Filter();
 // See: https://github.com/ekzhang/setwithfriends/issues/49
 filter.removeWords("queer", "queers", "queerz", "qweers", "qweerz", "lesbian");
 
+// See: https://github.com/ekzhang/setwithfriends/issues/71
+filter.removeWords("wang");
+
 export const colors = {
   red,
   pink,
