@@ -127,7 +127,7 @@ function Game({ deck, onClick, onClear, selected, gameMode, answer, lastSet }) {
       if (index < board.length) {
         onClick(board[index]);
       }
-    } else if (key === keyboardLayout.orientationChangeKey) {
+    } else if (key.toLowerCase() === keyboardLayout.orientationChangeKey) {
       play();
       setLayoutOrientation(isHorizontal ? "vertical" : "horizontal");
     }
