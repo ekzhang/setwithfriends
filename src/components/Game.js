@@ -5,7 +5,7 @@ import Paper from "@material-ui/core/Paper";
 import Typography from "@material-ui/core/Typography";
 import { lightGreen } from "@material-ui/core/colors";
 import { animated, useSprings } from "react-spring";
-import useSound from 'use-sound';
+import useSound from "use-sound";
 
 import { generateCards, splitDeck, standardLayouts } from "../util";
 import ResponsiveSetCard from "../components/ResponsiveSetCard";
@@ -13,7 +13,7 @@ import useDimensions from "../hooks/useDimensions";
 import useKeydown from "../hooks/useKeydown";
 import useStorage from "../hooks/useStorage";
 import { KeyboardContext } from "../context";
-import beepSfx from '../assets/layoutChangeSound.mp3';
+import beepSfx from "../assets/layoutChangeSound.mp3";
 
 const gamePadding = 8;
 const cardArray = generateCards();
