@@ -115,15 +115,19 @@ function Game({ deck, onClick, onClear, selected, gameMode, answer, lastSet }) {
   const shortcuts = isHorizontal
     ? keyboardLayout.horizontalLayout
     : keyboardLayout.verticalLayout;
-  useKeydown(({ key }) => {
+  useKeydown((event) => {
+    const { key } = event;
     if (key === "Escape") {
+      event.preventDefault();
       onClear();
     } else if (key.length === 1 && shortcuts.includes(key.toLowerCase())) {
+      event.preventDefault();
       const index = shortcuts.indexOf(key.toLowerCase());
       if (index < board.length) {
         onClick(board[index]);
       }
-    } else if (key === keyboardLayout.orientationChangeKey) {
+    } else if (key.toLowerCase() === keyboardLayout.orientationChangeKey) {
+      event.preventDefault();
       setLayoutOrientation(isHorizontal ? "vertical" : "horizontal");
     }
   });
