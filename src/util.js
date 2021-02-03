@@ -43,35 +43,54 @@ export const colors = {
   deepOrange,
 };
 
+export const modes = {
+  normal: {
+    name: "Normal",
+    color: "purple",
+    description: "Find 3 cards that form a Set.",
+  },
+  setchain: {
+    name: "Set-Chain",
+    color: "teal",
+    description: "In every Set, you have to use 1 card from the previous Set.",
+  },
+  ultraset: {
+    name: "UltraSet",
+    color: "pink",
+    description:
+      "Find 4 cards such that the first pair and the second pair form a Set with the same additional card.",
+  },
+};
+
 export const standardLayouts = {
   QWERTY: {
-    verticalLayout: "123qweasdzxcrtyfghvbn",
-    horizontalLayout: "qazwsxedcrfvtgbyhnujm",
+    verticalLayout: "123qweasdzxcrtyfghvbnuiojkl",
+    horizontalLayout: "qazwsxedcrfvtgbyhnujmik,ol.",
     orientationChangeKey: ";",
   },
   AZERTY: {
-    verticalLayout: '1é"azeqsdwxcrtyfghvbn',
-    horizontalLayout: "aqwzsxedcrfvtgbyhnuj;",
+    verticalLayout: '&é"azeqsdwxcrtyfghvbnuiojkl',
+    horizontalLayout: "aqwzsxedcrfvtgbyhnuj,ik;ol:",
     orientationChangeKey: "m",
   },
   QWERTZ: {
-    verticalLayout: "123qweasdyxcrtzfghvbn",
-    horizontalLayout: "qaywsxedcrfvtgbzhnujm",
+    verticalLayout: "123qweasdyxcrtzfghvbnuiojkl",
+    horizontalLayout: "qaywsxedcrfvtgbzhnujmik,ol.",
     orientationChangeKey: "p",
   },
   Dvorak: {
-    verticalLayout: "123',.aoe;qjpyfuidkxb",
-    horizontalLayout: "'a;,oq.ejpukyixfdbghm",
+    verticalLayout: "123',.aoe;qjpyfuidkxbgcrhtn",
+    horizontalLayout: "'a;,oq.ejpukyixfdbghmctwrnv",
     orientationChangeKey: "s",
   },
   Colemak: {
-    verticalLayout: "123qwfarszxcpgjtdhvbk",
-    horizontalLayout: "qazwrxfscptvgdbjhklnm",
+    verticalLayout: "123qwfarszxcpgjtdhvbkluynei",
+    horizontalLayout: "qazwrxfscptvgdbjhklnmue,yi.",
     orientationChangeKey: "o",
   },
   Workman: {
-    verticalLayout: "123qdrashzxmwbjtgycvk",
-    horizontalLayout: "qazdsxrhmwtcbgvjykfnl",
+    verticalLayout: "123qdrashzxmwbjtgycvkfupneo",
+    horizontalLayout: "qazdsxrhmwtcbgvjykfnlue,po.",
     orientationChangeKey: "i",
   },
 };
@@ -150,10 +169,10 @@ export function findSet(deck, gameMode = "normal", old) {
   return null;
 }
 
-export function splitDeck(deck, gameMode = "normal", old) {
-  let len = Math.min(deck.length, 12);
+export function splitDeck(deck, gameMode = "normal", minBoardSize = 12, old) {
+  let len = Math.min(deck.length, minBoardSize);
   while (len < deck.length && !findSet(deck.slice(0, len), gameMode, old))
-    len += 3;
+    len += 3 - (len % 3);
   return [deck.slice(0, len), deck.slice(len)];
 }
 
@@ -166,17 +185,18 @@ export function generateName() {
   return "Anonymous " + animals[Math.floor(Math.random() * animals.length)];
 }
 
-function isValid(used, cards) {
+function hasDuplicates(used, cards) {
   for (let i = 0; i < cards.length; i++) {
     for (let j = i + 1; j < cards.length; j++) {
-      if (cards[i] === cards[j]) return false;
+      if (cards[i] === cards[j]) return true;
     }
-    if (used[cards[i]]) return false;
+    if (used[cards[i]]) return true;
   }
-  return true;
+  return false;
 }
 
-function removeCards({ current, used }, cards) {
+function removeCards(internalGameState, cards) {
+  const { current, used } = internalGameState;
   let canPreserve = true;
   for (const c of cards) {
     if (current.indexOf(c) >= 12) canPreserve = false;
@@ -198,46 +218,72 @@ function removeCards({ current, used }, cards) {
   }
 }
 
-function processValidEvent({ used, current, scores, history }, event, cards) {
+function processValidEvent(internalGameState, event, cards) {
+  const { scores, history } = internalGameState;
   scores[event.user] = (scores[event.user] || 0) + 1;
   history.push(event);
-  removeCards({ current, used }, cards);
+  removeCards(internalGameState, cards);
 }
 
-function processEventNormal({ used, current, scores, history }, event) {
+function processEventNormal(internalGameState, event) {
+  const { current, used } = internalGameState;
   const cards = [event.c1, event.c2, event.c3];
-  if (!isValid(used, cards)) return;
-  processValidEvent({ used, current, scores, history }, event, cards);
+  if (hasDuplicates(used, cards)) return;
+  processValidEvent(internalGameState, event, cards);
+
+  const minSize = Math.max(internalGameState.boardSize - 3, 12);
+  const boardSize = splitDeck(current, "normal", minSize)[0].length;
+  internalGameState.boardSize = boardSize;
 }
 
-function processEventChain({ used, current, scores, history }, event) {
+function processEventChain(internalGameState, event) {
+  const { used, history, current } = internalGameState;
   const { c1, c2, c3 } = event;
 
-  let ok = c1 !== c2 && c2 !== c3 && c1 !== c3;
-  ok &&= !used[c2] && !used[c3];
+  let ok = c1 !== c2 && c2 !== c3 && c1 !== c3 && !used[c2] && !used[c3];
   if (history.length) {
-    //One card (c1) should be taken from the previous set
-    const prevEvent = history[history.length - 1];
-    const prev = [prevEvent.c1, prevEvent.c2, prevEvent.c3];
-    ok &&= prev.includes(c1);
+    // One card (c1) should be taken from the previous set
+    let prev = history[history.length - 1];
+    ok &&= [prev.c1, prev.c2, prev.c3].includes(c1);
+  } else {
+    ok &&= !used[c1];
   }
   if (!ok) return;
 
   const cards = history.length === 0 ? [c1, c2, c3] : [c2, c3];
-  processValidEvent({ used, current, scores, history }, event, cards);
+  processValidEvent(internalGameState, event, cards);
+
+  const minSize = Math.max(internalGameState.boardSize - cards.length, 12);
+  const old = [c1, c2, c3];
+  const boardSize = splitDeck(current, "setchain", minSize, old)[0].length;
+  internalGameState.boardSize = boardSize;
 }
 
-function processEventUltra({ used, current, scores, history }, event) {
+function processEventUltra(internalGameState, event) {
+  const { used, current } = internalGameState;
   const cards = [event.c1, event.c2, event.c3, event.c4];
-  if (!isValid(used, cards)) return;
-  processValidEvent({ used, current, scores, history }, event, cards);
+  if (hasDuplicates(used, cards)) return;
+  processValidEvent(internalGameState, event, cards);
+
+  const minSize = Math.max(internalGameState.boardSize - 4, 12);
+  const boardSize = splitDeck(current, "ultraset", minSize)[0].length;
+  internalGameState.boardSize = boardSize;
 }
 
 export function computeState(gameData, gameMode = "normal") {
   const scores = {}; // scores of all users
   const used = {}; // set of cards that have been taken
   const history = []; // list of valid events in time order
-  const current = gameData.deck.slice();
+  const current = gameData.deck.slice(); // remaining cards in the game
+  const internalGameState = {
+    used,
+    current,
+    scores,
+    history,
+    // Initial deck split
+    boardSize: splitDeck(current, gameMode, 12, [])[0].length,
+  };
+
   if (gameData.events) {
     const events = Object.entries(gameData.events)
       .sort(([k1, e1], [k2, e2]) => {
@@ -245,13 +291,13 @@ export function computeState(gameData, gameMode = "normal") {
       })
       .map(([_k, e]) => e);
     for (const event of events) {
-      const gameState = { used, current, scores, history };
-      if (gameMode === "normal") processEventNormal(gameState, event);
-      if (gameMode === "setchain") processEventChain(gameState, event);
-      if (gameMode === "ultraset") processEventUltra(gameState, event);
+      if (gameMode === "normal") processEventNormal(internalGameState, event);
+      if (gameMode === "setchain") processEventChain(internalGameState, event);
+      if (gameMode === "ultraset") processEventUltra(internalGameState, event);
     }
   }
-  return { current, scores, history };
+
+  return { current, scores, history, boardSize: internalGameState.boardSize };
 }
 
 export function formatTime(t, hideSubsecond) {

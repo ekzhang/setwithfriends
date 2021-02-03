@@ -25,7 +25,6 @@ import { UserContext } from "../context";
 import {
   removeCard,
   checkSet,
-  splitDeck,
   checkSetUltra,
   findSet,
   computeState,
@@ -153,7 +152,12 @@ function GamePage({ match }) {
 
   const gameMode = game.mode || "normal";
   const spectating = !game.users || !(user.id in game.users);
-  const { current, scores, history } = computeState(gameData, gameMode);
+
+  const { current, scores, history, boardSize } = computeState(
+    gameData,
+    gameMode
+  );
+
   const leaderboard = Object.keys(game.users).sort((u1, u2) => {
     const s1 = scores[u1] || 0;
     const s2 = scores[u2] || 0;
@@ -181,6 +185,12 @@ function GamePage({ match }) {
   if (gameMode === "setchain" && history.length > 0) {
     const { c1, c2, c3 } = history[history.length - 1];
     lastSet = [c1, c2, c3];
+  }
+  let answer = findSet(current.slice(0, boardSize), gameMode, lastSet);
+  if (gameMode === "normal" && hasHint(game) && answer) {
+    answer = answer.slice(0, numHints);
+  } else {
+    answer = null;
   }
 
   function handleClick(card) {
@@ -329,14 +339,6 @@ function GamePage({ match }) {
     setRedirect(`/room/${newId}`);
   }
 
-  const [board] = splitDeck(current, gameMode, lastSet);
-  let answer = findSet(board, gameMode, lastSet);
-  if (gameMode === "normal" && hasHint(game) && answer)
-    answer = answer.slice(0, numHints);
-  else {
-    answer = null;
-  }
-
   return (
     <Container>
       <DonateDialog
@@ -409,6 +411,7 @@ function GamePage({ match }) {
             {/* Game area itself */}
             <Game
               deck={current}
+              boardSize={boardSize}
               selected={selected}
               onClick={handleClick}
               onClear={handleClear}
@@ -432,7 +435,7 @@ function GamePage({ match }) {
                   variant="outlined"
                   color="primary"
                   fullWidth
-                  disabled={numHints === 3 || !answer}
+                  disabled={numHints === 3 || !answer || game.status === "done"}
                   onClick={handleAddHint}
                 >
                   Add hint: {numHints}
