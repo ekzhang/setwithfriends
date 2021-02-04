@@ -2,6 +2,11 @@ import * as functions from "firebase-functions";
 import * as admin from "firebase-admin";
 admin.initializeApp();
 
+import Stripe from "stripe";
+const stripe = new Stripe(functions.config().stripe.secret, {
+  apiVersion: "2020-08-27",
+});
+
 import { generateDeck, replayEvents, findSet } from "./game";
 
 const MAX_GAME_ID_LENGTH = 64;
@@ -32,10 +37,16 @@ export const finishGame = functions.https.onCall(async (data, context) => {
     .database()
     .ref(`gameData/${gameId}`)
     .once("value");
-  const { deck, finalTime } = replayEvents(gameData);
+  const gameModeRef = await admin
+    .database()
+    .ref(`games/${gameId}/mode`)
+    .once("value");
+  const { lastSet, deck, finalTime } = replayEvents(
+    gameData,
+    gameModeRef.val()
+  );
 
-  // Maximal cap set has size 20 (see: https://en.wikipedia.org/wiki/Cap_set)
-  if (deck.size > 20 || findSet(Array.from(deck))) {
+  if (findSet(Array.from(deck), gameModeRef.val(), lastSet)) {
     throw new functions.https.HttpsError(
       "failed-precondition",
       "The requested game has not yet ended."
@@ -53,6 +64,9 @@ export const finishGame = functions.https.onCall(async (data, context) => {
 export const createGame = functions.https.onCall(async (data, context) => {
   const gameId = data.gameId;
   const access = data.access || "public";
+  const mode = data.mode || "normal";
+  const enableHint = data.enableHint || false;
+
   if (
     !(typeof gameId === "string") ||
     gameId.length === 0 ||
@@ -125,6 +139,8 @@ export const createGame = functions.https.onCall(async (data, context) => {
         createdAt: admin.database.ServerValue.TIMESTAMP,
         status: "waiting",
         access,
+        mode,
+        enableHint,
       };
     } else {
       return;
@@ -168,6 +184,37 @@ export const createGame = functions.https.onCall(async (data, context) => {
   return snapshot?.val();
 });
 
+export const customerPortal = functions.https.onCall(async (data, context) => {
+  if (!context.auth) {
+    throw new functions.https.HttpsError(
+      "failed-precondition",
+      "This function must be called while authenticated."
+    );
+  }
+
+  const user = await admin.auth().getUser(context.auth.uid);
+  if (!user.email) {
+    throw new functions.https.HttpsError(
+      "failed-precondition",
+      "This function must be called by an authenticated user with email."
+    );
+  }
+
+  const customerResponse = await stripe.customers.list({ email: user.email });
+  if (!customerResponse.data.length) {
+    throw new functions.https.HttpsError(
+      "not-found",
+      `A subscription with email ${user.email} was not found.`
+    );
+  }
+
+  const portalResponse = await stripe.billingPortal.sessions.create({
+    customer: customerResponse.data[0].id,
+    return_url: data.returnUrl,
+  });
+  return portalResponse.url;
+});
+
 /** Periodically remove stale user connections */
 export const clearConnections = functions.pubsub
   .schedule("every 1 minutes")
@@ -190,3 +237,53 @@ export const clearConnections = functions.pubsub
     actions.push(admin.database().ref("stats/onlineUsers").set(numUsers));
     await Promise.all(actions);
   });
+
+/** Webhook that handles Stripe customer events. */
+export const handleStripe = functions.https.onRequest(async (req, res) => {
+  const payload = req.rawBody;
+  const sig = req.get("stripe-signature");
+
+  if (!sig) {
+    res.status(400).send("Webhook Error: Missing stripe-signature");
+    return;
+  }
+
+  const { endpoint_secret } = functions.config().stripe;
+  let event;
+  try {
+    event = stripe.webhooks.constructEvent(payload, sig, endpoint_secret);
+  } catch (error) {
+    res.status(400).send(`Webhook Error: ${error.message}`);
+    return;
+  }
+
+  console.log(`Received ${event.type}: ${JSON.stringify(event.data)}`);
+  if (
+    event.type === "customer.subscription.created" ||
+    event.type === "customer.subscription.deleted"
+  ) {
+    const subscription = event.data.object as Stripe.Subscription;
+    const { email } = (await stripe.customers.retrieve(
+      subscription.customer as string
+    )) as Stripe.Response<Stripe.Customer>;
+
+    if (email) {
+      const user = await admin
+        .auth()
+        .getUserByEmail(email)
+        .catch(() => null);
+
+      if (user) {
+        const newState = event.type === "customer.subscription.created";
+        await admin.database().ref(`users/${user.uid}/patron`).set(newState);
+        console.log(`Processed ${email} (${user.uid}): newState = ${newState}`);
+      } else {
+        console.log(`Failed to find user: ${email}`);
+      }
+    } else {
+      console.log("Subscription event received with no email, ignoring");
+    }
+  }
+
+  res.status(200).end();
+});

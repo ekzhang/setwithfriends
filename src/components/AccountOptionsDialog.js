@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useContext } from "react";
 
 import Button from "@material-ui/core/Button";
 import Dialog from "@material-ui/core/Dialog";
@@ -10,27 +10,21 @@ import PersonAddIcon from "@material-ui/icons/PersonAdd";
 import VpnKeyIcon from "@material-ui/icons/VpnKey";
 import red from "@material-ui/core/colors/red";
 
+import { UserContext } from "../context";
 import firebase, { authProvider } from "../firebase";
-import Loading from "./Loading";
 
 function AccountOptionsDialog({ open, onClose }) {
-  const [user, setUser] = useState(null);
+  const user = useContext(UserContext);
   const [linkError, setLinkError] = useState(null);
-
-  useEffect(
-    () =>
-      firebase
-        .auth()
-        .onAuthStateChanged((user) => setUser(Object.assign({}, user))),
-    [setUser]
-  );
 
   function handleLink() {
     firebase
       .auth()
       .currentUser.linkWithPopup(authProvider)
       .then((credential) => {
-        setUser(credential ? Object.assign({}, credential.user) : null);
+        // This is necessary because `linkWithPopup` does not automatically
+        // trigger an auth state change on success.
+        return user.setAuthUser({ ...credential.user });
       })
       .catch((error) => {
         switch (error.code) {
@@ -73,13 +67,7 @@ function AccountOptionsDialog({ open, onClose }) {
   return (
     <Dialog open={open} onClose={handleClose}>
       <DialogTitle>Account options</DialogTitle>
-      {!user ? (
-        <DialogContent>
-          <DialogContentText align="center" component="div">
-            <Loading />
-          </DialogContentText>
-        </DialogContent>
-      ) : user.isAnonymous ? (
+      {user.authUser.isAnonymous ? (
         <DialogContent>
           <DialogContentText gutterBottom>
             You are currently playing as an anonymous user. Your profile will be
@@ -129,7 +117,8 @@ function AccountOptionsDialog({ open, onClose }) {
       ) : (
         <DialogContent>
           <DialogContentText gutterBottom>
-            You are currently signed in as <strong>{user.email}</strong>.
+            You are currently signed in as{" "}
+            <strong>{user.authUser.email}</strong>.
           </DialogContentText>
           <Button
             onClick={handleLogout}

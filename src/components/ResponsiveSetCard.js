@@ -56,6 +56,7 @@ function ResponsiveSymbol(props) {
       width={props.size}
       height={2 * props.size}
       viewBox="0 0 200 400"
+      style={{ transition: "width 0.5s, height 0.5s" }}
     >
       <use
         href={"#" + shape}
@@ -95,6 +96,7 @@ function ResponsiveSetCard(props) {
         margin: margin,
         borderRadius: margin,
         background,
+        transition: "width 0.5s, height 0.5s",
       }}
       onClick={onClick}
     >

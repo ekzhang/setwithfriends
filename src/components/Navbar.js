@@ -1,5 +1,4 @@
 import { useState, useContext } from "react";
-import * as React from "react";
 
 import AppBar from "@material-ui/core/AppBar";
 import Menu from "@material-ui/core/Menu";
@@ -18,6 +17,7 @@ import User from "./User";
 import InternalLink from "./InternalLink";
 import PromptDialog from "./PromptDialog";
 import ColorChoiceDialog from "./ColorChoiceDialog";
+import KeyboardLayoutDialog from "./KeyboardLayoutDialog";
 import AccountOptionsDialog from "./AccountOptionsDialog";
 
 function Navbar({
@@ -27,9 +27,10 @@ function Navbar({
   handleCustomColors,
 }) {
   const user = useContext(UserContext);
-  const [anchorEl, setAnchorEl] = React.useState(null);
+  const [anchorEl, setAnchorEl] = useState(null);
   const [changeName, setChangeName] = useState(false);
   const [changeColors, setChangeColors] = useState(false);
+  const [changeKeyboardLayout, setChangeKeyboardLayout] = useState(false);
   const [showOptions, setShowOptions] = useState(false);
 
   function handleMenu(event) {
@@ -128,6 +129,14 @@ function Navbar({
           </MenuItem>
           <MenuItem
             onClick={() => {
+              setChangeKeyboardLayout(true);
+              handleCloseMenu();
+            }}
+          >
+            Change keyboard layout
+          </MenuItem>
+          <MenuItem
+            onClick={() => {
               setShowOptions(true);
               handleCloseMenu();
             }}
@@ -148,6 +157,11 @@ function Navbar({
           onClose={handleChangeColors}
           title="Change Colors"
           key={themeType}
+        />
+        <KeyboardLayoutDialog
+          open={changeKeyboardLayout}
+          onClose={() => setChangeKeyboardLayout(false)}
+          title="Change Keyboard Layout"
         />
         <AccountOptionsDialog
           open={showOptions}

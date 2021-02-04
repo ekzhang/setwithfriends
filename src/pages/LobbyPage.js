@@ -221,6 +221,7 @@ function LobbyPage() {
                   <TableRow>
                     <TableCell>Host</TableCell>
                     <TableCell>Players</TableCell>
+                    <TableCell>Mode</TableCell>
                     <TableCell>Status</TableCell>
                     <TableCell>Created</TableCell>
                   </TableRow>
@@ -300,6 +301,8 @@ function LobbyPage() {
         <InternalLink to="/help">Help</InternalLink> •{" "}
         <InternalLink to="/about">About</InternalLink> •{" "}
         <InternalLink to="/conduct">Conduct</InternalLink> •{" "}
+        <InternalLink to="/donate">Donate</InternalLink> •{" "}
+        <InternalLink to="/legal">Legal</InternalLink> •{" "}
         <Link target="_blank" rel="noopener" href="https://discord.gg/XbjJyc9">
           Discord
         </Link>

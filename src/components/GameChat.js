@@ -10,12 +10,13 @@ import SimpleInput from "./SimpleInput";
 import Subheading from "./Subheading";
 import Scrollbox from "./Scrollbox";
 import SetCard from "./SetCard";
+import UltraSetChatCards from "./UltraSetChatCards";
 import firebase from "../firebase";
 import autoscroll from "../utils/autoscroll";
 import useFirebaseQuery from "../hooks/useFirebaseQuery";
 import useStorage from "../hooks/useStorage";
 import { UserContext } from "../context";
-import { formatTime, filter } from "../util";
+import { formatTime, filter, modes } from "../util";
 
 const useStyles = makeStyles((theme) => ({
   chatPanel: {
@@ -48,7 +49,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-function GameChat({ gameId, history, startedAt }) {
+function GameChat({ gameId, history, startedAt, gameMode }) {
   const user = useContext(UserContext);
   const classes = useStyles();
 
@@ -125,7 +126,7 @@ function GameChat({ gameId, history, startedAt }) {
                       variant="subtitle2"
                       style={{ marginRight: "0.2em" }}
                     >
-                      Set found by
+                      {modes[gameMode].name} found by
                     </Typography>
                     <User
                       component={Typography}
@@ -134,11 +135,14 @@ function GameChat({ gameId, history, startedAt }) {
                       id={item.user}
                     />
                   </div>
-                  <div>
-                    <SetCard size="sm" value={item.c1} />
-                    <SetCard size="sm" value={item.c2} />
-                    <SetCard size="sm" value={item.c3} />
-                  </div>
+                  {(gameMode === "normal" || gameMode === "setchain") && (
+                    <div>
+                      <SetCard size="sm" value={item.c1} />
+                      <SetCard size="sm" value={item.c2} />
+                      <SetCard size="sm" value={item.c3} />
+                    </div>
+                  )}
+                  {gameMode === "ultraset" && <UltraSetChatCards item={item} />}
                 </div>
               </Tooltip>
             ) : (

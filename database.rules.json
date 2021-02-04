@@ -16,6 +16,14 @@
             ".write": "auth != null && auth.uid == $userId && data.parent().parent().child('status').val() == 'waiting'",
             ".validate": "!newData.exists() || (newData.isNumber() && newData.val() == now)"
           }
+        },
+        "mode": {
+          ".write": "auth != null && auth.uid == data.parent().child('host').val() && newData.exists()",
+          ".validate": "newData.isString()&& (newData.val() == 'normal' || newData.val() == 'ultraset' || newData.val() == 'setchain')"
+        },
+        "enableHint": {
+          ".write": "auth != null && auth.uid == data.parent().child('host').val() && newData.exists()",
+          ".validate": "newData.isBoolean()"
         }
       }
     },
