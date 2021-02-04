@@ -97,7 +97,6 @@ function Game({
           : "initial",
       opacity: 1,
       inplay: true,
-      rotateAmount: isHorizontal ? 90 : 0,
     };
   }
   for (const c of unplayed) {
@@ -106,15 +105,16 @@ function Game({
       positionY: gameHeight / 2 - cardHeight / 2,
       opacity: 0,
       inplay: false,
-      rotateAmount: isHorizontal ? 90 : 0,
     };
   }
+
+  const rotateAmount = isHorizontal ? "90deg" : "0deg";
 
   const springProps = useSprings(
     cardArray.length,
     cardArray.map((c) => ({
       to: {
-        transform: `translate(${cards[c].positionX}px, ${cards[c].positionY}px) rotate(${cards[c].rotateAmount}deg)`,
+        transform: `translate(${cards[c].positionX}px, ${cards[c].positionY}px) rotate(${rotateAmount})`,
         opacity: cards[c].opacity,
       },
       config: {
