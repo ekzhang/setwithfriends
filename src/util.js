@@ -48,17 +48,20 @@ export const modes = {
     name: "Normal",
     color: "purple",
     description: "Find 3 cards that form a Set.",
+    selectionType: "Set",
   },
   setchain: {
     name: "Set-Chain",
     color: "teal",
     description: "In every Set, you have to use 1 card from the previous Set.",
+    selectionType: "Set",
   },
   ultraset: {
     name: "UltraSet",
     color: "pink",
     description:
       "Find 4 cards such that the first pair and the second pair form a Set with the same additional card.",
+    selectionType: "UltraSet",
   },
 };
 
