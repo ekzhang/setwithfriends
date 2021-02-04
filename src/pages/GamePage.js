@@ -31,8 +31,8 @@ import {
   computeState,
   hasHint,
 } from "../util";
-import foundSFX from "../assets/successfulSetSound.mp3";
-import failSFX from "../assets/failedSetSound.mp3";
+import foundSfx from "../assets/successfulSetSound.mp3";
+import failSfx from "../assets/failedSetSound.mp3";
 
 const useStyles = makeStyles((theme) => ({
   sideColumn: {
@@ -84,8 +84,8 @@ function GamePage({ match }) {
 
   const [game, loadingGame] = useFirebaseRef(`games/${gameId}`);
   const [gameData, loadingGameData] = useFirebaseRef(`gameData/${gameId}`);
-  const [play_success] = useSound(foundSFX);
-  const [play_fail] = useSound(failSFX);
+  const [playSuccess] = useSound(foundSfx);
+  const [playFail] = useSound(failSfx);
 
   // Reset card selection and number of hints on update to game data
   useEffect(() => {
@@ -219,14 +219,14 @@ function GamePage({ match }) {
           if (vals.length === 3) {
             if (checkSet(...vals)) {
               handleSet(vals);
-              play_success();
+              playSuccess();
               setSnack({
                 open: true,
                 variant: "success",
                 message: "Found a set!",
               });
             } else {
-              play_fail();
+              playFail();
               setSnack({
                 open: true,
                 variant: "error",

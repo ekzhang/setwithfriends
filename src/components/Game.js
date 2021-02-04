@@ -13,7 +13,7 @@ import useDimensions from "../hooks/useDimensions";
 import useKeydown from "../hooks/useKeydown";
 import useStorage from "../hooks/useStorage";
 import { KeyboardContext } from "../context";
-import beepSfx from "../assets/layoutChangeSound.mp3";
+import layoutSfx from "../assets/layoutChangeSound.mp3";
 
 const gamePadding = 8;
 const cardArray = generateCards();
@@ -35,7 +35,7 @@ function Game({
   const keyboardLayout = standardLayouts[useContext(KeyboardContext)[0]];
   const isHorizontal = layoutOrientation === "horizontal";
   const [gameDimensions, gameEl] = useDimensions();
-  const [play] = useSound(beepSfx);
+  const [playLayout] = useSound(layoutSfx);
 
   let board = deck.slice(0, boardSize);
   const unplayed = deck.slice(boardSize);
@@ -144,7 +144,7 @@ function Game({
       }
     } else if (key.toLowerCase() === keyboardLayout.orientationChangeKey) {
       event.preventDefault();
-      play();
+      playLayout();
       setLayoutOrientation(isHorizontal ? "vertical" : "horizontal");
     }
   });
