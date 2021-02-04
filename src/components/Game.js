@@ -97,6 +97,7 @@ function Game({
           : "initial",
       opacity: 1,
       inplay: true,
+      rotateAmount: isHorizontal ? 90 : 0,
     };
   }
   for (const c of unplayed) {
@@ -105,6 +106,7 @@ function Game({
       positionY: gameHeight / 2 - cardHeight / 2,
       opacity: 0,
       inplay: false,
+      rotateAmount: isHorizontal ? 90 : 0,
     };
   }
 
@@ -112,7 +114,7 @@ function Game({
     cardArray.length,
     cardArray.map((c) => ({
       to: {
-        transform: `translate(${cards[c].positionX}px, ${cards[c].positionY}px)`,
+        transform: `translate(${cards[c].positionX}px, ${cards[c].positionY}px) rotate(${cards[c].rotateAmount}deg)`,
         opacity: cards[c].opacity,
       },
       config: {
@@ -195,7 +197,6 @@ function Game({
           <ResponsiveSetCard
             value={card}
             width={cardWidth}
-            rotate={isHorizontal}
             background={cards[card].background}
             active={selected.includes(card)}
             onClick={cards[card].inplay ? () => onClick(card) : null}
