@@ -74,56 +74,53 @@ function Chat() {
   );
   const messages = useFirebaseQuery(messagesQuery);
   const [lastMsg, setLastMsg] = useState("");
-  const [msgCounter,setMsgCounter] = useState(0);
+  const [msgCounter, setMsgCounter] = useState(0);
 
   // eslint-disable-next-line no-unused-vars
-  const [previousMessages,setPreviousMessages] = useState({});
-  useEffect(()=>{
-    if (typeof messages !== 'undefined') {
+  const [previousMessages, setPreviousMessages] = useState({});
+  useEffect(() => {
+    if (typeof messages !== "undefined") {
       // eslint-disable-next-line eqeqeq
-      if(lastMsg!="" && lastMsg!= Object.keys(messages)[Object.keys(messages).length - 1] )
-      {            
+      if (
+        lastMsg != "" &&
+        lastMsg != Object.keys(messages)[Object.keys(messages).length - 1]
+      ) {
         setLastMsg(Object.keys(messages)[Object.keys(messages).length - 1]);
-        setMsgCounter(msgCounter+1);
+        setMsgCounter(msgCounter + 1);
       }
       // eslint-disable-next-line eqeqeq
-      if(lastMsg=="")
-      {
+      if (lastMsg == "") {
         setLastMsg(Object.keys(messages)[Object.keys(messages).length - 1]);
       }
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  },[messages])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [messages]);
 
   const onFocus = () => {
     setMsgCounter(0);
-    document.title="Set with friends";
+    document.title = "Set with friends";
   };
-  
+
   // User has switched away from the tab (AKA tab is hidden)
   const onBlur = () => {
-    if(msgCounter)
-      document.title=`Set with friends - (${msgCounter})`;
+    if (msgCounter) document.title = `Set with friends - (${msgCounter})`;
   };
   const handleActivity = () => {
-    setMsgCounter(0); 
+    setMsgCounter(0);
   };
-  
+
   useEffect(() => {
-    window.addEventListener('focus', onFocus);
-    window.addEventListener('blur', onBlur);
-    window.addEventListener('visibilitychange', handleActivity)
+    window.addEventListener("focus", onFocus);
+    window.addEventListener("blur", onBlur);
+    window.addEventListener("visibilitychange", handleActivity);
 
     // Specify how to clean up after this effect:
     return () => {
-      window.removeEventListener('focus', onFocus);
-      window.removeEventListener('blur', onBlur);
-      window.removeEventListener('visibilitychange', handleActivity)
-
+      window.removeEventListener("focus", onFocus);
+      window.removeEventListener("blur", onBlur);
+      window.removeEventListener("visibilitychange", handleActivity);
     };
   });
-
-  
 
   function handleSubmit(event) {
     event.preventDefault();
