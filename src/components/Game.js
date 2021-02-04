@@ -7,7 +7,7 @@ import { lightGreen } from "@material-ui/core/colors";
 import { animated, useSprings } from "react-spring";
 import useSound from "use-sound";
 
-import { generateCards, splitDeck, standardLayouts } from "../util";
+import { generateCards, standardLayouts } from "../util";
 import ResponsiveSetCard from "../components/ResponsiveSetCard";
 import useDimensions from "../hooks/useDimensions";
 import useKeydown from "../hooks/useKeydown";
@@ -18,7 +18,16 @@ import beepSfx from "../assets/layoutChangeSound.mp3";
 const gamePadding = 8;
 const cardArray = generateCards();
 
-function Game({ deck, onClick, onClear, selected, gameMode, answer, lastSet }) {
+function Game({
+  deck,
+  boardSize,
+  onClick,
+  onClear,
+  selected,
+  gameMode,
+  answer,
+  lastSet,
+}) {
   const [layoutOrientation, setLayoutOrientation] = useStorage(
     "layout",
     "vertical"
@@ -28,9 +37,10 @@ function Game({ deck, onClick, onClear, selected, gameMode, answer, lastSet }) {
   const [gameDimensions, gameEl] = useDimensions();
   const [play] = useSound(beepSfx);
 
-  const [board, unplayed] = splitDeck(deck, gameMode, lastSet);
+  let board = deck.slice(0, boardSize);
+  const unplayed = deck.slice(boardSize);
   if (gameMode === "setchain") {
-    board.splice(0, 0, ...lastSet);
+    board = [...lastSet, ...board];
   }
 
   const lineSpacing =
@@ -101,11 +111,13 @@ function Game({ deck, onClick, onClear, selected, gameMode, answer, lastSet }) {
     };
   }
 
+  const rotateAmount = isHorizontal ? "90deg" : "0deg";
+
   const springProps = useSprings(
     cardArray.length,
     cardArray.map((c) => ({
       to: {
-        transform: `translate(${cards[c].positionX}px, ${cards[c].positionY}px)`,
+        transform: `translate(${cards[c].positionX}px, ${cards[c].positionY}px) rotate(${rotateAmount})`,
         opacity: cards[c].opacity,
       },
       config: {
@@ -189,7 +201,6 @@ function Game({ deck, onClick, onClear, selected, gameMode, answer, lastSet }) {
           <ResponsiveSetCard
             value={card}
             width={cardWidth}
-            rotate={isHorizontal}
             background={cards[card].background}
             active={selected.includes(card)}
             onClick={cards[card].inplay ? () => onClick(card) : null}

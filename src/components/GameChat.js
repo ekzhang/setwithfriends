@@ -10,13 +10,13 @@ import SimpleInput from "./SimpleInput";
 import Subheading from "./Subheading";
 import Scrollbox from "./Scrollbox";
 import SetCard from "./SetCard";
+import UltraSetChatCards from "./UltraSetChatCards";
 import firebase from "../firebase";
 import autoscroll from "../utils/autoscroll";
 import useFirebaseQuery from "../hooks/useFirebaseQuery";
 import useStorage from "../hooks/useStorage";
 import { UserContext } from "../context";
-import { formatTime, filter } from "../util";
-import UltraSetChatCards from "./UltraSetChatCards";
+import { formatTime, filter, modes } from "../util";
 
 const useStyles = makeStyles((theme) => ({
   chatPanel: {
@@ -126,7 +126,7 @@ function GameChat({ gameId, history, startedAt, gameMode }) {
                       variant="subtitle2"
                       style={{ marginRight: "0.2em" }}
                     >
-                      Set found by
+                      {modes[gameMode].name} found by
                     </Typography>
                     <User
                       component={Typography}

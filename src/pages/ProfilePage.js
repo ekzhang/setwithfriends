@@ -17,7 +17,7 @@ import ProfileGamesTable from "../components/ProfileGamesTable";
 import Subheading from "../components/Subheading";
 import useFirebaseRef from "../hooks/useFirebaseRef";
 import useFirebaseRefs from "../hooks/useFirebaseRefs";
-import { computeState, hasHint } from "../util";
+import { computeState, hasHint, modes } from "../util";
 import LoadingPage from "./LoadingPage";
 
 const datasetVariants = {
@@ -32,21 +32,6 @@ const datasetVariants = {
   multiplayer: {
     label: "Multiplayer Games",
     filterFn: (gameData) => Object.keys(gameData.users).length > 1,
-  },
-};
-
-const modeVariants = {
-  normal: {
-    label: "Normal",
-    filterFn: (gameData) => gameData.mode === "normal" && !hasHint(gameData),
-  },
-  setchain: {
-    label: "Set-Chain",
-    filterFn: (gameData) => gameData.mode === "setchain",
-  },
-  ultraset: {
-    label: "UltraSet",
-    filterFn: (gameData) => gameData.mode === "ultraset",
   },
 };
 
@@ -118,7 +103,8 @@ function ProfilePage({ match }) {
         const gameData = mergeGameData(gameVals[i], gameDataVals[i]);
         if (
           datasetVariants[variant].filterFn(gameData) &&
-          modeVariants[modeVariant].filterFn(gameData)
+          (gameData.mode || "normal") === modeVariant &&
+          !hasHint(gameData)
         ) {
           gamesData[gameIds[i]] = gameData;
         }
@@ -154,9 +140,9 @@ function ProfilePage({ match }) {
                   style={{ marginRight: "1em" }}
                   color="secondary"
                 >
-                  {Object.entries(modeVariants).map(([key, { label }]) => (
+                  {Object.entries(modes).map(([key, { name }]) => (
                     <MenuItem key={key} value={key}>
-                      <Typography variant="body2">{label}</Typography>
+                      <Typography variant="body2">{name}</Typography>
                     </MenuItem>
                   ))}
                 </Select>
