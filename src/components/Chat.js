@@ -1,3 +1,4 @@
+/* eslint-disable eqeqeq */
 import { useEffect, useRef, useState, useMemo, useContext, memo } from "react";
 
 import Typography from "@material-ui/core/Typography";
