@@ -103,7 +103,7 @@ function ProfilePage({ match }) {
         const gameData = mergeGameData(gameVals[i], gameDataVals[i]);
         if (
           datasetVariants[variant].filterFn(gameData) &&
-          gameData.mode === modeVariant &&
+          (gameData.mode || "normal") === modeVariant &&
           !hasHint(gameData)
         ) {
           gamesData[gameIds[i]] = gameData;
