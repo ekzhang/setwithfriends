@@ -64,7 +64,9 @@ function Game({
       cardHeight = Math.round(cardWidth / 1.6);
       gameHeight = cardHeight * rows + 2 * gamePadding + lineSpacing;
     } else {
-      cardWidth = Math.floor((gameWidth - 2 * gamePadding - lineSpacing) / cols);
+      cardWidth = Math.floor(
+        (gameWidth - 2 * gamePadding - lineSpacing) / cols
+      );
       cardHeight = Math.round(cardWidth / 1.6);
       gameHeight = cardHeight * rows + 2 * gamePadding;
     }
@@ -74,7 +76,9 @@ function Game({
       cardWidth = Math.round(cardHeight * 1.6);
       gameHeight = cardWidth * rows + 2 * gamePadding + lineSpacing;
     } else {
-      cardHeight = Math.floor((gameWidth - 2 * gamePadding - lineSpacing) / cols);
+      cardHeight = Math.floor(
+        (gameWidth - 2 * gamePadding - lineSpacing) / cols
+      );
       cardWidth = Math.round(cardHeight * 1.6);
       gameHeight = cardWidth * rows + 2 * gamePadding;
     }
@@ -105,8 +109,7 @@ function Game({
       positionY = cardHeight * r + gamePadding;
     } else {
       const delta = (cardWidth - cardHeight) / 2; // accounting for rotation
-      positionX =
-        cardHeight * c + gamePadding - delta;
+      positionX = cardHeight * c + gamePadding - delta;
       positionY = cardWidth * r + gamePadding + delta;
     }
     if (!isLandscape) {
@@ -170,13 +173,25 @@ function Game({
       setCardOrientation(isHorizontal ? "vertical" : "horizontal");
     } else if (key.toLowerCase() === keyboardLayout.layoutChangeKey) {
       event.preventDefault();
-      setLayoutOrientation(isLandscape ? "portrait" : "landscape")
+      setLayoutOrientation(isLandscape ? "portrait" : "landscape");
     }
   });
 
   const lastSetLineStyle = isLandscape
-    ? { left: `${ (isHorizontal ? cardHeight : cardWidth) + gamePadding + lineSpacing / 2}px` }
-    : { top: `${ (isHorizontal ? cardWidth : cardHeight) + gamePadding + lineSpacing / 2}px` };
+    ? {
+        left: `${
+          (isHorizontal ? cardHeight : cardWidth) +
+          gamePadding +
+          lineSpacing / 2
+        }px`,
+      }
+    : {
+        top: `${
+          (isHorizontal ? cardWidth : cardHeight) +
+          gamePadding +
+          lineSpacing / 2
+        }px`,
+      };
 
   return (
     <Paper
