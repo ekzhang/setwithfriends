@@ -28,10 +28,15 @@ function Game({
 }) {
   const [layoutOrientation, setLayoutOrientation] = useStorage(
     "layout",
+    "portrait"
+  );
+  const [cardOrientation, setCardOrientation] = useStorage(
+    "orientation",
     "vertical"
   );
   const keyboardLayout = standardLayouts[useContext(KeyboardContext)[0]];
-  const isHorizontal = layoutOrientation === "horizontal";
+  const isHorizontal = cardOrientation === "horizontal";
+  const isLandscape = layoutOrientation === "landscape";
   const [gameDimensions, gameEl] = useDimensions();
 
   let board = deck.slice(0, boardSize);
@@ -49,18 +54,30 @@ function Game({
   const gameWidth = gameDimensions ? gameDimensions.width : 200;
   const numCards = board.length;
 
-  const rows = isHorizontal ? 3 : Math.max(Math.ceil(numCards / 3), 4);
-  const cols = isHorizontal ? Math.max(Math.ceil(numCards / 3), 4) : 3;
+  const rows = isLandscape ? 3 : Math.max(Math.ceil(numCards / 3), 4);
+  const cols = isLandscape ? Math.max(Math.ceil(numCards / 3), 4) : 3;
 
   let cardWidth, cardHeight, gameHeight;
   if (!isHorizontal) {
-    cardWidth = Math.floor((gameWidth - 2 * gamePadding) / cols);
-    cardHeight = Math.round(cardWidth / 1.6);
-    gameHeight = cardHeight * rows + 2 * gamePadding + lineSpacing;
+    if (!isLandscape) {
+      cardWidth = Math.floor((gameWidth - 2 * gamePadding) / cols);
+      cardHeight = Math.round(cardWidth / 1.6);
+      gameHeight = cardHeight * rows + 2 * gamePadding + lineSpacing;
+    } else {
+      cardWidth = Math.floor((gameWidth - 2 * gamePadding - lineSpacing) / cols);
+      cardHeight = Math.round(cardWidth / 1.6);
+      gameHeight = cardHeight * rows + 2 * gamePadding;
+    }
   } else {
-    cardHeight = Math.floor((gameWidth - 2 * gamePadding - lineSpacing) / cols);
-    cardWidth = Math.round(cardHeight * 1.6);
-    gameHeight = cardWidth * rows + 2 * gamePadding;
+    if (!isLandscape) {
+      cardHeight = Math.floor((gameWidth - 2 * gamePadding) / cols);
+      cardWidth = Math.round(cardHeight * 1.6);
+      gameHeight = cardWidth * rows + 2 * gamePadding + lineSpacing;
+    } else {
+      cardHeight = Math.floor((gameWidth - 2 * gamePadding - lineSpacing) / cols);
+      cardWidth = Math.round(cardHeight * 1.6);
+      gameHeight = cardWidth * rows + 2 * gamePadding;
+    }
   }
 
   // Compute coordinate positions of each card, in and out of play
@@ -77,16 +94,25 @@ function Game({
 
   for (let i = 0; i < board.length; i++) {
     let positionX, positionY;
-    if (!isHorizontal) {
-      const [r, c] = [Math.floor(i / 3), i % 3];
-      positionX = cardWidth * c + gamePadding;
-      positionY = cardHeight * r + gamePadding + (i >= 3 ? lineSpacing : 0);
+    let r, c;
+    if (!isLandscape) {
+      [r, c] = [Math.floor(i / 3), i % 3];
     } else {
-      const [r, c] = [i % 3, Math.floor(i / 3)];
+      [r, c] = [i % 3, Math.floor(i / 3)];
+    }
+    if (!isHorizontal) {
+      positionX = cardWidth * c + gamePadding;
+      positionY = cardHeight * r + gamePadding;
+    } else {
       const delta = (cardWidth - cardHeight) / 2; // accounting for rotation
       positionX =
-        cardHeight * c + gamePadding + (i >= 3 ? lineSpacing : 0) - delta;
+        cardHeight * c + gamePadding - delta;
       positionY = cardWidth * r + gamePadding + delta;
+    }
+    if (!isLandscape) {
+      positionY = positionY + (i >= 3 ? lineSpacing : 0);
+    } else {
+      positionX = positionX + (i >= 3 ? lineSpacing : 0);
     }
     cards[board[i]] = {
       positionX,
@@ -125,7 +151,7 @@ function Game({
   );
 
   // Keyboard shortcuts
-  const shortcuts = isHorizontal
+  const shortcuts = isLandscape
     ? keyboardLayout.horizontalLayout
     : keyboardLayout.verticalLayout;
   useKeydown((event) => {
@@ -141,13 +167,16 @@ function Game({
       }
     } else if (key.toLowerCase() === keyboardLayout.orientationChangeKey) {
       event.preventDefault();
-      setLayoutOrientation(isHorizontal ? "vertical" : "horizontal");
+      setCardOrientation(isHorizontal ? "vertical" : "horizontal");
+    } else if (key.toLowerCase() === keyboardLayout.layoutChangeKey) {
+      event.preventDefault();
+      setLayoutOrientation(isLandscape ? "portrait" : "landscape")
     }
   });
 
-  const lastSetLineStyle = isHorizontal
-    ? { left: `${cardHeight + gamePadding + lineSpacing / 2}px` }
-    : { top: `${cardHeight + gamePadding + lineSpacing / 2}px` };
+  const lastSetLineStyle = isLandscape
+    ? { left: `${ (isHorizontal ? cardHeight : cardWidth) + gamePadding + lineSpacing / 2}px` }
+    : { top: `${ (isHorizontal ? cardWidth : cardHeight) + gamePadding + lineSpacing / 2}px` };
 
   return (
     <Paper
@@ -166,8 +195,8 @@ function Game({
         style={{
           position: "absolute",
           left:
-            isHorizontal && lastSet.length
-              ? `${gamePadding + cardHeight / 2}px`
+            isLandscape && lastSet.length
+              ? `${gamePadding + (isHorizontal ? cardHeight : cardWidth) / 2}px`
               : 0,
           bottom: gamePadding,
           width: "100%",
@@ -177,7 +206,7 @@ function Game({
       </Typography>
       {gameMode === "setchain" && lastSet.length ? (
         <Divider
-          orientation={isHorizontal ? "vertical" : "horizontal"}
+          orientation={isLandscape ? "vertical" : "horizontal"}
           variant="fullWidth"
           absolute={true}
           style={lastSetLineStyle}
