@@ -52,12 +52,12 @@ function AboutPage() {
         </Typography>
       </Paper>
       <Paper style={{ padding: "1rem", maxWidth: 720, margin: "12px auto" }}>
-        <Typography variant="body2" gutterBottom>
+        <Typography variant="body2">
           Sounds used from{" "}
           <Link href="https://notificationsounds.com/terms-of-use">
             notificationsounds.com
           </Link>
-          &nbsp;were provided under a{" "}
+          &nbsp;are provided under a{" "}
           <Link href="https://creativecommons.org/licenses/by/4.0/legalcode">
             Creative Commons Attribution license
           </Link>
