@@ -48,17 +48,20 @@ export const modes = {
     name: "Normal",
     color: "purple",
     description: "Find 3 cards that form a Set.",
+    setType: "Set",
   },
   setchain: {
     name: "Set-Chain",
     color: "teal",
     description: "In every Set, you have to use 1 card from the previous Set.",
+    setType: "Set",
   },
   ultraset: {
     name: "UltraSet",
     color: "pink",
     description:
       "Find 4 cards such that the first pair and the second pair form a Set with the same additional card.",
+    setType: "UltraSet",
   },
 };
 
@@ -67,31 +70,37 @@ export const standardLayouts = {
     verticalLayout: "123qweasdzxcrtyfghvbnuiojkl",
     horizontalLayout: "qazwsxedcrfvtgbyhnujmik,ol.",
     orientationChangeKey: ";",
+    layoutChangeKey: "'",
   },
   AZERTY: {
     verticalLayout: '&é"azeqsdwxcrtyfghvbnuiojkl',
     horizontalLayout: "aqwzsxedcrfvtgbyhnuj,ik;ol:",
     orientationChangeKey: "m",
+    layoutChangeKey: "ù",
   },
   QWERTZ: {
     verticalLayout: "123qweasdyxcrtzfghvbnuiojkl",
     horizontalLayout: "qaywsxedcrfvtgbzhnujmik,ol.",
     orientationChangeKey: "p",
+    layoutChangeKey: "-",
   },
   Dvorak: {
     verticalLayout: "123',.aoe;qjpyfuidkxbgcrhtn",
     horizontalLayout: "'a;,oq.ejpukyixfdbghmctwrnv",
     orientationChangeKey: "s",
+    layoutChangeKey: "-",
   },
   Colemak: {
     verticalLayout: "123qwfarszxcpgjtdhvbkluynei",
     horizontalLayout: "qazwrxfscptvgdbjhklnmue,yi.",
     orientationChangeKey: "o",
+    layoutChangeKey: "'",
   },
   Workman: {
     verticalLayout: "123qdrashzxmwbjtgycvkfupneo",
     horizontalLayout: "qazdsxrhmwtcbgvjykfnlue,po.",
     orientationChangeKey: "i",
+    layoutChangeKey: "'",
   },
 };
 
