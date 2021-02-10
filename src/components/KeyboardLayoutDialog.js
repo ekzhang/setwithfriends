@@ -13,7 +13,7 @@ import DialogContentText from "@material-ui/core/DialogContentText";
 import { makeStyles } from "@material-ui/core/styles";
 
 import { standardLayouts } from "../util";
-import { KeyboardContext } from "../context";
+import { SettingsContext } from "../context";
 
 const useStyles = makeStyles({
   formControl: {
@@ -25,7 +25,7 @@ function KeyboardLayoutDialog(props) {
   const { open, onClose, title } = props;
   const classes = useStyles();
 
-  const [keyboardLayout, setKeyboardLayout] = useContext(KeyboardContext);
+  const { keyboardLayout, setKeyboardLayout } = useContext(SettingsContext);
 
   const handleChange = (event) => {
     setKeyboardLayout(event.target.value);
