@@ -7,11 +7,11 @@ import Paper from "@material-ui/core/Paper";
 
 import InternalLink from "../components/InternalLink";
 import SetCard from "../components/SetCard";
-import { KeyboardContext } from "../context";
+import { SettingsContext } from "../context";
 import { standardLayouts } from "../util";
 
 function HelpPage() {
-  const [keyboardLayout] = useContext(KeyboardContext);
+  const { keyboardLayout } = useContext(SettingsContext);
 
   return (
     <Container>

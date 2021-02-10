@@ -22,7 +22,7 @@ import LoadingPage from "./LoadingPage";
 import GameSidebar from "../components/GameSidebar";
 import GameChat from "../components/GameChat";
 import DonateDialog from "../components/DonateDialog";
-import { UserContext } from "../context";
+import { SettingsContext, UserContext } from "../context";
 import {
   removeCard,
   checkSet,
@@ -73,6 +73,7 @@ const useStyles = makeStyles((theme) => ({
 
 function GamePage({ match }) {
   const user = useContext(UserContext);
+  const { volume } = useContext(SettingsContext);
   const gameId = match.params.id;
   const classes = useStyles();
 
@@ -219,14 +220,14 @@ function GamePage({ match }) {
           if (vals.length === 3) {
             if (checkSet(...vals)) {
               handleSet(vals);
-              playSuccess();
+              if (volume === "on") playSuccess();
               setSnack({
                 open: true,
                 variant: "success",
                 message: "Found a set!",
               });
             } else {
-              playFail();
+              if (volume === "on") playFail();
               setSnack({
                 open: true,
                 variant: "error",

@@ -12,7 +12,7 @@ import ResponsiveSetCard from "../components/ResponsiveSetCard";
 import useDimensions from "../hooks/useDimensions";
 import useKeydown from "../hooks/useKeydown";
 import useStorage from "../hooks/useStorage";
-import { KeyboardContext } from "../context";
+import { SettingsContext } from "../context";
 import layoutSfx from "../assets/layoutChangeSound.mp3";
 
 const gamePadding = 8;
@@ -36,7 +36,8 @@ function Game({
     "orientation",
     "vertical"
   );
-  const keyboardLayout = standardLayouts[useContext(KeyboardContext)[0]];
+  const { keyboardLayout, volume } = useContext(SettingsContext);
+  const keyboardLayoutDesc = standardLayouts[keyboardLayout];
   const isHorizontal = cardOrientation === "horizontal";
   const isLandscape = layoutOrientation === "landscape";
   const [gameDimensions, gameEl] = useDimensions();
@@ -158,8 +159,8 @@ function Game({
 
   // Keyboard shortcuts
   const shortcuts = isLandscape
-    ? keyboardLayout.horizontalLayout
-    : keyboardLayout.verticalLayout;
+    ? keyboardLayoutDesc.horizontalLayout
+    : keyboardLayoutDesc.verticalLayout;
   useKeydown((event) => {
     const { key } = event;
     if (key === "Escape") {
@@ -171,13 +172,13 @@ function Game({
       if (index < board.length) {
         onClick(board[index]);
       }
-    } else if (key.toLowerCase() === keyboardLayout.orientationChangeKey) {
+    } else if (key.toLowerCase() === keyboardLayoutDesc.orientationChangeKey) {
       event.preventDefault();
-      playLayout();
+      if (volume === "on") playLayout();
       setCardOrientation(isHorizontal ? "vertical" : "horizontal");
-    } else if (key.toLowerCase() === keyboardLayout.layoutChangeKey) {
+    } else if (key.toLowerCase() === keyboardLayoutDesc.layoutChangeKey) {
       event.preventDefault();
-      playLayout();
+      if (volume === "on") playLayout();
       setLayoutOrientation(isLandscape ? "portrait" : "landscape");
     }
   });
