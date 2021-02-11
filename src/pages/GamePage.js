@@ -9,6 +9,7 @@ import Button from "@material-ui/core/Button";
 import Box from "@material-ui/core/Box";
 import Snackbar from "@material-ui/core/Snackbar";
 import { Redirect } from "react-router-dom";
+import useSound from "use-sound";
 
 import SnackContent from "../components/SnackContent";
 import firebase, { createGame, finishGame } from "../firebase";
@@ -21,7 +22,7 @@ import LoadingPage from "./LoadingPage";
 import GameSidebar from "../components/GameSidebar";
 import GameChat from "../components/GameChat";
 import DonateDialog from "../components/DonateDialog";
-import { UserContext } from "../context";
+import { SettingsContext, UserContext } from "../context";
 import {
   removeCard,
   checkSet,
@@ -30,6 +31,8 @@ import {
   computeState,
   hasHint,
 } from "../util";
+import foundSfx from "../assets/successfulSetSound.mp3";
+import failSfx from "../assets/failedSetSound.mp3";
 
 const useStyles = makeStyles((theme) => ({
   sideColumn: {
@@ -70,6 +73,7 @@ const useStyles = makeStyles((theme) => ({
 
 function GamePage({ match }) {
   const user = useContext(UserContext);
+  const { volume } = useContext(SettingsContext);
   const gameId = match.params.id;
   const classes = useStyles();
 
@@ -81,6 +85,8 @@ function GamePage({ match }) {
 
   const [game, loadingGame] = useFirebaseRef(`games/${gameId}`);
   const [gameData, loadingGameData] = useFirebaseRef(`gameData/${gameId}`);
+  const [playSuccess] = useSound(foundSfx);
+  const [playFail] = useSound(failSfx);
 
   // Reset card selection and number of hints on update to game data
   useEffect(() => {
@@ -214,12 +220,14 @@ function GamePage({ match }) {
           if (vals.length === 3) {
             if (checkSet(...vals)) {
               handleSet(vals);
+              if (volume === "on") playSuccess();
               setSnack({
                 open: true,
                 variant: "success",
                 message: "Found a set!",
               });
             } else {
+              if (volume === "on") playFail();
               setSnack({
                 open: true,
                 variant: "error",
@@ -236,12 +244,14 @@ function GamePage({ match }) {
             let res = checkSetUltra(...vals);
             if (res) {
               handleSet(res);
+              if (volume === "on") playSuccess();
               setSnack({
                 open: true,
                 variant: "success",
                 message: "Found an UltraSet!",
               });
             } else {
+              if (volume === "on") playFail();
               setSnack({
                 open: true,
                 variant: "error",
@@ -265,6 +275,7 @@ function GamePage({ match }) {
           }
           if (vals.length === 3) {
             if (lastSet.length > 0 && !lastSet.includes(vals[0])) {
+              if (volume === "on") playFail();
               setSnack({
                 open: true,
                 variant: "error",
@@ -272,12 +283,14 @@ function GamePage({ match }) {
               });
             } else if (checkSet(...vals)) {
               handleSet(vals);
+              if (volume === "on") playSuccess();
               setSnack({
                 open: true,
                 variant: "success",
                 message: "Found a set chain!",
               });
             } else {
+              if (volume === "on") playFail();
               setSnack({
                 open: true,
                 variant: "error",

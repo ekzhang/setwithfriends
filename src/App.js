@@ -7,7 +7,7 @@ import CssBaseline from "@material-ui/core/CssBaseline";
 import { ThemeProvider } from "@material-ui/core/styles";
 
 import { generateColor, generateName } from "./util";
-import { UserContext, KeyboardContext } from "./context";
+import { UserContext, SettingsContext } from "./context";
 import useStorage from "./hooks/useStorage";
 import ConnectionsTracker from "./components/ConnectionsTracker";
 import WelcomeDialog from "./components/WelcomeDialog";
@@ -37,6 +37,7 @@ function App() {
     "keyboardLayout",
     "QWERTY"
   );
+  const [volume, setVolume] = useStorage("volume", "on");
 
   useEffect(() => {
     return firebase.auth().onAuthStateChanged((user) => {
@@ -120,8 +121,8 @@ function App() {
           <BannedPage time={user.banned} />
         ) : (
           <UserContext.Provider value={user}>
-            <KeyboardContext.Provider
-              value={[keyboardLayout, setKeyboardLayout]}
+            <SettingsContext.Provider
+              value={{ keyboardLayout, setKeyboardLayout, volume, setVolume }}
             >
               <ConnectionsTracker />
               <WelcomeDialog />
@@ -143,7 +144,7 @@ function App() {
                 <Route exact path="/profile/:id" component={ProfilePage} />
                 <Route component={NotFoundPage} />
               </Switch>
-            </KeyboardContext.Provider>
+            </SettingsContext.Provider>
           </UserContext.Provider>
         )}
       </BrowserRouter>

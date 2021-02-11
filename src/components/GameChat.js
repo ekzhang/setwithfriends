@@ -126,7 +126,7 @@ function GameChat({ gameId, history, startedAt, gameMode }) {
                       variant="subtitle2"
                       style={{ marginRight: "0.2em" }}
                     >
-                      {modes[gameMode].selectionType} found by
+                      {modes[gameMode].setType} found by
                     </Typography>
                     <User
                       component={Typography}

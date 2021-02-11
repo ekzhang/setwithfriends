@@ -7,11 +7,11 @@ import Paper from "@material-ui/core/Paper";
 
 import InternalLink from "../components/InternalLink";
 import SetCard from "../components/SetCard";
-import { KeyboardContext } from "../context";
+import { SettingsContext } from "../context";
 import { standardLayouts } from "../util";
 
 function HelpPage() {
-  const [keyboardLayout] = useContext(KeyboardContext);
+  const { keyboardLayout } = useContext(SettingsContext);
 
   return (
     <Container>
@@ -140,10 +140,13 @@ function HelpPage() {
           </ul>
         </Typography>
         <Typography variant="body1" gutterBottom>
-          On devices with a keyboard, you can also rotate the layout of cards by
-          pressing the{" "}
+          On devices with a keyboard, you can also rotate the cards by pressing
+          the{" "}
           <code>{standardLayouts[keyboardLayout].orientationChangeKey}</code>{" "}
-          key. This also changes the keyboard shortcuts, which may be more
+          key and change the card layout (between portrait and landscape) by
+          pressing the{" "}
+          <code>{standardLayouts[keyboardLayout].layoutChangeKey}</code> key.
+          The latter also changes the keyboard shortcuts, which may be more
           convenient to use.
         </Typography>
         <Typography variant="body1" gutterBottom>

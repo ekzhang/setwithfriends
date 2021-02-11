@@ -8,11 +8,13 @@ import Tooltip from "@material-ui/core/Tooltip";
 import Typography from "@material-ui/core/Typography";
 import IconButton from "@material-ui/core/IconButton";
 import SettingsIcon from "@material-ui/icons/Settings";
-import Brightness3Icon from "@material-ui/icons/Brightness3";
-import WbSunnyIcon from "@material-ui/icons/WbSunny";
+import Brightness4Icon from "@material-ui/icons/Brightness4";
+import Brightness7Icon from "@material-ui/icons/Brightness7";
+import VolumeOffIcon from "@material-ui/icons/VolumeOff";
+import VolumeUpIcon from "@material-ui/icons/VolumeUp";
 
 import firebase from "../firebase";
-import { UserContext } from "../context";
+import { UserContext, SettingsContext } from "../context";
 import User from "./User";
 import InternalLink from "./InternalLink";
 import PromptDialog from "./PromptDialog";
@@ -27,6 +29,7 @@ function Navbar({
   handleCustomColors,
 }) {
   const user = useContext(UserContext);
+  const settings = useContext(SettingsContext);
   const [anchorEl, setAnchorEl] = useState(null);
   const [changeName, setChangeName] = useState(false);
   const [changeColors, setChangeColors] = useState(false);
@@ -56,6 +59,10 @@ function Navbar({
     }
   }
 
+  function handleChangeVolume() {
+    settings.setVolume((volume) => (volume === "on" ? "off" : "on"));
+  }
+
   return (
     <AppBar position="relative" color="transparent" elevation={0}>
       <Toolbar variant="dense">
@@ -80,14 +87,25 @@ function Navbar({
             />
           </InternalLink>
         </Typography>
+        <IconButton color="inherit" onClick={handleChangeVolume}>
+          {settings.volume === "on" ? (
+            <Tooltip title="Mute">
+              <VolumeUpIcon />
+            </Tooltip>
+          ) : (
+            <Tooltip title="Unmute">
+              <VolumeOffIcon />
+            </Tooltip>
+          )}
+        </IconButton>
         <IconButton color="inherit" onClick={handleChangeTheme}>
           {themeType === "light" ? (
             <Tooltip title="Dark theme">
-              <Brightness3Icon />
+              <Brightness4Icon />
             </Tooltip>
           ) : (
             <Tooltip title="Light theme">
-              <WbSunnyIcon />
+              <Brightness7Icon />
             </Tooltip>
           )}
         </IconButton>
