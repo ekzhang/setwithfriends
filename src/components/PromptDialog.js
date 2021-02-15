@@ -24,7 +24,7 @@ function PromptDialog(props) {
       alert(
         "We detected that your input contains profane language. If you think this was a mistake, please let us know!"
       );
-    } else if (!value.match(/^[\p{L}\p{M}\p{N}\p{P}\p{Zs}]*$/u)) {
+    } else if (!value.match(/^(\p{L}|\p{M}|\p{N}|\p{P}|\p{Zs})*$/u)) {
       alert("Please use only letters, numbers, and punctuation.");
     } else {
       onClose(value);
