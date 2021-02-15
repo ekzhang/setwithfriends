@@ -244,12 +244,14 @@ function GamePage({ match }) {
             let res = checkSetUltra(...vals);
             if (res) {
               handleSet(res);
+              if (volume === "on") playSuccess();
               setSnack({
                 open: true,
                 variant: "success",
                 message: "Found an UltraSet!",
               });
             } else {
+              if (volume === "on") playFail();
               setSnack({
                 open: true,
                 variant: "error",
@@ -273,6 +275,7 @@ function GamePage({ match }) {
           }
           if (vals.length === 3) {
             if (lastSet.length > 0 && !lastSet.includes(vals[0])) {
+              if (volume === "on") playFail();
               setSnack({
                 open: true,
                 variant: "error",
@@ -280,12 +283,14 @@ function GamePage({ match }) {
               });
             } else if (checkSet(...vals)) {
               handleSet(vals);
+              if (volume === "on") playSuccess();
               setSnack({
                 open: true,
                 variant: "success",
                 message: "Found a set chain!",
               });
             } else {
+              if (volume === "on") playFail();
               setSnack({
                 open: true,
                 variant: "error",
