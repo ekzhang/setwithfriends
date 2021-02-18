@@ -76,6 +76,9 @@ function App() {
           games: {},
           color: generateColor(),
           name: generateName(),
+          "ratings/normal": 1200,
+          "ratings/setchain": 1200,
+          "ratings/ultraset": 1200,
         });
       }
     }
