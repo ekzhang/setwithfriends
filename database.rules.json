@@ -73,6 +73,20 @@
             ".validate": "newData.isString() || !newData.exists()"
           }
         },
+        "ratings": {
+          "normal": {
+            ".write": "!data.exists() && newData.exists() && auth != null",
+            ".validate": "newData.isNumber()"
+          },
+          "setchain": {
+            ".write": "!data.exists() && newData.exists() && auth != null",
+            ".validate": "newData.isNumber()"
+          },
+          "ultraset": {
+            ".write": "!data.exists() && newData.exists() && auth != null",
+            ".validate": "newData.isNumber()"
+          }
+        },
         "banned": {
           ".validate": "newData.isNumber()"
         },
