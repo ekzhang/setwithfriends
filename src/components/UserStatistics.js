@@ -21,11 +21,11 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-function UserStatistics({ gamesData, userId }) {
+function UserStatistics({ gamesData, rating, userId }) {
   const classes = useStyles();
   const theme = useTheme();
 
-  if (!gamesData) {
+  if (!gamesData || !rating) {
     return <Loading />;
   }
 
@@ -104,6 +104,12 @@ function UserStatistics({ gamesData, userId }) {
         <Typography variant="body2" className={classes.statsItem}>
           Average game length:{" "}
           <strong>{stats[0] ? formatTime(stats[4] / stats[0]) : "N/A"}</strong>
+        </Typography>
+        <Typography varient="body2" className={classes.statsItem}>
+          Rating:{" "}
+          <strong>
+            {rating.toFixed(2)}
+          </strong>
         </Typography>
       </Grid>
     </Grid>

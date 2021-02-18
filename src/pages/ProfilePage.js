@@ -69,6 +69,7 @@ function ProfilePage({ match }) {
   const classes = useStyles();
 
   const [games, loadingGames] = useFirebaseRef(`/userGames/${userId}`, true);
+  const [ratings, loadingRatings] = useFirebaseRef(`/users/${userId}/ratings`, true);
   const [redirect, setRedirect] = useState(null);
   const [variant, setVariant] = useState("all");
   const [modeVariant, setModeVariant] = useState("normal");
@@ -110,6 +111,11 @@ function ProfilePage({ match }) {
         }
       }
     }
+  }
+
+  let rating = null;
+  if (!loadingRatings) {
+    rating = ratings[modeVariant];
   }
 
   return (
@@ -159,7 +165,7 @@ function ProfilePage({ match }) {
                 </Select>
               </div>
             </div>
-            <UserStatistics userId={userId} gamesData={gamesData} />
+            <UserStatistics userId={userId} gamesData={gamesData} rating={rating} />
           </Grid>
         </Grid>
         <Subheading style={{ textAlign: "left" }}>Finished Games</Subheading>
