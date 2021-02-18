@@ -7,6 +7,8 @@ const stripe = new Stripe(functions.config().stripe.secret, {
   apiVersion: "2020-08-27",
 });
 
+// import { Rating, rate } from "ts-trueskill";
+
 import { generateDeck, replayEvents, findSet } from "./game";
 
 const MAX_GAME_ID_LENGTH = 64;
@@ -43,7 +45,7 @@ export const finishGame = functions.https.onCall(async (data, context) => {
     .once("value");
   const gameMode = gameModeRef.val() || "normal";
 
-  const { lastSet, deck, finalTime } = replayEvents(gameData, gameMode);
+  const { lastSet, deck, finalTime, scores } = replayEvents(gameData, gameMode);
 
   if (findSet(Array.from(deck), gameMode, lastSet)) {
     throw new functions.https.HttpsError(
@@ -57,6 +59,96 @@ export const finishGame = functions.https.onCall(async (data, context) => {
     status: "done",
     endedAt: finalTime,
   });
+
+  // Update ratings of players involved based on an extension of the Elo system.
+  // System parameters.
+  const scalingFactor = 400;
+  const learningRate = 16;
+
+  // Retrieve userIds of players in the game.
+  const playersSnap = await admin
+    .database()
+    .ref(`games/${gameId}/users`)
+    .once("value");
+  const players: string[] = [];
+  playersSnap.forEach(function (childSnap) {
+    if (childSnap.key !== null) {
+      players.push(childSnap.key);
+    }
+  });
+
+  // Count total number of sets in the game.
+  let setCount = 0;
+  for (const score of scores.values()) {
+    setCount += score;
+  }
+
+  // Add scores for players without a single set.
+  for (const player in players) {
+    if (!scores.has(player)) {
+      scores.set(player, 0);
+    }
+  }
+
+  // Retrieve old ratings from the database.
+  const ratings = new Map<string, number>();
+  for (const player in players) {
+    const ratingSnap = await admin
+      .database()
+      .ref(`users/${player}/rating`)
+      .once("value");
+    const rating = ratingSnap.val();
+    ratings.set(player, rating);
+  }
+
+  // Translate ratings to exponential format.
+  for (const player in players) {
+    ratings.set(
+      player,
+      Math.pow(10, <number>ratings.get(player) / scalingFactor)
+    );
+  }
+
+  // Compute expected ratio for each player.
+  const expectedRatio = new Map<string, number>();
+  let ratingSum = 0;
+  for (const player in players) {
+    ratingSum += <number>ratings.get(player);
+  }
+  for (const player in players) {
+    expectedRatio.set(player, <number>ratings.get(player) / ratingSum);
+  }
+
+  // Compute achieved ratio for each player.
+  const achievedRatio = new Map<string, number>();
+  for (const player in players) {
+    achievedRatio.set(player, <number>scores.get(player) / setCount);
+  }
+
+  // Compute new rating for each player.
+  for (const player in players) {
+    // TODO make learningRate dynamic.
+    const newRating =
+      <number>ratings.get(player) +
+      learningRate *
+        (<number>achievedRatio.get(player) - <number>expectedRatio.get(player));
+    ratings.set(player, newRating);
+  }
+
+  // Push new ratings to the database.
+  const updates: Array<Promise<any>> = [];
+  for (const player in players) {
+    updates.push(
+      admin
+        .database()
+        .ref(`users/${player}`)
+        .set({
+          rating: <number>ratings.get(player),
+        })
+    );
+  }
+
+  await Promise.all(updates);
 });
 
 /** Create a new game in the database */
