@@ -178,7 +178,7 @@ export function replayEvents(
       history.push(event);
       scores.set(
         event.user,
-        scores.has(event.user) ? scores.get(event.user) + 1 : 1
+        scores.has(event.user) ? <number>scores.get(event.user) + 1 : 1
       );
       finalTime = event.time;
     }

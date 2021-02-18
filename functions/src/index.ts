@@ -7,8 +7,6 @@ const stripe = new Stripe(functions.config().stripe.secret, {
   apiVersion: "2020-08-27",
 });
 
-// import { Rating, rate } from "ts-trueskill";
-
 import { generateDeck, replayEvents, findSet } from "./game";
 
 const MAX_GAME_ID_LENGTH = 64;
@@ -95,7 +93,7 @@ export const finishGame = functions.https.onCall(async (data, context) => {
   for (const player in players) {
     const ratingSnap = await admin
       .database()
-      .ref(`users/${player}/rating`)
+      .ref(`users/${player}/ratings/${gameMode}`)
       .once("value");
     const rating = ratingSnap.val();
     ratings.set(player, rating);
@@ -141,9 +139,9 @@ export const finishGame = functions.https.onCall(async (data, context) => {
     updates.push(
       admin
         .database()
-        .ref(`users/${player}`)
+        .ref(`users/${player}/ratings`)
         .set({
-          rating: <number>ratings.get(player),
+          [gameMode]: <number>ratings.get(player),
         })
     );
   }
