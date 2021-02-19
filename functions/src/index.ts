@@ -12,6 +12,10 @@ import { generateDeck, replayEvents, findSet } from "./game";
 const MAX_GAME_ID_LENGTH = 64;
 const MAX_UNFINISHED_GAMES_PER_HOUR = 4;
 
+// Parameters rating system.
+const SCALING_FACTOR = 400;
+const LEARNING_RATE = 16;
+
 /** Ends the game with the correct time */
 export const finishGame = functions.https.onCall(async (data, context) => {
   const gameId = data.gameId;
@@ -59,9 +63,6 @@ export const finishGame = functions.https.onCall(async (data, context) => {
   });
 
   // Update ratings of players involved based on an extension of the Elo system.
-  // System parameters.
-  const scalingFactor = 400;
-  const learningRate = 16;
 
   // Retrieve userIds of players in the game.
   const playersSnap = await admin
@@ -104,7 +105,7 @@ export const finishGame = functions.https.onCall(async (data, context) => {
   for (const player in players) {
     expRatings.set(
       player,
-      Math.pow(10, <number>ratings.get(player) / scalingFactor)
+      Math.pow(10, <number>ratings.get(player) / SCALING_FACTOR)
     );
   }
 
@@ -126,10 +127,10 @@ export const finishGame = functions.https.onCall(async (data, context) => {
 
   // Compute new rating for each player.
   for (const player in players) {
-    // TODO make learningRate dynamic.
+    // TODO make LEARNING_RATE dynamic.
     const newRating =
       <number>ratings.get(player) +
-      learningRate *
+      LEARNING_RATE *
         (<number>achievedRatio.get(player) - <number>expectedRatio.get(player));
     ratings.set(player, newRating);
   }
