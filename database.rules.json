@@ -75,15 +75,15 @@
         },
         "ratings": {
           "normal": {
-            ".write": "!data.exists() && newData.exists() && auth != null",
+            ".write": "!data.exists() && newData.exists() && auth != null && newData.val() == 1200",
             ".validate": "newData.isNumber()"
           },
           "setchain": {
-            ".write": "!data.exists() && newData.exists() && auth != null",
+            ".write": "!data.exists() && newData.exists() && auth != null && newData.val() == 1200",
             ".validate": "newData.isNumber()"
           },
           "ultraset": {
-            ".write": "!data.exists() && newData.exists() && auth != null",
+            ".write": "!data.exists() && newData.exists() && auth != null && newData.val() == 1200",
             ".validate": "newData.isNumber()"
           }
         },
