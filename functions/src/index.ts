@@ -100,8 +100,9 @@ export const finishGame = functions.https.onCall(async (data, context) => {
   }
 
   // Translate ratings to exponential format.
+  const expRatings = new Map<string, number>();
   for (const player in players) {
-    ratings.set(
+    expRatings.set(
       player,
       Math.pow(10, <number>ratings.get(player) / scalingFactor)
     );
@@ -111,10 +112,10 @@ export const finishGame = functions.https.onCall(async (data, context) => {
   const expectedRatio = new Map<string, number>();
   let ratingSum = 0;
   for (const player in players) {
-    ratingSum += <number>ratings.get(player);
+    ratingSum += <number>expRatings.get(player);
   }
   for (const player in players) {
-    expectedRatio.set(player, <number>ratings.get(player) / ratingSum);
+    expectedRatio.set(player, <number>expRatings.get(player) / ratingSum);
   }
 
   // Compute achieved ratio for each player.
