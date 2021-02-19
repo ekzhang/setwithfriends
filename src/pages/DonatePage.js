@@ -80,6 +80,10 @@ function DonatePage() {
               <User id={user.id} forcePatron />
               ).
             </li>
+            <li>
+              Freedom to create a name without limiting to just letters,
+              numbers, and punctuation.
+            </li>
             <li>More to come soon!</li>
           </ul>
         </Typography>
