@@ -115,7 +115,11 @@ function ProfilePage({ match }) {
 
   let rating = null;
   if (!loadingRatings) {
-    rating = ratings[modeVariant];
+    if (ratings == null) {
+      rating = 1200;
+    } else {
+      rating = ratings[modeVariant] || 1200;
+    }
   }
 
   return (

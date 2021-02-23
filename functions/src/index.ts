@@ -15,6 +15,7 @@ const MAX_UNFINISHED_GAMES_PER_HOUR = 4;
 // Parameters rating system.
 const SCALING_FACTOR = 400;
 const LEARNING_RATE = 16;
+const BASE_RATING = 1200;
 
 /** Ends the game with the correct time */
 export const finishGame = functions.https.onCall(async (data, context) => {
@@ -101,7 +102,7 @@ export const finishGame = functions.https.onCall(async (data, context) => {
       .database()
       .ref(`users/${player}/ratings/${gameMode}`)
       .once("value");
-    const rating = ratingSnap.val();
+    const rating = ratingSnap.exists() ? ratingSnap.val() : BASE_RATING;
     ratings.set(player, rating);
   }
 
