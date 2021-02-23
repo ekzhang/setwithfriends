@@ -69,7 +69,10 @@ function ProfilePage({ match }) {
   const classes = useStyles();
 
   const [games, loadingGames] = useFirebaseRef(`/userGames/${userId}`, true);
-  const [ratings, loadingRatings] = useFirebaseRef(`/users/${userId}/ratings`, true);
+  const [ratings, loadingRatings] = useFirebaseRef(
+    `/users/${userId}/ratings`,
+    true
+  );
   const [redirect, setRedirect] = useState(null);
   const [variant, setVariant] = useState("all");
   const [modeVariant, setModeVariant] = useState("normal");
@@ -169,7 +172,11 @@ function ProfilePage({ match }) {
                 </Select>
               </div>
             </div>
-            <UserStatistics userId={userId} gamesData={gamesData} rating={rating} />
+            <UserStatistics
+              userId={userId}
+              gamesData={gamesData}
+              rating={rating}
+            />
           </Grid>
         </Grid>
         <Subheading style={{ textAlign: "left" }}>Finished Games</Subheading>

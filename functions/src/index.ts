@@ -38,7 +38,10 @@ export const finishGame = functions.https.onCall(async (data, context) => {
     );
   }
 
-  const statusRef = await admin.database().ref(`games/${gameId}/status`).once("value");
+  const statusRef = await admin
+    .database()
+    .ref(`games/${gameId}/status`)
+    .once("value");
   if (statusRef.val() === "done") {
     return;
   }

@@ -106,10 +106,7 @@ function UserStatistics({ gamesData, rating, userId }) {
           <strong>{stats[0] ? formatTime(stats[4] / stats[0]) : "N/A"}</strong>
         </Typography>
         <Typography varient="body2" className={classes.statsItem}>
-          Rating:{" "}
-          <strong>
-            {rating.toFixed(2)}
-          </strong>
+          Rating: <strong>{rating.toFixed(2)}</strong>
         </Typography>
       </Grid>
     </Grid>
