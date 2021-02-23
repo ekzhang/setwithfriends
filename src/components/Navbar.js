@@ -18,6 +18,7 @@ import { UserContext, SettingsContext } from "../context";
 import User from "./User";
 import InternalLink from "./InternalLink";
 import PromptDialog from "./PromptDialog";
+import UserColorDialog from "./UserColorDialog";
 import ColorChoiceDialog from "./ColorChoiceDialog";
 import KeyboardLayoutDialog from "./KeyboardLayoutDialog";
 import AccountOptionsDialog from "./AccountOptionsDialog";
@@ -32,7 +33,8 @@ function Navbar({
   const settings = useContext(SettingsContext);
   const [anchorEl, setAnchorEl] = useState(null);
   const [changeName, setChangeName] = useState(false);
-  const [changeColors, setChangeColors] = useState(false);
+  const [changeUserColor, setChangeUserColor] = useState(false);
+  const [changeCardColors, setChangeCardColors] = useState(false);
   const [changeKeyboardLayout, setChangeKeyboardLayout] = useState(false);
   const [showOptions, setShowOptions] = useState(false);
 
@@ -51,8 +53,8 @@ function Navbar({
     }
   }
 
-  function handleChangeColors(colorMap) {
-    setChangeColors(false);
+  function handleChangeCardColors(colorMap) {
+    setChangeCardColors(false);
     if (colorMap) {
       customColors[themeType] = colorMap;
       handleCustomColors(customColors);
@@ -139,11 +141,19 @@ function Navbar({
           </MenuItem>
           <MenuItem
             onClick={() => {
-              setChangeColors(true);
+              setChangeUserColor(true);
               handleCloseMenu();
             }}
           >
-            Change colors
+            Change user color
+          </MenuItem>
+          <MenuItem
+            onClick={() => {
+              setChangeCardColors(true);
+              handleCloseMenu();
+            }}
+          >
+            Change card colors
           </MenuItem>
           <MenuItem
             onClick={() => {
@@ -170,11 +180,15 @@ function Navbar({
           label="Name"
           maxLength={25}
         />
+        <UserColorDialog
+          open={changeUserColor}
+          onClose={() => setChangeUserColor(false)}
+          title="Change User Color"
+        />
         <ColorChoiceDialog
-          open={changeColors}
-          onClose={handleChangeColors}
-          title="Change Colors"
-          key={themeType}
+          open={changeCardColors}
+          onClose={handleChangeCardColors}
+          title="Change Card Colors"
         />
         <KeyboardLayoutDialog
           open={changeKeyboardLayout}
