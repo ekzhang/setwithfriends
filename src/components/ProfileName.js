@@ -106,6 +106,12 @@ function ProfileName({ userId }) {
               </Menu>
             </div>
 
+            {player.admin && (
+              <Typography variant="subtitle2" gutterBottom>
+                Moderator
+              </Typography>
+            )}
+
             <Typography variant="body2" gutterBottom>
               Last seen:{" "}
               <span
