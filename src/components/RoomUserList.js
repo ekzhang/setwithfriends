@@ -64,7 +64,10 @@ function RoomUserList({ game, gameMode, gameId }) {
                     </Tooltip>
                   )}
                 </ListItemIcon>
-                <ListItemText>{Math.round(player.ratings[game.mode || "normal"]) || BASE_RATING}</ListItemText>
+                <ListItemText>
+                  {Math.round(player.ratings[game.mode || "normal"]) ||
+                    BASE_RATING}
+                </ListItemText>
                 <ListItemText disableTypography>{playerEl}</ListItemText>
                 {playerId === user.id && (
                   <ListItemText style={{ flex: "0 0 auto", marginLeft: 8 }}>
