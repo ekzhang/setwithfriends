@@ -438,6 +438,7 @@ function GamePage({ match }) {
           <Grid item xs={12} md={3} className={classes.sideColumn}>
             <GameSidebar
               game={game}
+              gameMode={gameMode}
               scores={scores}
               leaderboard={leaderboard}
             />

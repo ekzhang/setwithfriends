@@ -15,7 +15,7 @@ import { Link as RouterLink } from "react-router-dom";
 import User from "../components/User";
 import { UserContext } from "../context";
 
-function RoomUserList({ game, gameId }) {
+function RoomUserList({ game, gameMode, gameId }) {
   const user = useContext(UserContext);
 
   // Current list of players, sorted by when they joined
@@ -63,7 +63,7 @@ function RoomUserList({ game, gameId }) {
                     </Tooltip>
                   )}
                 </ListItemIcon>
-
+                <ListItemText>{Math.round(player.ratings[game.mode || "normal"]) || 1200}</ListItemText>
                 <ListItemText disableTypography>{playerEl}</ListItemText>
                 {playerId === user.id && (
                   <ListItemText style={{ flex: "0 0 auto", marginLeft: 8 }}>

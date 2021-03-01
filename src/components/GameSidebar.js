@@ -41,7 +41,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-function GameSidebar({ game, scores, leaderboard }) {
+function GameSidebar({ game, gameMode, scores, leaderboard }) {
   const classes = useStyles();
   const { pathname } = useLocation();
   const time = useMoment(500);
@@ -87,6 +87,7 @@ function GameSidebar({ game, scores, leaderboard }) {
                       )}
                     </ListItemIcon>
                   )}
+                  <ListItemText>{Math.round(user.ratings[gameMode]) || 1200}</ListItemText>
                   <ListItemText disableTypography>{userEl}</ListItemText>
                   <ListItemText
                     style={{

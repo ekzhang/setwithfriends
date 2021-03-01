@@ -121,7 +121,7 @@ function ProfilePage({ match }) {
     if (ratings == null) {
       rating = 1200;
     } else {
-      rating = ratings[modeVariant] || 1200;
+      rating = Math.round(ratings[modeVariant]) || 1200;
     }
   }
 
