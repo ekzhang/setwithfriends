@@ -17,7 +17,7 @@ import ProfileGamesTable from "../components/ProfileGamesTable";
 import Subheading from "../components/Subheading";
 import useFirebaseRef from "../hooks/useFirebaseRef";
 import useFirebaseRefs from "../hooks/useFirebaseRefs";
-import { computeState, hasHint, modes } from "../util";
+import { BASE_RATING, computeState, hasHint, modes } from "../util";
 import LoadingPage from "./LoadingPage";
 
 const datasetVariants = {
@@ -119,9 +119,9 @@ function ProfilePage({ match }) {
   let rating = null;
   if (!loadingRatings) {
     if (ratings == null) {
-      rating = 1200;
+      rating = BASE_RATING;
     } else {
-      rating = Math.round(ratings[modeVariant]) || 1200;
+      rating = Math.round(ratings[modeVariant]) || BASE_RATING;
     }
   }
 

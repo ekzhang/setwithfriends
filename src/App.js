@@ -6,7 +6,7 @@ import { BrowserRouter, Switch, Route } from "react-router-dom";
 import CssBaseline from "@material-ui/core/CssBaseline";
 import { ThemeProvider } from "@material-ui/core/styles";
 
-import { generateColor, generateName } from "./util";
+import { BASE_RATING, generateColor, generateName } from "./util";
 import { UserContext, SettingsContext } from "./context";
 import useStorage from "./hooks/useStorage";
 import ConnectionsTracker from "./components/ConnectionsTracker";
@@ -77,9 +77,9 @@ function App() {
           color: generateColor(),
           name: generateName(),
           ratings: {
-            normal: 1200,
-            setchain: 1200,
-            ultraset: 1200,
+            normal: BASE_RATING,
+            setchain: BASE_RATING,
+            ultraset: BASE_RATING,
           },
         });
       }

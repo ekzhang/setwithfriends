@@ -14,6 +14,7 @@ import { Link as RouterLink } from "react-router-dom";
 
 import User from "../components/User";
 import { UserContext } from "../context";
+import { BASE_RATING } from "../util";
 
 function RoomUserList({ game, gameMode, gameId }) {
   const user = useContext(UserContext);
@@ -63,7 +64,7 @@ function RoomUserList({ game, gameMode, gameId }) {
                     </Tooltip>
                   )}
                 </ListItemIcon>
-                <ListItemText>{Math.round(player.ratings[game.mode || "normal"]) || 1200}</ListItemText>
+                <ListItemText>{Math.round(player.ratings[game.mode || "normal"]) || BASE_RATING}</ListItemText>
                 <ListItemText disableTypography>{playerEl}</ListItemText>
                 {playerId === user.id && (
                   <ListItemText style={{ flex: "0 0 auto", marginLeft: 8 }}>

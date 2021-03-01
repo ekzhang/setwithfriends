@@ -15,7 +15,7 @@ import { useLocation, Link as RouterLink } from "react-router-dom";
 import User from "./User";
 import Subheading from "./Subheading";
 import useMoment from "../hooks/useMoment";
-import { formatTime } from "../util";
+import { BASE_RATING, formatTime } from "../util";
 
 const useStyles = makeStyles((theme) => ({
   sidebar: {
@@ -87,7 +87,7 @@ function GameSidebar({ game, gameMode, scores, leaderboard }) {
                       )}
                     </ListItemIcon>
                   )}
-                  <ListItemText>{Math.round(user.ratings[gameMode]) || 1200}</ListItemText>
+                  <ListItemText>{Math.round(user.ratings[gameMode]) || BASE_RATING}</ListItemText>
                   <ListItemText disableTypography>{userEl}</ListItemText>
                   <ListItemText
                     style={{
