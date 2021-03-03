@@ -25,7 +25,7 @@ const useStyles = makeStyles((theme) => ({
     fontSize: "13.5px",
     textAlign: "center",
     width: "41px",
-  }
+  },
 }));
 
 function RoomUserList({ game, gameMode, gameId }) {
@@ -78,7 +78,11 @@ function RoomUserList({ game, gameMode, gameId }) {
                   )}
                 </ListItemIcon>
                 <ListItemText classes={{ primary: classes.rating }}>
-                  {Math.round(player.ratings == null ? BASE_RATING : player.ratings[game.mode || "normal"] || BASE_RATING)}
+                  {Math.round(
+                    player.ratings == null
+                      ? BASE_RATING
+                      : player.ratings[game.mode || "normal"] || BASE_RATING
+                  )}
                 </ListItemText>
                 <ListItemText disableTypography>{playerEl}</ListItemText>
                 {playerId === user.id && (
