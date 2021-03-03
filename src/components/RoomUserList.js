@@ -15,8 +15,21 @@ import { Link as RouterLink } from "react-router-dom";
 import User from "../components/User";
 import { UserContext } from "../context";
 import { BASE_RATING } from "../util";
+import { makeStyles } from "@material-ui/core/styles";
+
+const useStyles = makeStyles((theme) => ({
+  rating: {
+    color: "white",
+    backgroundColor: "dodgerblue",
+    borderRadius: "5px",
+    fontSize: "13.5px",
+    textAlign: "center",
+    width: "41px",
+  }
+}));
 
 function RoomUserList({ game, gameMode, gameId }) {
+  const classes = useStyles();
   const user = useContext(UserContext);
 
   // Current list of players, sorted by when they joined
@@ -64,7 +77,7 @@ function RoomUserList({ game, gameMode, gameId }) {
                     </Tooltip>
                   )}
                 </ListItemIcon>
-                <ListItemText>
+                <ListItemText classes={{ primary: classes.rating }}>
                   {Math.round(player.ratings == null ? BASE_RATING : player.ratings[game.mode || "normal"] || BASE_RATING)}
                 </ListItemText>
                 <ListItemText disableTypography>{playerEl}</ListItemText>

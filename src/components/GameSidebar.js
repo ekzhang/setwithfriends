@@ -39,6 +39,14 @@ const useStyles = makeStyles((theme) => ({
     flexDirection: "column",
     overflowY: "hidden",
   },
+  rating: {
+    color: "white",
+    backgroundColor: "dodgerblue",
+    borderRadius: "5px",
+    fontSize: "13.5px",
+    textAlign: "center",
+    width: "41px",
+  }
 }));
 
 function GameSidebar({ game, gameMode, scores, leaderboard }) {
@@ -87,7 +95,8 @@ function GameSidebar({ game, gameMode, scores, leaderboard }) {
                       )}
                     </ListItemIcon>
                   )}
-                  <ListItemText>
+                  <ListItemText classes={{ primary: classes.rating }}
+                  >
                     {Math.round(user.ratings == null ? BASE_RATING : user.ratings[game.mode || "normal"] || BASE_RATING)}
                   </ListItemText>
                   <ListItemText disableTypography>{userEl}</ListItemText>
