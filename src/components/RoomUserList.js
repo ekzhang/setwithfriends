@@ -65,8 +65,7 @@ function RoomUserList({ game, gameMode, gameId }) {
                   )}
                 </ListItemIcon>
                 <ListItemText>
-                  {Math.round(player.ratings[game.mode || "normal"]) ||
-                    BASE_RATING}
+                  {Math.round(player.ratings == null ? BASE_RATING : player.ratings[game.mode || "normal"] || BASE_RATING)}
                 </ListItemText>
                 <ListItemText disableTypography>{playerEl}</ListItemText>
                 {playerId === user.id && (

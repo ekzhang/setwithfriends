@@ -88,7 +88,7 @@ function GameSidebar({ game, gameMode, scores, leaderboard }) {
                     </ListItemIcon>
                   )}
                   <ListItemText>
-                    {Math.round(user.ratings[gameMode]) || BASE_RATING}
+                    {Math.round(user.ratings == null ? BASE_RATING : user.ratings[game.mode || "normal"] || BASE_RATING)}
                   </ListItemText>
                   <ListItemText disableTypography>{userEl}</ListItemText>
                   <ListItemText
