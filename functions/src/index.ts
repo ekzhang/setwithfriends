@@ -99,49 +99,45 @@ export const finishGame = functions.https.onCall(async (data, context) => {
   }
 
   // Retrieve old ratings from the database.
-  const ratings = new Map<string, number>();
+  const ratings: Record<string, number> = {};
   for (const player of players) {
     const ratingSnap = await admin
       .database()
       .ref(`users/${player}/ratings/${gameMode}`)
       .once("value");
     const rating = ratingSnap.exists() ? ratingSnap.val() : BASE_RATING;
-    ratings.set(player, rating);
+    ratings[player] = rating;
   }
 
   // Translate ratings to exponential format.
-  const expRatings = new Map<string, number>();
+  const expRatings: Record<string, number> = {};
   for (const player of players) {
-    expRatings.set(
-      player,
-      Math.pow(10, <number>ratings.get(player) / SCALING_FACTOR)
-    );
+    expRatings[player] = Math.pow(10, ratings[player] / SCALING_FACTOR);
   }
 
   // Compute expected ratio for each player.
-  const expectedRatio = new Map<string, number>();
+  const expectedRatio: Record<string, number> = {};
   let ratingSum = 0;
   for (const player of players) {
-    ratingSum += <number>expRatings.get(player);
+    ratingSum += expRatings[player];
   }
   for (const player of players) {
-    expectedRatio.set(player, <number>expRatings.get(player) / ratingSum);
+    expectedRatio[player] = expRatings[player] / ratingSum;
   }
 
   // Compute achieved ratio for each player.
-  const achievedRatio = new Map<string, number>();
+  const achievedRatio: Record<string, number> = {};
   for (const player of players) {
-    achievedRatio.set(player, <number>scores.get(player) / setCount);
+    achievedRatio[player] = scores.get(player)! / setCount;
   }
 
   // Compute new rating for each player.
   for (const player of players) {
     // TODO make LEARNING_RATE dynamic.
     const newRating =
-      <number>ratings.get(player) +
-      LEARNING_RATE *
-        (<number>achievedRatio.get(player) - <number>expectedRatio.get(player));
-    ratings.set(player, newRating);
+      ratings[player] +
+      LEARNING_RATE * (achievedRatio[player] - expectedRatio[player]);
+    ratings[player] = newRating;
   }
 
   // Push new ratings to the database.
@@ -152,7 +148,7 @@ export const finishGame = functions.https.onCall(async (data, context) => {
         .database()
         .ref(`users/${player}/ratings`)
         .update({
-          [gameMode]: <number>ratings.get(player),
+          [gameMode]: ratings[player],
         })
     );
   }
