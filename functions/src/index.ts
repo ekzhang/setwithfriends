@@ -14,7 +14,11 @@ const MAX_UNFINISHED_GAMES_PER_HOUR = 4;
 
 // Parameters rating system.
 const SCALING_FACTOR = 400;
-const LEARNING_RATE = 16;
+const LEARNING_RATE_BEGINNER = 32;
+const LEARNING_RATE_INTERMEDIATE = 16;
+const LEARNING_RATE_INTERMEDIATE_THRESHOLD = 250;
+const LEARNING_RATE_ADVANCED = 8;
+const LEARNING_RATE_ADVANCED_THRESHOLD = 500;
 const BASE_RATING = 1200;
 
 /** Ends the game with the correct time */
@@ -71,7 +75,9 @@ export const finishGame = functions.https.onCall(async (data, context) => {
     endedAt: finalTime,
   });
 
-  // Update ratings of players involved based on an extension of the Elo system.
+  /**
+   * Update ratings of players involved based on an extension of the Elo system.
+   */
 
   // Retrieve userIds of players in the game.
   const playersSnap = await admin
@@ -85,75 +91,115 @@ export const finishGame = functions.https.onCall(async (data, context) => {
     }
   });
 
-  // Count total number of sets in the game.
-  let setCount = 0;
-  for (const score of scores.values()) {
-    setCount += score;
-  }
-
-  // Add scores for players without a single set.
-  for (const player of players) {
-    if (!scores.has(player)) {
-      scores.set(player, 0);
+  // Differentiate between single-player and multiplayer games.
+  if (players.length === 1) {
+    return;
+  } else {
+    // Count total number of sets in the game.
+    let setCount = 0;
+    for (const score of scores.values()) {
+      setCount += score;
     }
-  }
 
-  // Retrieve old ratings from the database.
-  const ratings: Record<string, number> = {};
-  for (const player of players) {
-    const ratingSnap = await admin
-      .database()
-      .ref(`users/${player}/ratings/${gameMode}`)
-      .once("value");
-    const rating = ratingSnap.exists() ? ratingSnap.val() : BASE_RATING;
-    ratings[player] = rating;
-  }
+    // Add scores for players without a single set.
+    for (const player of players) {
+      if (!scores.has(player)) {
+        scores.set(player, 0);
+      }
+    }
 
-  // Translate ratings to exponential format.
-  const expRatings: Record<string, number> = {};
-  for (const player of players) {
-    expRatings[player] = Math.pow(10, ratings[player] / SCALING_FACTOR);
-  }
-
-  // Compute expected ratio for each player.
-  const expectedRatio: Record<string, number> = {};
-  let ratingSum = 0;
-  for (const player of players) {
-    ratingSum += expRatings[player];
-  }
-  for (const player of players) {
-    expectedRatio[player] = expRatings[player] / ratingSum;
-  }
-
-  // Compute achieved ratio for each player.
-  const achievedRatio: Record<string, number> = {};
-  for (const player of players) {
-    achievedRatio[player] = scores.get(player)! / setCount;
-  }
-
-  // Compute new rating for each player.
-  for (const player of players) {
-    // TODO make LEARNING_RATE dynamic.
-    const newRating =
-      ratings[player] +
-      LEARNING_RATE * (achievedRatio[player] - expectedRatio[player]);
-    ratings[player] = newRating;
-  }
-
-  // Push new ratings to the database.
-  const updates: Array<Promise<any>> = [];
-  for (const player of players) {
-    updates.push(
-      admin
+    // Retrieve old ratings from the database.
+    const ratings: Record<string, number> = {};
+    for (const player of players) {
+      const ratingSnap = await admin
         .database()
-        .ref(`users/${player}/ratings`)
-        .update({
-          [gameMode]: ratings[player],
-        })
-    );
-  }
+        .ref(`users/${player}/ratings/${gameMode}`)
+        .once("value");
+      const rating = ratingSnap.exists() ? ratingSnap.val() : BASE_RATING;
+      ratings[player] = rating;
+    }
 
-  await Promise.all(updates);
+    // Translate ratings to exponential format.
+    const expRatings: Record<string, number> = {};
+    for (const player of players) {
+      expRatings[player] = Math.pow(10, ratings[player] / SCALING_FACTOR);
+    }
+
+    // Compute expected ratio for each player.
+    const expectedRatio: Record<string, number> = {};
+    let ratingSum = 0;
+    for (const player of players) {
+      ratingSum += expRatings[player];
+    }
+    for (const player of players) {
+      expectedRatio[player] = expRatings[player] / ratingSum;
+    }
+
+    // Compute achieved ratio for each player.
+    const achievedRatio: Record<string, number> = {};
+    for (const player of players) {
+      achievedRatio[player] = scores.get(player)! / setCount;
+    }
+
+    // Compute new rating for each player.
+    const gameCounts: Record<string, number> = {};
+    const playerCountMultiplier = 1.0 / (players.length - 1);
+    for (const player of players) {
+      let learningRate = LEARNING_RATE_BEGINNER;
+
+      const finishedGamesCountSnap = await admin
+        .database()
+        .ref(`users/${player}/stats/${gameMode}/multiplayer/finishedGamesCount`)
+        .once("value");
+      gameCounts[player] = finishedGamesCountSnap.exists()
+        ? finishedGamesCountSnap.val()
+        : 0;
+
+      if (gameCounts[player] >= LEARNING_RATE_ADVANCED_THRESHOLD) {
+        learningRate = LEARNING_RATE_ADVANCED;
+      } else if (gameCounts[player] >= LEARNING_RATE_INTERMEDIATE_THRESHOLD) {
+        learningRate = LEARNING_RATE_INTERMEDIATE;
+      }
+
+      const newRating =
+        ratings[player] +
+        playerCountMultiplier *
+          learningRate *
+          (achievedRatio[player] - expectedRatio[player]);
+      ratings[player] = newRating;
+    }
+
+    // Push new ratings to the database.
+    const updates: Array<Promise<any>> = [];
+    for (const player of players) {
+      updates.push(
+        admin
+          .database()
+          .ref(`users/${player}/ratings`)
+          .update({
+            [gameMode]: ratings[player],
+          })
+      );
+    }
+
+    /**
+     * Update the stats of all players involved.
+     */
+
+    // Finished game count.
+    for (const player of players) {
+      updates.push(
+        admin
+          .database()
+          .ref(`users/${player}/ratings/${gameMode}/multiplayer`)
+          .update({
+            finishedGamesCount: gameCounts[player] + 1,
+          })
+      );
+    }
+
+    await Promise.all(updates);
+  }
 });
 
 /** Create a new game in the database */
