@@ -87,6 +87,50 @@
             ".validate": "newData.isNumber()"
           }
         },
+        "stats": {
+          "normal": {
+            "singleplayer": {
+              "finishedGamesCount": {
+                ".write": "!data.exists() && newData.exists() && auth != null && newData.val() == 0",
+                ".validate": "newData.isNumber()"
+              }
+            },
+            "multiplayer": {
+              "finishedGamesCount": {
+                ".write": "!data.exists() && newData.exists() && auth != null && newData.val() == 0",
+                ".validate": "newData.isNumber()"
+              }
+            }
+          },
+          "setchain": {
+            "singleplayer": {
+              "finishedGamesCount": {
+                ".write": "!data.exists() && newData.exists() && auth != null && newData.val() == 0",
+                ".validate": "newData.isNumber()"
+              }
+            },
+            "multiplayer": {
+              "finishedGamesCount": {
+                ".write": "!data.exists() && newData.exists() && auth != null && newData.val() == 0",
+                ".validate": "newData.isNumber()"
+              }
+            }
+          },
+          "ultraset": {
+            "singleplayer": {
+              "finishedGamesCount": {
+                ".write": "!data.exists() && newData.exists() && auth != null && newData.val() == 0",
+                ".validate": "newData.isNumber()"
+              }
+            },
+            "multiplayer": {
+              "finishedGamesCount": {
+                ".write": "!data.exists() && newData.exists() && auth != null && newData.val() == 0",
+                ".validate": "newData.isNumber()"
+              }
+            }
+          }
+        },
         "banned": {
           ".validate": "newData.isNumber()"
         },

@@ -81,6 +81,32 @@ function App() {
             setchain: BASE_RATING,
             ultraset: BASE_RATING,
           },
+          stats: {
+            normal: {
+              singleplayer: {
+                finishedGamesCount: 0,
+              },
+              multiplayer: {
+                finishedGamesCount: 0,
+              },
+            },
+            setchain: {
+              singleplayer: {
+                finishedGamesCount: 0,
+              },
+              multiplayer: {
+                finishedGamesCount: 0,
+              },
+            },
+            ultraset: {
+              singleplayer: {
+                finishedGamesCount: 0,
+              },
+              multiplayer: {
+                finishedGamesCount: 0,
+              },
+            },
+          },
         });
       }
     }
