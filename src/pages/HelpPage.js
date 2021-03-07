@@ -8,7 +8,7 @@ import Paper from "@material-ui/core/Paper";
 import InternalLink from "../components/InternalLink";
 import SetCard from "../components/SetCard";
 import { SettingsContext } from "../context";
-import { standardLayouts } from "../util";
+import { BASE_RATING, SCALING_FACTOR, standardLayouts } from "../util";
 
 function HelpPage() {
   const { keyboardLayout } = useContext(SettingsContext);
@@ -20,6 +20,9 @@ function HelpPage() {
       </Typography>
 
       <Paper style={{ padding: "1rem", maxWidth: 720, margin: "12px auto" }}>
+        <Typography variant="h5" gutterBottom>
+          Rules
+        </Typography>
         <Typography variant="body1" gutterBottom>
           Welcome to Set with Friends! This web app allows you to play Set, the
           popular real-time card game designed by Marsha Falco in 1974 (
@@ -117,6 +120,18 @@ function HelpPage() {
           cards, additional cards will be dealt out in multiples of 3.
         </Typography>
         <Typography variant="body1" gutterBottom>
+          <strong>
+            That's all there are to the rules of Set, so head back and start
+            playing!
+          </strong>
+        </Typography>
+
+        <hr />
+
+        <Typography variant="h5" gutterBottom>
+          Controls and layout
+        </Typography>
+        <Typography variant="body1" gutterBottom>
           To indicate a set in the game interface, you can select three cards
           either by clicking, tapping, or using the following keyboard
           shortcuts, if you prefer.
@@ -155,15 +170,11 @@ function HelpPage() {
           shortcuts by selecting your keyboard layout in the settings. The
           shortcuts specific to your layout will then be reflected here.
         </Typography>
-        <Typography variant="body1" gutterBottom>
-          <strong>
-            That's all there are to the rules of Set, so head back and start
-            playing!
-          </strong>
-        </Typography>
 
         <hr />
-
+        <Typography variant="h5" gutterBottom>
+          Game modes
+        </Typography>
         <Typography variant="body1" gutterBottom>
           For experienced players, there are many interesting variations on the
           standard Set game. Currently this site lets you play two of these
@@ -240,6 +251,82 @@ function HelpPage() {
         <Typography variant="body1" gutterBottom>
           Note that you do not have to select the four cards in any particular
           order while playing.
+        </Typography>
+
+        <hr />
+
+        <Typography variant="h5" gutterBottom>
+          Rating system
+        </Typography>
+        <Typography variant="body1" gutterBottom>
+          Set with Friends includes a rating system based on the well known Elo
+          system. The system assigns a number to every player, and updates its
+          value based on your performance compared to your opponents. The
+          ratings are tracked separately for each game mode.
+        </Typography>
+        <Typography variant="body1" gutterBottom>
+          Like in chess, each player initially starts with a rating of{" "}
+          {BASE_RATING}. The update to each player's rating is based on the
+          fraction of the sets they obtain, and the ratings of the other players
+          in the game. Let{" "}
+          <i>
+            R<sub>i</sub>
+          </i>{" "}
+          be the rating of player <i>i</i>. In the calculation of the expected
+          ratio of sets obtained, we scale the ratings exponentially such that a
+          player with a rating {SCALING_FACTOR} points higher is expected to
+          obtain approximately 10 times as many sets.{" "}
+          <i>
+            Q<sub>i</sub>
+          </i>
+          , the exponentially scaled rating of player <i>i</i>, is computed
+          using as follows:
+        </Typography>
+        <Typography variant="body1" align="center" gutterBottom>
+          <i>
+            Q<sub>i</sub> = 10
+            <sup>
+              R<sub>i</sub> / {SCALING_FACTOR}
+            </sup>
+          </i>
+        </Typography>
+        <Typography variant="body1" gutterBottom>
+          For each player in a game, we then compute the expected ratio of sets
+          for that player using the following formula:
+        </Typography>
+        <Typography variant="body1" align="center" gutterBottom>
+          <i>
+            E<sub>i</sub> = Q<sub>i</sub> / (Σ Q<sub>j</sub>){" "}
+          </i>
+        </Typography>
+        <Typography variant="body1" gutterBottom>
+          where{" "}
+          <i>
+            Σ Q<sub>j</sub>
+          </i>{" "}
+          is a sum over the exponentially scaled ratings of all players in the
+          game.
+        </Typography>
+        <Typography variant="body1" gutterBottom>
+          Finally, we compute the updated rating,{" "}
+          <i>
+            R<sub>i</sub>'
+          </i>
+          , for each player using the following formula:
+        </Typography>
+        <Typography variant="body1" align="center" gutterBottom>
+          <i>
+            R<sub>i</sub>' = R<sub>i</sub> + K·(S<sub>i</sub> - E<sub>i</sub>){" "}
+          </i>
+        </Typography>
+        <Typography variant="body1" gutterBottom>
+          where{" "}
+          <i>
+            S<sub>i</sub>
+          </i>{" "}
+          is the achieved ratio of sets obtained by player <i>i</i> and <i>K</i>{" "}
+          is an additional factor based on the number of players in the game and
+          your level of experience.
         </Typography>
       </Paper>
       <Typography

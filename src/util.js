@@ -105,6 +105,7 @@ export const standardLayouts = {
 };
 
 export const BASE_RATING = 1200;
+export const SCALING_FACTOR = 400;
 
 export function generateCards() {
   const deck = [];
