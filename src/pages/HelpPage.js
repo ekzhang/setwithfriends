@@ -328,6 +328,10 @@ function HelpPage() {
           is an additional factor based on the number of players in the game and
           your level of experience.
         </Typography>
+        <Typography variant="body1" gutterBottom>
+          Note that while the rating is displayed as an integer, it is stored
+          and computed as a real number.
+        </Typography>
       </Paper>
       <Typography
         variant="body1"
