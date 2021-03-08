@@ -280,7 +280,7 @@ function HelpPage() {
             Q<sub>i</sub>
           </i>
           , the exponentially scaled rating of player <i>i</i>, is computed
-          using as follows:
+          using
         </Typography>
         <Typography variant="body1" align="center" gutterBottom>
           <i>
@@ -288,15 +288,16 @@ function HelpPage() {
             <sup>
               R<sub>i</sub> / {SCALING_FACTOR}
             </sup>
+            .
           </i>
         </Typography>
         <Typography variant="body1" gutterBottom>
           For each player in a game, we then compute the expected ratio of sets
-          for that player using the following formula:
+          for that player using the formula
         </Typography>
         <Typography variant="body1" align="center" gutterBottom>
           <i>
-            E<sub>i</sub> = Q<sub>i</sub> / (Σ Q<sub>j</sub>){" "}
+            E<sub>i</sub> = Q<sub>i</sub> / (Σ Q<sub>j</sub>){", "}
           </i>
         </Typography>
         <Typography variant="body1" gutterBottom>
@@ -312,11 +313,12 @@ function HelpPage() {
           <i>
             R<sub>i</sub>'
           </i>
-          , for each player using the following formula:
+          , for each player using the formula
         </Typography>
         <Typography variant="body1" align="center" gutterBottom>
           <i>
-            R<sub>i</sub>' = R<sub>i</sub> + K·(S<sub>i</sub> - E<sub>i</sub>){" "}
+            R<sub>i</sub>' = R<sub>i</sub> + K·(S<sub>i</sub> - E<sub>i</sub>)
+            {", "}
           </i>
         </Typography>
         <Typography variant="body1" gutterBottom>
@@ -330,7 +332,7 @@ function HelpPage() {
         </Typography>
         <Typography variant="body1" gutterBottom>
           Note that while the rating is displayed as an integer, it is stored
-          and computed as a real number.
+          and computed as a floating-point number.
         </Typography>
       </Paper>
       <Typography
