@@ -164,7 +164,7 @@ export function replayEvents(
 
   const deck: Set<string> = new Set(gameData.child("deck").val());
   const history: GameEvent[] = [];
-  const scores: Map<string, number> = new Map<string, number>();
+  const scores: Record<string, number> = {};
   let finalTime = 0;
   for (const event of events) {
     let eventValid = false;
@@ -176,10 +176,7 @@ export function replayEvents(
       eventValid = true;
     if (eventValid) {
       history.push(event);
-      scores.set(
-        event.user,
-        scores.has(event.user) ? <number>scores.get(event.user) + 1 : 1
-      );
+      scores[event.user] = (scores[event.user] ?? 0) + 1;
       finalTime = event.time;
     }
   }

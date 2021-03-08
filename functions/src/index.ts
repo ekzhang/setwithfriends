@@ -97,15 +97,13 @@ export const finishGame = functions.https.onCall(async (data, context) => {
   } else {
     // Count total number of sets in the game.
     let setCount = 0;
-    for (const score of scores.values()) {
+    for (const score of Object.values(scores)) {
       setCount += score;
     }
 
     // Add scores for players without a single set.
     for (const player of players) {
-      if (!scores.has(player)) {
-        scores.set(player, 0);
-      }
+      scores[player] ??= 0;
     }
 
     // Retrieve old ratings from the database.
@@ -138,7 +136,7 @@ export const finishGame = functions.https.onCall(async (data, context) => {
     // Compute achieved ratio for each player.
     const achievedRatio: Record<string, number> = {};
     for (const player of players) {
-      achievedRatio[player] = scores.get(player)! / setCount;
+      achievedRatio[player] = scores[player] / setCount;
     }
 
     // Compute new rating for each player.
