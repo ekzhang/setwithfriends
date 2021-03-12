@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useContext } from "react";
 
 import Button from "@material-ui/core/Button";
 import TextField from "@material-ui/core/TextField";
@@ -9,10 +9,12 @@ import DialogContentText from "@material-ui/core/DialogContentText";
 import DialogTitle from "@material-ui/core/DialogTitle";
 
 import { filter } from "../util";
+import { UserContext } from "../context";
 
 function PromptDialog(props) {
   const { open, onClose, title, message, label, maxLength } = props;
   const [value, setValue] = useState("");
+  const user = useContext(UserContext);
 
   function handleClose() {
     onClose(null);
@@ -24,7 +26,10 @@ function PromptDialog(props) {
       alert(
         "We detected that your input contains profane language. If you think this was a mistake, please let us know!"
       );
-    } else if (!value.match(/^[\p{L}\p{M}\p{N}\p{P}\p{Zs}]*$/u)) {
+    } else if (
+      !user.patron &&
+      !value.match(/^[\p{L}\p{M}\p{N}\p{P}\p{Zs}]*$/u)
+    ) {
       alert("Please use only letters, numbers, and punctuation.");
     } else {
       onClose(value);

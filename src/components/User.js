@@ -1,10 +1,18 @@
-import { useState } from "react";
-import { useTheme } from "@material-ui/core/styles";
-import WhatshotIcon from "@material-ui/icons/Whatshot";
 import { useHistory } from "react-router-dom";
+import { useTheme, makeStyles } from "@material-ui/core/styles";
+import WhatshotIcon from "@material-ui/icons/Whatshot";
 
 import useFirebaseRef from "../hooks/useFirebaseRef";
 import { colors } from "../util";
+
+const useStyles = makeStyles((theme) => ({
+  patronIcon: {
+    cursor: "pointer",
+    "&:hover": {
+      filter: `drop-shadow(0.1rem 0rem 0.2rem)`,
+    },
+  },
+}));
 
 function User(props) {
   const theme = useTheme();
@@ -12,27 +20,12 @@ function User(props) {
 
   const { id, style, component, render, forcePatron, ...other } = props;
   const [user, loading] = useFirebaseRef(`users/${id}`);
-  const [patronIconIsActive, setPatronIconIsActive] = useState(false);
+
+  const classes = useStyles();
 
   if (loading) {
     return null;
   }
-
-  const userNameColor = colors.hasOwnProperty(user.color)
-    ? colors[user.color][theme.palette.type === "dark" ? 100 : 900]
-    : "inherit";
-
-  const patronIconColor = colors.hasOwnProperty(user.color)
-    ? colors[user.color][
-        theme.palette.type === "dark"
-          ? patronIconIsActive
-            ? 400
-            : 100
-          : patronIconIsActive
-          ? 400
-          : 900
-      ]
-    : "inherit";
 
   const handleClick = (e) => {
     e.preventDefault();
@@ -43,6 +36,9 @@ function User(props) {
   const userEl = (
     <Component
       style={{
+        color: colors.hasOwnProperty(user.color)
+          ? colors[user.color][theme.palette.type === "dark" ? 100 : 900]
+          : "inherit",
         fontWeight: 500,
         ...style,
       }}
@@ -50,8 +46,7 @@ function User(props) {
     >
       {(user.patron || forcePatron) && (
         <WhatshotIcon
-          onMouseEnter={() => setPatronIconIsActive(true)}
-          onMouseLeave={() => setPatronIconIsActive(false)}
+          className={classes.patronIcon}
           onClick={handleClick}
           fontSize="inherit"
           style={{
@@ -59,12 +54,11 @@ function User(props) {
             position: "relative",
             left: "-0.1em",
             top: "0.15em",
-            color: patronIconColor,
-            cursor: "pointer",
+            color: "inherit",
           }}
         />
       )}
-      <span style={{ color: userNameColor }}>{user.name}</span>
+      <span>{user.name}</span>
     </Component>
   );
   return render ? render(user, userEl) : userEl;
