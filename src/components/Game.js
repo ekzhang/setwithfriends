@@ -157,6 +157,12 @@ function Game({
     }))
   );
 
+  // Orientation
+  window.onorientationchange = function (event) {
+    if (volume === "on") playLayout();
+    setCardOrientation(isHorizontal ? "vertical" : "horizontal");
+  };
+
   // Keyboard shortcuts
   const shortcuts = isLandscape
     ? keyboardLayoutDesc.horizontalLayout
