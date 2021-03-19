@@ -69,9 +69,9 @@ function DonatePage() {
         </Typography>
         <Typography variant="body1" gutterBottom>
           If you enjoy using this site, please consider supporting us by
-          donating and becoming a patron. In addition to helping us pay for
-          ultra-fast servers and ongoing development, you'll gain access to some{" "}
-          cosmetic perks:
+          donating and becoming a patron. We're a small team, so your support
+          makes a huge difference. In addition to helping us make the site
+          better, you'll gain access to some cosmetic perks:
         </Typography>
         <Typography variant="body1" gutterBottom component="div">
           <ul>
@@ -81,14 +81,14 @@ function DonatePage() {
               ).
             </li>
             <li>
-              Freedom to create a name without limiting to just letters,
-              numbers, and punctuation.
+              Use any characters in your name: not just letters, numbers, and
+              punctuation.
             </li>
             <li>
-              Exclusive setting to choose the color of your username &mdash;
-              pick whatever you like!
+              Exclusive setting to choose the color of your name &mdash; change
+              it at any time!
             </li>
-            <li>More to come soon!</li>
+            <li>More to come soon…</li>
           </ul>
         </Typography>
         <Typography variant="body1" gutterBottom>
@@ -130,7 +130,7 @@ function DonatePage() {
           <Typography variant="body1" style={{ fontStyle: "italic" }}>
             It looks like you're playing anonymously right now. If you'd like to
             become a patron, please link your Google account from the settings
-            menu, so you can log in at any time.
+            menu.
           </Typography>
         )}
       </Paper>
