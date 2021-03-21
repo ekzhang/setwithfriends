@@ -73,64 +73,6 @@
             ".validate": "newData.isString() || !newData.exists()"
           }
         },
-        "ratings": {
-          "normal": {
-            ".write": "!data.exists() && newData.exists() && auth != null && newData.val() == 1200",
-            ".validate": "newData.isNumber()"
-          },
-          "setchain": {
-            ".write": "!data.exists() && newData.exists() && auth != null && newData.val() == 1200",
-            ".validate": "newData.isNumber()"
-          },
-          "ultraset": {
-            ".write": "!data.exists() && newData.exists() && auth != null && newData.val() == 1200",
-            ".validate": "newData.isNumber()"
-          }
-        },
-        "stats": {
-          "normal": {
-            "singleplayer": {
-              "finishedGamesCount": {
-                ".write": "!data.exists() && newData.exists() && auth != null && newData.val() == 0",
-                ".validate": "newData.isNumber()"
-              }
-            },
-            "multiplayer": {
-              "finishedGamesCount": {
-                ".write": "!data.exists() && newData.exists() && auth != null && newData.val() == 0",
-                ".validate": "newData.isNumber()"
-              }
-            }
-          },
-          "setchain": {
-            "singleplayer": {
-              "finishedGamesCount": {
-                ".write": "!data.exists() && newData.exists() && auth != null && newData.val() == 0",
-                ".validate": "newData.isNumber()"
-              }
-            },
-            "multiplayer": {
-              "finishedGamesCount": {
-                ".write": "!data.exists() && newData.exists() && auth != null && newData.val() == 0",
-                ".validate": "newData.isNumber()"
-              }
-            }
-          },
-          "ultraset": {
-            "singleplayer": {
-              "finishedGamesCount": {
-                ".write": "!data.exists() && newData.exists() && auth != null && newData.val() == 0",
-                ".validate": "newData.isNumber()"
-              }
-            },
-            "multiplayer": {
-              "finishedGamesCount": {
-                ".write": "!data.exists() && newData.exists() && auth != null && newData.val() == 0",
-                ".validate": "newData.isNumber()"
-              }
-            }
-          }
-        },
         "banned": {
           ".validate": "newData.isNumber()"
         },
@@ -146,6 +88,17 @@
         "$gameId": {
           ".write": "auth != null && auth.uid == $userId",
           ".validate": "!newData.exists() || (newData.isNumber() && newData.val() == root.child('games/' + $gameId + '/createdAt').val())"
+        }
+      }
+    },
+    "userStats": {
+      "$userId": {
+        ".read": "auth != null",
+        "$gameMode": {
+          "rating": {
+            ".write": "!data.exists() && newData.exists() && auth != null && newData.val() == 1200",
+            ".validate": "newData.isNumber()"
+          }
         }
       }
     },

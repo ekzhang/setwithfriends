@@ -15,11 +15,12 @@ const MAX_UNFINISHED_GAMES_PER_HOUR = 4;
 // Parameters rating system.
 const SCALING_FACTOR = 400;
 const LEARNING_RATE_BEGINNER = 32;
-const LEARNING_RATE_INTERMEDIATE = 16;
-const LEARNING_RATE_INTERMEDIATE_THRESHOLD = 250;
-const LEARNING_RATE_ADVANCED = 8;
-const LEARNING_RATE_ADVANCED_THRESHOLD = 500;
 const BASE_RATING = 1200;
+// Parameters not currently in use, see additional comment in finishGame().
+// const LEARNING_RATE_INTERMEDIATE = 16;
+// const LEARNING_RATE_INTERMEDIATE_THRESHOLD = 250;
+// const LEARNING_RATE_ADVANCED = 8;
+// const LEARNING_RATE_ADVANCED_THRESHOLD = 500;
 
 /** Ends the game with the correct time */
 export const finishGame = functions.https.onCall(async (data, context) => {
@@ -111,7 +112,7 @@ export const finishGame = functions.https.onCall(async (data, context) => {
     for (const player of players) {
       const ratingSnap = await admin
         .database()
-        .ref(`users/${player}/ratings/${gameMode}`)
+        .ref(`userStats/${player}/${gameMode}/rating`)
         .once("value");
       const rating = ratingSnap.exists() ? ratingSnap.val() : BASE_RATING;
       ratings[player] = rating;
@@ -140,24 +141,31 @@ export const finishGame = functions.https.onCall(async (data, context) => {
     }
 
     // Compute new rating for each player.
-    const gameCounts: Record<string, number> = {};
     const playerCountMultiplier = 1.0 / (players.length - 1);
+    // const gameCounts: Record<string, number> = {};
     for (const player of players) {
       let learningRate = LEARNING_RATE_BEGINNER;
 
-      const finishedGamesCountSnap = await admin
-        .database()
-        .ref(`users/${player}/stats/${gameMode}/multiplayer/finishedGamesCount`)
-        .once("value");
-      gameCounts[player] = finishedGamesCountSnap.exists()
-        ? finishedGamesCountSnap.val()
-        : 0;
-
-      if (gameCounts[player] >= LEARNING_RATE_ADVANCED_THRESHOLD) {
-        learningRate = LEARNING_RATE_ADVANCED;
-      } else if (gameCounts[player] >= LEARNING_RATE_INTERMEDIATE_THRESHOLD) {
-        learningRate = LEARNING_RATE_INTERMEDIATE;
-      }
+      /**
+       * This code is currently not in use. It has been written to accommodate
+       * adapting the learning rate to the experience of a player and the
+       * corresponding certainty of the rating system based on the number of
+       * games played. It is specifically aimed for use after a restructuring of
+       * the database where the users statistics are moved over to the DB.
+       */
+      // const finishedGamesCountSnap = await admin
+      //   .database()
+      //   .ref(`userStats/${player}/${gameMode}/finishedGamesCount`)
+      //   .once("value");
+      // gameCounts[player] = finishedGamesCountSnap.exists()
+      //   ? finishedGamesCountSnap.val()
+      //   : 0;
+      //
+      // if (gameCounts[player] >= LEARNING_RATE_ADVANCED_THRESHOLD) {
+      //   learningRate = LEARNING_RATE_ADVANCED;
+      // } else if (gameCounts[player] >= LEARNING_RATE_INTERMEDIATE_THRESHOLD) {
+      //   learningRate = LEARNING_RATE_INTERMEDIATE;
+      // }
 
       const newRating =
         ratings[player] +
@@ -173,25 +181,9 @@ export const finishGame = functions.https.onCall(async (data, context) => {
       updates.push(
         admin
           .database()
-          .ref(`users/${player}/ratings`)
+          .ref(`userStats/${player}/${gameMode}`)
           .update({
-            [gameMode]: ratings[player],
-          })
-      );
-    }
-
-    /**
-     * Update the stats of all players involved.
-     */
-
-    // Finished game count.
-    for (const player of players) {
-      updates.push(
-        admin
-          .database()
-          .ref(`users/${player}/ratings/${gameMode}/multiplayer`)
-          .update({
-            finishedGamesCount: gameCounts[player] + 1,
+            rating: ratings[player],
           })
       );
     }

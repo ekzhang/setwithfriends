@@ -19,11 +19,12 @@ function User(props) {
   const history = useHistory();
 
   const { id, style, component, render, forcePatron, ...other } = props;
-  const [user, loading] = useFirebaseRef(`users/${id}`);
+  const [user, userLoading] = useFirebaseRef(`users/${id}`);
+  const [userStats, userStatsLoading] = useFirebaseRef(`userStats/${id}`)
 
   const classes = useStyles();
 
-  if (loading) {
+  if (userLoading || userStatsLoading) {
     return null;
   }
 
@@ -61,7 +62,7 @@ function User(props) {
       <span>{user.name}</span>
     </Component>
   );
-  return render ? render(user, userEl) : userEl;
+  return render ? render(user, userStats, userEl) : userEl;
 }
 
 export default User;

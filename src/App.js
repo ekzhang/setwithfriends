@@ -63,6 +63,7 @@ function App() {
       return;
     }
     const userRef = firebase.database().ref(`/users/${authUser.uid}`);
+    const userStatsRef = firebase.database().ref(`/userStats/${authUser.uid}`)
     function update(snapshot) {
       if (snapshot.child("name").exists()) {
         setUser({
@@ -76,38 +77,18 @@ function App() {
           games: {},
           color: generateColor(),
           name: generateName(),
-          ratings: {
-            normal: BASE_RATING,
-            setchain: BASE_RATING,
-            ultraset: BASE_RATING,
-          },
-          stats: {
-            normal: {
-              singleplayer: {
-                finishedGamesCount: 0,
-              },
-              multiplayer: {
-                finishedGamesCount: 0,
-              },
-            },
-            setchain: {
-              singleplayer: {
-                finishedGamesCount: 0,
-              },
-              multiplayer: {
-                finishedGamesCount: 0,
-              },
-            },
-            ultraset: {
-              singleplayer: {
-                finishedGamesCount: 0,
-              },
-              multiplayer: {
-                finishedGamesCount: 0,
-              },
-            },
-          },
         });
+        userStatsRef.update({
+          normal: {
+            rating: BASE_RATING,
+          },
+          setchain: {
+            rating: BASE_RATING,
+          },
+          ultraset: {
+            rating: BASE_RATING,
+          },
+        })
       }
     }
     userRef.on("value", update);

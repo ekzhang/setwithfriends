@@ -79,7 +79,7 @@ function GameSidebar({ game, gameMode, scores, leaderboard }) {
               component={Typography}
               variant="body2"
               noWrap
-              render={(user, userEl) => (
+              render={(user, userStats, userEl) => (
                 <ListItem button component={RouterLink} to={`/profile/${uid}`}>
                   {game.status === "ingame" && (
                     <ListItemIcon>
@@ -97,9 +97,9 @@ function GameSidebar({ game, gameMode, scores, leaderboard }) {
                   )}
                   <ListItemText classes={{ primary: classes.rating }}>
                     {Math.round(
-                      user.ratings == null
+                      userStats == null
                         ? BASE_RATING
-                        : user.ratings[game.mode || "normal"] || BASE_RATING
+                        : userStats[game.mode || "normal"]["rating"] || BASE_RATING
                     )}
                   </ListItemText>
                   <ListItemText disableTypography>{userEl}</ListItemText>

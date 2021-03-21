@@ -51,7 +51,7 @@ function RoomUserList({ game, gameMode, gameId }) {
             component={Typography}
             variant="body2"
             noWrap
-            render={(player, playerEl) => (
+            render={(player, playerStats, playerEl) => (
               <ListItem
                 button
                 component={RouterLink}
@@ -79,9 +79,9 @@ function RoomUserList({ game, gameMode, gameId }) {
                 </ListItemIcon>
                 <ListItemText classes={{ primary: classes.rating }}>
                   {Math.round(
-                    player.ratings == null
+                    playerStats == null
                       ? BASE_RATING
-                      : player.ratings[game.mode || "normal"] || BASE_RATING
+                      : playerStats[game.mode || "normal"]["rating"] || BASE_RATING
                   )}
                 </ListItemText>
                 <ListItemText disableTypography>{playerEl}</ListItemText>

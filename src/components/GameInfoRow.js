@@ -66,7 +66,7 @@ function GameInfoRow({ gameId, onClick }) {
       id={game.host}
       component={TableCell}
       className={classes.host}
-      render={(host, hostEl) => (
+      render={(host, hostStats, hostEl) => (
         <TableRow onClick={onClick}>
           {hostEl}
           <TableCell>

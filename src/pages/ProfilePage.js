@@ -69,13 +69,10 @@ function ProfilePage({ match }) {
   const classes = useStyles();
 
   const [games, loadingGames] = useFirebaseRef(`/userGames/${userId}`, true);
-  const [ratings, loadingRatings] = useFirebaseRef(
-    `/users/${userId}/ratings`,
-    true
-  );
   const [redirect, setRedirect] = useState(null);
   const [variant, setVariant] = useState("all");
   const [modeVariant, setModeVariant] = useState("normal");
+  const [rating, loadingRating] = useFirebaseRef(`/userStats/${userId}/${modeVariant}/rating`);
 
   const handleClickGame = (gameId) => {
     setRedirect(`/room/${gameId}`);
@@ -116,12 +113,12 @@ function ProfilePage({ match }) {
     }
   }
 
-  let rating = null;
-  if (!loadingRatings) {
-    if (ratings == null) {
-      rating = BASE_RATING;
+  let parsedRating = null;
+  if (!loadingRating) {
+    if (rating == null) {
+      parsedRating = BASE_RATING;
     } else {
-      rating = Math.round(ratings[modeVariant]) || BASE_RATING;
+      parsedRating = Math.round(rating) || BASE_RATING;
     }
   }
 
@@ -175,7 +172,7 @@ function ProfilePage({ match }) {
             <UserStatistics
               userId={userId}
               gamesData={gamesData}
-              rating={rating}
+              rating={parsedRating}
             />
           </Grid>
         </Grid>
