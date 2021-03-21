@@ -81,7 +81,8 @@ function RoomUserList({ game, gameMode, gameId }) {
                   {Math.round(
                     playerStats == null
                       ? BASE_RATING
-                      : playerStats[game.mode || "normal"]["rating"] || BASE_RATING
+                      : playerStats[game.mode || "normal"]["rating"] ||
+                          BASE_RATING
                   )}
                 </ListItemText>
                 <ListItemText disableTypography>{playerEl}</ListItemText>

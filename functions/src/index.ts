@@ -179,12 +179,9 @@ export const finishGame = functions.https.onCall(async (data, context) => {
     const updates: Array<Promise<any>> = [];
     for (const player of players) {
       updates.push(
-        admin
-          .database()
-          .ref(`userStats/${player}/${gameMode}`)
-          .update({
-            rating: ratings[player],
-          })
+        admin.database().ref(`userStats/${player}/${gameMode}`).update({
+          rating: ratings[player],
+        })
       );
     }
 

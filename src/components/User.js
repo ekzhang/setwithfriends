@@ -20,7 +20,7 @@ function User(props) {
 
   const { id, style, component, render, forcePatron, ...other } = props;
   const [user, userLoading] = useFirebaseRef(`users/${id}`);
-  const [userStats, userStatsLoading] = useFirebaseRef(`userStats/${id}`)
+  const [userStats, userStatsLoading] = useFirebaseRef(`userStats/${id}`);
 
   const classes = useStyles();
 

@@ -63,7 +63,7 @@ function App() {
       return;
     }
     const userRef = firebase.database().ref(`/users/${authUser.uid}`);
-    const userStatsRef = firebase.database().ref(`/userStats/${authUser.uid}`)
+    const userStatsRef = firebase.database().ref(`/userStats/${authUser.uid}`);
     function update(snapshot) {
       if (snapshot.child("name").exists()) {
         setUser({
@@ -88,7 +88,7 @@ function App() {
           ultraset: {
             rating: BASE_RATING,
           },
-        })
+        });
       }
     }
     userRef.on("value", update);

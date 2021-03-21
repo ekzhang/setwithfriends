@@ -72,7 +72,9 @@ function ProfilePage({ match }) {
   const [redirect, setRedirect] = useState(null);
   const [variant, setVariant] = useState("all");
   const [modeVariant, setModeVariant] = useState("normal");
-  const [rating, loadingRating] = useFirebaseRef(`/userStats/${userId}/${modeVariant}/rating`);
+  const [rating, loadingRating] = useFirebaseRef(
+    `/userStats/${userId}/${modeVariant}/rating`
+  );
 
   const handleClickGame = (gameId) => {
     setRedirect(`/room/${gameId}`);
