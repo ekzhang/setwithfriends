@@ -98,9 +98,9 @@
     "chats": {
       "$chatId": {
         ".read": "auth != null",
-        ".indexOn": "time",
+        ".indexOn": ["time", "user"],
         "$messageId": {
-          ".write": "!data.exists() && newData.exists() && auth != null",
+          ".write": "auth != null && ((!data.exists() && newData.exists()) || (data.exists() && root.child('users').child(auth.uid).child('admin').val() == true))",
           ".validate": "newData.hasChildren(['user', 'message', 'time'])",
           "user": {
             ".validate": "newData.isString() && newData.val() == auth.uid"
