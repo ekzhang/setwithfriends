@@ -198,7 +198,7 @@ function LobbyPage() {
         <Box clone order={{ xs: 3, md: 1 }} className={classes.chatColumn}>
           <Grid item xs={12} sm={12} md={3}>
             <Paper className={classes.chatColumnPaper}>
-              <Chat user={user} />
+              <Chat title="Lobby Chat" messageLimit={30} showMessageTimes />
             </Paper>
           </Grid>
         </Box>

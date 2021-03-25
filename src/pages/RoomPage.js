@@ -19,7 +19,7 @@ import NotFoundPage from "./NotFoundPage";
 import SimpleInput from "../components/SimpleInput";
 import RoomUserList from "../components/RoomUserList";
 import Subheading from "../components/Subheading";
-import GameChat from "../components/GameChat";
+import Chat from "../components/Chat";
 import firebase from "../firebase";
 import { UserContext } from "../context";
 import GameSettings from "../components/GameSettings";
@@ -133,7 +133,7 @@ function RoomPage({ match, location }) {
         <Box clone order={{ xs: 2, sm: 1 }}>
           <Grid item xs={12} sm={4} md={3}>
             <Paper className={classes.chatPanel}>
-              <GameChat gameId={gameId} />
+              <Chat title="Game Chat" messageLimit={200} gameId={gameId} />
             </Paper>
           </Grid>
         </Box>
