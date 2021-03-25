@@ -3,6 +3,9 @@ import { useEffect, useRef, useState, useMemo, useContext, memo } from "react";
 import Typography from "@material-ui/core/Typography";
 import { makeStyles } from "@material-ui/core/styles";
 import Tooltip from "@material-ui/core/Tooltip";
+import MoreVertIcon from "@material-ui/icons/MoreVert";
+import MenuItem from "@material-ui/core/MenuItem";
+import Menu from "@material-ui/core/Menu";
 
 import User from "./User";
 import InternalLink from "./InternalLink";
@@ -36,6 +39,19 @@ const useStyles = makeStyles((theme) => ({
     overflowWrap: "anywhere",
     padding: "0 4px",
   },
+  vertIcon: {
+    marginLeft: "auto",
+    cursor: "pointer",
+    "&:hover": {
+      fill: "#f06292",
+    },
+    visibility: "hidden",
+  },
+  message: {
+    "&:hover > $vertIcon": {
+      visibility: "visible",
+    },
+  },
   logEntry: {
     marginBottom: "0.35em",
     padding: "0 12px",
@@ -52,6 +68,8 @@ const useStyles = makeStyles((theme) => ({
 function GameChat({ gameId, history, startedAt, gameMode }) {
   const user = useContext(UserContext);
   const classes = useStyles();
+
+  const [menuOpenIdx, setMenuOpenIdx] = useState(null);
 
   const chatEl = useRef();
   useEffect(() => {
@@ -93,6 +111,38 @@ function GameChat({ gameId, history, startedAt, gameMode }) {
   function toggleChat() {
     setChatHidden(chatHidden === "yes" ? "no" : "yes");
   }
+
+  const [anchorEl, setAnchorEl] = useState(null);
+
+  const handleClickVertIcon = (event, key) => {
+    setAnchorEl(event.currentTarget);
+    setMenuOpenIdx(key);
+  };
+
+  const handleDelete = (key) => {
+    firebase.database().ref(`chats/${gameId}`).child(key).remove();
+    handleClose();
+  };
+
+  const handleDeleteAll = async (uid) => {
+    const messages = await firebase
+      .database()
+      .ref(`chats/${gameId}`)
+      .orderByChild("user")
+      .equalTo(uid)
+      .once("value");
+    const updates = {};
+    messages.forEach((snap) => {
+      updates[snap.key] = null;
+    });
+    firebase.database().ref(`chats/${gameId}`).update(updates);
+    handleClose();
+  };
+
+  const handleClose = () => {
+    setAnchorEl(null);
+    setMenuOpenIdx(null);
+  };
 
   const items = messages;
   if (history) {
@@ -147,15 +197,43 @@ function GameChat({ gameId, history, startedAt, gameMode }) {
               </Tooltip>
             ) : (
               chatHidden !== "yes" && (
-                <Typography key={key} variant="body2" gutterBottom>
-                  <User
-                    id={item.user}
-                    component={InternalLink}
-                    to={`/profile/${item.user}`}
-                    underline="none"
-                  />
-                  : {item.message}
-                </Typography>
+                <div
+                  key={key}
+                  style={{ display: "flex", flexDirection: "row" }}
+                  className={classes.message}
+                >
+                  <Typography variant="body2" gutterBottom>
+                    <User
+                      id={item.user}
+                      component={InternalLink}
+                      to={`/profile/${item.user}`}
+                      underline="none"
+                    />
+                    : {item.message}
+                  </Typography>
+                  {user.admin && (
+                    <MoreVertIcon
+                      aria-controls="admin-menu"
+                      color="inherit"
+                      className={classes.vertIcon}
+                      onClick={(e) => handleClickVertIcon(e, key)}
+                    />
+                  )}
+
+                  <Menu
+                    id="admin-menu"
+                    anchorEl={anchorEl}
+                    open={Boolean(anchorEl) && key === menuOpenIdx}
+                    onClose={handleClose}
+                  >
+                    <MenuItem onClick={() => handleDelete(key)}>
+                      Delete message
+                    </MenuItem>
+                    <MenuItem onClick={() => handleDeleteAll(item.user)}>
+                      Delete all from user
+                    </MenuItem>
+                  </Menu>
+                </div>
               )
             )
           )}
