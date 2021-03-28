@@ -269,66 +269,66 @@ function HelpPage() {
           {BASE_RATING}. The update to each player's rating is based on the
           fraction of the sets they obtain, and the ratings of the other players
           in the game. Let{" "}
-          <i>
+          <em>
             R<sub>i</sub>
-          </i>{" "}
-          be the rating of player <i>i</i>. In the calculation of the expected
+          </em>{" "}
+          be the rating of player <em>i</em>. In the calculation of the expected
           ratio of sets obtained, we scale the ratings exponentially such that a
           player with a rating {SCALING_FACTOR} points higher is expected to
           obtain approximately 10 times as many sets.{" "}
-          <i>
+          <em>
             Q<sub>i</sub>
-          </i>
-          , the exponentially scaled rating of player <i>i</i>, is computed
+          </em>
+          , the exponentially scaled rating of player <em>i</em>, is computed
           using
         </Typography>
         <Typography variant="body1" align="center" gutterBottom>
-          <i>
+          <em>
             Q<sub>i</sub> = 10
             <sup>
               R<sub>i</sub> / {SCALING_FACTOR}
             </sup>
             .
-          </i>
+          </em>
         </Typography>
         <Typography variant="body1" gutterBottom>
           For each player in a game, we then compute the expected ratio of sets
           for that player using the formula
         </Typography>
         <Typography variant="body1" align="center" gutterBottom>
-          <i>
+          <em>
             E<sub>i</sub> = Q<sub>i</sub> / (Σ Q<sub>j</sub>){", "}
-          </i>
+          </em>
         </Typography>
         <Typography variant="body1" gutterBottom>
           where{" "}
-          <i>
+          <em>
             Σ Q<sub>j</sub>
-          </i>{" "}
+          </em>{" "}
           is a sum over the exponentially scaled ratings of all players in the
           game.
         </Typography>
         <Typography variant="body1" gutterBottom>
           Finally, we compute the updated rating,{" "}
-          <i>
+          <em>
             R<sub>i</sub>'
-          </i>
+          </em>
           , for each player using the formula
         </Typography>
         <Typography variant="body1" align="center" gutterBottom>
-          <i>
+          <em>
             R<sub>i</sub>' = R<sub>i</sub> + K·(S<sub>i</sub> - E<sub>i</sub>)
             {", "}
-          </i>
+          </em>
         </Typography>
         <Typography variant="body1" gutterBottom>
           where{" "}
-          <i>
+          <em>
             S<sub>i</sub>
-          </i>{" "}
-          is the achieved ratio of sets obtained by player <i>i</i> and <i>K</i>{" "}
-          is an additional factor based on the number of players in the game and
-          your level of experience.
+          </em>{" "}
+          is the achieved ratio of sets obtained by player <em>i</em> and{" "}
+          <em>K</em> is an additional factor based on the number of players in
+          the game and your level of experience.
         </Typography>
         <Typography variant="body1" gutterBottom>
           Note that while the rating is displayed as an integer, it is stored

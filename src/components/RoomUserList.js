@@ -13,23 +13,10 @@ import { useTransition, animated } from "react-spring";
 import { Link as RouterLink } from "react-router-dom";
 
 import User from "../components/User";
+import UserRating from "../components/UserRating";
 import { UserContext } from "../context";
-import { BASE_RATING } from "../util";
-import { makeStyles } from "@material-ui/core/styles";
 
-const useStyles = makeStyles((theme) => ({
-  rating: {
-    color: "white",
-    backgroundColor: "dodgerblue",
-    borderRadius: "5px",
-    fontSize: "13.5px",
-    textAlign: "center",
-    width: "41px",
-  },
-}));
-
-function RoomUserList({ game, gameMode, gameId }) {
-  const classes = useStyles();
+function RoomUserList({ game, gameId }) {
   const user = useContext(UserContext);
 
   // Current list of players, sorted by when they joined
@@ -51,7 +38,7 @@ function RoomUserList({ game, gameMode, gameId }) {
             component={Typography}
             variant="body2"
             noWrap
-            render={(player, playerStats, playerEl) => (
+            render={(player, playerEl) => (
               <ListItem
                 button
                 component={RouterLink}
@@ -77,15 +64,14 @@ function RoomUserList({ game, gameMode, gameId }) {
                     </Tooltip>
                   )}
                 </ListItemIcon>
-                <ListItemText classes={{ primary: classes.rating }}>
-                  {Math.round(
-                    playerStats == null
-                      ? BASE_RATING
-                      : playerStats[game.mode || "normal"]["rating"] ||
-                          BASE_RATING
-                  )}
+
+                <ListItemText disableTypography>
+                  <UserRating
+                    userId={playerId}
+                    gameMode={game.mode || "normal"}
+                  />
+                  {playerEl}
                 </ListItemText>
-                <ListItemText disableTypography>{playerEl}</ListItemText>
                 {playerId === user.id && (
                   <ListItemText style={{ flex: "0 0 auto", marginLeft: 8 }}>
                     (You)

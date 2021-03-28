@@ -61,7 +61,7 @@ function ProfileName({ userId }) {
   return (
     <User
       id={userId}
-      render={(player, userStats, userEl) => {
+      render={(player, userEl) => {
         const isOnline =
           player.connections && Object.keys(player.connections).length > 0;
         return (

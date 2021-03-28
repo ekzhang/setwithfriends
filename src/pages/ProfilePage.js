@@ -15,9 +15,11 @@ import ProfileName from "../components/ProfileName";
 import UserStatistics from "../components/UserStatistics";
 import ProfileGamesTable from "../components/ProfileGamesTable";
 import Subheading from "../components/Subheading";
+import Loading from "../components/Loading";
 import useFirebaseRef from "../hooks/useFirebaseRef";
 import useFirebaseRefs from "../hooks/useFirebaseRefs";
-import { BASE_RATING, computeState, hasHint, modes } from "../util";
+import useStats from "../hooks/useStats";
+import { computeState, hasHint, modes } from "../util";
 import LoadingPage from "./LoadingPage";
 
 const datasetVariants = {
@@ -69,12 +71,10 @@ function ProfilePage({ match }) {
   const classes = useStyles();
 
   const [games, loadingGames] = useFirebaseRef(`/userGames/${userId}`, true);
+  const [stats, loadingStats] = useStats(userId);
   const [redirect, setRedirect] = useState(null);
   const [variant, setVariant] = useState("all");
   const [modeVariant, setModeVariant] = useState("normal");
-  const [rating, loadingRating] = useFirebaseRef(
-    `/userStats/${userId}/${modeVariant}/rating`
-  );
 
   const handleClickGame = (gameId) => {
     setRedirect(`/room/${gameId}`);
@@ -112,15 +112,6 @@ function ProfilePage({ match }) {
           gamesData[gameIds[i]] = gameData;
         }
       }
-    }
-  }
-
-  let parsedRating = null;
-  if (!loadingRating) {
-    if (rating == null) {
-      parsedRating = BASE_RATING;
-    } else {
-      parsedRating = Math.round(rating) || BASE_RATING;
     }
   }
 
@@ -171,11 +162,15 @@ function ProfilePage({ match }) {
                 </Select>
               </div>
             </div>
-            <UserStatistics
-              userId={userId}
-              gamesData={gamesData}
-              rating={parsedRating}
-            />
+            {loadingStats ? (
+              <Loading />
+            ) : (
+              <UserStatistics
+                userId={userId}
+                gamesData={gamesData}
+                rating={stats[modeVariant].rating}
+              />
+            )}
           </Grid>
         </Grid>
         <Subheading style={{ textAlign: "left" }}>Finished Games</Subheading>

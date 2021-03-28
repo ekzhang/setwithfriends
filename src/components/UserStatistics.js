@@ -21,11 +21,11 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-function UserStatistics({ gamesData, rating, userId }) {
+function UserStatistics({ userId, rating, gamesData }) {
   const classes = useStyles();
   const theme = useTheme();
 
-  if (!gamesData || !rating) {
+  if (!gamesData) {
     return <Loading />;
   }
 

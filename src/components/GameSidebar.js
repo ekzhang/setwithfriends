@@ -13,9 +13,10 @@ import SnoozeIcon from "@material-ui/icons/Snooze";
 import { useLocation, Link as RouterLink } from "react-router-dom";
 
 import User from "./User";
+import UserRating from "./UserRating";
 import Subheading from "./Subheading";
 import useMoment from "../hooks/useMoment";
-import { BASE_RATING, formatTime } from "../util";
+import { formatTime } from "../util";
 
 const useStyles = makeStyles((theme) => ({
   sidebar: {
@@ -39,17 +40,9 @@ const useStyles = makeStyles((theme) => ({
     flexDirection: "column",
     overflowY: "hidden",
   },
-  rating: {
-    color: "white",
-    backgroundColor: "dodgerblue",
-    borderRadius: "5px",
-    fontSize: "13.5px",
-    textAlign: "center",
-    width: "41px",
-  },
 }));
 
-function GameSidebar({ game, gameMode, scores, leaderboard }) {
+function GameSidebar({ game, scores, leaderboard }) {
   const classes = useStyles();
   const { pathname } = useLocation();
   const time = useMoment(500);
@@ -79,7 +72,7 @@ function GameSidebar({ game, gameMode, scores, leaderboard }) {
               component={Typography}
               variant="body2"
               noWrap
-              render={(user, userStats, userEl) => (
+              render={(user, userEl) => (
                 <ListItem button component={RouterLink} to={`/profile/${uid}`}>
                   {game.status === "ingame" && (
                     <ListItemIcon>
@@ -95,15 +88,10 @@ function GameSidebar({ game, gameMode, scores, leaderboard }) {
                       )}
                     </ListItemIcon>
                   )}
-                  <ListItemText classes={{ primary: classes.rating }}>
-                    {Math.round(
-                      userStats == null
-                        ? BASE_RATING
-                        : userStats[game.mode || "normal"]["rating"] ||
-                            BASE_RATING
-                    )}
+                  <ListItemText disableTypography>
+                    <UserRating userId={uid} gameMode={game.mode || "normal"} />
+                    {userEl}
                   </ListItemText>
-                  <ListItemText disableTypography>{userEl}</ListItemText>
                   <ListItemText
                     style={{
                       flex: "0 0 36px",

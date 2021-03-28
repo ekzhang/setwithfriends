@@ -6,7 +6,7 @@ import { BrowserRouter, Switch, Route } from "react-router-dom";
 import CssBaseline from "@material-ui/core/CssBaseline";
 import { ThemeProvider } from "@material-ui/core/styles";
 
-import { BASE_RATING, generateColor, generateName } from "./util";
+import { generateColor, generateName } from "./util";
 import { UserContext, SettingsContext } from "./context";
 import useStorage from "./hooks/useStorage";
 import ConnectionsTracker from "./components/ConnectionsTracker";
@@ -63,7 +63,6 @@ function App() {
       return;
     }
     const userRef = firebase.database().ref(`/users/${authUser.uid}`);
-    const userStatsRef = firebase.database().ref(`/userStats/${authUser.uid}`);
     function update(snapshot) {
       if (snapshot.child("name").exists()) {
         setUser({
@@ -74,20 +73,8 @@ function App() {
         });
       } else {
         userRef.update({
-          games: {},
           color: generateColor(),
           name: generateName(),
-        });
-        userStatsRef.update({
-          normal: {
-            rating: BASE_RATING,
-          },
-          setchain: {
-            rating: BASE_RATING,
-          },
-          ultraset: {
-            rating: BASE_RATING,
-          },
         });
       }
     }

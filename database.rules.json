@@ -93,13 +93,7 @@
     },
     "userStats": {
       "$userId": {
-        ".read": "auth != null",
-        "$gameMode": {
-          "rating": {
-            ".write": "!data.exists() && newData.exists() && auth != null && newData.val() == 1200",
-            ".validate": "newData.isNumber()"
-          }
-        }
+        ".read": "auth != null"
       }
     },
     "publicGames": {
