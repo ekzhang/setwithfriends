@@ -11,6 +11,6 @@
   "dependencies": {
     "esm": "^3.2.25",
     "firebase-admin": "^9.5.0",
-    "inquirer": "^7.3.3"
+    "inquirer": "^8.0.0"
   }
 }

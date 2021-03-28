@@ -317,7 +317,7 @@ export function formatTime(t, hideSubsecond) {
   const hours = Math.floor(t / (3600 * 1000));
   const rest = t % (3600 * 1000);
   const format = hideSubsecond ? "mm:ss" : "mm:ss.SS";
-  return (hours ? `${hours}:` : "") + moment(rest).format(format);
+  return (hours ? `${hours}:` : "") + moment.utc(rest).format(format);
 }
 
 /** Returns true if a game actually has hints enabled. */
