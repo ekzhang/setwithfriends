@@ -13,7 +13,6 @@ import SnoozeIcon from "@material-ui/icons/Snooze";
 import { useLocation, Link as RouterLink } from "react-router-dom";
 
 import User from "./User";
-import UserRating from "./UserRating";
 import Subheading from "./Subheading";
 import useMoment from "../hooks/useMoment";
 import { formatTime } from "../util";
@@ -69,6 +68,7 @@ function GameSidebar({ game, scores, leaderboard }) {
             <User
               key={uid}
               id={uid}
+              showRating={game.mode || "normal"}
               component={Typography}
               variant="body2"
               noWrap
@@ -88,10 +88,7 @@ function GameSidebar({ game, scores, leaderboard }) {
                       )}
                     </ListItemIcon>
                   )}
-                  <ListItemText disableTypography>
-                    <UserRating userId={uid} gameMode={game.mode || "normal"} />
-                    {userEl}
-                  </ListItemText>
+                  <ListItemText disableTypography>{userEl}</ListItemText>
                   <ListItemText
                     style={{
                       flex: "0 0 36px",

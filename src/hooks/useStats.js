@@ -5,7 +5,9 @@ import { BASE_RATING, modes } from "../util";
 
 /** Listen to statistics for a given user, with filled in default null values. */
 function useStats(userId) {
-  const [value, loading] = useFirebaseRef(`/userStats/${userId}`);
+  const [value, loading] = useFirebaseRef(
+    userId ? `/userStats/${userId}` : null
+  );
   if (loading) {
     return [value, loading];
   }

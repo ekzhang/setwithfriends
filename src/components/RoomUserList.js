@@ -13,7 +13,6 @@ import { useTransition, animated } from "react-spring";
 import { Link as RouterLink } from "react-router-dom";
 
 import User from "../components/User";
-import UserRating from "../components/UserRating";
 import { UserContext } from "../context";
 
 function RoomUserList({ game, gameId }) {
@@ -35,6 +34,7 @@ function RoomUserList({ game, gameId }) {
         <animated.div key={key} style={props}>
           <User
             id={playerId}
+            showRating={game.mode || "normal"}
             component={Typography}
             variant="body2"
             noWrap
@@ -65,13 +65,7 @@ function RoomUserList({ game, gameId }) {
                   )}
                 </ListItemIcon>
 
-                <ListItemText disableTypography>
-                  <UserRating
-                    userId={playerId}
-                    gameMode={game.mode || "normal"}
-                  />
-                  {playerEl}
-                </ListItemText>
+                <ListItemText disableTypography>{playerEl}</ListItemText>
                 {playerId === user.id && (
                   <ListItemText style={{ flex: "0 0 auto", marginLeft: 8 }}>
                     (You)

@@ -3,6 +3,7 @@ import { useTheme, makeStyles } from "@material-ui/core/styles";
 import WhatshotIcon from "@material-ui/icons/Whatshot";
 
 import useFirebaseRef from "../hooks/useFirebaseRef";
+import useStats from "../hooks/useStats";
 import { colors } from "../util";
 
 const useStyles = makeStyles((theme) => ({
@@ -12,16 +13,33 @@ const useStyles = makeStyles((theme) => ({
       filter: `drop-shadow(0.1rem 0rem 0.2rem)`,
     },
   },
+  rating: {
+    display: "inline-block",
+    width: "3em",
+    marginRight: "0.5em",
+    borderRadius: "5px",
+    color: "white",
+    backgroundColor: "dodgerblue",
+    fontSize: "1em",
+    textAlign: "center",
+  },
 }));
 
-function User(props) {
+function User({
+  id,
+  style,
+  component,
+  render,
+  forcePatron,
+  showRating,
+  ...other
+}) {
   const theme = useTheme();
   const history = useHistory();
-
-  const { id, style, component, render, forcePatron, ...other } = props;
-  const [user, loading] = useFirebaseRef(`users/${id}`);
-
   const classes = useStyles();
+
+  const [user, loading] = useFirebaseRef(`users/${id}`);
+  const [stats, loadingStats] = useStats(showRating ? id : null);
 
   if (loading) {
     return null;
@@ -44,6 +62,11 @@ function User(props) {
       }}
       {...other}
     >
+      {showRating && (
+        <span className={classes.rating}>
+          {loadingStats ? "⋯" : Math.round(stats[showRating].rating)}
+        </span>
+      )}
       {(user.patron || forcePatron) && (
         <WhatshotIcon
           className={classes.patronIcon}
