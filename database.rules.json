@@ -91,6 +91,11 @@
         }
       }
     },
+    "userStats": {
+      "$userId": {
+        ".read": "auth != null"
+      }
+    },
     "publicGames": {
       ".read": "auth != null",
       ".indexOn": ".value"

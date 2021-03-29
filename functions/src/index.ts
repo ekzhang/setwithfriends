@@ -12,7 +12,22 @@ import { generateDeck, replayEvents, findSet } from "./game";
 const MAX_GAME_ID_LENGTH = 64;
 const MAX_UNFINISHED_GAMES_PER_HOUR = 4;
 
-/** Ends the game with the correct time */
+// Rating system parameters.
+const SCALING_FACTOR = 400;
+const LEARNING_RATE_BEGINNER = 32;
+const BASE_RATING = 1200;
+// Parameters not currently in use, see additional comment in finishGame().
+// const LEARNING_RATE_INTERMEDIATE = 16;
+// const LEARNING_RATE_INTERMEDIATE_THRESHOLD = 250;
+// const LEARNING_RATE_ADVANCED = 8;
+// const LEARNING_RATE_ADVANCED_THRESHOLD = 500;
+
+type TransactionResult = {
+  committed: boolean;
+  snapshot: functions.database.DataSnapshot;
+};
+
+/** Ends the game with the correct time and updates ratings */
 export const finishGame = functions.https.onCall(async (data, context) => {
   const gameId = data.gameId;
   if (
@@ -43,7 +58,7 @@ export const finishGame = functions.https.onCall(async (data, context) => {
     .once("value");
   const gameMode = gameModeRef.val() || "normal";
 
-  const { lastSet, deck, finalTime } = replayEvents(gameData, gameMode);
+  const { lastSet, deck, finalTime, scores } = replayEvents(gameData, gameMode);
 
   if (findSet(Array.from(deck), gameMode, lastSet)) {
     throw new functions.https.HttpsError(
@@ -52,11 +67,109 @@ export const finishGame = functions.https.onCall(async (data, context) => {
     );
   }
 
-  // Success! The game has ended, so we do an idempotent update.
-  await admin.database().ref(`games/${gameId}`).update({
-    status: "done",
-    endedAt: finalTime,
+  // The game has ended, so we attempt to do an atomic update.
+  // Safety: Events can only be appended to the game, so the final time must remain the same.
+  const { committed, snapshot }: TransactionResult = await admin
+    .database()
+    .ref(`games/${gameId}`)
+    .transaction((game) => {
+      if (game.status !== "ingame") {
+        // Someone beat us to the atomic update, so we cancel the transaction.
+        return;
+      }
+      game.status = "done";
+      game.endedAt = finalTime;
+      return game;
+    });
+
+  if (!committed) {
+    return;
+  }
+
+  /**
+   * Update ratings of players involved based on an extension of the Elo system.
+   */
+
+  // Retrieve userIds of players in the game.
+  const players: string[] = [];
+  snapshot.child("users").forEach(function (childSnap) {
+    if (childSnap.key !== null) {
+      players.push(childSnap.key);
+    }
   });
+
+  // Differentiate between single-player and multiplayer games.
+  if (players.length === 1) {
+    return;
+  }
+
+  // Add scores for players without a single set.
+  for (const player of players) {
+    scores[player] ??= 0;
+  }
+
+  // Retrieve old ratings from the database.
+  const ratings: Record<string, number> = {};
+  for (const player of players) {
+    const ratingSnap = await admin
+      .database()
+      .ref(`userStats/${player}/${gameMode}/rating`)
+      .once("value");
+    const rating = ratingSnap.exists() ? ratingSnap.val() : BASE_RATING;
+    ratings[player] = rating;
+  }
+
+  // Compute expected ratio for each player.
+  const likelihood: Record<string, number> = {};
+  let totalLikelihood = 0;
+  for (const player of players) {
+    likelihood[player] = Math.pow(10, ratings[player] / SCALING_FACTOR);
+    totalLikelihood += likelihood[player];
+  }
+
+  // Compute achieved ratio for each player.
+  const achievedRatio: Record<string, number> = {};
+  const setCount = Object.values(scores).reduce((a, b) => a + b);
+  for (const player of players) {
+    achievedRatio[player] = scores[player] / setCount;
+  }
+
+  // Compute new rating for each player.
+  const playerCountMultiplier = 1.0 / (players.length - 1);
+  const updates: Record<string, number> = {};
+  for (const player of players) {
+    const learningRate = LEARNING_RATE_BEGINNER;
+
+    /**
+     * This code is currently not in use. It has been written to accommodate
+     * adapting the learning rate to the experience of a player and the
+     * corresponding certainty of the rating system based on the number of
+     * games played. It is specifically aimed for use after a restructuring of
+     * the database where the users statistics are moved over to the DB.
+     */
+    // const finishedGamesCountSnap = await admin
+    //   .database()
+    //   .ref(`userStats/${player}/${gameMode}/finishedGamesCount`)
+    //   .once("value");
+    // gameCounts[player] = finishedGamesCountSnap.exists()
+    //   ? finishedGamesCountSnap.val()
+    //   : 0;
+    //
+    // if (gameCounts[player] >= LEARNING_RATE_ADVANCED_THRESHOLD) {
+    //   learningRate = LEARNING_RATE_ADVANCED;
+    // } else if (gameCounts[player] >= LEARNING_RATE_INTERMEDIATE_THRESHOLD) {
+    //   learningRate = LEARNING_RATE_INTERMEDIATE;
+    // }
+
+    const newRating =
+      ratings[player] +
+      playerCountMultiplier *
+        learningRate *
+        (achievedRatio[player] - likelihood[player] / totalLikelihood);
+
+    updates[`${player}/${gameMode}/rating`] = newRating;
+  }
+  await admin.database().ref("userStats").update(updates);
 });
 
 /** Create a new game in the database */
@@ -180,7 +293,7 @@ export const createGame = functions.https.onCall(async (data, context) => {
   }
 
   await Promise.all(updates);
-  return snapshot?.val();
+  return snapshot.val();
 });
 
 export const customerPortal = functions.https.onCall(async (data, context) => {

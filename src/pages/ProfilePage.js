@@ -15,8 +15,10 @@ import ProfileName from "../components/ProfileName";
 import UserStatistics from "../components/UserStatistics";
 import ProfileGamesTable from "../components/ProfileGamesTable";
 import Subheading from "../components/Subheading";
+import Loading from "../components/Loading";
 import useFirebaseRef from "../hooks/useFirebaseRef";
 import useFirebaseRefs from "../hooks/useFirebaseRefs";
+import useStats from "../hooks/useStats";
 import { computeState, hasHint, modes } from "../util";
 import LoadingPage from "./LoadingPage";
 
@@ -69,6 +71,7 @@ function ProfilePage({ match }) {
   const classes = useStyles();
 
   const [games, loadingGames] = useFirebaseRef(`/userGames/${userId}`, true);
+  const [stats, loadingStats] = useStats(userId);
   const [redirect, setRedirect] = useState(null);
   const [variant, setVariant] = useState("all");
   const [modeVariant, setModeVariant] = useState("normal");
@@ -159,7 +162,15 @@ function ProfilePage({ match }) {
                 </Select>
               </div>
             </div>
-            <UserStatistics userId={userId} gamesData={gamesData} />
+            {loadingStats ? (
+              <Loading />
+            ) : (
+              <UserStatistics
+                userId={userId}
+                gamesData={gamesData}
+                rating={stats[modeVariant].rating}
+              />
+            )}
           </Grid>
         </Grid>
         <Subheading style={{ textAlign: "left" }}>Finished Games</Subheading>

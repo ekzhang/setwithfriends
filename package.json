@@ -12,6 +12,7 @@
     "@stripe/stripe-js": "^1.13.2",
     "bad-words": "^3.0.4",
     "chart.js": "^2.9.4",
+    "clone-deep": "^4.0.1",
     "clsx": "^1.1.1",
     "firebase": "^8.3.1",
     "moment": "^2.29.1",

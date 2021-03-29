@@ -34,6 +34,7 @@ function RoomUserList({ game, gameId }) {
         <animated.div key={key} style={props}>
           <User
             id={playerId}
+            showRating={game.mode || "normal"}
             component={Typography}
             variant="body2"
             noWrap
