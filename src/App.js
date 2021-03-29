@@ -73,7 +73,6 @@ function App() {
         });
       } else {
         userRef.update({
-          games: {},
           color: generateColor(),
           name: generateName(),
         });

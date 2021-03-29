@@ -68,6 +68,7 @@ function GameSidebar({ game, scores, leaderboard }) {
             <User
               key={uid}
               id={uid}
+              showRating={game.mode || "normal"}
               component={Typography}
               variant="body2"
               noWrap
