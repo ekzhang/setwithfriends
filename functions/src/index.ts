@@ -13,13 +13,13 @@ const MAX_GAME_ID_LENGTH = 64;
 const MAX_UNFINISHED_GAMES_PER_HOUR = 4;
 
 // Rating system parameters.
-const SCALING_FACTOR = 400;
-const LEARNING_RATE_BEGINNER = 32;
+const SCALING_FACTOR = 800;
+const LEARNING_RATE_BEGINNER = 64;
 const BASE_RATING = 1200;
 // Parameters not currently in use, see additional comment in finishGame().
-// const LEARNING_RATE_INTERMEDIATE = 16;
+// const LEARNING_RATE_INTERMEDIATE = 32;
 // const LEARNING_RATE_INTERMEDIATE_THRESHOLD = 250;
-// const LEARNING_RATE_ADVANCED = 8;
+// const LEARNING_RATE_ADVANCED = 16;
 // const LEARNING_RATE_ADVANCED_THRESHOLD = 500;
 
 type TransactionResult = {
@@ -135,7 +135,6 @@ export const finishGame = functions.https.onCall(async (data, context) => {
   }
 
   // Compute new rating for each player.
-  const playerCountMultiplier = 1.0 / (players.length - 1);
   const updates: Record<string, number> = {};
   for (const player of players) {
     const learningRate = LEARNING_RATE_BEGINNER;
@@ -163,8 +162,7 @@ export const finishGame = functions.https.onCall(async (data, context) => {
 
     const newRating =
       ratings[player] +
-      playerCountMultiplier *
-        learningRate *
+      learningRate *
         (achievedRatio[player] - likelihood[player] / totalLikelihood);
 
     updates[`${player}/${gameMode}/rating`] = newRating;

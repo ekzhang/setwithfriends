@@ -327,8 +327,7 @@ function HelpPage() {
             S<sub>i</sub>
           </em>{" "}
           is the achieved ratio of sets obtained by player <em>i</em> and{" "}
-          <em>K</em> is an additional factor based on the number of players in
-          the game and your level of experience.
+          <em>K</em> is an additional factor based on your level of experience.
         </Typography>
         <Typography variant="body1" gutterBottom>
           Note that while the rating is displayed as an integer, it is stored
