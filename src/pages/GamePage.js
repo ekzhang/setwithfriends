@@ -434,6 +434,8 @@ function GamePage({ match }) {
               lastSet={lastSet}
               answer={answer}
             />
+
+            <Button onClick={() => handleSet(findSet(current))}>Cheat</Button>
           </Grid>
         </Box>
         <Box clone order={{ xs: 2, sm: 3 }}>

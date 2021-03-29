@@ -120,12 +120,11 @@ export const finishGame = functions.https.onCall(async (data, context) => {
   }
 
   // Compute expected ratio for each player.
-  const expectedRatio: Record<string, number> = {};
+  const likelihood: Record<string, number> = {};
   let totalLikelihood = 0;
   for (const player of players) {
-    const likelihood = Math.pow(10, ratings[player] / SCALING_FACTOR);
-    expectedRatio[player] = likelihood;
-    totalLikelihood += likelihood;
+    likelihood[player] = Math.pow(10, ratings[player] / SCALING_FACTOR);
+    totalLikelihood += likelihood[player];
   }
 
   // Compute achieved ratio for each player.
@@ -166,7 +165,7 @@ export const finishGame = functions.https.onCall(async (data, context) => {
       ratings[player] +
       playerCountMultiplier *
         learningRate *
-        (achievedRatio[player] - expectedRatio[player] / totalLikelihood);
+        (achievedRatio[player] - likelihood[player] / totalLikelihood);
 
     updates[`${player}/${gameMode}/rating`] = newRating;
   }
