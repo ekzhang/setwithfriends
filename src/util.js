@@ -21,6 +21,9 @@ export const filter = new Filter();
 
 filter.addWords("cunting");
 
+// See: https://github.com/ekzhang/setwithfriends/issues/117
+filter.addWords("retard", "retarded");
+
 // See: https://github.com/ekzhang/setwithfriends/issues/49
 filter.removeWords("queer", "queers", "queerz", "qweers", "qweerz", "lesbian");
 
