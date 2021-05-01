@@ -19,6 +19,11 @@ import deepOrange from "@material-ui/core/colors/deepOrange";
 
 export const filter = new Filter();
 
+filter.addWords("cunting");
+
+// See: https://github.com/ekzhang/setwithfriends/issues/117
+filter.addWords("retard", "retarded");
+
 // See: https://github.com/ekzhang/setwithfriends/issues/49
 filter.removeWords("queer", "queers", "queerz", "qweers", "qweerz", "lesbian");
 
@@ -105,7 +110,7 @@ export const standardLayouts = {
 };
 
 export const BASE_RATING = 1200;
-export const SCALING_FACTOR = 400;
+export const SCALING_FACTOR = 800;
 
 export function generateCards() {
   const deck = [];
