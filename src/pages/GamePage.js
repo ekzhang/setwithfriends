@@ -193,7 +193,11 @@ function GamePage({ match }) {
     lastSet = [c1, c2, c3];
   }
   let answer = findSet(current.slice(0, boardSize), gameMode, lastSet);
-  if (gameMode === "normal" && hasHint(game) && answer) {
+  if (
+    (gameMode === "normal" || gameMode === "setjr") &&
+    hasHint(game) &&
+    answer
+  ) {
     answer = answer.slice(0, numHints);
   } else {
     answer = null;

@@ -9,10 +9,22 @@ interface GameEvent {
   c4?: string;
 }
 
-type GameMode = "normal" | "setchain" | "ultraset";
+export type GameMode = "normal" | "setjr" | "setchain" | "ultraset";
 
-/** Generates a random 81-card deck using a Fisher-Yates shuffle. */
-export function generateDeck() {
+/** shuffle a deck using Fisher-Yates */
+function shuffle(deck: string[]) {
+  // Fisher-Yates
+  for (let i = deck.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    const temp = deck[i];
+    deck[i] = deck[j];
+    deck[j] = temp;
+  }
+  return deck;
+}
+
+/** Standard 81 card deck */
+function generateDeckStandard() {
   const deck: Array<string> = [];
   for (let i = 0; i < 3; i++) {
     for (let j = 0; j < 3; j++) {
@@ -23,14 +35,27 @@ export function generateDeck() {
       }
     }
   }
-  // Fisher-Yates
-  for (let i = deck.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    const temp = deck[i];
-    deck[i] = deck[j];
-    deck[j] = temp;
+  return shuffle(deck);
+}
+
+/** 27 card deck used for Set Jr. games (no shanding) */
+function generateDeckSmall() {
+  const deck: Array<string> = [];
+  for (let i = 0; i < 3; i++) {
+    for (let j = 0; j < 3; j++) {
+      for (let k = 0; k < 3; k++) {
+        deck.push(`${i}${j}${0}${k}`);
+      }
+    }
   }
-  return deck;
+  return shuffle(deck);
+}
+
+export function generateDeck(mode: GameMode) {
+  /**if (mode === "setjr") return generateDeckStandard();
+  return generateDeckSmall(); */
+  if (mode === "setjr") return generateDeckSmall();
+  else return generateDeckStandard();
 }
 
 /** Check if three cards form a set. */
@@ -71,6 +96,7 @@ export function findSet(deck: string[], gameMode: GameMode, old?: string[]) {
       const c = conjugateCard(deck[i], deck[j]);
       if (
         gameMode === "normal" ||
+        gameMode === "setjr" ||
         (gameMode === "setchain" && old!.length === 0)
       ) {
         if (deckSet.has(c)) {
@@ -169,6 +195,8 @@ export function replayEvents(
   for (const event of events) {
     let eventValid = false;
     if (gameMode === "normal" && replayEventNormal(deck, event))
+      eventValid = true;
+    if (gameMode === "setjr" && replayEventNormal(deck, event))
       eventValid = true;
     if (gameMode === "setchain" && replayEventChain(history, deck, event))
       eventValid = true;

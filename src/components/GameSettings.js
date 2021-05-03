@@ -32,7 +32,7 @@ function GameSettings({ game, gameId, userId }) {
   return (
     <div className={classes.settings}>
       <RadioGroup row value={gameMode} onChange={handleChangeMode}>
-        {["normal", "setchain", "ultraset"].map((mode) => (
+        {["normal", "setjr", "setchain", "ultraset"].map((mode) => (
           <Tooltip
             key={mode}
             arrow
@@ -48,7 +48,7 @@ function GameSettings({ game, gameId, userId }) {
           </Tooltip>
         ))}
       </RadioGroup>
-      {gameMode === "normal" && (
+      {(gameMode === "normal" || gameMode === "setjr") && (
         <Tooltip arrow placement="left" title={hintTip}>
           <FormControlLabel
             control={<Switch checked={hasHint(game)} onChange={toggleHint} />}

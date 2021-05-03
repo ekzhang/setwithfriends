@@ -175,6 +175,7 @@ export const createGame = functions.https.onCall(async (data, context) => {
   const gameId = data.gameId;
   const access = data.access || "public";
   const mode = data.mode || "normal";
+  console.log(mode);
   const enableHint = data.enableHint || false;
 
   if (
@@ -270,9 +271,12 @@ export const createGame = functions.https.onCall(async (data, context) => {
   //   3. /publicGames (if access is public)
   const updates: Array<Promise<any>> = [];
   updates.push(
-    admin.database().ref(`gameData/${gameId}`).set({
-      deck: generateDeck(),
-    })
+    admin
+      .database()
+      .ref(`gameData/${gameId}`)
+      .set({
+        deck: generateDeck(mode), //generateDeck("setjr"),//[],//generateDeck(mode),
+      })
   );
   updates.push(
     admin
