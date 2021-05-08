@@ -331,7 +331,6 @@ export const createDeck = functions.https.onCall(async (data, context) => {
   await admin.database().ref(`gameData/${data}/deck`).set(deck);
 });
 
-
 /** Periodically remove stale user connections */
 export const clearConnections = functions.pubsub
   .schedule("every 1 minutes")
