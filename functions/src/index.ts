@@ -175,7 +175,6 @@ export const createGame = functions.https.onCall(async (data, context) => {
   const gameId = data.gameId;
   const access = data.access || "public";
   const mode = data.mode || "normal";
-  console.log(mode);
   const enableHint = data.enableHint || false;
 
   if (
@@ -273,14 +272,6 @@ export const createGame = functions.https.onCall(async (data, context) => {
   updates.push(
     admin
       .database()
-      .ref(`gameData/${gameId}`)
-      .set({
-        deck: generateDeck("setjr"), //generateDeck("setjr"),//[],//generateDeck(mode),
-      })
-  );
-  updates.push(
-    admin
-      .database()
       .ref("stats/gameCount")
       .transaction((count) => (count || 0) + 1)
   );
@@ -328,6 +319,18 @@ export const customerPortal = functions.https.onCall(async (data, context) => {
   });
   return portalResponse.url;
 });
+
+/**
+ * Pushes the shuffled deck to the database when the game starts. Since the
+ * game mode can be changed in the lobby, this can't be done during createGame.
+ */
+export const createDeck = functions.https.onCall(async (data, context) => {
+  const gameModeRef = await admin.database().ref(`games/${data}/mode`).get();
+  const gameMode = gameModeRef.val() || "normal";
+  const deck = generateDeck(gameMode);
+  await admin.database().ref(`gameData/${data}/deck`).set(deck);
+});
+
 
 /** Periodically remove stale user connections */
 export const clearConnections = functions.pubsub

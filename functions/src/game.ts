@@ -52,8 +52,6 @@ function generateDeckSmall() {
 }
 
 export function generateDeck(mode: GameMode) {
-  /**if (mode === "setjr") return generateDeckStandard();
-  return generateDeckSmall(); */
   if (mode === "setjr") return generateDeckSmall();
   else return generateDeckStandard();
 }

@@ -20,7 +20,7 @@ import SimpleInput from "../components/SimpleInput";
 import RoomUserList from "../components/RoomUserList";
 import Subheading from "../components/Subheading";
 import Chat from "../components/Chat";
-import firebase from "../firebase";
+import firebase, { createDeck } from "../firebase";
 import { UserContext } from "../context";
 import GameSettings from "../components/GameSettings";
 
@@ -104,6 +104,12 @@ function RoomPage({ match, location }) {
   }
 
   function startGame() {
+    try {
+      createDeck(gameId);
+    } catch (error) {
+      alert("Error when creating deck.");
+      return;
+    }
     firebase.database().ref(`games/${gameId}`).update({
       status: "ingame",
       startedAt: firebase.database.ServerValue.TIMESTAMP,

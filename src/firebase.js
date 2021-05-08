@@ -15,5 +15,6 @@ const functions = firebase.functions();
 export const createGame = functions.httpsCallable("createGame");
 export const customerPortal = functions.httpsCallable("customerPortal");
 export const finishGame = functions.httpsCallable("finishGame");
+export const createDeck = functions.httpsCallable("createDeck");
 
 export default firebase;
