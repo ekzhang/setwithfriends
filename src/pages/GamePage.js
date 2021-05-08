@@ -219,7 +219,7 @@ function GamePage({ match }) {
       if (selected.includes(card)) {
         return removeCard(selected, card);
       } else {
-        if (gameMode === "normal") {
+        if (gameMode === "normal" || gameMode === "setjr") {
           const vals = [...selected, card];
           if (vals.length === 3) {
             if (checkSet(...vals)) {
@@ -448,18 +448,21 @@ function GamePage({ match }) {
               leaderboard={leaderboard}
             />
             <Box mt={1}>
-              {gameMode === "normal" && hasHint(game) && (
-                <Button
-                  size="large"
-                  variant="outlined"
-                  color="primary"
-                  fullWidth
-                  disabled={numHints === 3 || !answer || game.status === "done"}
-                  onClick={handleAddHint}
-                >
-                  Add hint: {numHints}
-                </Button>
-              )}
+              {(gameMode === "normal" || gameMode === "setjr") &&
+                hasHint(game) && (
+                  <Button
+                    size="large"
+                    variant="outlined"
+                    color="primary"
+                    fullWidth
+                    disabled={
+                      numHints === 3 || !answer || game.status === "done"
+                    }
+                    onClick={handleAddHint}
+                  >
+                    Add hint: {numHints}
+                  </Button>
+                )}
             </Box>
           </Grid>
         </Box>

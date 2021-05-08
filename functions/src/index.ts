@@ -275,7 +275,7 @@ export const createGame = functions.https.onCall(async (data, context) => {
       .database()
       .ref(`gameData/${gameId}`)
       .set({
-        deck: generateDeck(mode), //generateDeck("setjr"),//[],//generateDeck(mode),
+        deck: generateDeck("setjr"), //generateDeck("setjr"),//[],//generateDeck(mode),
       })
   );
   updates.push(
