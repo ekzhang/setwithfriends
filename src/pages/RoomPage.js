@@ -103,9 +103,9 @@ function RoomPage({ match, location }) {
     navigator.clipboard.writeText(link).then(() => setCopiedLink(true));
   }
 
-  function startGame() {
+  async function startGame() {
     try {
-      createDeck(gameId);
+      await createDeck(gameId);
     } catch (error) {
       alert("Error when creating deck.");
       return;
