@@ -76,6 +76,9 @@
         "banned": {
           ".validate": "newData.isNumber()"
         },
+        "canChat": {
+          ".validate": "newData.isBoolean()"
+        },
         "$other": {
           ".validate": false
         }

@@ -54,6 +54,8 @@ const useStyles = makeStyles({
   },
 });
 
+const MIN_GAMES = 10;
+
 /** A chat sidebar element, opens lobby chat when the `gameId` prop is not set. */
 function Chat({
   title,
@@ -88,7 +90,7 @@ function Chat({
   );
   const messages = useFirebaseQuery(messagesQuery);
 
-  function handleSubmit(event) {
+  async function handleSubmit(event) {
     event.preventDefault();
     if (input) {
       if (filter.isProfane(input)) {
@@ -96,12 +98,32 @@ function Chat({
           "We detected that your message contains profane language. If you think this was a mistake, please let us know!"
         );
       } else {
-        firebase.database().ref(databasePath).push({
-          user: user.id,
-          message: input,
-          time: firebase.database.ServerValue.TIMESTAMP,
-        });
-        setInput("");
+        let ref = await firebase
+          .database()
+          .ref(`users/${user.id}/canChat`)
+          .once("value");
+        let canChat = ref.val();
+        if (!canChat) {
+          ref = await firebase
+            .database()
+            .ref(`/userGames/${user.id}`)
+            .once("value");
+          canChat = ref.numChildren() >= MIN_GAMES;
+          firebase.database().ref(`users/${user.id}/canChat`).set(canChat);
+        }
+        if (!canChat) {
+          setInput("");
+          alert(
+            "To prevent spam, new accounts are not allow to use chat.  Play a few games and this message should dissapear."
+          );
+        } else {
+          firebase.database().ref(databasePath).push({
+            user: user.id,
+            message: input,
+            time: firebase.database.ServerValue.TIMESTAMP,
+          });
+          setInput("");
+        }
       }
     }
   }
