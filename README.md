@@ -36,7 +36,7 @@ chat!
 
 To build the site for development:
 
-- Install Node.js and npm
+- Install Node.js 14 and npm 7
 - Run `npm install` in the root folder
 - Run `npm start` - it should now open the site in your browser
 

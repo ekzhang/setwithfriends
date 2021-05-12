@@ -12,5 +12,9 @@
     "esm": "^3.2.25",
     "firebase-admin": "^9.5.0",
     "inquirer": "^8.0.0"
+  },
+  "engines": {
+    "node": "14",
+    "npm": "7"
   }
 }

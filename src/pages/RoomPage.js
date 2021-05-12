@@ -69,8 +69,8 @@ function RoomPage({ match, location }) {
       (!game.users || !(user.id in game.users))
     ) {
       const updates = {
-        [`games/${gameId}/users/${user.id}`]: firebase.database.ServerValue
-          .TIMESTAMP,
+        [`games/${gameId}/users/${user.id}`]:
+          firebase.database.ServerValue.TIMESTAMP,
         [`userGames/${user.id}/${gameId}`]: game.createdAt,
       };
       firebase

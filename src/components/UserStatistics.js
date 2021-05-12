@@ -67,11 +67,15 @@ function UserStatistics({ userId, rating, gamesData }) {
   const pieOptions = {
     maintainAspectRatio: false,
     responsive: true,
-    legend: {
-      position: "bottom",
-      onClick: (e) => e.stopPropagation(),
+    plugins: {
+      legend: {
+        position: "bottom",
+        onClick: (e) => e.stopPropagation(),
+      },
+      tooltip: {
+        enabled: stats[0],
+      },
     },
-    tooltips: { enabled: stats[0] },
     elements: {
       arc: {
         borderWidth: 0,

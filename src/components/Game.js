@@ -4,7 +4,7 @@ import Divider from "@material-ui/core/Divider";
 import Paper from "@material-ui/core/Paper";
 import Typography from "@material-ui/core/Typography";
 import { lightGreen } from "@material-ui/core/colors";
-import { animated, useSprings } from "react-spring";
+import { animated, useSprings } from "@react-spring/web";
 import useSound from "use-sound";
 
 import { generateCards, standardLayouts } from "../util";
@@ -239,7 +239,7 @@ function Game({
           style={{
             position: "absolute",
             ...springProps[idx],
-            visibility: springProps[idx].opacity.interpolate((x) =>
+            visibility: springProps[idx].opacity.to((x) =>
               x > 0 ? "visible" : "hidden"
             ),
           }}

@@ -9,7 +9,7 @@ import SnoozeIcon from "@material-ui/icons/Snooze";
 import StarsIcon from "@material-ui/icons/Stars";
 import Tooltip from "@material-ui/core/Tooltip";
 import Typography from "@material-ui/core/Typography";
-import { useTransition, animated } from "react-spring";
+import { useTransition, animated } from "@react-spring/web";
 import { Link as RouterLink } from "react-router-dom";
 
 import User from "../components/User";
@@ -22,7 +22,7 @@ function RoomUserList({ game, gameId }) {
   const users = Object.keys(game.users || {}).sort(
     (a, b) => game.users[a] - game.users[b]
   );
-  const transitions = useTransition(users, null, {
+  const transition = useTransition(users, {
     from: { opacity: 0 },
     enter: { opacity: 1 },
     leave: { opacity: 0 },
@@ -30,8 +30,8 @@ function RoomUserList({ game, gameId }) {
 
   return (
     <List dense disablePadding>
-      {transitions.map(({ item: playerId, props, key }) => (
-        <animated.div key={key} style={props}>
+      {transition((style, playerId) => (
+        <animated.div style={style}>
           <User
             id={playerId}
             showRating={game.mode || "normal"}
