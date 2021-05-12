@@ -38,7 +38,7 @@ function generateDeckStandard() {
   return shuffle(deck);
 }
 
-/** 27 card deck used for Set Jr. games (no shanding) */
+/** 27 card deck used for Set Jr. games (no shading) */
 function generateDeckSmall() {
   const deck: Array<string> = [];
   for (let i = 0; i < 3; i++) {
