@@ -11,7 +11,7 @@ interface GameEvent {
 
 export type GameMode = "normal" | "setjr" | "setchain" | "ultraset";
 
-/** shuffle a deck using Fisher-Yates */
+/** Shuffle a deck using Fisher-Yates */
 function shuffle(deck: string[]) {
   // Fisher-Yates
   for (let i = deck.length - 1; i > 0; i--) {
