@@ -75,6 +75,7 @@ function App() {
         userRef.update({
           color: generateColor(),
           name: generateName(),
+          firstOnline: firebase.database.ServerValue.TIMESTAMP,
         });
       }
     }

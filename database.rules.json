@@ -68,6 +68,9 @@
         "lastOnline": {
           ".validate": "newData.isNumber() && newData.val() == now"
         },
+        "firstOnline": {
+          ".validate": "newData.isNumber() && newData.val() == now"
+        },
         "connections": {
           "$connectionId": {
             ".validate": "newData.isString() || !newData.exists()"
@@ -75,9 +78,6 @@
         },
         "banned": {
           ".validate": "newData.isNumber()"
-        },
-        "canChat": {
-          ".validate": "newData.isBoolean()"
         },
         "$other": {
           ".validate": false
