@@ -18,6 +18,7 @@ import firebase from "../firebase";
 import { filter } from "../util";
 import autoscroll from "../utils/autoscroll";
 import useFirebaseQuery from "../hooks/useFirebaseQuery";
+import useFirebaseRef from "../hooks/useFirebaseRef";
 import useStorage from "../hooks/useStorage";
 import { UserContext } from "../context";
 
@@ -75,6 +76,7 @@ function Chat({
     return autoscroll(chatEl.current);
   }, []);
 
+  const [serverOffset] = useFirebaseRef("/.info/serverTimeOffset");
   const [input, setInput] = useState("");
   const [menuOpenIdx, setMenuOpenIdx] = useState(null);
   const [chatHidden, setChatHidden] = useStorage("chat-hidden", "no");
@@ -100,7 +102,7 @@ function Chat({
         );
       } else {
         const canChat = user.firstOnline
-          ? new Date().getTime() - user.firstOnline > NEW_ACCOUNT_TIME
+          ? serverOffset + Date.now() - user.firstOnline > NEW_ACCOUNT_TIME
           : true;
         if (!canChat) {
           setInput("");
