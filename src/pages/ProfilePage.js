@@ -16,11 +16,11 @@ import UserStatistics from "../components/UserStatistics";
 import ProfileGamesTable from "../components/ProfileGamesTable";
 import Subheading from "../components/Subheading";
 import Loading from "../components/Loading";
-import useFirebaseRef from "../hooks/useFirebaseRef";
+import firebase from "../firebase";
+import useFirebaseQuery from "../hooks/useFirebaseQuery";
 import useFirebaseRefs from "../hooks/useFirebaseRefs";
 import useStats from "../hooks/useStats";
 import { computeState, hasHint, modes } from "../util";
-import LoadingPage from "./LoadingPage";
 
 const datasetVariants = {
   all: {
@@ -70,7 +70,15 @@ function ProfilePage({ match }) {
   const userId = match.params.id;
   const classes = useStyles();
 
-  const [games, loadingGames] = useFirebaseRef(`/userGames/${userId}`, true);
+  const games = useFirebaseQuery(
+    useMemo(() => {
+      return firebase
+        .database()
+        .ref(`/userGames/${userId}`)
+        .orderByValue()
+        .limitToLast(50);
+    }, [userId])
+  );
   const [stats, loadingStats] = useStats(userId);
   const [redirect, setRedirect] = useState(null);
   const [variant, setVariant] = useState("all");
@@ -80,10 +88,7 @@ function ProfilePage({ match }) {
     setRedirect(`/room/${gameId}`);
   };
 
-  const gameIds = useMemo(
-    () => (loadingGames ? [] : Object.keys(games || {})),
-    [loadingGames, games]
-  );
+  const gameIds = useMemo(() => Object.keys(games), [games]);
   const [gameVals, loadingGameVals] = useFirebaseRefs(
     useMemo(() => gameIds.map((gameId) => `games/${gameId}`), [gameIds])
   );
@@ -93,9 +98,6 @@ function ProfilePage({ match }) {
 
   if (redirect) {
     return <Redirect push to={redirect} />;
-  }
-  if (loadingGames) {
-    return <LoadingPage />;
   }
 
   let gamesData = null;
@@ -165,11 +167,7 @@ function ProfilePage({ match }) {
             {loadingStats ? (
               <Loading />
             ) : (
-              <UserStatistics
-                userId={userId}
-                gamesData={gamesData}
-                rating={stats[modeVariant].rating}
-              />
+              <UserStatistics stats={stats[modeVariant]} variant={variant} />
             )}
           </Grid>
         </Grid>

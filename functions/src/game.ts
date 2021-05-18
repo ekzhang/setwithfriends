@@ -9,7 +9,7 @@ interface GameEvent {
   c4?: string;
 }
 
-type GameMode = "normal" | "setchain" | "ultraset";
+export type GameMode = "normal" | "setchain" | "ultraset";
 
 /** Generates a random 81-card deck using a Fisher-Yates shuffle. */
 export function generateDeck() {

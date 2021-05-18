@@ -62,7 +62,7 @@ function ProfileGamesTable({ userId, gamesData, handleClickGame }) {
   if (Object.keys(gamesData).length === 0) {
     return (
       <Typography style={{ color: grey[400] }}>
-        No games finished yet...
+        No recent games to display...
       </Typography>
     );
   }

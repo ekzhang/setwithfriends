@@ -9,20 +9,19 @@ const stripe = process.env.FUNCTIONS_EMULATOR
       apiVersion: "2020-08-27",
     });
 
-import { generateDeck, replayEvents, findSet } from "./game";
+import { generateDeck, replayEvents, findSet, GameMode } from "./game";
 
 const MAX_GAME_ID_LENGTH = 64;
 const MAX_UNFINISHED_GAMES_PER_HOUR = 4;
 
 // Rating system parameters.
 const SCALING_FACTOR = 800;
-const LEARNING_RATE_BEGINNER = 64;
+const LEARNING_RATE_BEGINNER = 128;
 const BASE_RATING = 1200;
-// Parameters not currently in use, see additional comment in finishGame().
-// const LEARNING_RATE_INTERMEDIATE = 32;
-// const LEARNING_RATE_INTERMEDIATE_THRESHOLD = 250;
-// const LEARNING_RATE_ADVANCED = 16;
-// const LEARNING_RATE_ADVANCED_THRESHOLD = 500;
+const LEARNING_RATE_INTERMEDIATE = 64;
+const LEARNING_RATE_INTERMEDIATE_THRESHOLD = 30;
+const LEARNING_RATE_ADVANCED = 32;
+const LEARNING_RATE_ADVANCED_THRESHOLD = 60;
 
 type TransactionResult = {
   committed: boolean;
@@ -54,11 +53,8 @@ export const finishGame = functions.https.onCall(async (data, context) => {
     .database()
     .ref(`gameData/${gameId}`)
     .once("value");
-  const gameModeRef = await admin
-    .database()
-    .ref(`games/${gameId}/mode`)
-    .once("value");
-  const gameMode = gameModeRef.val() || "normal";
+  const gameSnap = await admin.database().ref(`games/${gameId}`).once("value");
+  const gameMode = (gameSnap.child("mode").val() as GameMode) || "normal";
 
   const { lastSet, deck, finalTime, scores } = replayEvents(gameData, gameMode);
 
@@ -89,7 +85,8 @@ export const finishGame = functions.https.onCall(async (data, context) => {
   }
 
   /**
-   * Update ratings of players involved based on an extension of the Elo system.
+   * Update statistics and ratings of players involved based on an extension of
+   * the Elo system.
    */
 
   // Retrieve userIds of players in the game.
@@ -100,14 +97,42 @@ export const finishGame = functions.https.onCall(async (data, context) => {
     }
   });
 
-  // Differentiate between single-player and multiplayer games.
-  if (players.length === 1) {
-    return;
-  }
-
   // Add scores for players without a single set.
   for (const player of players) {
     scores[player] ??= 0;
+  }
+
+  // Differentiate between solo and multiplayer games.
+  const variant = players.length === 1 ? "solo" : "multiplayer";
+  const time = finalTime - gameSnap.child("startedAt").val();
+  const topScore = Math.max(...Object.values(scores));
+
+  // Update statistics for all users
+  const userStats: Record<string, any> = {};
+  await Promise.all(
+    players.map(async (player) => {
+      const result: TransactionResult = await admin
+        .database()
+        .ref(`userStats/${player}/${gameMode}/${variant}`)
+        .transaction((stats) => {
+          stats ??= {}; // tslint:disable-line no-parameter-reassignment
+          stats.finishedGames = (stats.finishedGames ?? 0) + 1;
+          stats.totalSets = (stats.totalSets ?? 0) + scores[player];
+          if (scores[player] === topScore) {
+            stats.wonGames = (stats.wonGames ?? 0) + 1;
+            stats.fastestTime = Math.min(stats.fastestTime ?? Infinity, time);
+          }
+          stats.totalTime = (stats.totalTime ?? 0) + time;
+          return stats;
+        });
+      // Save these values for use in rating calculation
+      userStats[player] = result.snapshot.val();
+    })
+  );
+
+  // If the game is solo, we skip rating calculation.
+  if (variant === "solo") {
+    return;
   }
 
   // Retrieve old ratings from the database.
@@ -139,28 +164,19 @@ export const finishGame = functions.https.onCall(async (data, context) => {
   // Compute new rating for each player.
   const updates: Record<string, number> = {};
   for (const player of players) {
-    const learningRate = LEARNING_RATE_BEGINNER;
+    let learningRate = LEARNING_RATE_BEGINNER;
 
     /**
-     * This code is currently not in use. It has been written to accommodate
-     * adapting the learning rate to the experience of a player and the
+     * Adapt the learning rate to the experience of a player and the
      * corresponding certainty of the rating system based on the number of
-     * games played. It is specifically aimed for use after a restructuring of
-     * the database where the users statistics are moved over to the DB.
+     * games played.
      */
-    // const finishedGamesCountSnap = await admin
-    //   .database()
-    //   .ref(`userStats/${player}/${gameMode}/finishedGamesCount`)
-    //   .once("value");
-    // gameCounts[player] = finishedGamesCountSnap.exists()
-    //   ? finishedGamesCountSnap.val()
-    //   : 0;
-    //
-    // if (gameCounts[player] >= LEARNING_RATE_ADVANCED_THRESHOLD) {
-    //   learningRate = LEARNING_RATE_ADVANCED;
-    // } else if (gameCounts[player] >= LEARNING_RATE_INTERMEDIATE_THRESHOLD) {
-    //   learningRate = LEARNING_RATE_INTERMEDIATE;
-    // }
+    const gameCount = userStats[player].finishedGames as number;
+    if (gameCount >= LEARNING_RATE_ADVANCED_THRESHOLD) {
+      learningRate = LEARNING_RATE_ADVANCED;
+    } else if (gameCount >= LEARNING_RATE_INTERMEDIATE_THRESHOLD) {
+      learningRate = LEARNING_RATE_INTERMEDIATE;
+    }
 
     const newRating =
       ratings[player] +
