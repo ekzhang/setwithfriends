@@ -10,7 +10,7 @@
   },
   "dependencies": {
     "esm": "^3.2.25",
-    "firebase-admin": "^9.5.0",
+    "firebase-admin": "^9.8.0",
     "inquirer": "^8.0.0"
   },
   "engines": {
