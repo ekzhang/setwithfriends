@@ -23,8 +23,9 @@ Code for the frontend is written in JavaScript and located in the `src/` folder,
 while serverless functions are written in TypeScript and located in the
 `functions/` folder.
 
-The production site is built and hosted on Netlify from the `master` branch. The
-latest development version of the code is in the `develop` branch.
+The latest development version of the code is on the `main` branch. We use
+GitHub Actions to automate our build and deployment process on Netlify, after a
+new release is created with version number `vA.B.C`.
 
 ## Contributing
 
@@ -51,7 +52,7 @@ which contains useful information and allows you to inspect/modify the database
 during development. Changes to client code in `src` should be immediately
 visible, as well as changes to code in `functions`.
 
-Please make all pull requests with new features or bugfixes to the `develop`
+Please make all pull requests with new features or bugfixes to the `main`
 branch. We are formatting code using [Prettier](https://prettier.io/), so you
 should run `npm run format` on your code before making a pull request.
 
@@ -66,9 +67,9 @@ emulator suite using the `npm run build:dev` script.
 The other parts of the app (serverless functions, database rules) are deployed
 to production using GitHub Actions on the master branch. The
 [staging environment](https://setwithfriends-dev.web.app/) gets automatic deploy
-previews when CI on the `develop` branch passes. It is useful for seeing the
-latest version of the app and making sure that nothing is broken before
-releasing to production.
+previews when CI on the `main` branch passes. It is useful for seeing the latest
+version of the app and making sure that nothing is broken before releasing to
+production.
 
 ## License
 
