@@ -36,7 +36,7 @@
   },
   "scripts": {
     "start": "react-scripts start",
-    "dev": "node run_dev.js",
+    "dev": "node rundev.js",
     "build:dev": "react-scripts build",
     "build:preview": "cross-env REACT_APP_ENV=preview react-scripts build",
     "build": "cross-env REACT_APP_ENV=production react-scripts build",
