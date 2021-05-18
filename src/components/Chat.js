@@ -18,6 +18,7 @@ import firebase from "../firebase";
 import { filter } from "../util";
 import autoscroll from "../utils/autoscroll";
 import useFirebaseQuery from "../hooks/useFirebaseQuery";
+import useMoment from "../hooks/useMoment";
 import useStorage from "../hooks/useStorage";
 import { UserContext } from "../context";
 
@@ -66,6 +67,11 @@ function Chat({
 }) {
   const user = useContext(UserContext);
   const classes = useStyles();
+  const isNewUser = useMoment(30000)
+    .clone()
+    .subtract(5, "minutes")
+    .isBefore(user.authUser.metadata.creationTime);
+  const chatDisabled = !gameId && isNewUser;
 
   const chatEl = useRef();
   useEffect(() => {
@@ -226,12 +232,22 @@ function Chat({
           )}
       </Scrollbox>
       <form onSubmit={handleSubmit}>
-        <SimpleInput
-          value={input}
-          onChange={(e) => setInput(e.target.value)}
-          placeholder="Type a message..."
-          maxLength={250}
-        />
+        <Tooltip
+          arrow
+          title={
+            chatDisabled
+              ? "New users cannot chat. Play a couple games first!"
+              : ""
+          }
+        >
+          <SimpleInput
+            value={input}
+            onChange={(e) => setInput(e.target.value)}
+            placeholder="Type a message..."
+            maxLength={250}
+            disabled={chatDisabled}
+          />
+        </Tooltip>
       </form>
     </section>
   );

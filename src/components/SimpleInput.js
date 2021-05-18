@@ -16,6 +16,9 @@ const SimpleInput = styled("input")(({ theme }) => ({
   "&:focus": {
     borderColor: theme.palette.primary.main,
   },
+  "&:disabled": {
+    backgroundColor: theme.palette.action.disabledBackground,
+  },
 }));
 
 export default SimpleInput;
