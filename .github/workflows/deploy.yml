@@ -1,14 +1,14 @@
 name: Deploy
 
 on:
-  push:
-    branches:
-      - master
+  release:
+    types: [published]
 
 jobs:
   deploy:
-    name: Database and Functions
+    name: Production
     runs-on: ubuntu-latest
+    if: ${{ startsWith(github.ref, 'refs/tags/v') }}
     steps:
       - uses: actions/checkout@v2
 
@@ -17,7 +17,14 @@ jobs:
           node-version: "14"
 
       - run: npm ci
+
+      - run: npm ci
         working-directory: functions
+
+      - name: Set env
+        run: echo "REACT_APP_VERSION=${GITHUB_REF#refs/tags/v}" >> $GITHUB_ENV
+
+      - run: npm run build
 
       - name: Deploy to Firebase
         uses: w9jds/firebase-action@master
@@ -25,3 +32,11 @@ jobs:
           args: deploy -P default --only database,functions
         env:
           FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
+
+      - name: Deploy to Netlify
+        uses: netlify/actions/cli@master
+        with:
+          args: deploy --dir=build --prod
+        env:
+          NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
+          NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}

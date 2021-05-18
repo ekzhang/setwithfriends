@@ -3,6 +3,8 @@ import { useState, useContext } from "react";
 import AppBar from "@material-ui/core/AppBar";
 import Menu from "@material-ui/core/Menu";
 import MenuItem from "@material-ui/core/MenuItem";
+import Divider from "@material-ui/core/Divider";
+import Link from "@material-ui/core/Link";
 import Toolbar from "@material-ui/core/Toolbar";
 import Tooltip from "@material-ui/core/Tooltip";
 import Typography from "@material-ui/core/Typography";
@@ -15,6 +17,7 @@ import VolumeUpIcon from "@material-ui/icons/VolumeUp";
 
 import firebase from "../firebase";
 import { UserContext, SettingsContext } from "../context";
+import { version } from "../config";
 import User from "./User";
 import InternalLink from "./InternalLink";
 import PromptDialog from "./PromptDialog";
@@ -132,6 +135,21 @@ function Navbar({
           open={anchorEl !== null}
           onClose={handleCloseMenu}
         >
+          <Typography variant="subtitle1" align="center">
+            {version ? `Version ${version}` : "Development Version"}
+          </Typography>
+          {version && (
+            <Typography variant="subtitle2" align="center">
+              <Link
+                target="_blank"
+                rel="noopener"
+                href={`https://github.com/ekzhang/setwithfriends/releases/tag/v${version}`}
+              >
+                Release Notes
+              </Link>
+            </Typography>
+          )}
+          <Divider style={{ margin: "8px 0" }} />
           <MenuItem
             onClick={() => {
               setChangeName(true);
