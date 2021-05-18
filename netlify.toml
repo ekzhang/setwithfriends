@@ -1,9 +1,6 @@
 [context.production]
   command = "npm run build"
 
-[context.deploy-preview]
-  command = "npm run build:dev"
-
 [[redirects]]
   from = "https://setwithfriends.netlify.app/*"
   to = "https://setwithfriends.com/:splat"

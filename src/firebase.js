@@ -4,10 +4,18 @@ import "firebase/auth";
 import "firebase/analytics";
 import "firebase/functions";
 
-import config from "./config";
+import config, { isDev } from "./config";
 
 firebase.initializeApp(config.firebase);
-firebase.analytics();
+if (isDev) {
+  firebase
+    .auth()
+    .useEmulator("http://localhost:9099", { disableWarnings: true });
+  firebase.database().useEmulator("localhost", 9000);
+  firebase.functions().useEmulator("localhost", 5001);
+} else {
+  firebase.analytics();
+}
 
 export const authProvider = new firebase.auth.GoogleAuthProvider();
 

@@ -3,9 +3,11 @@ import * as admin from "firebase-admin";
 admin.initializeApp();
 
 import Stripe from "stripe";
-const stripe = new Stripe(functions.config().stripe.secret, {
-  apiVersion: "2020-08-27",
-});
+const stripe = process.env.FUNCTIONS_EMULATOR
+  ? (null as any)
+  : new Stripe(functions.config().stripe.secret, {
+      apiVersion: "2020-08-27",
+    });
 
 import { generateDeck, replayEvents, findSet } from "./game";
 
@@ -294,6 +296,7 @@ export const createGame = functions.https.onCall(async (data, context) => {
   return snapshot.val();
 });
 
+/** Generate a link to the customer portal. */
 export const customerPortal = functions.https.onCall(async (data, context) => {
   if (!context.auth) {
     throw new functions.https.HttpsError(

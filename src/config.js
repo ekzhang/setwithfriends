@@ -7,6 +7,16 @@ const config = {
       authDomain: "setwithfriends-dev.web.app",
       databaseURL: "https://setwithfriends-dev.firebaseio.com",
       projectId: "setwithfriends-dev",
+      appId: "1:369319422608:web:b9038b38a1bd598048c615",
+    },
+    stripe: null, // Stripe not supported in development
+  },
+  preview: {
+    firebase: {
+      apiKey: "AIzaSyB6jICg__HEdtZRcSoIoeUMau41jvKNwvU",
+      authDomain: "setwithfriends-dev.web.app",
+      databaseURL: "https://setwithfriends-dev.firebaseio.com",
+      projectId: "setwithfriends-dev",
       storageBucket: "setwithfriends-dev.appspot.com",
       messagingSenderId: "369319422608",
       appId: "1:369319422608:web:b9038b38a1bd598048c615",
@@ -38,5 +48,6 @@ const config = {
 };
 
 export const env = process.env.REACT_APP_ENV || "development";
+export const isDev = env === "development";
 
 export default config[env];

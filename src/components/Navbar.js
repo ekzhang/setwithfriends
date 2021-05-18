@@ -48,7 +48,7 @@ function Navbar({
 
   function handleChangeName(name) {
     setChangeName(false);
-    name = name.trim();
+    name = (name || "").trim();
     if (name) {
       firebase.database().ref(`users/${user.id}/name`).set(name);
     }

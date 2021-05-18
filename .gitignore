@@ -5,6 +5,8 @@ build/
 
 ######### FIREBASE JUNK #########
 
+/data/
+
 # Logs
 logs
 *.log

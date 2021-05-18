@@ -36,9 +36,20 @@ chat!
 
 To build the site for development:
 
-- Install Node.js 14 and npm 7
-- Run `npm install` in the root folder
-- Run `npm start` - it should now open the site in your browser
+- Install Node.js 14 and npm 7.
+- Run `npm install -g firebase-tools` to globally install the Firebase CLI.
+- Run `npm install` in the root folder to get dependencies.
+- Run `npm install` in the `functions` folder.
+- To start the project, run `npm run dev`. This runs a script, which is
+  responsible for doing several things concurrently:
+  - Build the TypeScript cloud functions in watch mode.
+  - Start the Firebase Local Emulator Suite.
+  - Start the frontend with React Fast Refresh enabled.
+
+You should also be able to access the Emulator UI at `http://localhost:4000`,
+which contains useful information and allows you to inspect/modify the database
+during development. Changes to client code in `src` should be immediately
+visible, as well as changes to code in `functions`.
 
 Please make all pull requests with new features or bugfixes to the `develop`
 branch. We are formatting code using [Prettier](https://prettier.io/), so you
@@ -49,8 +60,8 @@ should run `npm run format` on your code before making a pull request.
 As mentioned above, the latest changes to the `master` branch are deployed
 automatically to Netlify using the `npm run build` script. If you try to run
 this locally, it will not work due to protections on the production database.
-Instead, you can preview a release build with development configuration using
-the `npm run build:dev` script.
+Instead, you can preview a release build configured to connect to the local
+emulator suite using the `npm run build:dev` script.
 
 The other parts of the app (serverless functions, database rules) are deployed
 to production using GitHub Actions on the master branch. They must be manually

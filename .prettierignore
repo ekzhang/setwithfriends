@@ -1,4 +1,6 @@
 build/
 
+/data/
+
 /functions/**/*.js
 /functions/**/*.js.map
