@@ -98,10 +98,12 @@ function ProfilePage({ match }) {
 
   const gameIds = useMemo(() => (games ? Object.keys(games) : []), [games]);
   const [gameVals, loadingGameVals] = useFirebaseRefs(
-    useMemo(() => gameIds.map((gameId) => `games/${gameId}`), [gameIds])
+    useMemo(() => gameIds.map((gameId) => `games/${gameId}`), [gameIds]),
+    true
   );
   const [gameDataVals, loadingGameDataVals] = useFirebaseRefs(
-    useMemo(() => gameIds.map((gameId) => `gameData/${gameId}`), [gameIds])
+    useMemo(() => gameIds.map((gameId) => `gameData/${gameId}`), [gameIds]),
+    true
   );
 
   if (redirect) {
