@@ -107,7 +107,7 @@ function deleteCards(deck: Set<string>, cards: string[]) {
   for (const c of cards) deck.delete(c);
 }
 
-/** Replay game event for normal mode*/
+/** Replay game event for normal mode */
 function replayEventNormal(deck: Set<string>, event: GameEvent) {
   const cards = [event.c1, event.c2, event.c3];
   if (!isValid(deck, cards)) return false;
@@ -123,11 +123,11 @@ function replayEventChain(
 ) {
   const { c1, c2, c3 } = event;
 
-  //Check validity
+  // Check validity
   let ok = c1 !== c2 && c2 !== c3 && c1 !== c3;
   ok &&= deck.has(c2) && deck.has(c3);
   if (history.length) {
-    //One card (c1) should be taken from the previous set
+    // One card (c1) should be taken from the previous set
     const prevEvent = history[history.length - 1];
     const prev = [prevEvent.c1, prevEvent.c2, prevEvent.c3];
     ok &&= prev.includes(c1);
@@ -139,7 +139,7 @@ function replayEventChain(
   return true;
 }
 
-/** Replay game event for ultraset mode*/
+/** Replay game event for ultraset mode */
 function replayEventUltra(deck: Set<string>, event: GameEvent) {
   const cards = [event.c1, event.c2, event.c3, event.c4!];
   if (!isValid(deck, cards)) return false;

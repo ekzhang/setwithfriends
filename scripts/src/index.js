@@ -4,9 +4,10 @@ import inquirer from "inquirer";
 import { listAdmins, listPatrons } from "./listUsers";
 import { sanitizeNames } from "./sanitizeNames";
 import { fixGames } from "./fixGames";
+import { calcStats } from "./calcStats";
 
 // Add scripts as functions to this array
-const scripts = [listAdmins, listPatrons, sanitizeNames, fixGames];
+const scripts = [listAdmins, listPatrons, sanitizeNames, fixGames, calcStats];
 
 admin.initializeApp({
   credential: admin.credential.cert("./credential.json"),
