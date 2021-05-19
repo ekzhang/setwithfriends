@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { Redirect } from "react-router-dom";
 
 import Container from "@material-ui/core/Container";
@@ -17,10 +17,10 @@ import ProfileGamesTable from "../components/ProfileGamesTable";
 import Subheading from "../components/Subheading";
 import Loading from "../components/Loading";
 import firebase from "../firebase";
-import useFirebaseQuery from "../hooks/useFirebaseQuery";
 import useFirebaseRefs from "../hooks/useFirebaseRefs";
 import useStats from "../hooks/useStats";
 import { computeState, hasHint, modes } from "../util";
+import LoadingPage from "./LoadingPage";
 
 const datasetVariants = {
   all: {
@@ -70,15 +70,23 @@ function ProfilePage({ match }) {
   const userId = match.params.id;
   const classes = useStyles();
 
-  const games = useFirebaseQuery(
-    useMemo(() => {
-      return firebase
-        .database()
-        .ref(`/userGames/${userId}`)
-        .orderByValue()
-        .limitToLast(50);
-    }, [userId])
-  );
+  const [games, setGames] = useState(null);
+  useEffect(() => {
+    const query = firebase
+      .database()
+      .ref(`/userGames/${userId}`)
+      .orderByValue()
+      .limitToLast(50);
+    const update = (snapshot) => {
+      query.off("value", update);
+      setGames(snapshot.val() ?? {});
+    };
+    query.on("value", update);
+    return () => {
+      query.off("value", update);
+    };
+  }, [userId]);
+
   const [stats, loadingStats] = useStats(userId);
   const [redirect, setRedirect] = useState(null);
   const [variant, setVariant] = useState("all");
@@ -88,7 +96,7 @@ function ProfilePage({ match }) {
     setRedirect(`/room/${gameId}`);
   };
 
-  const gameIds = useMemo(() => Object.keys(games), [games]);
+  const gameIds = useMemo(() => (games ? Object.keys(games) : []), [games]);
   const [gameVals, loadingGameVals] = useFirebaseRefs(
     useMemo(() => gameIds.map((gameId) => `games/${gameId}`), [gameIds])
   );
@@ -98,6 +106,9 @@ function ProfilePage({ match }) {
 
   if (redirect) {
     return <Redirect push to={redirect} />;
+  }
+  if (!games) {
+    return <LoadingPage />;
   }
 
   let gamesData = null;
