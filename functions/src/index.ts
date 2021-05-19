@@ -16,12 +16,7 @@ const MAX_UNFINISHED_GAMES_PER_HOUR = 4;
 
 // Rating system parameters.
 const SCALING_FACTOR = 800;
-const LEARNING_RATE_BEGINNER = 128;
 const BASE_RATING = 1200;
-const LEARNING_RATE_INTERMEDIATE = 64;
-const LEARNING_RATE_INTERMEDIATE_THRESHOLD = 30;
-const LEARNING_RATE_ADVANCED = 32;
-const LEARNING_RATE_ADVANCED_THRESHOLD = 60;
 
 type TransactionResult = {
   committed: boolean;
@@ -164,19 +159,13 @@ export const finishGame = functions.https.onCall(async (data, context) => {
   // Compute new rating for each player.
   const updates: Record<string, number> = {};
   for (const player of players) {
-    let learningRate = LEARNING_RATE_BEGINNER;
-
     /**
      * Adapt the learning rate to the experience of a player and the
      * corresponding certainty of the rating system based on the number of
      * games played.
      */
     const gameCount = userStats[player].finishedGames as number;
-    if (gameCount >= LEARNING_RATE_ADVANCED_THRESHOLD) {
-      learningRate = LEARNING_RATE_ADVANCED;
-    } else if (gameCount >= LEARNING_RATE_INTERMEDIATE_THRESHOLD) {
-      learningRate = LEARNING_RATE_INTERMEDIATE;
-    }
+    const learningRate = Math.max(256 / (1 + gameCount / 20), 64);
 
     const newRating =
       ratings[player] +
