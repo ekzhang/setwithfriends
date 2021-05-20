@@ -79,6 +79,16 @@ export const finishGame = functions.https.onCall(async (data, context) => {
     return;
   }
 
+  // Check if hints are enabled; and if so, ignore the game in statistics
+  if (
+    snapshot.child("enableHint").val() &&
+    snapshot.child("users").numChildren() === 1 &&
+    snapshot.child("access").val() === "private" &&
+    gameMode === "normal"
+  ) {
+    return;
+  }
+
   /**
    * Update statistics and ratings of players involved based on an extension of
    * the Elo system.

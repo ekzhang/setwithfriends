@@ -62,6 +62,16 @@ export async function calcStats() {
             const gameMode = game.child("mode").val() || "normal";
             const { finalTime, scores } = replayEvents(gameData, gameMode);
 
+            // Check if hints are enabled; and if so, ignore the game in statistics
+            if (
+              game.child("enableHint").val() &&
+              game.child("users").numChildren() === 1 &&
+              game.child("access").val() === "private" &&
+              gameMode === "normal"
+            ) {
+              return;
+            }
+
             // Retrieve userIds of players in the game.
             const players = [];
             game.child("users").forEach(function (childSnap) {
