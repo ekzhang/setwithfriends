@@ -36,6 +36,10 @@
       rel="stylesheet"
       href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap"
     />
+
+    <% if (process.env.REACT_APP_ENV === "production") { %>
+    <script async src="https://arc.io/widget.min.js#kjP2iFJD"></script>
+    <% } %>
   </head>
 
   <body>
