@@ -24,10 +24,15 @@ function useFirebaseRefs(paths, once = false) {
     };
   }, [paths, once]);
 
-  if (Object.keys(values).length < paths.length) {
-    return [null, true];
+  const results = [];
+  for (const path of paths) {
+    if (path in values) {
+      results.push(values[path]);
+    } else {
+      return [null, true];
+    }
   }
-  return [paths.map((path) => values[path]), false];
+  return [results, false];
 }
 
 export default useFirebaseRefs;
