@@ -10,8 +10,8 @@
   },
   "dependencies": {
     "esm": "^3.2.25",
-    "firebase-admin": "^9.8.0",
-    "inquirer": "^8.0.0"
+    "firebase-admin": "^9.9.0",
+    "inquirer": "^8.1.0"
   },
   "engines": {
     "node": "14",
