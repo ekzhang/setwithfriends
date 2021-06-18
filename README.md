@@ -58,14 +58,14 @@ should run `npm run format` on your code before making a pull request.
 
 ## Deployment
 
-As mentioned above, the latest changes to the `master` branch are deployed
+As mentioned above, the latest changes to the `main` branch are deployed
 automatically to Netlify using the `npm run build` script. If you try to run
 this locally, it will not work due to protections on the production database.
 Instead, you can preview a release build configured to connect to the local
 emulator suite using the `npm run build:dev` script.
 
 The other parts of the app (serverless functions, database rules) are deployed
-to production using GitHub Actions on the master branch. The
+to production using GitHub Actions on the `main` branch. The
 [staging environment](https://setwithfriends-dev.web.app/) gets automatic deploy
 previews when CI on the `main` branch passes. It is useful for seeing the latest
 version of the app and making sure that nothing is broken before releasing to
