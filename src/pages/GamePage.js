@@ -294,7 +294,7 @@ function GamePage({ match }) {
               setSnack({
                 open: true,
                 variant: "error",
-                message: "Not a set!",
+                message: "Not a set chain!",
               });
             }
             return [];
