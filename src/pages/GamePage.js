@@ -279,7 +279,7 @@ function GamePage({ match }) {
               setSnack({
                 open: true,
                 variant: "error",
-                message: "At least one card should be from the previous set!",
+                message: "One card must be from the previous set!",
               });
             } else if (checkSet(...vals)) {
               handleSet(vals);
