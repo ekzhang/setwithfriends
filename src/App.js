@@ -43,7 +43,7 @@ function App() {
     return firebase.auth().onAuthStateChanged((user) => {
       if (user) {
         // User is signed in.
-        setAuthUser({ ...user });
+        setAuthUser({ ...user._delegate });
       } else {
         // User is signed out.
         setAuthUser(null);
