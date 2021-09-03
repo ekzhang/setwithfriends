@@ -380,7 +380,7 @@ export const handleStripe = functions.https.onRequest(async (req, res) => {
   let event;
   try {
     event = stripe.webhooks.constructEvent(payload, sig, endpoint_secret);
-  } catch (error) {
+  } catch (error: any) {
     res.status(400).send(`Webhook Error: ${error.message}`);
     return;
   }
