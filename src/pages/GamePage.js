@@ -344,8 +344,9 @@ function GamePage({ match }) {
     try {
       await createGame(newGame);
     } catch (error) {
-      if (error.code !== "already-exists") {
+      if (error.code !== "functions/already-exists") {
         alert(error.toString());
+        setWaiting(false);
         return;
       }
     }

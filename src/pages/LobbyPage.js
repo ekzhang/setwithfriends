@@ -171,7 +171,7 @@ function LobbyPage() {
       try {
         await createGame({ gameId, access });
       } catch (error) {
-        if (error.code === "already-exists") {
+        if (error.code === "functions/already-exists") {
           // We generated an already-used game ID
           ++attempts;
           continue;
