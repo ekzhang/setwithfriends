@@ -51,8 +51,8 @@ export const finishGame = functions.https.onCall(async (data, context) => {
   const gameSnap = await admin.database().ref(`games/${gameId}`).once("value");
   if (!gameSnap.exists()) {
     throw new functions.https.HttpsError(
-      "invalid-argument",
-      `No game with gameId ${gameId}, was found in the database.`
+      "not-found",
+      `The game with gameId ${gameId} was not found in the database.`
     );
   }
 
