@@ -49,6 +49,13 @@ export const finishGame = functions.https.onCall(async (data, context) => {
     .ref(`gameData/${gameId}`)
     .once("value");
   const gameSnap = await admin.database().ref(`games/${gameId}`).once("value");
+  if (!gameSnap.exists()) {
+    throw new functions.https.HttpsError(
+      "not-found",
+      `The game with gameId ${gameId} was not found in the database.`
+    );
+  }
+
   const gameMode = (gameSnap.child("mode").val() as GameMode) || "normal";
 
   const { lastSet, deck, finalTime, scores } = replayEvents(gameData, gameMode);
