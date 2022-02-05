@@ -23,7 +23,10 @@ import AboutPage from "./pages/AboutPage";
 import ConductPage from "./pages/ConductPage";
 import DonatePage from "./pages/DonatePage";
 import LegalPage from "./pages/LegalPage";
+import ModerationPage from "./pages/ModerationPage";
+import AdvancedStatisticsPage from "./pages/AdvancedStatisticsPage";
 import ProfilePage from "./pages/ProfilePage";
+import PermissionDeniedPage from "./pages/PermissionDeniedPage";
 import { lightTheme, darkTheme } from "./themes";
 
 function App() {
@@ -137,10 +140,13 @@ function App() {
                 <Route exact path="/conduct" component={ConductPage} />
                 <Route exact path="/donate" component={DonatePage} />
                 <Route exact path="/legal" component={LegalPage} />
+                <Route exact path="/moderate" component={ModerationPage} />
+                <Route exact path="/permissiondenied" component={PermissionDeniedPage} />
                 <Route exact path="/" component={LobbyPage} />
                 <Route exact path="/room/:id" component={RoomPage} />
                 <Route exact path="/game/:id" component={GamePage} />
                 <Route exact path="/profile/:id" component={ProfilePage} />
+                <Route exact path="/statistics/:id" component={AdvancedStatisticsPage} />
                 <Route component={NotFoundPage} />
               </Switch>
             </SettingsContext.Provider>

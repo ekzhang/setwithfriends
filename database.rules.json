@@ -74,7 +74,13 @@
           }
         },
         "banned": {
+          ".write": "auth != null && root.child('users').child(auth.uid).child('admin').val() == true",
           ".validate": "newData.isNumber()"
+        },
+        "flagged": {
+          ".read": "auth != null && root.child('users').child(auth.uid).child('admin').val() == true",
+          ".write": "auth != null && root.child('users').child(auth.uid).child('admin').val() == true",
+          ".validate": "newData.isString()"
         },
         "$other": {
           ".validate": false
@@ -139,6 +145,25 @@
         },
         "$other": {
           ".validate": false
+        }
+      }
+    },
+    "banRecords": {
+      ".read": "auth != null && root.child('users').child(auth.uid).child('admin').val() == true",
+      ".write": "auth != null && root.child('users').child(auth.uid).child('admin').val() == true",
+      ".indexOn": ["time", "user"],
+      "$banId": {
+        "user": {
+          ".validate": "newData.isString()"
+        },
+        "moderator": {
+          ".validate": "newData.isString() && newData.val() == auth.uid"
+        },
+        "time": {
+          "validate": "newData.isNumber() && newData.val() == now"
+        },
+        "duration": {
+          "validate": "newData.isNumber() && newData.val() > 0"
         }
       }
     },
