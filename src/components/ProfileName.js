@@ -48,11 +48,25 @@ function ProfileName({ userId }) {
   const handleBan = (minutes) => {
     const endTime = Date.now() + minutes * 60000;
     firebase.database().ref(`users/${userId}/banned`).set(endTime);
+    firebase.database().ref(`banRecords`).push({
+      user: userId,
+      moderator: user.id,
+      time: firebase.database.ServerValue.TIMESTAMP,
+      duration: minutes * 60000
+    })
   };
 
   const handleUnban = () => {
-    firebase.database().ref(`users/${userId}/banned`).remove();
+    firebase.database().ref(`users/${userId}/banned`).set(1);
   };
+
+  const handleFlag = () => {
+    firebase.database().ref(`users/${userId}/flagged`).set(user.id);
+  };
+
+  const handleUnflag = () => {
+    firebase.database().ref(`users/${userId}/flagged`).remove();
+  }
 
   const handleClose = () => {
     setAnchorEl(null);
@@ -73,7 +87,7 @@ function ProfileName({ userId }) {
               <Typography variant="h4" style={{ overflowWrap: "anywhere" }}>
                 {userEl}
               </Typography>
-              {user.admin && (
+              {user.admin && user.id !== userId && (
                 <MoreVertIcon
                   aria-controls="admin-menu"
                   color="inherit"
@@ -88,6 +102,11 @@ function ProfileName({ userId }) {
                 onClose={handleClose}
               >
                 <MenuItem onClick={handleResetName}>Reset username</MenuItem>
+                {player.flagged ? (
+                  <MenuItem onClick={() => handleUnflag()}>Unflag</MenuItem>
+                ) : (
+                  <MenuItem onClick={() => handleFlag()}>Flag</MenuItem>
+                )}
                 {player.banned && Date.now() < player.banned ? (
                   <MenuItem onClick={() => handleUnban()}>Unban</MenuItem>
                 ) : (
@@ -109,6 +128,18 @@ function ProfileName({ userId }) {
             {player.admin && (
               <Typography variant="subtitle2" gutterBottom>
                 Moderator
+              </Typography>
+            )}
+
+            {user.admin && player.flagged && (
+              <Typography variant="subtitle2" gutterBottom>
+                Flagged user
+              </Typography>
+            )}
+
+            {user.admin && player.banned && Date.now() < player.banned && (
+              <Typography variant="subtitle2" gutterBottom>
+                Banned user
               </Typography>
             )}
 

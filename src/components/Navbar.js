@@ -14,6 +14,7 @@ import Brightness4Icon from "@material-ui/icons/Brightness4";
 import Brightness7Icon from "@material-ui/icons/Brightness7";
 import VolumeOffIcon from "@material-ui/icons/VolumeOff";
 import VolumeUpIcon from "@material-ui/icons/VolumeUp";
+import PolicyIcon from "@material-ui/icons/Policy";
 
 import firebase from "../firebase";
 import { UserContext, SettingsContext } from "../context";
@@ -93,6 +94,13 @@ function Navbar({
             />
           </InternalLink>
         </Typography>
+        {user.admin && (
+          <InternalLink underline="none" color="inherit" to={"/moderate"}>
+            <IconButton color="inherit">
+              <Tooltip title="Moderation panel">
+                <PolicyIcon />
+              </Tooltip>
+            </IconButton> </InternalLink>)}
         <IconButton color="inherit" onClick={handleChangeVolume}>
           {settings.volume === "on" ? (
             <Tooltip title="Mute">

@@ -60,7 +60,7 @@ function DonatePage() {
           make it as easy as possible to have fun playing Set online{" "}
           {!loadingGameCount && (
             <>
-              (over <strong>{gameCount.toLocaleString()}</strong> games have
+              (over <strong>{(gameCount && gameCount.toLocaleString()) || 0}</strong> games have
               been played)
             </>
           )}
