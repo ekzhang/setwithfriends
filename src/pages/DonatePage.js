@@ -88,6 +88,9 @@ function DonatePage() {
               Exclusive setting to choose the color of your name &mdash; change
               it at any time!
             </li>
+            <li>
+              Access to more advanced statistics to track your progress.
+            </li>
             <li>More to come soon…</li>
           </ul>
         </Typography>
