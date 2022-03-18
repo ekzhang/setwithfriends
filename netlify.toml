@@ -13,11 +13,6 @@
   status = 200
 
 [[redirects]]
-  from = "/arc-sw.js"
-  to = "https://arc.io/arc-sw.js"
-  status = 200
-
-[[redirects]]
   from = "/*"
   to = "/index.html"
   status = 200
