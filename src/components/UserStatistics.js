@@ -3,8 +3,11 @@ import Grid from "@material-ui/core/Grid";
 import Typography from "@material-ui/core/Typography";
 import { makeStyles, useTheme } from "@material-ui/core/styles";
 import { Pie } from "react-chartjs-2";
+import { Chart as ChartJS, ArcElement } from "chart.js";
 
 import { formatTime } from "../util";
+
+ChartJS.register(ArcElement);
 
 const useStyles = makeStyles((theme) => ({
   statisticsPanel: {
