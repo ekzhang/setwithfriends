@@ -96,11 +96,12 @@ function Navbar({
         </Typography>
         {user.admin && (
           <InternalLink underline="none" color="inherit" to={"/moderate"}>
-          <IconButton color="inherit">
-            <Tooltip title="Moderation panel">
-              <PolicyIcon />
-            </Tooltip>
-        </IconButton> </InternalLink>)}
+            <IconButton color="inherit">
+              <Tooltip title="Moderation panel">
+                <PolicyIcon />
+              </Tooltip>
+            </IconButton>
+          </InternalLink>)}
         <IconButton color="inherit" onClick={handleChangeVolume}>
           {settings.volume === "on" ? (
             <Tooltip title="Mute">
