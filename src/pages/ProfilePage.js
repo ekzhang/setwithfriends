@@ -21,9 +21,7 @@ import useFirebaseRefs from "../hooks/useFirebaseRefs";
 import useStats from "../hooks/useStats";
 import { computeState, hasHint, modes } from "../util";
 import LoadingPage from "./LoadingPage";
-import InternalLink from "../components/InternalLink";
 import {UserContext} from "../context";
-import Button from "@material-ui/core/Button";
 
 const datasetVariants = {
   all: {
@@ -186,10 +184,6 @@ function ProfilePage({ match }) {
             ) : (
               <UserStatistics stats={stats[modeVariant]} variant={variant} />
             )}
-            {requester.id === userId || requester.admin ? (
-              <div style={{ display: "flex", marginTop: "8px" }}><InternalLink underline="none" to={`/statistics/${userId}`} color="inherit">
-              <Button variant="contained" fullWidth color="primary">Advanced Statistics</Button>
-              </InternalLink></div>) : null}
           </Grid>
         </Grid>
         <Subheading style={{ textAlign: "left" }}>Finished Games</Subheading>
