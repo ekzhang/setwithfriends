@@ -105,8 +105,11 @@ function FlaggedUsersTable({ flaggedUserData, handleClickUser }) {
                     {flaggedUserProps.banned && Date.now() < flaggedUserProps.banned ? (
                       "Ban active"
                     ) : (
-                      "Not banned"
-                    )}
+                      flaggedUserProps.banned ? (
+                        "Ban expired"
+                      ) : (
+                        "Never banned"
+                    ))}
                   </TableCell>
                   <TableCell>
                     {isOnline ? (

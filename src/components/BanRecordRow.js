@@ -50,8 +50,11 @@ function BanRecordRow({ banRecordProps, handleClickUser }) {
         {player.banned && Date.now() < player.banned ? (
           "Ban active"
         ) : (
-          "Not banned"
-        )}
+          player.banned ? (
+            "Ban expired"
+          ) : (
+            "Never banned"
+          ))}
       </TableCell>
       <TableCell>
         {isOnline ? (

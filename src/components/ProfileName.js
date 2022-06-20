@@ -57,7 +57,7 @@ function ProfileName({ userId }) {
   };
 
   const handleUnban = () => {
-    firebase.database().ref(`users/${userId}/banned`).remove();
+    firebase.database().ref(`users/${userId}/banned`).set(0);
   };
 
   const handleFlag = () => {
