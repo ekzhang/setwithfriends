@@ -55,15 +55,27 @@ const useStyles = makeStyles((theme) => ({
 function compareGamesData(g1, g2, sortVariable, ascending) {
   switch (sortVariable) {
     case "createdAt":
-      return ascending ? g2.createdAt - g1.createdAt : g1.createdAt - g2.createdAt;
+      return ascending
+        ? g2.createdAt - g1.createdAt
+        : g1.createdAt - g2.createdAt;
     case "duration":
-      return ascending ? (g1.endedAt - g1.startedAt) - (g2.endedAt - g2.startedAt) : (g2.endedAt - g2.startedAt) - (g1.endedAt - g1.startedAt);
+      return ascending
+        ? g1.endedAt - g1.startedAt - (g2.endedAt - g2.startedAt)
+        : g2.endedAt - g2.startedAt - (g1.endedAt - g1.startedAt);
     case "players":
-      return ascending ? Object.keys(g1.users).length - Object.keys(g2.users).length : Object.keys(g2.users).length - Object.keys(g1.users).length;
+      return ascending
+        ? Object.keys(g1.users).length - Object.keys(g2.users).length
+        : Object.keys(g2.users).length - Object.keys(g1.users).length;
   }
 }
 
-function ProfileGamesTable({ userId, gamesData, handleClickGame, sortVariable, sortAscending }) {
+function ProfileGamesTable({
+  userId,
+  gamesData,
+  handleClickGame,
+  sortVariable,
+  sortAscending,
+}) {
   const classes = useStyles();
   const theme = useTheme();
 
@@ -97,7 +109,9 @@ function ProfileGamesTable({ userId, gamesData, handleClickGame, sortVariable, s
         </TableHead>
         <TableBody>
           {Object.entries(gamesData)
-            .sort(([, g1], [, g2]) => compareGamesData(g1, g2, sortVariable, sortAscending))
+            .sort(([, g1], [, g2]) =>
+              compareGamesData(g1, g2, sortVariable, sortAscending)
+            )
             .map(([gameId, game]) => {
               const modeInfo = modes[game.mode || "normal"];
               return (

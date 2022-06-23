@@ -9,8 +9,8 @@ function PermissionDeniedPage() {
         Permission denied
       </Typography>
       <Typography align="center" gutterBottom>
-        You do not have the proper permissions to view this page. Please contact a
-        moderator if you think that you should have access.
+        You do not have the proper permissions to view this page. Please contact
+        a moderator if you think that you should have access.
       </Typography>
       <Typography
         variant="body1"

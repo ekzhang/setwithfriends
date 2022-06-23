@@ -30,7 +30,7 @@ function ModerationPage() {
       .database()
       .ref(`/users/`)
       .orderByChild("flagged")
-      .startAt(true)
+      .startAt(true);
     const update = (snapshot) => {
       query.off("value", update);
       setFlaggedUsers(snapshot.val() ?? {});
@@ -43,10 +43,7 @@ function ModerationPage() {
 
   useEffect(() => {
     if (!permission) return null;
-    const query = firebase
-      .database()
-      .ref(`/banRecords/`)
-      .orderByChild(`time`)
+    const query = firebase.database().ref(`/banRecords/`).orderByChild(`time`);
     const update = (snapshot) => {
       query.off("value", update);
       setBanRecords(snapshot.val() ?? {});
@@ -58,7 +55,7 @@ function ModerationPage() {
   }, [permission]);
 
   if (!permission) {
-    return <Redirect to={'/permissiondenied'} />;
+    return <Redirect to={"/permissiondenied"} />;
   }
 
   const handleClickUser = (userId) => {
@@ -84,8 +81,18 @@ function ModerationPage() {
         <Tab label="Flagged users" value="flagged_users" />
       </Tabs>
       <Paper style={{ padding: "1rem", maxWidth: 720, margin: "12px auto" }}>
-        {tab === "recent_bans" ? <BanRecordTable banRecordData={banRecords} handleClickUser={handleClickUser} /> : null}
-        {tab === "flagged_users" ? <FlaggedUsersTable flaggedUserData={flaggedUsers} handleClickUser={handleClickUser} /> : null}
+        {tab === "recent_bans" ? (
+          <BanRecordTable
+            banRecordData={banRecords}
+            handleClickUser={handleClickUser}
+          />
+        ) : null}
+        {tab === "flagged_users" ? (
+          <FlaggedUsersTable
+            flaggedUserData={flaggedUsers}
+            handleClickUser={handleClickUser}
+          />
+        ) : null}
       </Paper>
       <Typography
         variant="body1"

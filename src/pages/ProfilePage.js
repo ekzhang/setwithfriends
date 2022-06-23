@@ -1,4 +1,4 @@
-import {useState, useMemo, useEffect, useContext} from "react";
+import { useState, useMemo, useEffect } from "react";
 import { Redirect } from "react-router-dom";
 
 import Container from "@material-ui/core/Container";
@@ -21,7 +21,6 @@ import useFirebaseRefs from "../hooks/useFirebaseRefs";
 import useStats from "../hooks/useStats";
 import { computeState, hasHint, modes } from "../util";
 import LoadingPage from "./LoadingPage";
-import {UserContext} from "../context";
 
 const datasetVariants = {
   all: {
@@ -69,7 +68,6 @@ function mergeGameData(game, gameData) {
 
 function ProfilePage({ match }) {
   const userId = match.params.id;
-  const requester = useContext(UserContext);
   const classes = useStyles();
 
   const [games, setGames] = useState(null);

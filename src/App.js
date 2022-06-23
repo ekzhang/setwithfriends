@@ -140,7 +140,11 @@ function App() {
                 <Route exact path="/donate" component={DonatePage} />
                 <Route exact path="/legal" component={LegalPage} />
                 <Route exact path="/moderate" component={ModerationPage} />
-                <Route exact path="/permissiondenied" component={PermissionDeniedPage} />
+                <Route
+                  exact
+                  path="/permissiondenied"
+                  component={PermissionDeniedPage}
+                />
                 <Route exact path="/" component={LobbyPage} />
                 <Route exact path="/room/:id" component={RoomPage} />
                 <Route exact path="/game/:id" component={GamePage} />

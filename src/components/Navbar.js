@@ -101,7 +101,8 @@ function Navbar({
                 <PolicyIcon />
               </Tooltip>
             </IconButton>
-          </InternalLink>)}
+          </InternalLink>
+        )}
         <IconButton color="inherit" onClick={handleChangeVolume}>
           {settings.volume === "on" ? (
             <Tooltip title="Mute">

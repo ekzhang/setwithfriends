@@ -73,7 +73,12 @@ function BanRecordTable({ banRecordData, handleClickUser }) {
             .sort((g1, g2) => g2[1].time - g1[1].time)
             .map((banRecord) => {
               let banRecordProps = banRecord[1];
-              return <BanRecordRow banRecordProps={banRecordProps} handleClickUser={handleClickUser} />
+              return (
+                <BanRecordRow
+                  banRecordProps={banRecordProps}
+                  handleClickUser={handleClickUser}
+                />
+              );
             })}
         </TableBody>
       </Table>

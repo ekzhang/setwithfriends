@@ -198,7 +198,7 @@ export function findAllSets(boardCards, gameMode = "normal", old) {
   const foundSets = new Set();
   for (let i = 0; i < boardCards.length; i++) {
     for (let j = 0; j < boardCards.length; j++) {
-      const c = conjugateCard(boardCards[i], boardCards[j])
+      const c = conjugateCard(boardCards[i], boardCards[j]);
       if (
         gameMode === "normal" ||
         (gameMode === "setchain" && old.length === 0)
@@ -291,8 +291,7 @@ function processEventNormal(internalGameState, event) {
   processValidEvent(internalGameState, event, cards);
 
   const minSize = Math.max(internalGameState.boardSize - 3, 12);
-  const boardSize = splitDeck(current, "normal", minSize)[0].length;
-  internalGameState.boardSize = boardSize;
+  internalGameState.boardSize = splitDeck(current, "normal", minSize)[0].length;
 }
 
 function processEventChain(internalGameState, event) {
@@ -314,8 +313,12 @@ function processEventChain(internalGameState, event) {
 
   const minSize = Math.max(internalGameState.boardSize - cards.length, 12);
   const old = [c1, c2, c3];
-  const boardSize = splitDeck(current, "setchain", minSize, old)[0].length;
-  internalGameState.boardSize = boardSize;
+  internalGameState.boardSize = splitDeck(
+    current,
+    "setchain",
+    minSize,
+    old
+  )[0].length;
 }
 
 function processEventUltra(internalGameState, event) {
@@ -325,8 +328,11 @@ function processEventUltra(internalGameState, event) {
   processValidEvent(internalGameState, event, cards);
 
   const minSize = Math.max(internalGameState.boardSize - 4, 12);
-  const boardSize = splitDeck(current, "ultraset", minSize)[0].length;
-  internalGameState.boardSize = boardSize;
+  internalGameState.boardSize = splitDeck(
+    current,
+    "ultraset",
+    minSize
+  )[0].length;
 }
 
 export function computeState(gameData, gameMode = "normal") {

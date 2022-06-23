@@ -48,12 +48,15 @@ function ProfileName({ userId }) {
   const handleBan = (minutes) => {
     const endTime = Date.now() + minutes * 60000;
     firebase.database().ref(`users/${userId}/banned`).set(endTime);
-    firebase.database().ref(`banRecords`).push({
-      user: userId,
-      moderator: user.id,
-      time: firebase.database.ServerValue.TIMESTAMP,
-      duration: minutes * 60000
-    })
+    firebase
+      .database()
+      .ref(`banRecords`)
+      .push({
+        user: userId,
+        moderator: user.id,
+        time: firebase.database.ServerValue.TIMESTAMP,
+        duration: minutes * 60000,
+      });
   };
 
   const handleUnban = () => {
@@ -66,7 +69,7 @@ function ProfileName({ userId }) {
 
   const handleUnflag = () => {
     firebase.database().ref(`users/${userId}/flagged`).remove();
-  }
+  };
 
   const handleClose = () => {
     setAnchorEl(null);

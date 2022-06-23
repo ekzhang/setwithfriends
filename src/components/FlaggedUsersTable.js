@@ -57,8 +57,10 @@ function FlaggedUsersTable({ flaggedUserData, handleClickUser }) {
   }
 
   function compareFlaggedUsers(g1, g2) {
-    const g1Online = g1[1].connections && Object.keys(g1[1].connections).length > 0;
-    const g2Online = g2[1].connections && Object.keys(g2[1].connections).length > 0;
+    const g1Online =
+      g1[1].connections && Object.keys(g1[1].connections).length > 0;
+    const g2Online =
+      g2[1].connections && Object.keys(g2[1].connections).length > 0;
 
     if (g1Online && g2Online) {
       return 0;
@@ -91,10 +93,14 @@ function FlaggedUsersTable({ flaggedUserData, handleClickUser }) {
               let flaggedUserProps = flaggedUser[1];
 
               const isOnline =
-                flaggedUserProps.connections && Object.keys(flaggedUserProps.connections).length > 0;
+                flaggedUserProps.connections &&
+                Object.keys(flaggedUserProps.connections).length > 0;
 
               return (
-                <TableRow key={flaggedUserId} onClick={() => handleClickUser(flaggedUserId)}>
+                <TableRow
+                  key={flaggedUserId}
+                  onClick={() => handleClickUser(flaggedUserId)}
+                >
                   <TableCell>
                     <User id={flaggedUserId} />
                   </TableCell>
@@ -102,14 +108,12 @@ function FlaggedUsersTable({ flaggedUserData, handleClickUser }) {
                     <User id={flaggedUserProps.flagged} />
                   </TableCell>
                   <TableCell>
-                    {flaggedUserProps.banned && Date.now() < flaggedUserProps.banned ? (
-                      "Ban active"
-                    ) : (
-                      flaggedUserProps.banned ? (
-                        "Ban expired"
-                      ) : (
-                        "Never banned"
-                    ))}
+                    {flaggedUserProps.banned &&
+                    Date.now() < flaggedUserProps.banned
+                      ? "Ban active"
+                      : flaggedUserProps.banned
+                      ? "Ban expired"
+                      : "Never banned"}
                   </TableCell>
                   <TableCell>
                     {isOnline ? (
