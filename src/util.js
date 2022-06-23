@@ -112,6 +112,7 @@ export const standardLayouts = {
 export const BASE_RATING = 1200;
 export const SCALING_FACTOR = 800;
 
+/** Generates a full deck, in order. */
 export function generateCards() {
   const deck = [];
   for (let i = 0; i < 3; i++) {
@@ -126,11 +127,13 @@ export function generateCards() {
   return deck;
 }
 
+/** Returns a random color from the specified array of colors. */
 export function generateColor() {
   const colorsArray = Object.keys(colors);
   return colorsArray[Math.floor(Math.random() * colorsArray.length)];
 }
 
+/** Checks whether a 3-tuple forms a normal set. */
 export function checkSet(a, b, c) {
   for (let i = 0; i < 4; i++) {
     if ((a.charCodeAt(i) + b.charCodeAt(i) + c.charCodeAt(i)) % 3 !== 0)
@@ -151,6 +154,7 @@ export function conjugateCard(a, b) {
   return c;
 }
 
+/** Checks whether a 4-tuple is an ultra set, and returns it ordered according to the two sets if so. */
 export function checkSetUltra(a, b, c, d) {
   if (conjugateCard(a, b) === conjugateCard(c, d)) return [a, b, c, d];
   if (conjugateCard(a, c) === conjugateCard(b, d)) return [a, c, b, d];
@@ -158,6 +162,7 @@ export function checkSetUltra(a, b, c, d) {
   return null;
 }
 
+/** Find the first set in a deck, if any. */
 export function findSet(deck, gameMode = "normal", old) {
   const deckSet = new Set(deck);
   const ultraConjugates = {};
@@ -186,6 +191,41 @@ export function findSet(deck, gameMode = "normal", old) {
   return null;
 }
 
+/** Find all sets in an ordered board, if any. */
+export function findAllSets(boardCards, gameMode = "normal", old) {
+  const boardCardsSet = new Set(boardCards);
+  const ultraConjugatesLists = {};
+  const foundSets = new Set();
+  for (let i = 0; i < boardCards.length; i++) {
+    for (let j = 0; j < boardCards.length; j++) {
+      const c = conjugateCard(boardCards[i], boardCards[j]);
+      if (
+        gameMode === "normal" ||
+        (gameMode === "setchain" && old.length === 0)
+      ) {
+        if (boardCardsSet.has(c)) {
+          foundSets.add(new Set([boardCards[i], boardCards[j], c]));
+        }
+      } else if (gameMode === "setchain") {
+        if (old.includes(c)) {
+          foundSets.add(new Set([c, boardCards[i], boardCards[j]]));
+        }
+      } else if (gameMode === "ultraset") {
+        if (c in ultraConjugatesLists) {
+          for (let pair in ultraConjugatesLists[c]) {
+            foundSets.add([...pair, boardCards[i], boardCards[j]]);
+          }
+          ultraConjugatesLists[c].push([boardCards[i], boardCards[j]]);
+        } else {
+          ultraConjugatesLists[c] = [[boardCards[i], boardCards[j]]];
+        }
+      }
+    }
+  }
+  return foundSets;
+}
+
+/** Splits the deck according to the rules to return the cards on the board. */
 export function splitDeck(deck, gameMode = "normal", minBoardSize = 12, old) {
   let len = Math.min(deck.length, minBoardSize);
   while (len < deck.length && !findSet(deck.slice(0, len), gameMode, old))
@@ -193,11 +233,13 @@ export function splitDeck(deck, gameMode = "normal", minBoardSize = 12, old) {
   return [deck.slice(0, len), deck.slice(len)];
 }
 
+/** Removes a card from the deck. */
 export function removeCard(deck, c) {
   let i = deck.indexOf(c);
   return [...deck.slice(0, i), ...deck.slice(i + 1)];
 }
 
+/** Returns a random name of the form "Anonymous {animal}". */
 export function generateName() {
   return "Anonymous " + animals[Math.floor(Math.random() * animals.length)];
 }
@@ -249,8 +291,7 @@ function processEventNormal(internalGameState, event) {
   processValidEvent(internalGameState, event, cards);
 
   const minSize = Math.max(internalGameState.boardSize - 3, 12);
-  const boardSize = splitDeck(current, "normal", minSize)[0].length;
-  internalGameState.boardSize = boardSize;
+  internalGameState.boardSize = splitDeck(current, "normal", minSize)[0].length;
 }
 
 function processEventChain(internalGameState, event) {
@@ -272,8 +313,12 @@ function processEventChain(internalGameState, event) {
 
   const minSize = Math.max(internalGameState.boardSize - cards.length, 12);
   const old = [c1, c2, c3];
-  const boardSize = splitDeck(current, "setchain", minSize, old)[0].length;
-  internalGameState.boardSize = boardSize;
+  internalGameState.boardSize = splitDeck(
+    current,
+    "setchain",
+    minSize,
+    old
+  )[0].length;
 }
 
 function processEventUltra(internalGameState, event) {
@@ -283,8 +328,11 @@ function processEventUltra(internalGameState, event) {
   processValidEvent(internalGameState, event, cards);
 
   const minSize = Math.max(internalGameState.boardSize - 4, 12);
-  const boardSize = splitDeck(current, "ultraset", minSize)[0].length;
-  internalGameState.boardSize = boardSize;
+  internalGameState.boardSize = splitDeck(
+    current,
+    "ultraset",
+    minSize
+  )[0].length;
 }
 
 export function computeState(gameData, gameMode = "normal") {

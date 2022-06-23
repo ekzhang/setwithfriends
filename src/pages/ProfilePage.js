@@ -189,6 +189,8 @@ function ProfilePage({ match }) {
           userId={userId}
           handleClickGame={handleClickGame}
           gamesData={gamesData}
+          sortVariable={"createdAt"}
+          sortAscending={true}
         />
       </Paper>
     </Container>
