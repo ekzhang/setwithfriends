@@ -160,10 +160,10 @@
           ".validate": "newData.isString() && newData.val() == auth.uid"
         },
         "time": {
-          "validate": "newData.isNumber() && newData.val() == now"
+          ".validate": "newData.isNumber() && newData.val() == now"
         },
         "duration": {
-          "validate": "newData.isNumber() && newData.val() > 0"
+          ".validate": "newData.isNumber() && newData.val() > 0"
         }
       }
     },
