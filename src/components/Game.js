@@ -1,6 +1,7 @@
 import { useContext } from "react";
 
 import Divider from "@material-ui/core/Divider";
+import Link from "@material-ui/core/Link";
 import Paper from "@material-ui/core/Paper";
 import Typography from "@material-ui/core/Typography";
 import { lightGreen } from "@material-ui/core/colors";
@@ -223,7 +224,10 @@ function Game({
           width: "100%",
         }}
       >
-        <strong>{unplayed.length}</strong> cards remaining in the deck
+        <strong>{unplayed.length}</strong> cards remaining in the deck •{" "}
+        <Link component="button">Flip layout</Link> •{" "}
+        <Link component="button">Flip cards</Link> •{" "}
+        <Link component="button">Show keys</Link>
       </Typography>
       {gameMode === "setchain" && lastSet.length ? (
         <Divider
