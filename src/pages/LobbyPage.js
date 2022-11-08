@@ -305,6 +305,14 @@ function LobbyPage() {
         <InternalLink to="/legal">Legal</InternalLink> •{" "}
         <Link target="_blank" rel="noopener" href="https://discord.gg/XbjJyc9">
           Discord
+        </Link>{" "}
+        •{" "}
+        <Link
+          target="_blank"
+          rel="noopener"
+          href="https://github.com/ekzhang/setwithfriends/"
+        >
+          Github
         </Link>
       </Typography>
     </Container>
