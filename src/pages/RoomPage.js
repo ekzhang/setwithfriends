@@ -14,6 +14,7 @@ import DoneIcon from "@material-ui/icons/Done";
 import { Redirect, useHistory } from "react-router-dom";
 
 import useFirebaseRef from "../hooks/useFirebaseRef";
+import useKeydown from "../hooks/useKeydown";
 import LoadingPage from "./LoadingPage";
 import NotFoundPage from "./NotFoundPage";
 import SimpleInput from "../components/SimpleInput";
@@ -84,6 +85,12 @@ function RoomPage({ match, location }) {
     }
   }, [user.id, game, gameId, leaving]);
 
+  useKeydown((event) => {
+    if (event.ctrlKey === true && event.keyCode === 13) {
+      startGame();
+    }
+  });
+
   if (loadingGame) {
     return <LoadingPage />;
   }
@@ -126,7 +133,6 @@ function RoomPage({ match, location }) {
         setLeaving(false);
       });
   }
-
   return (
     <Container>
       <Grid container spacing={2}>
@@ -213,7 +219,7 @@ function RoomPage({ match, location }) {
                       fullWidth
                       onClick={startGame}
                     >
-                      Start game
+                      Start game (Ctrl+Enter)
                     </Button>
                   </Tooltip>
                 ) : (
