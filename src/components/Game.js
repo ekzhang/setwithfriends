@@ -41,13 +41,15 @@ function Game({
     "vertical"
   );
 
-  const [hotkeysVisible, setHotkeysVisible] = useStorage("show-hotkeys", false);
+  const [isHotkeysVisible, setHotkeysVisible] = useStorage(
+    "show-hotkeys",
+    false
+  );
 
   const { keyboardLayout, volume } = useContext(SettingsContext);
   const keyboardLayoutDesc = standardLayouts[keyboardLayout];
   const isHorizontal = cardOrientation === "horizontal";
   const isLandscape = layoutOrientation === "landscape";
-  const isHotkeysVisible = hotkeysVisible;
   const [gameDimensions, gameEl] = useDimensions();
   const [playLayout] = useSound(layoutSfx);
 
@@ -293,6 +295,7 @@ function Game({
               float: "left",
               position: "absolute",
               "font-family": "lucida-grande, courier, monospace",
+              visibility: isHotkeysVisible ? "visible" : "hidden",
               ...springPropsLabel[idx],
             }}
           >
