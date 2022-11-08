@@ -1,9 +1,11 @@
 import { useContext } from "react";
 
 import Divider from "@material-ui/core/Divider";
+import Link from "@material-ui/core/Link";
 import Paper from "@material-ui/core/Paper";
 import Typography from "@material-ui/core/Typography";
 import { lightGreen } from "@material-ui/core/colors";
+import { useTheme } from "@material-ui/core/styles";
 import { animated, useSprings } from "@react-spring/web";
 import useSound from "use-sound";
 
@@ -28,6 +30,8 @@ function Game({
   answer,
   lastSet,
 }) {
+  const theme = useTheme();
+
   const [layoutOrientation, setLayoutOrientation] = useStorage(
     "layout",
     "portrait"
@@ -36,6 +40,12 @@ function Game({
     "orientation",
     "vertical"
   );
+
+  const [isHotkeysVisible, setHotkeysVisible] = useStorage(
+    "show-hotkeys",
+    false
+  );
+
   const { keyboardLayout, volume } = useContext(SettingsContext);
   const keyboardLayoutDesc = standardLayouts[keyboardLayout];
   const isHorizontal = cardOrientation === "horizontal";
@@ -156,6 +166,43 @@ function Game({
       },
     }))
   );
+  const springPropsLabel = useSprings(
+    cardArray.length,
+    cardArray.map((c) => ({
+      to: {
+        transform: `translate(${
+          isHorizontal
+            ? cards[c].positionX + cardHeight + gamePadding
+            : cards[c].positionX + gamePadding
+        }px, ${
+          isHorizontal
+            ? cards[c].positionY + cardHeight - gamePadding
+            : cards[c].positionY - gamePadding
+        }px)`,
+        opacity: cards[c].opacity,
+      },
+      config: {
+        tension: 64,
+        friction: 14,
+      },
+    }))
+  );
+
+  function flipCardOrientation(event) {
+    event.preventDefault();
+    if (volume === "on") playLayout();
+    setCardOrientation(isHorizontal ? "vertical" : "horizontal");
+  }
+  function flipLayoutOrientation(event) {
+    event.preventDefault();
+    if (volume === "on") playLayout();
+    setLayoutOrientation(isLandscape ? "portrait" : "landscape");
+  }
+  function flipHotkeysVisible(event) {
+    event.preventDefault();
+    if (volume === "on") playLayout();
+    setHotkeysVisible(!isHotkeysVisible);
+  }
 
   // Keyboard shortcuts
   const shortcuts = isLandscape
@@ -173,13 +220,11 @@ function Game({
         onClick(board[index]);
       }
     } else if (key.toLowerCase() === keyboardLayoutDesc.orientationChangeKey) {
-      event.preventDefault();
-      if (volume === "on") playLayout();
-      setCardOrientation(isHorizontal ? "vertical" : "horizontal");
+      flipCardOrientation(event);
     } else if (key.toLowerCase() === keyboardLayoutDesc.layoutChangeKey) {
-      event.preventDefault();
-      if (volume === "on") playLayout();
-      setLayoutOrientation(isLandscape ? "portrait" : "landscape");
+      flipLayoutOrientation(event);
+    } else if (key.toLowerCase() === keyboardLayoutDesc.hotkeyChangeKey) {
+      flipHotkeysVisible(event);
     }
   });
 
@@ -223,7 +268,18 @@ function Game({
           width: "100%",
         }}
       >
-        <strong>{unplayed.length}</strong> cards remaining in the deck
+        <strong>{unplayed.length}</strong> cards remaining in the deck •{" "}
+        <Link component="button" onClick={flipLayoutOrientation}>
+          Rotate layout
+        </Link>{" "}
+        •{" "}
+        <Link component="button" onClick={flipCardOrientation}>
+          Rotate cards
+        </Link>{" "}
+        •{" "}
+        <Link component="button" onClick={flipHotkeysVisible}>
+          Toggle keys
+        </Link>
       </Typography>
       {gameMode === "setchain" && lastSet.length ? (
         <Divider
@@ -234,24 +290,39 @@ function Game({
         />
       ) : null}
       {cardArray.map((card, idx) => (
-        <animated.div
-          key={card}
-          style={{
-            position: "absolute",
-            ...springProps[idx],
-            visibility: springProps[idx].opacity.to((x) =>
-              x > 0 ? "visible" : "hidden"
-            ),
-          }}
-        >
-          <ResponsiveSetCard
-            value={card}
-            width={cardWidth}
-            background={cards[card].background}
-            active={selected.includes(card)}
-            onClick={cards[card].inplay ? () => onClick(card) : null}
-          />
-        </animated.div>
+        <div>
+          <animated.h2
+            style={{
+              color: theme.palette.primary.main,
+              float: "left",
+              position: "absolute",
+              "font-family": "lucida-grande, courier, monospace",
+              visibility: isHotkeysVisible ? "visible" : "hidden",
+              ...springPropsLabel[idx],
+            }}
+          >
+            {(shortcuts[board.indexOf(card)] || "﹖").toUpperCase()}
+          </animated.h2>
+
+          <animated.div
+            key={card}
+            style={{
+              position: "absolute",
+              ...springProps[idx],
+              visibility: springProps[idx].opacity.to((x) =>
+                x > 0 ? "visible" : "hidden"
+              ),
+            }}
+          >
+            <ResponsiveSetCard
+              value={card}
+              width={cardWidth}
+              background={cards[card].background}
+              active={selected.includes(card)}
+              onClick={cards[card].inplay ? () => onClick(card) : null}
+            />
+          </animated.div>
+        </div>
       ))}
     </Paper>
   );

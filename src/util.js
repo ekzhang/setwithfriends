@@ -76,36 +76,42 @@ export const standardLayouts = {
     horizontalLayout: "qazwsxedcrfvtgbyhnujmik,ol.",
     orientationChangeKey: ";",
     layoutChangeKey: "'",
+    hotkeyChangeKey: "`",
   },
   AZERTY: {
     verticalLayout: '&é"azeqsdwxcrtyfghvbnuiojkl',
     horizontalLayout: "aqwzsxedcrfvtgbyhnuj,ik;ol:",
     orientationChangeKey: "m",
     layoutChangeKey: "ù",
+    hotkeyChangeKey: "²",
   },
   QWERTZ: {
     verticalLayout: "123qweasdyxcrtzfghvbnuiojkl",
     horizontalLayout: "qaywsxedcrfvtgbzhnujmik,ol.",
     orientationChangeKey: "p",
     layoutChangeKey: "-",
+    hotkeyChangeKey: ";",
   },
   Dvorak: {
     verticalLayout: "123',.aoe;qjpyfuidkxbgcrhtn",
     horizontalLayout: "'a;,oq.ejpukyixfdbghmctwrnv",
     orientationChangeKey: "s",
     layoutChangeKey: "-",
+    hotkeyChangeKey: "`",
   },
   Colemak: {
     verticalLayout: "123qwfarszxcpgjtdhvbkluynei",
     horizontalLayout: "qazwrxfscptvgdbjhklnmue,yi.",
     orientationChangeKey: "o",
     layoutChangeKey: "'",
+    hotkeyChangeKey: "`",
   },
   Workman: {
     verticalLayout: "123qdrashzxmwbjtgycvkfupneo",
     horizontalLayout: "qazdsxrhmwtcbgvjykfnlue,po.",
     orientationChangeKey: "i",
     layoutChangeKey: "'",
+    hotkeyChangeKey: "`",
   },
 };
 
