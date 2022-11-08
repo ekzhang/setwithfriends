@@ -158,6 +158,17 @@ function Game({
     }))
   );
 
+  function flipCardOrientation(event) {
+    event.preventDefault();
+    if (volume === "on") playLayout();
+    setCardOrientation(isHorizontal ? "vertical" : "horizontal");
+  }
+  function flipLayoutOrientation(event) {
+    event.preventDefault();
+    if (volume === "on") playLayout();
+    setLayoutOrientation(isLandscape ? "portrait" : "landscape");
+  }
+
   // Keyboard shortcuts
   const shortcuts = isLandscape
     ? keyboardLayoutDesc.horizontalLayout
@@ -174,13 +185,9 @@ function Game({
         onClick(board[index]);
       }
     } else if (key.toLowerCase() === keyboardLayoutDesc.orientationChangeKey) {
-      event.preventDefault();
-      if (volume === "on") playLayout();
-      setCardOrientation(isHorizontal ? "vertical" : "horizontal");
+      flipCardOrientation(event);
     } else if (key.toLowerCase() === keyboardLayoutDesc.layoutChangeKey) {
-      event.preventDefault();
-      if (volume === "on") playLayout();
-      setLayoutOrientation(isLandscape ? "portrait" : "landscape");
+      flipLayoutOrientation(event);
     }
   });
 
@@ -225,9 +232,14 @@ function Game({
         }}
       >
         <strong>{unplayed.length}</strong> cards remaining in the deck •{" "}
-        <Link component="button">Flip layout</Link> •{" "}
-        <Link component="button">Flip cards</Link> •{" "}
-        <Link component="button">Show keys</Link>
+        <Link component="button" onClick={flipLayoutOrientation}>
+          Rotate layout
+        </Link>{" "}
+        •{" "}
+        <Link component="button" onClick={flipCardOrientation}>
+          Rotate cards
+        </Link>{" "}
+        • <Link component="button">Show keys</Link>
       </Typography>
       {gameMode === "setchain" && lastSet.length ? (
         <Divider
