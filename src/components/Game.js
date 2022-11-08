@@ -5,6 +5,7 @@ import Link from "@material-ui/core/Link";
 import Paper from "@material-ui/core/Paper";
 import Typography from "@material-ui/core/Typography";
 import { lightGreen } from "@material-ui/core/colors";
+import { makeStyles, useTheme } from "@material-ui/core/styles";
 import { animated, useSprings } from "@react-spring/web";
 import useSound from "use-sound";
 
@@ -29,6 +30,8 @@ function Game({
   answer,
   lastSet,
 }) {
+  const theme = useTheme();
+
   const [layoutOrientation, setLayoutOrientation] = useStorage(
     "layout",
     "portrait"
@@ -262,24 +265,37 @@ function Game({
         />
       ) : null}
       {cardArray.map((card, idx) => (
-        <animated.div
-          key={card}
-          style={{
-            position: "absolute",
-            ...springProps[idx],
-            visibility: springProps[idx].opacity.to((x) =>
-              x > 0 ? "visible" : "hidden"
-            ),
-          }}
-        >
-          <ResponsiveSetCard
-            value={card}
-            width={cardWidth}
-            background={cards[card].background}
-            active={selected.includes(card)}
-            onClick={cards[card].inplay ? () => onClick(card) : null}
-          />
-        </animated.div>
+        <div>
+          <animated.div
+            key={card}
+            style={{
+              position: "absolute",
+              ...springProps[idx],
+              visibility: springProps[idx].opacity.to((x) =>
+                x > 0 ? "visible" : "hidden"
+              ),
+            }}
+          >
+            <span
+              style={{
+                top: 2,
+                left: 5,
+                position: "absolute",
+                float: "left",
+                color: theme.palette.text.primary,
+              }}
+            >
+              {card}
+            </span>
+            <ResponsiveSetCard
+              value={card}
+              width={cardWidth}
+              background={cards[card].background}
+              active={selected.includes(card)}
+              onClick={cards[card].inplay ? () => onClick(card) : null}
+            />
+          </animated.div>
+        </div>
       ))}
     </Paper>
   );
