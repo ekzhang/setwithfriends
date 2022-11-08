@@ -198,7 +198,7 @@ function Game({
     if (volume === "on") playLayout();
     setLayoutOrientation(isLandscape ? "portrait" : "landscape");
   }
-  function flipHotKeysVisible(event) {
+  function flipHotkeysVisible(event) {
     event.preventDefault();
     if (volume === "on") playLayout();
     setHotkeysVisible(!isHotkeysVisible);
@@ -223,6 +223,8 @@ function Game({
       flipCardOrientation(event);
     } else if (key.toLowerCase() === keyboardLayoutDesc.layoutChangeKey) {
       flipLayoutOrientation(event);
+    } else if (key.toLowerCase() === keyboardLayoutDesc.hotkeyChangeKey) {
+      flipHotkeysVisible(event);
     }
   });
 
@@ -275,8 +277,8 @@ function Game({
           Rotate cards
         </Link>{" "}
         •{" "}
-        <Link component="button" onClick={flipHotKeysVisible}>
-          Show keys
+        <Link component="button" onClick={flipHotkeysVisible}>
+          Toggle keys
         </Link>
       </Typography>
       {gameMode === "setchain" && lastSet.length ? (
