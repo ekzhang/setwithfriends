@@ -193,7 +193,11 @@ function GamePage({ match }) {
     lastSet = [c1, c2, c3];
   }
   let answer = findSet(current.slice(0, boardSize), gameMode, lastSet);
-  if ((gameMode === "normal" || gameMode === "setjr") && hasHint(game) && answer) {
+  if (
+    (gameMode === "normal" || gameMode === "setjr") &&
+    hasHint(game) &&
+    answer
+  ) {
     answer = answer.slice(0, numHints);
   } else {
     answer = null;
@@ -445,18 +449,21 @@ function GamePage({ match }) {
               leaderboard={leaderboard}
             />
             <Box mt={1}>
-              {(gameMode === "normal" || gameMode === "setjr") && hasHint(game) && (
-                <Button
-                  size="large"
-                  variant="outlined"
-                  color="primary"
-                  fullWidth
-                  disabled={numHints === 3 || !answer || game.status === "done"}
-                  onClick={handleAddHint}
-                >
-                  Add hint: {numHints}
-                </Button>
-              )}
+              {(gameMode === "normal" || gameMode === "setjr") &&
+                hasHint(game) && (
+                  <Button
+                    size="large"
+                    variant="outlined"
+                    color="primary"
+                    fullWidth
+                    disabled={
+                      numHints === 3 || !answer || game.status === "done"
+                    }
+                    onClick={handleAddHint}
+                  >
+                    Add hint: {numHints}
+                  </Button>
+                )}
             </Box>
           </Grid>
         </Box>

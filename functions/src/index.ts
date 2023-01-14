@@ -294,11 +294,14 @@ export const createGame = functions.https.onCall(async (data, context) => {
   //   3. /publicGames (if access is public)
   const updates: Array<Promise<any>> = [];
   updates.push(
-    admin.database().ref(`gameData/${gameId}`).set({
-      // On "Play Again", the same mode will be selected;
-      // otherwise, the mode will default to "Normal".
-      deck: generateDeck(mode),
-    })
+    admin
+      .database()
+      .ref(`gameData/${gameId}`)
+      .set({
+        // On "Play Again", the same mode will be selected;
+        // otherwise, the mode will default to "Normal".
+        deck: generateDeck(mode),
+      })
   );
   updates.push(
     admin

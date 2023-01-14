@@ -177,7 +177,10 @@ export function replayEvents(
   let finalTime = 0;
   for (const event of events) {
     let eventValid = false;
-    if ((gameMode === "normal" || gameMode === "setjr") && replayEventNormal(deck, event))
+    if (
+      (gameMode === "normal" || gameMode === "setjr") &&
+      replayEventNormal(deck, event)
+    )
       eventValid = true;
     if (gameMode === "setchain" && replayEventChain(history, deck, event))
       eventValid = true;

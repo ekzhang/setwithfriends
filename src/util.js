@@ -58,7 +58,8 @@ export const modes = {
   setjr: {
     name: "Set Jr.",
     color: "amber",
-    description: "Play a simplified version where the deck only contains solid cards.",
+    description:
+      "Play a simplified version where the deck only contains solid cards.",
     setType: "Set",
   },
   setchain: {
@@ -137,7 +138,7 @@ export function generateCards(mode) {
 }
 
 export function generateShuffledCards(mode) {
-  const deck = generateCards(mode)
+  const deck = generateCards(mode);
   // Fisher-Yates
   for (let i = deck.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
@@ -331,7 +332,8 @@ export function computeState(gameData, gameMode = "normal") {
       })
       .map(([_k, e]) => e);
     for (const event of events) {
-      if (gameMode === "normal" || gameMode === "setjr") processEventNormal(internalGameState, event);
+      if (gameMode === "normal" || gameMode === "setjr")
+        processEventNormal(internalGameState, event);
       if (gameMode === "setchain") processEventChain(internalGameState, event);
       if (gameMode === "ultraset") processEventUltra(internalGameState, event);
     }

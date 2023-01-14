@@ -22,10 +22,13 @@ function GameSettings({ game, gameId, userId }) {
   function handleChangeMode(event) {
     const newMode = event.target.value;
     firebase.database().ref(`games/${gameId}/mode`).set(newMode);
-    firebase.database().ref(`gameData/${gameId}`).update({
-      // Deck must be regenerated when changing mode to/from Set Jr
-      deck: generateShuffledCards(newMode),
-    });
+    firebase
+      .database()
+      .ref(`gameData/${gameId}`)
+      .update({
+        // Deck must be regenerated when changing mode to/from Set Jr
+        deck: generateShuffledCards(newMode),
+      });
   }
 
   function toggleHint() {
