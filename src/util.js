@@ -55,6 +55,12 @@ export const modes = {
     description: "Find 3 cards that form a Set.",
     setType: "Set",
   },
+  setjr: {
+    name: "Set Jr.",
+    color: "amber",
+    description: "Play a simplified version where the deck only contains solid cards.",
+    setType: "Set",
+  },
   setchain: {
     name: "Set-Chain",
     color: "teal",
@@ -112,16 +118,32 @@ export const standardLayouts = {
 export const BASE_RATING = 1200;
 export const SCALING_FACTOR = 800;
 
-export function generateCards() {
+export function generateCards(mode) {
   const deck = [];
   for (let i = 0; i < 3; i++) {
     for (let j = 0; j < 3; j++) {
       for (let k = 0; k < 3; k++) {
-        for (let l = 0; l < 3; l++) {
-          deck.push(`${i}${j}${k}${l}`);
+        if (mode === "setjr") {
+          deck.push(`${i}${j}${0}${k}`);
+        } else {
+          for (let l = 0; l < 3; l++) {
+            deck.push(`${i}${j}${k}${l}`);
+          }
         }
       }
     }
+  }
+  return deck;
+}
+
+export function generateShuffledCards(mode) {
+  const deck = generateCards(mode)
+  // Fisher-Yates
+  for (let i = deck.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    const temp = deck[i];
+    deck[i] = deck[j];
+    deck[j] = temp;
   }
   return deck;
 }
@@ -166,6 +188,7 @@ export function findSet(deck, gameMode = "normal", old) {
       const c = conjugateCard(deck[i], deck[j]);
       if (
         gameMode === "normal" ||
+        gameMode === "setjr" ||
         (gameMode === "setchain" && old.length === 0)
       ) {
         if (deckSet.has(c)) {
@@ -308,7 +331,7 @@ export function computeState(gameData, gameMode = "normal") {
       })
       .map(([_k, e]) => e);
     for (const event of events) {
-      if (gameMode === "normal") processEventNormal(internalGameState, event);
+      if (gameMode === "normal" || gameMode === "setjr") processEventNormal(internalGameState, event);
       if (gameMode === "setchain") processEventChain(internalGameState, event);
       if (gameMode === "ultraset") processEventUltra(internalGameState, event);
     }
@@ -332,6 +355,6 @@ export function hasHint(game) {
     game.users &&
     Object.keys(game.users).length === 1 &&
     game.access === "private" &&
-    (game.mode || "normal") === "normal"
+    ((game.mode || "normal") === "normal" || game.mode === "setjr")
   );
 }

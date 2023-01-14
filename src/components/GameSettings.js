@@ -6,7 +6,7 @@ import Switch from "@material-ui/core/Switch";
 import Tooltip from "@material-ui/core/Tooltip";
 
 import firebase from "../firebase";
-import { hasHint, modes } from "../util";
+import { generateShuffledCards, hasHint, modes } from "../util";
 
 const useStyles = makeStyles(() => ({
   settings: { display: "flex", flexDirection: "column", alignItems: "center" },
@@ -20,7 +20,12 @@ function GameSettings({ game, gameId, userId }) {
   const classes = useStyles();
 
   function handleChangeMode(event) {
-    firebase.database().ref(`games/${gameId}/mode`).set(event.target.value);
+    const newMode = event.target.value;
+    firebase.database().ref(`games/${gameId}/mode`).set(newMode);
+    firebase.database().ref(`gameData/${gameId}`).update({
+      // Deck must be regenerated when changing mode to/from Set Jr
+      deck: generateShuffledCards(newMode),
+    });
   }
 
   function toggleHint() {
@@ -32,7 +37,7 @@ function GameSettings({ game, gameId, userId }) {
   return (
     <div className={classes.settings}>
       <RadioGroup row value={gameMode} onChange={handleChangeMode}>
-        {["normal", "setchain", "ultraset"].map((mode) => (
+        {["normal", "setjr", "setchain", "ultraset"].map((mode) => (
           <Tooltip
             key={mode}
             arrow
@@ -48,7 +53,7 @@ function GameSettings({ game, gameId, userId }) {
           </Tooltip>
         ))}
       </RadioGroup>
-      {gameMode === "normal" && (
+      {(gameMode === "normal" || gameMode === "setjr") && (
         <Tooltip arrow placement="left" title={hintTip}>
           <FormControlLabel
             control={<Switch checked={hasHint(game)} onChange={toggleHint} />}

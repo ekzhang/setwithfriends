@@ -36,7 +36,7 @@ export async function calcStats() {
         }
 
         const stats = {};
-        for (const mode of ["normal", "setchain", "ultraset"]) {
+        for (const mode of ["normal", "setjr", "setchain", "ultraset"]) {
           stats[mode] = {};
           for (const variant of ["solo", "multiplayer"]) {
             stats[mode][variant] = {};
@@ -67,7 +67,7 @@ export async function calcStats() {
               game.child("enableHint").val() &&
               game.child("users").numChildren() === 1 &&
               game.child("access").val() === "private" &&
-              gameMode === "normal"
+              (gameMode === "normal" || gameMode === "setjr")
             ) {
               return;
             }
@@ -111,7 +111,7 @@ export async function calcStats() {
           console.log(`[${userId}] Finished: ${JSON.stringify(stats)}`);
 
         const updates = {};
-        for (const mode of ["normal", "setchain", "ultraset"]) {
+        for (const mode of ["normal", "setjr", "setchain", "ultraset"]) {
           for (const variant of ["solo", "multiplayer"]) {
             updates[`${mode}/${variant}`] = stats[mode][variant];
           }
@@ -199,7 +199,7 @@ export function replayEvents(gameData, gameMode) {
   let finalTime = 0;
   for (const event of events) {
     let eventValid = false;
-    if (gameMode === "normal" && replayEventNormal(deck, event))
+    if ((gameMode === "normal" || gameMode === "setjr") && replayEventNormal(deck, event))
       eventValid = true;
     if (gameMode === "setchain" && replayEventChain(history, deck, event))
       eventValid = true;

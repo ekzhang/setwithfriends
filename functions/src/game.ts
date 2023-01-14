@@ -9,16 +9,24 @@ interface GameEvent {
   c4?: string;
 }
 
-export type GameMode = "normal" | "setchain" | "ultraset";
+export type GameMode = "normal" | "setjr" | "setchain" | "ultraset";
 
-/** Generates a random 81-card deck using a Fisher-Yates shuffle. */
-export function generateDeck() {
+/**
+ * Generates a random deck using a Fisher-Yates shuffle.
+ * "Set Jr" mode has 27 cards, all other modes have 81 cards.
+ */
+export function generateDeck(mode: string) {
   const deck: Array<string> = [];
   for (let i = 0; i < 3; i++) {
     for (let j = 0; j < 3; j++) {
       for (let k = 0; k < 3; k++) {
-        for (let l = 0; l < 3; l++) {
-          deck.push(`${i}${j}${k}${l}`);
+        if (mode === "setjr") {
+          // Solid fill only
+          deck.push(`${i}${j}${0}${k}`);
+        } else {
+          for (let l = 0; l < 3; l++) {
+            deck.push(`${i}${j}${k}${l}`);
+          }
         }
       }
     }
@@ -71,6 +79,7 @@ export function findSet(deck: string[], gameMode: GameMode, old?: string[]) {
       const c = conjugateCard(deck[i], deck[j]);
       if (
         gameMode === "normal" ||
+        gameMode === "setjr" ||
         (gameMode === "setchain" && old!.length === 0)
       ) {
         if (deckSet.has(c)) {
@@ -168,7 +177,7 @@ export function replayEvents(
   let finalTime = 0;
   for (const event of events) {
     let eventValid = false;
-    if (gameMode === "normal" && replayEventNormal(deck, event))
+    if ((gameMode === "normal" || gameMode === "setjr") && replayEventNormal(deck, event))
       eventValid = true;
     if (gameMode === "setchain" && replayEventChain(history, deck, event))
       eventValid = true;

@@ -44,7 +44,7 @@ function ChatCards({ item, gameMode, startedAt }) {
             id={item.user}
           />
         </div>
-        {(gameMode === "normal" || gameMode === "setchain") && (
+        {(gameMode === "normal" || gameMode === "setjr" || gameMode === "setchain") && (
           <div>
             <SetCard size="sm" value={item.c1} />
             <SetCard size="sm" value={item.c2} />
