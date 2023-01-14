@@ -45,6 +45,7 @@ describe("findSet()", () => {
       ["1111", "2222", "1010", "2021", "0201", "1021", "1022", "0112"],
     ]) {
       expect(findSet(deck, "normal")).toBeTruthy();
+      expect(findSet(deck, "setjr")).toBeTruthy();
       expect(findSet(deck, "setchain", [])).toBeTruthy();
     }
 
@@ -54,6 +55,7 @@ describe("findSet()", () => {
       ["1121", "2021", "2222", "0112", "1021", "1022", "0201", "1010"],
     ]) {
       expect(findSet(deck, "normal")).toBe(null);
+      expect(findSet(deck, "setjr")).toBe(null);
       expect(findSet(deck, "setchain", [])).toBe(null);
     }
   });

@@ -91,7 +91,7 @@ export const finishGame = functions.https.onCall(async (data, context) => {
     snapshot.child("enableHint").val() &&
     snapshot.child("users").numChildren() === 1 &&
     snapshot.child("access").val() === "private" &&
-    gameMode === "normal"
+    (gameMode === "normal" || gameMode === "setjr")
   ) {
     return;
   }
@@ -294,9 +294,14 @@ export const createGame = functions.https.onCall(async (data, context) => {
   //   3. /publicGames (if access is public)
   const updates: Array<Promise<any>> = [];
   updates.push(
-    admin.database().ref(`gameData/${gameId}`).set({
-      deck: generateDeck(),
-    })
+    admin
+      .database()
+      .ref(`gameData/${gameId}`)
+      .set({
+        // On "Play Again", the same mode will be selected;
+        // otherwise, the mode will default to "Normal".
+        deck: generateDeck(mode),
+      })
   );
   updates.push(
     admin

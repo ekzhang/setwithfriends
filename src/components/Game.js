@@ -16,7 +16,6 @@ import { SettingsContext } from "../context";
 import layoutSfx from "../assets/layoutChangeSound.mp3";
 
 const gamePadding = 8;
-const cardArray = generateCards();
 
 function Game({
   deck,
@@ -36,6 +35,7 @@ function Game({
     "orientation",
     "vertical"
   );
+  const cardArray = generateCards(gameMode);
   const { keyboardLayout, volume } = useContext(SettingsContext);
   const keyboardLayoutDesc = standardLayouts[keyboardLayout];
   const isHorizontal = cardOrientation === "horizontal";
