@@ -107,6 +107,12 @@ export const standardLayouts = {
     orientationChangeKey: "i",
     layoutChangeKey: "'",
   },
+  Neo: {
+    verticalLayout: "123xvluiaüöäcwkeospzbhgfnrt",
+    horizontalLayout: "xuüviölaäcepwozksbhnmgr,ft.",
+    orientationChangeKey: "q",
+    layoutChangeKey: "j",
+  },
 };
 
 export const BASE_RATING = 1200;
