@@ -337,7 +337,6 @@ export function hasHint(game) {
     game.enableHint &&
     game.users &&
     Object.keys(game.users).length === 1 &&
-    game.access === "private" &&
-    (game.mode || "normal") === "normal"
+    game.access === "private"
   );
 }
