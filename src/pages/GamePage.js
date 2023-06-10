@@ -193,7 +193,7 @@ function GamePage({ match }) {
     lastSet = [c1, c2, c3];
   }
   let answer = findSet(current.slice(0, boardSize), gameMode, lastSet);
-  if (gameMode === "normal" && hasHint(game) && answer) {
+  if (hasHint(game) && answer) {
     answer = answer.slice(0, numHints);
   } else {
     answer = null;
@@ -316,8 +316,9 @@ function GamePage({ match }) {
   }
 
   function handleAddHint() {
+    const maxNumHints = gameMode === "ultraset" ? 4 : 3;
     setNumHints((numHints) => {
-      if (numHints === 3) {
+      if (numHints === maxNumHints) {
         return numHints;
       }
       return numHints + 1;
@@ -445,13 +446,18 @@ function GamePage({ match }) {
               leaderboard={leaderboard}
             />
             <Box mt={1}>
-              {gameMode === "normal" && hasHint(game) && (
+              {hasHint(game) && (
                 <Button
                   size="large"
                   variant="outlined"
                   color="primary"
                   fullWidth
-                  disabled={numHints === 3 || !answer || game.status === "done"}
+                  disabled={
+                    (gameMode === "ultraset" && numHints === 4) ||
+                    (gameMode !== "ultraset" && numHints === 3) ||
+                    !answer ||
+                    game.status === "done"
+                  }
                   onClick={handleAddHint}
                 >
                   Add hint: {numHints}

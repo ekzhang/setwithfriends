@@ -107,6 +107,12 @@ export const standardLayouts = {
     orientationChangeKey: "i",
     layoutChangeKey: "'",
   },
+  Neo: {
+    verticalLayout: "123xvluiaüöäcwkeospzbhgfnrt",
+    horizontalLayout: "xuüviölaäcepwozksbhnmgr,ft.",
+    orientationChangeKey: "q",
+    layoutChangeKey: "j",
+  },
 };
 
 export const BASE_RATING = 1200;
@@ -331,7 +337,6 @@ export function hasHint(game) {
     game.enableHint &&
     game.users &&
     Object.keys(game.users).length === 1 &&
-    game.access === "private" &&
-    (game.mode || "normal") === "normal"
+    game.access === "private"
   );
 }

@@ -48,7 +48,7 @@ function GameSettings({ game, gameId, userId }) {
           </Tooltip>
         ))}
       </RadioGroup>
-      {gameMode === "normal" && (
+      {
         <Tooltip arrow placement="left" title={hintTip}>
           <FormControlLabel
             control={<Switch checked={hasHint(game)} onChange={toggleHint} />}
@@ -59,7 +59,7 @@ function GameSettings({ game, gameId, userId }) {
             }
           />
         </Tooltip>
-      )}
+      }
     </div>
   );
 }
