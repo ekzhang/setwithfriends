@@ -1,6 +1,5 @@
 import animals from "./utils/animals.json";
 import moment from "moment";
-import Filter from "bad-words";
 import red from "@material-ui/core/colors/red";
 import pink from "@material-ui/core/colors/pink";
 import purple from "@material-ui/core/colors/purple";
@@ -16,19 +15,16 @@ import lime from "@material-ui/core/colors/lime";
 import amber from "@material-ui/core/colors/amber";
 import orange from "@material-ui/core/colors/orange";
 import deepOrange from "@material-ui/core/colors/deepOrange";
+import { isProfane } from "no-profanity";
 
-export const filter = new Filter();
+const filterOptions = {
+  includes: ["retarded", "cunting"],
+  excludes: ["wang"],
+};
 
-filter.addWords("cunting");
-
-// See: https://github.com/ekzhang/setwithfriends/issues/117
-filter.addWords("retard", "retarded");
-
-// See: https://github.com/ekzhang/setwithfriends/issues/49
-filter.removeWords("queer", "queers", "queerz", "qweers", "qweerz", "lesbian");
-
-// See: https://github.com/ekzhang/setwithfriends/issues/71
-filter.removeWords("wang");
+export function containsProfanity(text) {
+  return isProfane({ testString: text, options: filterOptions });
+}
 
 export const colors = {
   red,

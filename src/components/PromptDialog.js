@@ -8,7 +8,7 @@ import DialogContent from "@material-ui/core/DialogContent";
 import DialogContentText from "@material-ui/core/DialogContentText";
 import DialogTitle from "@material-ui/core/DialogTitle";
 
-import { filter } from "../util";
+import { containsProfanity } from "../util";
 import { UserContext } from "../context";
 
 function PromptDialog(props) {
@@ -22,7 +22,7 @@ function PromptDialog(props) {
   }
 
   function handleSubmit() {
-    if (filter.isProfane(value)) {
+    if (containsProfanity(value)) {
       alert(
         "We detected that your input contains profane language. If you think this was a mistake, please let us know!"
       );

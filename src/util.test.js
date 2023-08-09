@@ -3,7 +3,7 @@ import {
   checkSet,
   checkSetUltra,
   findSet,
-  filter,
+  containsProfanity,
 } from "./util";
 
 it("computes conjugate cards", () => {
@@ -74,9 +74,13 @@ describe("findSet()", () => {
   });
 });
 
-describe("bad-words filter", () => {
+describe("profanity filter", () => {
   it("does not trigger on 'wang'", () => {
-    expect(filter.isProfane("Rona Wang")).toBe(false);
-    expect(filter.isProfane("wang")).toBe(false);
+    expect(containsProfanity("Rona Wang")).toBe(false);
+    expect(containsProfanity("wang")).toBe(false);
+  });
+
+  it("does trigger on asshole", () => {
+    expect(containsProfanity("asshole")).toBe(true);
   });
 });
