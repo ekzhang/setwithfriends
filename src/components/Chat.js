@@ -15,7 +15,7 @@ import Scrollbox from "./Scrollbox";
 import ChatCards from "./ChatCards";
 import ElapsedTime from "./ElapsedTime";
 import firebase from "../firebase";
-import { filter } from "../util";
+import { containsProfanity } from "../util";
 import autoscroll from "../utils/autoscroll";
 import useFirebaseQuery from "../hooks/useFirebaseQuery";
 import useMoment from "../hooks/useMoment";
@@ -97,7 +97,7 @@ function Chat({
   function handleSubmit(event) {
     event.preventDefault();
     if (input) {
-      if (filter.isProfane(input)) {
+      if (containsProfanity(input)) {
         alert(
           "We detected that your message contains profane language. If you think this was a mistake, please let us know!"
         );
