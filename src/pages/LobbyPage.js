@@ -312,7 +312,7 @@ function LobbyPage() {
           rel="noopener"
           href="https://github.com/ekzhang/setwithfriends/"
         >
-          Github
+          GitHub
         </Link>
       </Typography>
     </Container>
