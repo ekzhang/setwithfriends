@@ -32,7 +32,6 @@
   "devDependencies": {
     "@google-cloud/pubsub": "^4.9.0",
     "@trivago/prettier-plugin-sort-imports": "^5.2.0",
-    "cross-env": "^7.0.3",
     "prettier": "3.4.2"
   },
   "eslintConfig": {
@@ -42,8 +41,8 @@
     "start": "react-scripts start",
     "dev": "node rundev.js",
     "build:dev": "react-scripts build",
-    "build:preview": "cross-env REACT_APP_ENV=preview react-scripts build",
-    "build": "cross-env REACT_APP_ENV=production react-scripts build",
+    "build:preview": "REACT_APP_ENV=preview react-scripts build",
+    "build": "REACT_APP_ENV=production react-scripts build",
     "test": "react-scripts test --env=jsdom",
     "eject": "react-scripts eject",
     "format": "prettier --write ."

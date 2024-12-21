@@ -1,5 +1,5 @@
 import * as admin from "firebase-admin";
-import * as functions from "firebase-functions";
+import * as functions from "firebase-functions/v1";
 import Stripe from "stripe";
 
 import { GameMode, findSet, generateDeck, replayEvents } from "./game";
@@ -25,8 +25,8 @@ type TransactionResult = {
 };
 
 /** Ends the game with the correct time and updates ratings */
-export const finishGame = functions.https.onCall(async (req) => {
-  const gameId = req.data.gameId;
+export const finishGame = functions.https.onCall(async (data, context) => {
+  const gameId = data.gameId;
   if (
     !(typeof gameId === "string") ||
     gameId.length === 0 ||
@@ -38,7 +38,7 @@ export const finishGame = functions.https.onCall(async (req) => {
         "argument `gameId` to be finished at `/games/:gameId`.",
     );
   }
-  if (!req.auth) {
+  if (!context.auth) {
     throw new functions.https.HttpsError(
       "failed-precondition",
       "The function must be called while authenticated.",
@@ -196,11 +196,11 @@ export const finishGame = functions.https.onCall(async (req) => {
 });
 
 /** Create a new game in the database */
-export const createGame = functions.https.onCall(async (req) => {
-  const gameId = req.data.gameId;
-  const access = req.data.access || "public";
-  const mode = req.data.mode || "normal";
-  const enableHint = req.data.enableHint || false;
+export const createGame = functions.https.onCall(async (data, context) => {
+  const gameId = data.gameId;
+  const access = data.access || "public";
+  const mode = data.mode || "normal";
+  const enableHint = data.enableHint || false;
 
   if (
     !(typeof gameId === "string") ||
@@ -223,14 +223,14 @@ export const createGame = functions.https.onCall(async (req) => {
         'argument `access` given value "public" or "private".',
     );
   }
-  if (!req.auth) {
+  if (!context.auth) {
     throw new functions.https.HttpsError(
       "failed-precondition",
       "The function must be called while authenticated.",
     );
   }
 
-  const userId = req.auth.uid;
+  const userId = context.auth.uid;
 
   const oneHourAgo = Date.now() - 3600000;
   const recentGameIds = await admin
@@ -322,15 +322,15 @@ export const createGame = functions.https.onCall(async (req) => {
 });
 
 /** Generate a link to the customer portal. */
-export const customerPortal = functions.https.onCall(async (req) => {
-  if (!req.auth) {
+export const customerPortal = functions.https.onCall(async (data, context) => {
+  if (!context.auth) {
     throw new functions.https.HttpsError(
       "failed-precondition",
       "This function must be called while authenticated.",
     );
   }
 
-  const user = await admin.auth().getUser(req.auth.uid);
+  const user = await admin.auth().getUser(context.auth.uid);
   if (!user.email) {
     throw new functions.https.HttpsError(
       "failed-precondition",
@@ -348,15 +348,15 @@ export const customerPortal = functions.https.onCall(async (req) => {
 
   const portalResponse = await stripe.billingPortal.sessions.create({
     customer: customerResponse.data[0].id,
-    return_url: req.data.returnUrl,
+    return_url: data.returnUrl,
   });
   return portalResponse.url;
 });
 
 /** Periodically remove stale user connections */
-export const clearConnections = functions.scheduler.onSchedule(
-  "every 1 minutes",
-  async (event) => {
+export const clearConnections = functions.pubsub
+  .schedule("every 1 minutes")
+  .onRun(async (context) => {
     const onlineUsers = await admin
       .database()
       .ref("users")
@@ -374,8 +374,7 @@ export const clearConnections = functions.scheduler.onSchedule(
     });
     actions.push(admin.database().ref("stats/onlineUsers").set(numUsers));
     await Promise.all(actions);
-  },
-);
+  });
 
 /** Webhook that handles Stripe customer events. */
 export const handleStripe = functions.https.onRequest(async (req, res) => {
