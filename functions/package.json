@@ -1,7 +1,6 @@
 {
   "name": "functions",
   "scripts": {
-    "lint": "true",
     "build": "tsc",
     "serve": "npm run build && firebase serve --only functions",
     "shell": "npm run build && firebase functions:shell",

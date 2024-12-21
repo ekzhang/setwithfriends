@@ -29,11 +29,9 @@ new release is created with version number `vA.B.C`.
 
 ## Contributing
 
-This game is in active development, and we welcome contributions from developers
-of all backgrounds. I would recommend talking to us on Discord (link above) or
-submitting an issue if you want to see a new feature added. If you would like to
-help by contributing code, that's great – we would be happy to set up a time to
-chat!
+This game is currently in maintenance mode, and we'll only accept bug fixes. I
+would recommend talking to us on Discord (link above) if you really want to see
+a new feature added. We also have monthly community meetings organized there.
 
 To build the site for development:
 
@@ -41,20 +39,40 @@ To build the site for development:
 - Run `npm install -g firebase-tools` to globally install the Firebase CLI.
 - Run `npm install` in the root folder to get dependencies.
 - Run `npm install` in the `functions` folder.
-- To start the project, run `npm run dev`. This runs a script, which is
+- To start the project, run `npm run develop`. This runs a script, which is
   responsible for doing several things concurrently:
   - Build the TypeScript cloud functions in watch mode.
   - Start the Firebase Local Emulator Suite.
-  - Start the frontend with React Fast Refresh enabled.
+  - Start the frontend dev server with Vite + React.
+
+The site can be opened at `http://localhost:5173`.
 
 You should also be able to access the Emulator UI at `http://localhost:4000`,
 which contains useful information and allows you to inspect/modify the database
 during development. Changes to client code in `src` should be immediately
 visible, as well as changes to code in `functions`.
 
-Please make all pull requests with new features or bugfixes to the `main`
-branch. We are formatting code using [Prettier](https://prettier.io/), so you
-should run `npm run format` on your code before making a pull request.
+Other useful commands:
+
+```bash
+npm run lint
+npm test
+
+# Bundle the application into static assets.
+npm run build
+npm run build:preview
+
+# Format the codebase with Prettier.
+npm run format
+
+# Run development server targeting setwithfriends-dev project.
+npm run dev -- --mode preview
+
+# Run development server targeting production data. This requires Eric to update
+# the "Browser key (auto created by Firebase)" website restrictions at
+# https://console.cloud.google.com/apis/credentials to allow traffic.
+npm run dev -- --mode production
+```
 
 ## Deployment
 

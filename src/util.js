@@ -309,7 +309,7 @@ export function computeState(gameData, gameMode = "normal") {
       .sort(([k1, e1], [k2, e2]) => {
         return e1.time !== e2.time ? e1.time - e2.time : k1 < k2;
       })
-      .map(([_k, e]) => e);
+      .map(([, e]) => e);
     for (const event of events) {
       if (gameMode === "normal") processEventNormal(internalGameState, event);
       if (gameMode === "setchain") processEventChain(internalGameState, event);

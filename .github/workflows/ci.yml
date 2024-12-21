@@ -35,11 +35,9 @@ jobs:
 
       - run: npm ci
 
-      - run: npx eslint src
+      - run: npm run lint
 
-      # TODO: This is not working due to ESM packaging issues. We can fix this
-      # again later probably after we migrate from CRA -> Vite.
-      # - run: npm test
+      - run: npm test
 
   functions:
     name: Cloud Functions
@@ -52,9 +50,6 @@ jobs:
           node-version: "20"
 
       - run: npm ci
-        working-directory: functions
-
-      - run: npm run lint
         working-directory: functions
 
       - run: npm run build

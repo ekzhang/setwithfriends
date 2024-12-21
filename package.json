@@ -1,5 +1,6 @@
 {
   "name": "setwithfriends",
+  "type": "module",
   "version": "1.0.0",
   "repository": "https://github.com/ekzhang/setwithfriends",
   "license": "MIT",
@@ -26,25 +27,33 @@
     "react-color": "^2.19.3",
     "react-dom": "^18.3.1",
     "react-router-dom": "^7.1.0",
-    "react-scripts": "5.0.1",
     "use-sound": "^4.0.3"
   },
   "devDependencies": {
+    "@eslint/js": "^9.17.0",
     "@google-cloud/pubsub": "^4.9.0",
     "@trivago/prettier-plugin-sort-imports": "^5.2.0",
-    "prettier": "3.4.2"
-  },
-  "eslintConfig": {
-    "extends": "react-app"
+    "@types/react": "^18.3.18",
+    "@types/react-dom": "^18.3.5",
+    "@vitejs/plugin-react-swc": "^3.7.2",
+    "eslint": "^9.17.0",
+    "eslint-plugin-react": "^7.37.2",
+    "eslint-plugin-react-hooks": "^5.1.0",
+    "eslint-plugin-react-refresh": "^0.4.16",
+    "globals": "^15.14.0",
+    "prettier": "3.4.2",
+    "vite": "^6.0.5",
+    "vitest": "^2.1.8"
   },
   "scripts": {
-    "start": "react-scripts start",
-    "dev": "node rundev.js",
-    "build:dev": "react-scripts build",
-    "build:preview": "REACT_APP_ENV=preview react-scripts build",
-    "build": "REACT_APP_ENV=production react-scripts build",
-    "test": "react-scripts test --env=jsdom",
-    "eject": "react-scripts eject",
+    "dev": "vite dev",
+    "develop": "node rundev.js",
+    "build:dev": "vite build --mode development",
+    "build:preview": "vite build --mode preview",
+    "build": "vite build",
+    "preview": "vite preview",
+    "lint": "eslint src",
+    "test": "vitest",
     "format": "prettier --write ."
   },
   "browserslist": [
