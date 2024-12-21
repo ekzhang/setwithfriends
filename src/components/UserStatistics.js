@@ -1,10 +1,10 @@
-import { memo } from "react";
 import Grid from "@mui/material/Grid";
 import Typography from "@mui/material/Typography";
 import { useTheme } from "@mui/material/styles";
 import makeStyles from "@mui/styles/makeStyles";
+import { ArcElement, Chart as ChartJS } from "chart.js";
+import { memo } from "react";
 import { Pie } from "react-chartjs-2";
-import { Chart as ChartJS, ArcElement } from "chart.js";
 
 import { formatTime } from "../util";
 

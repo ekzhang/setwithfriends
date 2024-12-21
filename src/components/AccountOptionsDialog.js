@@ -1,17 +1,16 @@
-import { useState, useContext } from "react";
-
+import PersonAddIcon from "@mui/icons-material/PersonAdd";
+import VpnKeyIcon from "@mui/icons-material/VpnKey";
 import Button from "@mui/material/Button";
 import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
 import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
-import PersonAddIcon from "@mui/icons-material/PersonAdd";
-import VpnKeyIcon from "@mui/icons-material/VpnKey";
-import { UserContext } from "../context";
-
-import firebase, { authProvider } from "../firebase";
 import { red } from "@mui/material/colors";
+import { useContext, useState } from "react";
+
+import { UserContext } from "../context";
+import firebase, { authProvider } from "../firebase";
 
 function AccountOptionsDialog({ open, onClose }) {
   const user = useContext(UserContext);

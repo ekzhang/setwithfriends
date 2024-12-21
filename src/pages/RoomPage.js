@@ -1,16 +1,15 @@
-import { useState, useEffect, useContext } from "react";
-
-import makeStyles from "@mui/styles/makeStyles";
-import Container from "@mui/material/Container";
-import Typography from "@mui/material/Typography";
-import Button from "@mui/material/Button";
-import IconButton from "@mui/material/IconButton";
-import Tooltip from "@mui/material/Tooltip";
-import Paper from "@mui/material/Paper";
-import Grid from "@mui/material/Grid";
-import Box from "@mui/material/Box";
-import LinkIcon from "@mui/icons-material/Link";
 import DoneIcon from "@mui/icons-material/Done";
+import LinkIcon from "@mui/icons-material/Link";
+import Box from "@mui/material/Box";
+import Button from "@mui/material/Button";
+import Container from "@mui/material/Container";
+import Grid from "@mui/material/Grid";
+import IconButton from "@mui/material/IconButton";
+import Paper from "@mui/material/Paper";
+import Tooltip from "@mui/material/Tooltip";
+import Typography from "@mui/material/Typography";
+import makeStyles from "@mui/styles/makeStyles";
+import { useContext, useEffect, useState } from "react";
 import {
   Navigate,
   useLocation,
@@ -18,16 +17,16 @@ import {
   useParams,
 } from "react-router-dom";
 
+import Chat from "../components/Chat";
+import GameSettings from "../components/GameSettings";
+import RoomUserList from "../components/RoomUserList";
+import SimpleInput from "../components/SimpleInput";
+import Subheading from "../components/Subheading";
+import { UserContext } from "../context";
+import firebase from "../firebase";
 import useFirebaseRef from "../hooks/useFirebaseRef";
 import LoadingPage from "./LoadingPage";
 import NotFoundPage from "./NotFoundPage";
-import SimpleInput from "../components/SimpleInput";
-import RoomUserList from "../components/RoomUserList";
-import Subheading from "../components/Subheading";
-import Chat from "../components/Chat";
-import firebase from "../firebase";
-import { UserContext } from "../context";
-import GameSettings from "../components/GameSettings";
 
 const useStyles = makeStyles((theme) => ({
   subpanel: {

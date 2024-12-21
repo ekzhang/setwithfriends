@@ -1,8 +1,8 @@
-import { useState, useEffect, useContext } from "react";
+import { useContext, useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 
-import firebase from "../firebase";
 import { UserContext } from "../context";
+import firebase from "../firebase";
 
 function ConnectionsTracker() {
   const user = useContext(UserContext);

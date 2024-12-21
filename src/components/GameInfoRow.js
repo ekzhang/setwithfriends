@@ -1,17 +1,17 @@
+import DoneIcon from "@mui/icons-material/Done";
 import ExitToAppIcon from "@mui/icons-material/ExitToApp";
 import SnoozeIcon from "@mui/icons-material/Snooze";
 import VisibilityIcon from "@mui/icons-material/Visibility";
-import DoneIcon from "@mui/icons-material/Done";
 import TableCell from "@mui/material/TableCell";
 import TableRow from "@mui/material/TableRow";
 import Tooltip from "@mui/material/Tooltip";
 import { useTheme } from "@mui/material/styles";
+import makeStyles from "@mui/styles/makeStyles";
 
+import useFirebaseRef from "../hooks/useFirebaseRef";
+import { colors, modes } from "../util";
 import ElapsedTime from "./ElapsedTime";
 import User from "./User";
-import useFirebaseRef from "../hooks/useFirebaseRef";
-import makeStyles from "@mui/styles/makeStyles";
-import { colors, modes } from "../util";
 
 const useStyles = makeStyles({
   host: {

@@ -1,26 +1,25 @@
-import { useEffect, useRef, useState, useMemo, useContext, memo } from "react";
-
-import Typography from "@mui/material/Typography";
-import Tooltip from "@mui/material/Tooltip";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
-import MenuItem from "@mui/material/MenuItem";
 import Menu from "@mui/material/Menu";
+import MenuItem from "@mui/material/MenuItem";
+import Tooltip from "@mui/material/Tooltip";
+import Typography from "@mui/material/Typography";
 import makeStyles from "@mui/styles/makeStyles";
+import { memo, useContext, useEffect, useMemo, useRef, useState } from "react";
 
-import User from "./User";
-import InternalLink from "./InternalLink";
-import SimpleInput from "./SimpleInput";
-import Subheading from "./Subheading";
-import Scrollbox from "./Scrollbox";
-import ChatCards from "./ChatCards";
-import ElapsedTime from "./ElapsedTime";
+import { UserContext } from "../context";
 import firebase from "../firebase";
-import { filter } from "../util";
-import autoscroll from "../utils/autoscroll";
 import useFirebaseQuery from "../hooks/useFirebaseQuery";
 import useMoment from "../hooks/useMoment";
 import useStorage from "../hooks/useStorage";
-import { UserContext } from "../context";
+import { filter } from "../util";
+import autoscroll from "../utils/autoscroll";
+import ChatCards from "./ChatCards";
+import ElapsedTime from "./ElapsedTime";
+import InternalLink from "./InternalLink";
+import Scrollbox from "./Scrollbox";
+import SimpleInput from "./SimpleInput";
+import Subheading from "./Subheading";
+import User from "./User";
 
 const useStyles = makeStyles({
   chatPanel: {

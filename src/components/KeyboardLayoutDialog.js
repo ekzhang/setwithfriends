@@ -1,19 +1,18 @@
-import { useContext } from "react";
-
 import Button from "@mui/material/Button";
 import Dialog from "@mui/material/Dialog";
-import Select from "@mui/material/Select";
 import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
-import DialogTitle from "@mui/material/DialogTitle";
-import InputLabel from "@mui/material/InputLabel";
-import FormControl from "@mui/material/FormControl";
-import MenuItem from "@mui/material/MenuItem";
 import DialogContentText from "@mui/material/DialogContentText";
+import DialogTitle from "@mui/material/DialogTitle";
+import FormControl from "@mui/material/FormControl";
+import InputLabel from "@mui/material/InputLabel";
+import MenuItem from "@mui/material/MenuItem";
+import Select from "@mui/material/Select";
 import makeStyles from "@mui/styles/makeStyles";
+import { useContext } from "react";
 
-import { standardLayouts } from "../util";
 import { SettingsContext } from "../context";
+import { standardLayouts } from "../util";
 
 const useStyles = makeStyles({
   formControl: {

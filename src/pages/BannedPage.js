@@ -1,6 +1,6 @@
-import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import Link from "@mui/material/Link";
+import Typography from "@mui/material/Typography";
 
 function BannedPage({ time }) {
   const date = new Date(time);

@@ -31,6 +31,7 @@
   },
   "devDependencies": {
     "@google-cloud/pubsub": "^4.9.0",
+    "@trivago/prettier-plugin-sort-imports": "^5.2.0",
     "cross-env": "^7.0.3",
     "prettier": "3.4.2"
   },

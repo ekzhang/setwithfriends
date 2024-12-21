@@ -1,8 +1,7 @@
-import { memo } from "react";
-
 import { useTheme } from "@mui/material/styles";
 import makeStyles from "@mui/styles/makeStyles";
 import clsx from "clsx";
+import { memo } from "react";
 
 const useStyles = makeStyles((theme) => ({
   symbol: {

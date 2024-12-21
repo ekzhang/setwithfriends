@@ -1,15 +1,16 @@
-import * as functions from "firebase-functions";
 import * as admin from "firebase-admin";
+import * as functions from "firebase-functions";
+import Stripe from "stripe";
+
+import { GameMode, findSet, generateDeck, replayEvents } from "./game";
+
 admin.initializeApp();
 
-import Stripe from "stripe";
 const stripe = process.env.FUNCTIONS_EMULATOR
   ? (null as any)
   : new Stripe(functions.config().stripe.secret, {
       apiVersion: "2024-12-18.acacia",
     });
-
-import { generateDeck, replayEvents, findSet, GameMode } from "./game";
 
 const MAX_GAME_ID_LENGTH = 64;
 const MAX_UNFINISHED_GAMES_PER_HOUR = 4;

@@ -1,4 +1,6 @@
 import AlarmIcon from "@mui/icons-material/Alarm";
+import SnoozeIcon from "@mui/icons-material/Snooze";
+import SportsEsportsIcon from "@mui/icons-material/SportsEsports";
 import Divider from "@mui/material/Divider";
 import List from "@mui/material/List";
 import ListItemButton from "@mui/material/ListItemButton";
@@ -8,14 +10,12 @@ import Paper from "@mui/material/Paper";
 import Tooltip from "@mui/material/Tooltip";
 import Typography from "@mui/material/Typography";
 import makeStyles from "@mui/styles/makeStyles";
-import SportsEsportsIcon from "@mui/icons-material/SportsEsports";
-import SnoozeIcon from "@mui/icons-material/Snooze";
-import { useLocation, Link as RouterLink } from "react-router-dom";
+import { Link as RouterLink, useLocation } from "react-router-dom";
 
-import User from "./User";
-import Subheading from "./Subheading";
 import useMoment from "../hooks/useMoment";
 import { formatTime } from "../util";
+import Subheading from "./Subheading";
+import User from "./User";
 
 const useStyles = makeStyles((theme) => ({
   sidebar: {

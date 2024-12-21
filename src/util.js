@@ -1,24 +1,24 @@
-import animals from "./utils/animals.json";
-import moment from "moment";
-import { Filter } from "bad-words";
-
 import {
-  red,
-  pink,
-  purple,
-  deepPurple,
-  indigo,
+  amber,
   blue,
-  lightBlue,
   cyan,
-  teal,
+  deepOrange,
+  deepPurple,
   green,
+  indigo,
+  lightBlue,
   lightGreen,
   lime,
-  amber,
   orange,
-  deepOrange,
+  pink,
+  purple,
+  red,
+  teal,
 } from "@mui/material/colors";
+import { Filter } from "bad-words";
+import moment from "moment";
+
+import animals from "./utils/animals.json";
 
 export const filter = new Filter();
 

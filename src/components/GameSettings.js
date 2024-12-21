@@ -1,9 +1,9 @@
-import makeStyles from "@mui/styles/makeStyles";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import Radio from "@mui/material/Radio";
 import RadioGroup from "@mui/material/RadioGroup";
 import Switch from "@mui/material/Switch";
 import Tooltip from "@mui/material/Tooltip";
+import makeStyles from "@mui/styles/makeStyles";
 
 import firebase from "../firebase";
 import { hasHint, modes } from "../util";

@@ -1,12 +1,11 @@
-import { memo } from "react";
-
 import Tooltip from "@mui/material/Tooltip";
 import Typography from "@mui/material/Typography";
 import makeStyles from "@mui/styles/makeStyles";
+import { memo } from "react";
 
+import { conjugateCard, formatTime, modes } from "../util";
 import SetCard from "./SetCard";
 import User from "./User";
-import { conjugateCard, formatTime, modes } from "../util";
 
 const useStyles = makeStyles((theme) => ({
   logEntry: {

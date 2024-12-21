@@ -1,15 +1,14 @@
-import { useContext } from "react";
-
+import PersonIcon from "@mui/icons-material/Person";
+import SnoozeIcon from "@mui/icons-material/Snooze";
+import StarsIcon from "@mui/icons-material/Stars";
 import List from "@mui/material/List";
 import ListItemButton from "@mui/material/ListItemButton";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
-import PersonIcon from "@mui/icons-material/Person";
-import SnoozeIcon from "@mui/icons-material/Snooze";
-import StarsIcon from "@mui/icons-material/Stars";
 import Tooltip from "@mui/material/Tooltip";
 import Typography from "@mui/material/Typography";
-import { useTransition, animated } from "@react-spring/web";
+import { animated, useTransition } from "@react-spring/web";
+import { useContext } from "react";
 import { Link as RouterLink } from "react-router-dom";
 
 import User from "../components/User";

@@ -1,16 +1,15 @@
-import { useContext, useState } from "react";
-
+import WhatshotIcon from "@mui/icons-material/Whatshot";
 import Button from "@mui/material/Button";
 import Container from "@mui/material/Container";
 import Paper from "@mui/material/Paper";
 import Typography from "@mui/material/Typography";
-import WhatshotIcon from "@mui/icons-material/Whatshot";
+import { useContext, useState } from "react";
 
 import InternalLink from "../components/InternalLink";
 import User from "../components/User";
+import { UserContext } from "../context";
 import firebase, { customerPortal } from "../firebase";
 import useFirebaseRef from "../hooks/useFirebaseRef";
-import { UserContext } from "../context";
 import { patronCheckout } from "../stripe";
 
 function DonatePage() {

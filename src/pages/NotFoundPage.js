@@ -1,7 +1,8 @@
-import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
-import InternalLink from "../components/InternalLink";
+import Typography from "@mui/material/Typography";
+
 import cowImage from "../assets/cow_404.png";
+import InternalLink from "../components/InternalLink";
 
 function NotFoundPage() {
   return (

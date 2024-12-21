@@ -1,17 +1,16 @@
-import { useState, memo, useContext } from "react";
-
+import MoreVertIcon from "@mui/icons-material/MoreVert";
+import Menu from "@mui/material/Menu";
+import MenuItem from "@mui/material/MenuItem";
 import Typography from "@mui/material/Typography";
 import { useTheme } from "@mui/material/styles";
-import MoreVertIcon from "@mui/icons-material/MoreVert";
-import MenuItem from "@mui/material/MenuItem";
-import Menu from "@mui/material/Menu";
 import makeStyles from "@mui/styles/makeStyles";
+import { memo, useContext, useState } from "react";
 
+import { UserContext } from "../context";
 import firebase from "../firebase";
+import { generateName } from "../util";
 import ElapsedTime from "./ElapsedTime";
 import User from "./User";
-import { UserContext } from "../context";
-import { generateName } from "../util";
 
 const useStyles = makeStyles((theme) => ({
   vertIcon: {

@@ -1,19 +1,18 @@
-import { useContext } from "react";
-
 import Divider from "@mui/material/Divider";
 import Paper from "@mui/material/Paper";
 import Typography from "@mui/material/Typography";
 import { lightGreen } from "@mui/material/colors";
 import { animated, useSprings } from "@react-spring/web";
+import { useContext } from "react";
 import useSound from "use-sound";
 
-import { generateCards, standardLayouts } from "../util";
+import layoutSfx from "../assets/layoutChangeSound.mp3";
 import ResponsiveSetCard from "../components/ResponsiveSetCard";
+import { SettingsContext } from "../context";
 import useDimensions from "../hooks/useDimensions";
 import useKeydown from "../hooks/useKeydown";
 import useStorage from "../hooks/useStorage";
-import { SettingsContext } from "../context";
-import layoutSfx from "../assets/layoutChangeSound.mp3";
+import { generateCards, standardLayouts } from "../util";
 
 const gamePadding = 8;
 const cardArray = generateCards();

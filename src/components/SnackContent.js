@@ -1,13 +1,13 @@
-import clsx from "clsx";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
+import CloseIcon from "@mui/icons-material/Close";
 import ErrorIcon from "@mui/icons-material/Error";
 import InfoIcon from "@mui/icons-material/Info";
-import CloseIcon from "@mui/icons-material/Close";
-import { amber, green } from "@mui/material/colors";
+import WarningIcon from "@mui/icons-material/Warning";
 import IconButton from "@mui/material/IconButton";
 import SnackbarContent from "@mui/material/SnackbarContent";
-import WarningIcon from "@mui/icons-material/Warning";
+import { amber, green } from "@mui/material/colors";
 import makeStyles from "@mui/styles/makeStyles";
+import clsx from "clsx";
 import { forwardRef } from "react";
 
 const variantIcon = {

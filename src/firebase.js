@@ -1,7 +1,7 @@
-import firebase from "firebase/compat/app";
-import "firebase/compat/database";
-import "firebase/compat/auth";
 import "firebase/compat/analytics";
+import firebase from "firebase/compat/app";
+import "firebase/compat/auth";
+import "firebase/compat/database";
 import "firebase/compat/functions";
 
 import config, { isDev } from "./config";

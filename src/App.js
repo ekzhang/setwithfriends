@@ -1,30 +1,29 @@
-import { useState, useEffect } from "react";
-import firebase from "./firebase";
-import "./styles.css";
-
-import { BrowserRouter, Route, Routes } from "react-router-dom";
 import CssBaseline from "@mui/material/CssBaseline";
-import { ThemeProvider, StyledEngineProvider } from "@mui/material/styles";
+import { StyledEngineProvider, ThemeProvider } from "@mui/material/styles";
+import { useEffect, useState } from "react";
+import { BrowserRouter, Route, Routes } from "react-router-dom";
 
-import { generateColor, generateName } from "./util";
-import { UserContext, SettingsContext } from "./context";
-import useStorage from "./hooks/useStorage";
 import ConnectionsTracker from "./components/ConnectionsTracker";
-import WelcomeDialog from "./components/WelcomeDialog";
 import Navbar from "./components/Navbar";
-import RoomPage from "./pages/RoomPage";
-import GamePage from "./pages/GamePage";
-import LobbyPage from "./pages/LobbyPage";
-import LoadingPage from "./pages/LoadingPage";
-import NotFoundPage from "./pages/NotFoundPage";
-import BannedPage from "./pages/BannedPage";
-import HelpPage from "./pages/HelpPage";
+import WelcomeDialog from "./components/WelcomeDialog";
+import { SettingsContext, UserContext } from "./context";
+import firebase from "./firebase";
+import useStorage from "./hooks/useStorage";
 import AboutPage from "./pages/AboutPage";
+import BannedPage from "./pages/BannedPage";
 import ConductPage from "./pages/ConductPage";
 import DonatePage from "./pages/DonatePage";
+import GamePage from "./pages/GamePage";
+import HelpPage from "./pages/HelpPage";
 import LegalPage from "./pages/LegalPage";
+import LoadingPage from "./pages/LoadingPage";
+import LobbyPage from "./pages/LobbyPage";
+import NotFoundPage from "./pages/NotFoundPage";
 import ProfilePage from "./pages/ProfilePage";
-import { lightTheme, darkTheme } from "./themes";
+import RoomPage from "./pages/RoomPage";
+import "./styles.css";
+import { darkTheme, lightTheme } from "./themes";
+import { generateColor, generateName } from "./util";
 
 function App() {
   const [authUser, setAuthUser] = useState(null);

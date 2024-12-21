@@ -1,38 +1,37 @@
-import { useState, useEffect, useContext, useRef } from "react";
-
-import makeStyles from "@mui/styles/makeStyles";
-import Grid from "@mui/material/Grid";
-import Typography from "@mui/material/Typography";
-import Container from "@mui/material/Container";
-import Paper from "@mui/material/Paper";
-import Button from "@mui/material/Button";
 import Box from "@mui/material/Box";
+import Button from "@mui/material/Button";
+import Container from "@mui/material/Container";
+import Grid from "@mui/material/Grid";
+import Paper from "@mui/material/Paper";
 import Snackbar from "@mui/material/Snackbar";
+import Typography from "@mui/material/Typography";
+import makeStyles from "@mui/styles/makeStyles";
+import { useContext, useEffect, useRef, useState } from "react";
 import { Navigate, useParams } from "react-router-dom";
 import useSound from "use-sound";
 
-import SnackContent from "../components/SnackContent";
-import firebase, { createGame, finishGame } from "../firebase";
-import useFirebaseRef from "../hooks/useFirebaseRef";
-import Game from "../components/Game";
-import User from "../components/User";
-import Loading from "../components/Loading";
-import NotFoundPage from "./NotFoundPage";
-import LoadingPage from "./LoadingPage";
-import GameSidebar from "../components/GameSidebar";
+import failSfx from "../assets/failedSetSound.mp3";
+import foundSfx from "../assets/successfulSetSound.mp3";
 import Chat from "../components/Chat";
 import DonateDialog from "../components/DonateDialog";
+import Game from "../components/Game";
+import GameSidebar from "../components/GameSidebar";
+import Loading from "../components/Loading";
+import SnackContent from "../components/SnackContent";
+import User from "../components/User";
 import { SettingsContext, UserContext } from "../context";
+import firebase, { createGame, finishGame } from "../firebase";
+import useFirebaseRef from "../hooks/useFirebaseRef";
 import {
-  removeCard,
   checkSet,
   checkSetUltra,
-  findSet,
   computeState,
+  findSet,
   hasHint,
+  removeCard,
 } from "../util";
-import foundSfx from "../assets/successfulSetSound.mp3";
-import failSfx from "../assets/failedSetSound.mp3";
+import LoadingPage from "./LoadingPage";
+import NotFoundPage from "./NotFoundPage";
 
 const useStyles = makeStyles((theme) => ({
   sideColumn: {

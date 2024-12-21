@@ -6,8 +6,8 @@ import DialogTitle from "@mui/material/DialogTitle";
 import Typography from "@mui/material/Typography";
 import makeStyles from "@mui/styles/makeStyles";
 
-import InternalLink from "./InternalLink";
 import useStorage from "../hooks/useStorage";
+import InternalLink from "./InternalLink";
 
 const useStyles = makeStyles({
   emoji: {

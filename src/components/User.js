@@ -1,7 +1,7 @@
-import { useNavigate } from "react-router-dom";
+import WhatshotIcon from "@mui/icons-material/Whatshot";
 import { useTheme } from "@mui/material/styles";
 import makeStyles from "@mui/styles/makeStyles";
-import WhatshotIcon from "@mui/icons-material/Whatshot";
+import { useNavigate } from "react-router-dom";
 
 import useFirebaseRef from "../hooks/useFirebaseRef";
 import useStats from "../hooks/useStats";

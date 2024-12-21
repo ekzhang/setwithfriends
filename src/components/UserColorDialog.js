@@ -1,17 +1,16 @@
-import { useContext, useEffect } from "react";
-
 import Button from "@mui/material/Button";
 import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
 import DialogTitle from "@mui/material/DialogTitle";
 import makeStyles from "@mui/styles/makeStyles";
-import { useNavigate } from "react-router-dom";
 import clsx from "clsx";
+import { useContext, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 
 import { UserContext } from "../context";
-import { colors } from "../util";
 import firebase from "../firebase";
+import { colors } from "../util";
 
 const useStyles = makeStyles({
   colorBox: {

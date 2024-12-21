@@ -1,30 +1,29 @@
-import { useState, useContext } from "react";
-
+import Brightness4Icon from "@mui/icons-material/Brightness4";
+import Brightness7Icon from "@mui/icons-material/Brightness7";
+import SettingsIcon from "@mui/icons-material/Settings";
+import VolumeOffIcon from "@mui/icons-material/VolumeOff";
+import VolumeUpIcon from "@mui/icons-material/VolumeUp";
 import AppBar from "@mui/material/AppBar";
+import Divider from "@mui/material/Divider";
+import IconButton from "@mui/material/IconButton";
+import Link from "@mui/material/Link";
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
-import Divider from "@mui/material/Divider";
-import Link from "@mui/material/Link";
 import Toolbar from "@mui/material/Toolbar";
 import Tooltip from "@mui/material/Tooltip";
 import Typography from "@mui/material/Typography";
-import IconButton from "@mui/material/IconButton";
-import SettingsIcon from "@mui/icons-material/Settings";
-import Brightness4Icon from "@mui/icons-material/Brightness4";
-import Brightness7Icon from "@mui/icons-material/Brightness7";
-import VolumeOffIcon from "@mui/icons-material/VolumeOff";
-import VolumeUpIcon from "@mui/icons-material/VolumeUp";
+import { useContext, useState } from "react";
 
-import firebase from "../firebase";
-import { UserContext, SettingsContext } from "../context";
 import { version } from "../config";
-import User from "./User";
-import InternalLink from "./InternalLink";
-import PromptDialog from "./PromptDialog";
-import UserColorDialog from "./UserColorDialog";
-import ColorChoiceDialog from "./ColorChoiceDialog";
-import KeyboardLayoutDialog from "./KeyboardLayoutDialog";
+import { SettingsContext, UserContext } from "../context";
+import firebase from "../firebase";
 import AccountOptionsDialog from "./AccountOptionsDialog";
+import ColorChoiceDialog from "./ColorChoiceDialog";
+import InternalLink from "./InternalLink";
+import KeyboardLayoutDialog from "./KeyboardLayoutDialog";
+import PromptDialog from "./PromptDialog";
+import User from "./User";
+import UserColorDialog from "./UserColorDialog";
 
 function Navbar({
   themeType,

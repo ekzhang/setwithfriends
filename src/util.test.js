@@ -1,9 +1,9 @@
 import {
-  conjugateCard,
   checkSet,
   checkSetUltra,
-  findSet,
+  conjugateCard,
   filter,
+  findSet,
 } from "./util";
 
 it("computes conjugate cards", () => {

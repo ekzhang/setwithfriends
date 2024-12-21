@@ -1,15 +1,8 @@
-import { useState, useMemo, useContext } from "react";
-
-import generate from "project-name-generator";
-import { Navigate } from "react-router-dom";
-import makeStyles from "@mui/styles/makeStyles";
-import Paper from "@mui/material/Paper";
-import Container from "@mui/material/Container";
-import Typography from "@mui/material/Typography";
-import Grid from "@mui/material/Grid";
 import Button from "@mui/material/Button";
+import Container from "@mui/material/Container";
+import Grid from "@mui/material/Grid";
 import Link from "@mui/material/Link";
-import Tabs from "@mui/material/Tabs";
+import Paper from "@mui/material/Paper";
 import Tab from "@mui/material/Tab";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
@@ -17,15 +10,21 @@ import TableCell from "@mui/material/TableCell";
 import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
+import Tabs from "@mui/material/Tabs";
 import Tooltip from "@mui/material/Tooltip";
+import Typography from "@mui/material/Typography";
+import makeStyles from "@mui/styles/makeStyles";
+import generate from "project-name-generator";
+import { useContext, useMemo, useState } from "react";
+import { Navigate } from "react-router-dom";
 
+import Chat from "../components/Chat";
+import GameInfoRow from "../components/GameInfoRow";
+import InternalLink from "../components/InternalLink";
+import { UserContext } from "../context";
 import firebase, { createGame } from "../firebase";
 import useFirebaseQuery from "../hooks/useFirebaseQuery";
 import useFirebaseRef from "../hooks/useFirebaseRef";
-import InternalLink from "../components/InternalLink";
-import GameInfoRow from "../components/GameInfoRow";
-import Chat from "../components/Chat";
-import { UserContext } from "../context";
 
 const useStyles = makeStyles((theme) => ({
   mainGrid: {

@@ -1,7 +1,7 @@
-import Typography from "@mui/material/Typography";
-import Link from "@mui/material/Link";
 import Container from "@mui/material/Container";
+import Link from "@mui/material/Link";
 import Paper from "@mui/material/Paper";
+import Typography from "@mui/material/Typography";
 
 import InternalLink from "../components/InternalLink";
 

@@ -1,3 +1,4 @@
+import WhatshotIcon from "@mui/icons-material/Whatshot";
 import Button from "@mui/material/Button";
 import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
@@ -5,12 +6,11 @@ import DialogContent from "@mui/material/DialogContent";
 import DialogTitle from "@mui/material/DialogTitle";
 import Link from "@mui/material/Link";
 import Typography from "@mui/material/Typography";
-import WhatshotIcon from "@mui/icons-material/Whatshot";
 import { useNavigate } from "react-router-dom";
 
-import useStorage from "../hooks/useStorage";
-import useMoment from "../hooks/useMoment";
 import firebase from "../firebase";
+import useMoment from "../hooks/useMoment";
+import useStorage from "../hooks/useStorage";
 
 function DonateDialog({ active }) {
   const navigate = useNavigate();

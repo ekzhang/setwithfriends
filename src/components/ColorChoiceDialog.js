@@ -1,17 +1,16 @@
-import { useState } from "react";
-
-import makeStyles from "@mui/styles/makeStyles";
-import withTheme from "@mui/styles/withTheme";
 import Button from "@mui/material/Button";
 import Dialog from "@mui/material/Dialog";
-import Grid from "@mui/material/Grid";
 import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
 import DialogTitle from "@mui/material/DialogTitle";
+import Grid from "@mui/material/Grid";
+import makeStyles from "@mui/styles/makeStyles";
+import withTheme from "@mui/styles/withTheme";
+import { useState } from "react";
 import { ChromePicker } from "react-color";
 
-import ResponsiveSetCard from "./ResponsiveSetCard";
 import { darkTheme, lightTheme } from "../themes";
+import ResponsiveSetCard from "./ResponsiveSetCard";
 
 const useStyles = makeStyles({
   colorPickerColumn: {

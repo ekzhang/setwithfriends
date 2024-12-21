@@ -1,3 +1,4 @@
+import StarIcon from "@mui/icons-material/Star";
 import Paper from "@mui/material/Paper";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
@@ -5,16 +6,15 @@ import TableCell from "@mui/material/TableCell";
 import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
-import makeStyles from "@mui/styles/makeStyles";
 import Typography from "@mui/material/Typography";
-import StarIcon from "@mui/icons-material/Star";
 import { amber, grey } from "@mui/material/colors";
 import { useTheme } from "@mui/material/styles";
+import makeStyles from "@mui/styles/makeStyles";
 
+import { colors, formatTime, modes } from "../util";
 import ElapsedTime from "./ElapsedTime";
-import User from "./User";
 import Loading from "./Loading";
-import { formatTime, colors, modes } from "../util";
+import User from "./User";
 
 const useStyles = makeStyles((theme) => ({
   gamesTable: {

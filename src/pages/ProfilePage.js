@@ -1,21 +1,20 @@
-import { useState, useMemo, useEffect } from "react";
-import { Navigate, useParams } from "react-router-dom";
-
+import EqualizerIcon from "@mui/icons-material/Equalizer";
 import Container from "@mui/material/Container";
 import Divider from "@mui/material/Divider";
 import Grid from "@mui/material/Grid";
-import makeStyles from "@mui/styles/makeStyles";
-import Paper from "@mui/material/Paper";
-import Typography from "@mui/material/Typography";
-import Select from "@mui/material/Select";
 import MenuItem from "@mui/material/MenuItem";
-import EqualizerIcon from "@mui/icons-material/Equalizer";
+import Paper from "@mui/material/Paper";
+import Select from "@mui/material/Select";
+import Typography from "@mui/material/Typography";
+import makeStyles from "@mui/styles/makeStyles";
+import { useEffect, useMemo, useState } from "react";
+import { Navigate, useParams } from "react-router-dom";
 
-import ProfileName from "../components/ProfileName";
-import UserStatistics from "../components/UserStatistics";
-import ProfileGamesTable from "../components/ProfileGamesTable";
-import Subheading from "../components/Subheading";
 import Loading from "../components/Loading";
+import ProfileGamesTable from "../components/ProfileGamesTable";
+import ProfileName from "../components/ProfileName";
+import Subheading from "../components/Subheading";
+import UserStatistics from "../components/UserStatistics";
 import firebase from "../firebase";
 import useFirebaseRefs from "../hooks/useFirebaseRefs";
 import useStats from "../hooks/useStats";
