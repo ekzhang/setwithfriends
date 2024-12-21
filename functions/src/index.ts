@@ -6,7 +6,7 @@ import Stripe from "stripe";
 const stripe = process.env.FUNCTIONS_EMULATOR
   ? (null as any)
   : new Stripe(functions.config().stripe.secret, {
-      apiVersion: "2020-08-27",
+      apiVersion: "2024-12-18.acacia",
     });
 
 import { generateDeck, replayEvents, findSet, GameMode } from "./game";
@@ -20,12 +20,12 @@ const BASE_RATING = 1200;
 
 type TransactionResult = {
   committed: boolean;
-  snapshot: functions.database.DataSnapshot;
+  snapshot: admin.database.DataSnapshot;
 };
 
 /** Ends the game with the correct time and updates ratings */
-export const finishGame = functions.https.onCall(async (data, context) => {
-  const gameId = data.gameId;
+export const finishGame = functions.https.onCall(async (req) => {
+  const gameId = req.data.gameId;
   if (
     !(typeof gameId === "string") ||
     gameId.length === 0 ||
@@ -37,7 +37,7 @@ export const finishGame = functions.https.onCall(async (data, context) => {
         "argument `gameId` to be finished at `/games/:gameId`.",
     );
   }
-  if (!context.auth) {
+  if (!req.auth) {
     throw new functions.https.HttpsError(
       "failed-precondition",
       "The function must be called while authenticated.",
@@ -195,11 +195,11 @@ export const finishGame = functions.https.onCall(async (data, context) => {
 });
 
 /** Create a new game in the database */
-export const createGame = functions.https.onCall(async (data, context) => {
-  const gameId = data.gameId;
-  const access = data.access || "public";
-  const mode = data.mode || "normal";
-  const enableHint = data.enableHint || false;
+export const createGame = functions.https.onCall(async (req) => {
+  const gameId = req.data.gameId;
+  const access = req.data.access || "public";
+  const mode = req.data.mode || "normal";
+  const enableHint = req.data.enableHint || false;
 
   if (
     !(typeof gameId === "string") ||
@@ -222,14 +222,14 @@ export const createGame = functions.https.onCall(async (data, context) => {
         'argument `access` given value "public" or "private".',
     );
   }
-  if (!context.auth) {
+  if (!req.auth) {
     throw new functions.https.HttpsError(
       "failed-precondition",
       "The function must be called while authenticated.",
     );
   }
 
-  const userId = context.auth.uid;
+  const userId = req.auth.uid;
 
   const oneHourAgo = Date.now() - 3600000;
   const recentGameIds = await admin
@@ -270,7 +270,9 @@ export const createGame = functions.https.onCall(async (data, context) => {
       }
       return {
         host: userId,
-        createdAt: admin.database.ServerValue.TIMESTAMP,
+        // Hack: In Firebase v13, `admin.database.ServerValue.TIMESTAMP`
+        // does not work anymore from TypeScript.
+        createdAt: { ".sv": "timestamp" },
         status: "waiting",
         access,
         mode,
@@ -319,15 +321,15 @@ export const createGame = functions.https.onCall(async (data, context) => {
 });
 
 /** Generate a link to the customer portal. */
-export const customerPortal = functions.https.onCall(async (data, context) => {
-  if (!context.auth) {
+export const customerPortal = functions.https.onCall(async (req) => {
+  if (!req.auth) {
     throw new functions.https.HttpsError(
       "failed-precondition",
       "This function must be called while authenticated.",
     );
   }
 
-  const user = await admin.auth().getUser(context.auth.uid);
+  const user = await admin.auth().getUser(req.auth.uid);
   if (!user.email) {
     throw new functions.https.HttpsError(
       "failed-precondition",
@@ -345,15 +347,15 @@ export const customerPortal = functions.https.onCall(async (data, context) => {
 
   const portalResponse = await stripe.billingPortal.sessions.create({
     customer: customerResponse.data[0].id,
-    return_url: data.returnUrl,
+    return_url: req.data.returnUrl,
   });
   return portalResponse.url;
 });
 
 /** Periodically remove stale user connections */
-export const clearConnections = functions.pubsub
-  .schedule("every 1 minutes")
-  .onRun(async (context) => {
+export const clearConnections = functions.scheduler.onSchedule(
+  "every 1 minutes",
+  async (event) => {
     const onlineUsers = await admin
       .database()
       .ref("users")
@@ -371,7 +373,8 @@ export const clearConnections = functions.pubsub
     });
     actions.push(admin.database().ref("stats/onlineUsers").set(numUsers));
     await Promise.all(actions);
-  });
+  },
+);
 
 /** Webhook that handles Stripe customer events. */
 export const handleStripe = functions.https.onRequest(async (req, res) => {
