@@ -1,16 +1,15 @@
-import Paper from "@material-ui/core/Paper";
-import Table from "@material-ui/core/Table";
-import TableBody from "@material-ui/core/TableBody";
-import TableCell from "@material-ui/core/TableCell";
-import TableContainer from "@material-ui/core/TableContainer";
-import TableHead from "@material-ui/core/TableHead";
-import TableRow from "@material-ui/core/TableRow";
-import { makeStyles } from "@material-ui/core/styles";
-import Typography from "@material-ui/core/Typography";
-import StarIcon from "@material-ui/icons/Star";
-import amber from "@material-ui/core/colors/amber";
-import grey from "@material-ui/core/colors/grey";
-import { useTheme } from "@material-ui/core/styles";
+import Paper from "@mui/material/Paper";
+import Table from "@mui/material/Table";
+import TableBody from "@mui/material/TableBody";
+import TableCell from "@mui/material/TableCell";
+import TableContainer from "@mui/material/TableContainer";
+import TableHead from "@mui/material/TableHead";
+import TableRow from "@mui/material/TableRow";
+import makeStyles from "@mui/styles/makeStyles";
+import Typography from "@mui/material/Typography";
+import StarIcon from "@mui/icons-material/Star";
+import { amber, grey } from "@mui/material/colors";
+import { useTheme } from "@mui/material/styles";
 
 import ElapsedTime from "./ElapsedTime";
 import User from "./User";
@@ -37,7 +36,7 @@ const useStyles = makeStyles((theme) => ({
       background: theme.palette.background.panel,
     },
     "& tr": {
-      background: theme.profileTable.row,
+      background: theme.custom.profileTable.row,
     },
     "& tr:hover": {
       background: theme.palette.action.hover,
@@ -46,7 +45,7 @@ const useStyles = makeStyles((theme) => ({
   },
   // Remove cells of some columns of table for small screens
   vanishingTableCell: {
-    [theme.breakpoints.down("xs")]: {
+    [theme.breakpoints.down("sm")]: {
       display: "none",
     },
   },
@@ -97,7 +96,7 @@ function ProfileGamesTable({ userId, gamesData, handleClickGame }) {
                     style={{
                       color:
                         colors[modeInfo.color][
-                          theme.palette.type === "dark" ? 100 : 900
+                          theme.palette.mode === "dark" ? 100 : 900
                         ],
                     }}
                   >

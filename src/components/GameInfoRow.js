@@ -1,16 +1,16 @@
-import ExitToAppIcon from "@material-ui/icons/ExitToApp";
-import SnoozeIcon from "@material-ui/icons/Snooze";
-import VisibilityIcon from "@material-ui/icons/Visibility";
-import DoneIcon from "@material-ui/icons/Done";
-import TableCell from "@material-ui/core/TableCell";
-import TableRow from "@material-ui/core/TableRow";
-import Tooltip from "@material-ui/core/Tooltip";
-import { useTheme } from "@material-ui/core/styles";
+import ExitToAppIcon from "@mui/icons-material/ExitToApp";
+import SnoozeIcon from "@mui/icons-material/Snooze";
+import VisibilityIcon from "@mui/icons-material/Visibility";
+import DoneIcon from "@mui/icons-material/Done";
+import TableCell from "@mui/material/TableCell";
+import TableRow from "@mui/material/TableRow";
+import Tooltip from "@mui/material/Tooltip";
+import { useTheme } from "@mui/material/styles";
 
 import ElapsedTime from "./ElapsedTime";
 import User from "./User";
 import useFirebaseRef from "../hooks/useFirebaseRef";
-import { makeStyles } from "@material-ui/core/styles";
+import makeStyles from "@mui/styles/makeStyles";
 import { colors, modes } from "../util";
 
 const useStyles = makeStyles({
@@ -76,7 +76,7 @@ function GameInfoRow({ gameId, onClick }) {
             style={{
               color:
                 colors[modes[gameMode].color][
-                  theme.palette.type === "dark" ? 100 : 900
+                  theme.palette.mode === "dark" ? 100 : 900
                 ],
             }}
           >

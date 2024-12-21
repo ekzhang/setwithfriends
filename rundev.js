@@ -32,7 +32,7 @@ build = spawn(
   {
     cwd: path.join(__dirname, "functions"),
     stdio: ["ignore", "inherit", "inherit"],
-  }
+  },
 );
 
 // Start emulators
@@ -48,7 +48,7 @@ emulators = spawn(
   {
     cwd: __dirname,
     stdio: ["ignore", "inherit", "inherit"],
-  }
+  },
 );
 
 // Frontend application

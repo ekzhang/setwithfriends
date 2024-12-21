@@ -1,19 +1,19 @@
-import Button from "@material-ui/core/Button";
-import Dialog from "@material-ui/core/Dialog";
-import DialogActions from "@material-ui/core/DialogActions";
-import DialogContent from "@material-ui/core/DialogContent";
-import DialogTitle from "@material-ui/core/DialogTitle";
-import Link from "@material-ui/core/Link";
-import Typography from "@material-ui/core/Typography";
-import WhatshotIcon from "@material-ui/icons/Whatshot";
-import { useHistory } from "react-router-dom";
+import Button from "@mui/material/Button";
+import Dialog from "@mui/material/Dialog";
+import DialogActions from "@mui/material/DialogActions";
+import DialogContent from "@mui/material/DialogContent";
+import DialogTitle from "@mui/material/DialogTitle";
+import Link from "@mui/material/Link";
+import Typography from "@mui/material/Typography";
+import WhatshotIcon from "@mui/icons-material/Whatshot";
+import { useNavigate } from "react-router-dom";
 
 import useStorage from "../hooks/useStorage";
 import useMoment from "../hooks/useMoment";
 import firebase from "../firebase";
 
 function DonateDialog({ active }) {
-  const history = useHistory();
+  const navigate = useNavigate();
 
   const [viewed, setViewed] = useStorage("donate-time", "0");
   const time = useMoment(30000);
@@ -24,7 +24,7 @@ function DonateDialog({ active }) {
   const handleClose = () => setViewed(time.valueOf().toString());
   const handleDonate = () => {
     firebase.analytics().logEvent("donate_dialog_click");
-    history.push("/donate");
+    navigate("/donate");
   };
   return (
     <Dialog open={active && !recentlyViewed} onClose={handleClose}>
@@ -58,6 +58,7 @@ function DonateDialog({ active }) {
             target="_blank"
             rel="noopener"
             href="https://github.com/ekzhang/setwithfriends"
+            underline="hover"
           >
             starring the project on GitHub
           </Link>

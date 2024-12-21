@@ -1,11 +1,11 @@
 import { useState, memo, useContext } from "react";
 
-import Typography from "@material-ui/core/Typography";
-import { useTheme } from "@material-ui/core/styles";
-import MoreVertIcon from "@material-ui/icons/MoreVert";
-import MenuItem from "@material-ui/core/MenuItem";
-import Menu from "@material-ui/core/Menu";
-import { makeStyles } from "@material-ui/core/styles";
+import Typography from "@mui/material/Typography";
+import { useTheme } from "@mui/material/styles";
+import MoreVertIcon from "@mui/icons-material/MoreVert";
+import MenuItem from "@mui/material/MenuItem";
+import Menu from "@mui/material/Menu";
+import makeStyles from "@mui/styles/makeStyles";
 
 import firebase from "../firebase";
 import ElapsedTime from "./ElapsedTime";

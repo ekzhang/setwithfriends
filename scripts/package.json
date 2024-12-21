@@ -1,20 +1,17 @@
 {
   "name": "scripts",
+  "type": "module",
   "version": "1.0.0",
   "repository": "https://github.com/ekzhang/setwithfriends",
   "license": "MIT",
   "description": "Internal scripts for Set with Friends.",
-  "main": "src/index.ts",
-  "scripts": {
-    "start": "node -r esm src/index.js"
-  },
+  "main": "src/index.js",
   "dependencies": {
-    "esm": "^3.2.25",
-    "firebase-admin": "^9.12.0",
-    "inquirer": "^8.2.1"
+    "firebase-admin": "^13.0.2",
+    "inquirer": "^12.3.0"
   },
   "engines": {
-    "node": "16",
-    "npm": "8"
+    "node": "20",
+    "npm": "10"
   }
 }

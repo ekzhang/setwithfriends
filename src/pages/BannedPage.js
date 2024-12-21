@@ -1,6 +1,6 @@
-import Typography from "@material-ui/core/Typography";
-import Container from "@material-ui/core/Container";
-import Link from "@material-ui/core/Link";
+import Typography from "@mui/material/Typography";
+import Container from "@mui/material/Container";
+import Link from "@mui/material/Link";
 
 function BannedPage({ time }) {
   const date = new Date(time);
@@ -16,7 +16,12 @@ function BannedPage({ time }) {
       <Typography variant="body1" align="center" gutterBottom>
         Please take some time to cool off. If you have questions about this,
         contact a moderator on{" "}
-        <Link target="_blank" rel="noopener" href="https://discord.gg/XbjJyc9">
+        <Link
+          target="_blank"
+          rel="noopener"
+          href="https://discord.gg/XbjJyc9"
+          underline="hover"
+        >
           Discord
         </Link>
         .

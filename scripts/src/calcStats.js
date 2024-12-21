@@ -104,7 +104,7 @@ export async function calcStats() {
               obj.fastestTime = Math.min(obj.fastestTime || Infinity, time);
             }
             obj.totalTime = (obj.totalTime || 0) + time;
-          })
+          }),
         );
 
         if (process.env.VERBOSE)
@@ -117,7 +117,7 @@ export async function calcStats() {
           }
         }
         await admin.database().ref(`userStats/${userId}`).update(updates);
-      })
+      }),
     );
 
     const elapsed = Date.now() - startTime;

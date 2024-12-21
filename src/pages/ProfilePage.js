@@ -1,15 +1,15 @@
 import { useState, useMemo, useEffect } from "react";
-import { Redirect } from "react-router-dom";
+import { Navigate, useParams } from "react-router-dom";
 
-import Container from "@material-ui/core/Container";
-import Divider from "@material-ui/core/Divider";
-import Grid from "@material-ui/core/Grid";
-import { makeStyles } from "@material-ui/core/styles";
-import Paper from "@material-ui/core/Paper";
-import Typography from "@material-ui/core/Typography";
-import Select from "@material-ui/core/Select";
-import MenuItem from "@material-ui/core/MenuItem";
-import EqualizerIcon from "@material-ui/icons/Equalizer";
+import Container from "@mui/material/Container";
+import Divider from "@mui/material/Divider";
+import Grid from "@mui/material/Grid";
+import makeStyles from "@mui/styles/makeStyles";
+import Paper from "@mui/material/Paper";
+import Typography from "@mui/material/Typography";
+import Select from "@mui/material/Select";
+import MenuItem from "@mui/material/MenuItem";
+import EqualizerIcon from "@mui/icons-material/Equalizer";
 
 import ProfileName from "../components/ProfileName";
 import UserStatistics from "../components/UserStatistics";
@@ -41,12 +41,12 @@ const useStyles = makeStyles((theme) => ({
   statsHeading: {
     // Pixel-perfect corrections for icon alignment
     paddingTop: 4,
-    [theme.breakpoints.down("xs")]: {
+    [theme.breakpoints.down("sm")]: {
       paddingTop: 3,
     },
   },
   divider: {
-    [theme.breakpoints.down("sm")]: {
+    [theme.breakpoints.down("md")]: {
       display: "none",
     },
   },
@@ -66,8 +66,8 @@ function mergeGameData(game, gameData) {
   };
 }
 
-function ProfilePage({ match }) {
-  const userId = match.params.id;
+function ProfilePage() {
+  const { id: userId } = useParams();
   const classes = useStyles();
 
   const [games, setGames] = useState(null);
@@ -99,15 +99,15 @@ function ProfilePage({ match }) {
   const gameIds = useMemo(() => (games ? Object.keys(games) : []), [games]);
   const [gameVals, loadingGameVals] = useFirebaseRefs(
     useMemo(() => gameIds.map((gameId) => `games/${gameId}`), [gameIds]),
-    true
+    true,
   );
   const [gameDataVals, loadingGameDataVals] = useFirebaseRefs(
     useMemo(() => gameIds.map((gameId) => `gameData/${gameId}`), [gameIds]),
-    true
+    true,
   );
 
   if (redirect) {
-    return <Redirect push to={redirect} />;
+    return <Navigate push to={redirect} />;
   }
   if (!games) {
     return <LoadingPage />;
@@ -131,7 +131,7 @@ function ProfilePage({ match }) {
   }
 
   return (
-    <Container>
+    <Container sx={{ pb: 2 }}>
       <Paper style={{ padding: 16 }}>
         <Grid container className={classes.mainGrid}>
           <Grid item xs={12} md={4}>
@@ -153,6 +153,7 @@ function ProfilePage({ match }) {
               </div>
               <div style={{ marginLeft: "auto" }}>
                 <Select
+                  variant="standard"
                   value={modeVariant}
                   onChange={(event) => setModeVariant(event.target.value)}
                   style={{ marginRight: "1em" }}
@@ -165,6 +166,7 @@ function ProfilePage({ match }) {
                   ))}
                 </Select>
                 <Select
+                  variant="standard"
                   value={variant}
                   onChange={(event) => setVariant(event.target.value)}
                   color="secondary"

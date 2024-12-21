@@ -1,11 +1,11 @@
 import { useState } from "react";
 
-import Container from "@material-ui/core/Container";
-import Link from "@material-ui/core/Link";
-import Paper from "@material-ui/core/Paper";
-import Tab from "@material-ui/core/Tab";
-import Tabs from "@material-ui/core/Tabs";
-import Typography from "@material-ui/core/Typography";
+import Container from "@mui/material/Container";
+import Link from "@mui/material/Link";
+import Paper from "@mui/material/Paper";
+import Tab from "@mui/material/Tab";
+import Tabs from "@mui/material/Tabs";
+import Typography from "@mui/material/Typography";
 
 import InternalLink from "../components/InternalLink";
 
@@ -23,12 +23,15 @@ const TermsOfService = () => (
     <Typography variant="h6">1. Terms</Typography>
     <Typography variant="body1" gutterBottom>
       By accessing the website at{" "}
-      <Link href="/">https://setwithfriends.com/</Link>, you are agreeing to be
-      bound by these terms of service, all applicable laws and regulations, and
-      agree that you are responsible for compliance with any applicable local
-      laws. If you do not agree with any of these terms, you are prohibited from
-      using or accessing this site. The materials contained in this website are
-      protected by applicable copyright and trademark law.
+      <Link href="/" underline="hover">
+        https://setwithfriends.com/
+      </Link>
+      , you are agreeing to be bound by these terms of service, all applicable
+      laws and regulations, and agree that you are responsible for compliance
+      with any applicable local laws. If you do not agree with any of these
+      terms, you are prohibited from using or accessing this site. The materials
+      contained in this website are protected by applicable copyright and
+      trademark law.
     </Typography>
 
     <Typography variant="h6">2. Use License</Typography>
@@ -142,8 +145,11 @@ const PrivacyPolicy = () => (
     <Typography variant="body1" gutterBottom>
       Your privacy is important to us. It is Set with Friends' policy to respect
       your privacy regarding any information we may collect from you across our
-      website, <Link href="/">https://setwithfriends.com/</Link>, and other
-      sites we own and operate.
+      website,{" "}
+      <Link href="/" underline="hover">
+        https://setwithfriends.com/
+      </Link>
+      , and other sites we own and operate.
     </Typography>
     <Typography variant="body1" gutterBottom>
       We only ask for personal information when we truly need it to provide a

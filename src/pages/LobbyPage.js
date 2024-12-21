@@ -1,24 +1,23 @@
 import { useState, useMemo, useContext } from "react";
 
 import generate from "project-name-generator";
-import { Redirect } from "react-router-dom";
-import { makeStyles } from "@material-ui/core/styles";
-import Paper from "@material-ui/core/Paper";
-import Container from "@material-ui/core/Container";
-import Typography from "@material-ui/core/Typography";
-import Grid from "@material-ui/core/Grid";
-import Button from "@material-ui/core/Button";
-import Box from "@material-ui/core/Box";
-import Link from "@material-ui/core/Link";
-import Tabs from "@material-ui/core/Tabs";
-import Tab from "@material-ui/core/Tab";
-import Table from "@material-ui/core/Table";
-import TableBody from "@material-ui/core/TableBody";
-import TableCell from "@material-ui/core/TableCell";
-import TableContainer from "@material-ui/core/TableContainer";
-import TableHead from "@material-ui/core/TableHead";
-import TableRow from "@material-ui/core/TableRow";
-import Tooltip from "@material-ui/core/Tooltip";
+import { Navigate } from "react-router-dom";
+import makeStyles from "@mui/styles/makeStyles";
+import Paper from "@mui/material/Paper";
+import Container from "@mui/material/Container";
+import Typography from "@mui/material/Typography";
+import Grid from "@mui/material/Grid";
+import Button from "@mui/material/Button";
+import Link from "@mui/material/Link";
+import Tabs from "@mui/material/Tabs";
+import Tab from "@mui/material/Tab";
+import Table from "@mui/material/Table";
+import TableBody from "@mui/material/TableBody";
+import TableCell from "@mui/material/TableCell";
+import TableContainer from "@mui/material/TableContainer";
+import TableHead from "@mui/material/TableHead";
+import TableRow from "@mui/material/TableRow";
+import Tooltip from "@mui/material/Tooltip";
 
 import firebase, { createGame } from "../firebase";
 import useFirebaseQuery from "../hooks/useFirebaseQuery";
@@ -64,14 +63,14 @@ const useStyles = makeStyles((theme) => ({
     },
   },
   gameCounters: {
-    "& > p": {
+    "& > p:first-of-type": {
       marginBottom: "0.2em",
     },
     [theme.breakpoints.up("sm")]: {
       position: "absolute",
       bottom: 4,
     },
-    [theme.breakpoints.down("xs")]: {
+    [theme.breakpoints.down("sm")]: {
       marginTop: 4,
       display: "flex",
       justifyContent: "space-between",
@@ -87,7 +86,7 @@ const useStyles = makeStyles((theme) => ({
         margin: "12px 0",
       },
     },
-    [theme.breakpoints.down("xs")]: {
+    [theme.breakpoints.down("sm")]: {
       "& button": {
         marginBottom: theme.spacing(1),
       },
@@ -160,7 +159,7 @@ function LobbyPage() {
     setTabValue(newValue);
   };
 
-  if (redirect) return <Redirect push to={redirect} />;
+  if (redirect) return <Navigate push to={redirect} />;
 
   async function newRoom(access) {
     // Make several attempts to create a game with an unused ID
@@ -195,107 +194,118 @@ function LobbyPage() {
   return (
     <Container>
       <Grid container spacing={2} className={classes.mainGrid}>
-        <Box clone order={{ xs: 3, md: 1 }} className={classes.chatColumn}>
-          <Grid item xs={12} sm={12} md={3}>
-            <Paper className={classes.chatColumnPaper}>
-              <Chat title="Lobby Chat" messageLimit={30} showMessageTimes />
-            </Paper>
-          </Grid>
-        </Box>
-        <Box clone order={{ xs: 1, md: 2 }}>
-          <Grid item xs={12} sm={8} md={6}>
-            <Tabs
-              className={classes.lobbyTabs}
-              indicatorColor="secondary"
-              textColor="secondary"
-              variant="fullWidth"
-              value={tabValue}
-              onChange={handleTabChange}
+        <Grid
+          item
+          xs={12}
+          sm={12}
+          md={3}
+          order={{ xs: 3, md: 1 }}
+          className={classes.chatColumn}
+        >
+          <Paper className={classes.chatColumnPaper}>
+            <Chat title="Lobby Chat" messageLimit={30} showMessageTimes />
+          </Paper>
+        </Grid>
+
+        <Grid item xs={12} sm={8} md={6} order={{ xs: 1, md: 2 }}>
+          <Tabs
+            className={classes.lobbyTabs}
+            indicatorColor="secondary"
+            textColor="secondary"
+            variant="fullWidth"
+            value={tabValue}
+            onChange={handleTabChange}
+          >
+            <Tab label="Lobby" />
+            <Tab label="Your games" />
+          </Tabs>
+          <TableContainer component={Paper} className={classes.gamesTable}>
+            <Table size="small" stickyHeader>
+              <TableHead>
+                <TableRow>
+                  <TableCell>Host</TableCell>
+                  <TableCell>Players</TableCell>
+                  <TableCell>Mode</TableCell>
+                  <TableCell>Status</TableCell>
+                  <TableCell>Created</TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {Object.keys(tabValue === 0 ? games : myGames)
+                  .reverse()
+                  .map((gameId) => (
+                    <GameInfoRow
+                      key={gameId}
+                      gameId={gameId}
+                      onClick={() => {
+                        if (!waiting) setRedirect(`/room/${gameId}`);
+                      }}
+                    />
+                  ))}
+              </TableBody>
+            </Table>
+          </TableContainer>
+        </Grid>
+
+        <Grid
+          item
+          xs={12}
+          sm={4}
+          md={3}
+          order={{ xs: 2, md: 3 }}
+          className={classes.buttonColumn}
+        >
+          <div className={classes.actionButtons}>
+            <Tooltip
+              arrow
+              placement="top"
+              title="Create a new game, which will appear in the lobby. You can also invite your friends to join by link!"
             >
-              <Tab label="Lobby" />
-              <Tab label="Your games" />
-            </Tabs>
-            <TableContainer component={Paper} className={classes.gamesTable}>
-              <Table size="small" stickyHeader>
-                <TableHead>
-                  <TableRow>
-                    <TableCell>Host</TableCell>
-                    <TableCell>Players</TableCell>
-                    <TableCell>Mode</TableCell>
-                    <TableCell>Status</TableCell>
-                    <TableCell>Created</TableCell>
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  {Object.keys(tabValue === 0 ? games : myGames)
-                    .reverse()
-                    .map((gameId) => (
-                      <GameInfoRow
-                        key={gameId}
-                        gameId={gameId}
-                        onClick={() => {
-                          if (!waiting) setRedirect(`/room/${gameId}`);
-                        }}
-                      />
-                    ))}
-                </TableBody>
-              </Table>
-            </TableContainer>
-          </Grid>
-        </Box>
-        <Box clone order={{ xs: 2, md: 3 }} className={classes.buttonColumn}>
-          <Grid item xs={12} sm={4} md={3}>
-            <div className={classes.actionButtons}>
-              <Tooltip
-                arrow
-                placement="top"
-                title="Create a new game, which will appear in the lobby. You can also invite your friends to join by link!"
+              <Button
+                variant="contained"
+                fullWidth
+                color="primary"
+                onClick={() => newRoom("public")}
+                disabled={waiting}
               >
-                <Button
-                  variant="contained"
-                  fullWidth
-                  color="primary"
-                  onClick={() => newRoom("public")}
-                  disabled={waiting}
-                >
-                  Create a Game
-                </Button>
-              </Tooltip>
-              <Tooltip
-                arrow
-                placement="bottom"
-                title="Create a new private game. Only players you share the link with will be able to join."
+                Create a game
+              </Button>
+            </Tooltip>
+            <Tooltip
+              arrow
+              placement="bottom"
+              title="Create a new private game. Only players you share the link with will be able to join."
+            >
+              <Button
+                variant="contained"
+                fullWidth
+                color="grey"
+                onClick={() => newRoom("private")}
+                disabled={waiting}
               >
-                <Button
-                  variant="contained"
-                  fullWidth
-                  onClick={() => newRoom("private")}
-                  disabled={waiting}
-                >
-                  New Private Game
-                </Button>
-              </Tooltip>
-            </div>
-            <div className={classes.gameCounters}>
-              <Typography variant="body2">
-                <strong>
-                  {loadingStats
-                    ? "---"
-                    : humanize((stats && stats.onlineUsers) || 0)}
-                </strong>{" "}
-                users online
-              </Typography>
-              <Typography variant="body2">
-                <strong>
-                  {loadingStats
-                    ? "---,---"
-                    : humanize((stats && stats.gameCount) || 0)}
-                </strong>{" "}
-                games played
-              </Typography>
-            </div>
-          </Grid>
-        </Box>
+                New private game
+              </Button>
+            </Tooltip>
+          </div>
+          <div className={classes.gameCounters}>
+            <Typography variant="body2">
+              <strong>
+                {loadingStats
+                  ? "---"
+                  : humanize((stats && stats.onlineUsers) || 0)}
+              </strong>{" "}
+              users online
+            </Typography>
+            <Typography variant="body2">
+              <strong>
+                {loadingStats
+                  ? "---,---"
+                  : humanize((stats && stats.gameCount) || 0)}
+              </strong>{" "}
+              games played
+            </Typography>
+          </div>
+        </Grid>
       </Grid>
       <Typography variant="body1" align="center" style={{ padding: "16px 0" }}>
         <InternalLink to="/help">Help</InternalLink> •{" "}
@@ -303,7 +313,12 @@ function LobbyPage() {
         <InternalLink to="/conduct">Conduct</InternalLink> •{" "}
         <InternalLink to="/donate">Donate</InternalLink> •{" "}
         <InternalLink to="/legal">Legal</InternalLink> •{" "}
-        <Link target="_blank" rel="noopener" href="https://discord.gg/XbjJyc9">
+        <Link
+          target="_blank"
+          rel="noopener"
+          href="https://discord.gg/XbjJyc9"
+          underline="hover"
+        >
           Discord
         </Link>
       </Typography>

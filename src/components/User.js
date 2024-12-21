@@ -1,6 +1,7 @@
-import { useHistory } from "react-router-dom";
-import { useTheme, makeStyles } from "@material-ui/core/styles";
-import WhatshotIcon from "@material-ui/icons/Whatshot";
+import { useNavigate } from "react-router-dom";
+import { useTheme } from "@mui/material/styles";
+import makeStyles from "@mui/styles/makeStyles";
+import WhatshotIcon from "@mui/icons-material/Whatshot";
 
 import useFirebaseRef from "../hooks/useFirebaseRef";
 import useStats from "../hooks/useStats";
@@ -35,7 +36,7 @@ function User({
   ...other
 }) {
   const theme = useTheme();
-  const history = useHistory();
+  const navigate = useNavigate();
   const classes = useStyles();
 
   const [user, loading] = useFirebaseRef(`users/${id}`);
@@ -47,7 +48,7 @@ function User({
 
   const handleClick = (e) => {
     e.preventDefault();
-    history.push("/donate");
+    navigate("/donate");
   };
 
   const Component = component || "span";
@@ -55,7 +56,7 @@ function User({
     <Component
       style={{
         color: colors.hasOwnProperty(user.color)
-          ? colors[user.color][theme.palette.type === "dark" ? 100 : 900]
+          ? colors[user.color][theme.palette.mode === "dark" ? 100 : 900]
           : "inherit",
         fontWeight: 500,
         ...style,

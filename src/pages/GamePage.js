@@ -1,14 +1,14 @@
 import { useState, useEffect, useContext, useRef } from "react";
 
-import { makeStyles } from "@material-ui/core/styles";
-import Grid from "@material-ui/core/Grid";
-import Typography from "@material-ui/core/Typography";
-import Container from "@material-ui/core/Container";
-import Paper from "@material-ui/core/Paper";
-import Button from "@material-ui/core/Button";
-import Box from "@material-ui/core/Box";
-import Snackbar from "@material-ui/core/Snackbar";
-import { Redirect } from "react-router-dom";
+import makeStyles from "@mui/styles/makeStyles";
+import Grid from "@mui/material/Grid";
+import Typography from "@mui/material/Typography";
+import Container from "@mui/material/Container";
+import Paper from "@mui/material/Paper";
+import Button from "@mui/material/Button";
+import Box from "@mui/material/Box";
+import Snackbar from "@mui/material/Snackbar";
+import { Navigate, useParams } from "react-router-dom";
 import useSound from "use-sound";
 
 import SnackContent from "../components/SnackContent";
@@ -42,10 +42,10 @@ const useStyles = makeStyles((theme) => ({
     [theme.breakpoints.up("lg")]: {
       maxHeight: 543,
     },
-    [theme.breakpoints.down("md")]: {
+    [theme.breakpoints.down("lg")]: {
       maxHeight: 435,
     },
-    [theme.breakpoints.down("xs")]: {
+    [theme.breakpoints.down("sm")]: {
       maxHeight: 400,
     },
   },
@@ -71,10 +71,10 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-function GamePage({ match }) {
+function GamePage() {
   const user = useContext(UserContext);
   const { volume } = useContext(SettingsContext);
-  const gameId = match.params.id;
+  const { id: gameId } = useParams();
   const classes = useStyles();
 
   const [waiting, setWaiting] = useState(false);
@@ -134,7 +134,7 @@ function GamePage({ match }) {
     }
   });
 
-  if (redirect) return <Redirect push to={redirect} />;
+  if (redirect) return <Navigate push to={redirect} />;
 
   if (loadingGame || loadingGameData) {
     return <LoadingPage />;
@@ -161,7 +161,7 @@ function GamePage({ match }) {
 
   const { current, scores, history, boardSize } = computeState(
     gameData,
-    gameMode
+    gameMode,
   );
 
   const leaderboard = Object.keys(game.users).sort((u1, u2) => {
@@ -354,7 +354,7 @@ function GamePage({ match }) {
   }
 
   return (
-    <Container>
+    <Container sx={{ pb: 2 }}>
       <DonateDialog
         active={game.status === "done" && !spectating && !user.patron}
       />
@@ -374,92 +374,105 @@ function GamePage({ match }) {
         />
       </Snackbar>
       <Grid container spacing={2}>
-        <Box clone order={{ xs: 3, sm: 1 }}>
-          <Grid item xs={12} sm={4} md={3} className={classes.sideColumn}>
-            <Paper style={{ display: "flex", height: "100%", padding: 8 }}>
-              <Chat
-                title="Game Chat"
-                messageLimit={200}
-                gameId={gameId}
-                history={history}
-                startedAt={game.startedAt}
-                gameMode={gameMode}
-              />
-            </Paper>
-          </Grid>
-        </Box>
-        <Box clone order={{ xs: 1, sm: 2 }} position="relative">
-          <Grid item xs={12} sm={8} md={6} className={classes.mainColumn}>
-            {/* Backdrop, to be active when the game ends */}
-            <div
-              className={classes.doneOverlay}
-              style={{
-                opacity: game.status === "done" ? 1 : 0,
-                visibility: game.status === "done" ? "visible" : "hidden",
-              }}
-            >
-              <Paper elevation={3} className={classes.doneModal}>
-                <Typography variant="h5" gutterBottom>
-                  The game has ended.
-                </Typography>
-                <Typography variant="body1">
-                  Winner: <User id={leaderboard[0]} />
-                </Typography>
-                {leaderboard.length >= 2 && (
-                  <Typography variant="body2">
-                    Runner-up: <User id={leaderboard[1]} />
-                  </Typography>
-                )}
-                {!spectating && (
-                  <Button
-                    variant="contained"
-                    color="primary"
-                    onClick={handlePlayAgain}
-                    style={{ marginTop: 12 }}
-                    disabled={waiting}
-                  >
-                    {waiting ? <Loading /> : "Play Again"}
-                  </Button>
-                )}
-              </Paper>
-            </div>
-
-            {/* Game area itself */}
-            <Game
-              deck={current}
-              boardSize={boardSize}
-              selected={selected}
-              onClick={handleClick}
-              onClear={handleClear}
+        <Grid
+          item
+          xs={12}
+          sm={4}
+          md={3}
+          order={{ xs: 3, sm: 1 }}
+          className={classes.sideColumn}
+        >
+          <Paper style={{ display: "flex", height: "100%", padding: 8 }}>
+            <Chat
+              title="Game Chat"
+              messageLimit={200}
+              gameId={gameId}
+              history={history}
+              startedAt={game.startedAt}
               gameMode={gameMode}
-              lastSet={lastSet}
-              answer={answer}
             />
-          </Grid>
-        </Box>
-        <Box clone order={{ xs: 2, sm: 3 }}>
-          <Grid item xs={12} md={3} className={classes.sideColumn}>
-            <GameSidebar
-              game={game}
-              scores={scores}
-              leaderboard={leaderboard}
-            />
-            <Box mt={1}>
-              {gameMode === "normal" && hasHint(game) && (
+          </Paper>
+        </Grid>
+
+        <Grid
+          item
+          xs={12}
+          sm={8}
+          md={6}
+          order={{ xs: 3, sm: 1 }}
+          position="relative"
+          className={classes.mainColumn}
+        >
+          {/* Backdrop, to be active when the game ends */}
+          <div
+            className={classes.doneOverlay}
+            style={{
+              opacity: game.status === "done" ? 1 : 0,
+              visibility: game.status === "done" ? "visible" : "hidden",
+            }}
+          >
+            <Paper elevation={3} className={classes.doneModal}>
+              <Typography variant="h5" gutterBottom>
+                The game has ended.
+              </Typography>
+              <Typography variant="body1">
+                Winner: <User id={leaderboard[0]} />
+              </Typography>
+              {leaderboard.length >= 2 && (
+                <Typography variant="body2">
+                  Runner-up: <User id={leaderboard[1]} />
+                </Typography>
+              )}
+              {!spectating && (
                 <Button
-                  size="large"
-                  variant="outlined"
+                  variant="contained"
                   color="primary"
-                  fullWidth
-                  disabled={numHints === 3 || !answer || game.status === "done"}
-                  onClick={handleAddHint}
+                  onClick={handlePlayAgain}
+                  style={{ marginTop: 12 }}
+                  disabled={waiting}
                 >
-                  Add hint: {numHints}
+                  {waiting ? <Loading /> : "Play Again"}
                 </Button>
               )}
-            </Box>
-          </Grid>
-        </Box>
+            </Paper>
+          </div>
+
+          {/* Game area itself */}
+          <Game
+            deck={current}
+            boardSize={boardSize}
+            selected={selected}
+            onClick={handleClick}
+            onClear={handleClear}
+            gameMode={gameMode}
+            lastSet={lastSet}
+            answer={answer}
+          />
+        </Grid>
+
+        <Grid
+          item
+          xs={12}
+          md={3}
+          order={{ xs: 2, sm: 3 }}
+          className={classes.sideColumn}
+        >
+          <GameSidebar game={game} scores={scores} leaderboard={leaderboard} />
+          <Box mt={1}>
+            {gameMode === "normal" && hasHint(game) && (
+              <Button
+                size="large"
+                variant="outlined"
+                color="primary"
+                fullWidth
+                disabled={numHints === 3 || !answer || game.status === "done"}
+                onClick={handleAddHint}
+              >
+                Add hint: {numHints}
+              </Button>
+            )}
+          </Box>
+        </Grid>
       </Grid>
     </Container>
   );
