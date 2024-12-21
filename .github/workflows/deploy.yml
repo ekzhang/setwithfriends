@@ -22,7 +22,7 @@ jobs:
         working-directory: functions
 
       - name: Set env
-        run: echo "REACT_APP_VERSION=${GITHUB_REF#refs/tags/v}" >> $GITHUB_ENV
+        run: echo "VITE_SWF_VERSION=${GITHUB_REF#refs/tags/v}" >> $GITHUB_ENV
 
       - run: npm run build
 

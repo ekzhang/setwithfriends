@@ -49,7 +49,7 @@ function App() {
         firebase
           .auth()
           .signInAnonymously()
-          .catch((error) => {
+          .catch(() => {
             alert("Unable to connect to the server. Please try again later.");
           });
       }

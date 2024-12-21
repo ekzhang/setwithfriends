@@ -24,7 +24,7 @@ import LoadingPage from "./LoadingPage";
 const datasetVariants = {
   all: {
     label: "All Games",
-    filterFn: (gameData) => true,
+    filterFn: () => true,
   },
   solo: {
     label: "Solo Games",

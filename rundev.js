@@ -6,10 +6,13 @@
  * 3. Manually executes the `clearConnections` function on a schedule.
  * 4. Starts the frontend React app with Fast Refresh enabled.
  */
+import { PubSub } from "@google-cloud/pubsub";
+import { spawn, spawnSync } from "node:child_process";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
 
-const path = require("path");
-const { spawn, spawnSync } = require("child_process");
-const { PubSub } = require("@google-cloud/pubsub");
+// Patch for __dirname not being available in ES modules.
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 let build, emulators, app;
 
@@ -52,7 +55,7 @@ emulators = spawn(
 );
 
 // Frontend application
-app = spawn("npm", ["start"], {
+app = spawn("npm", ["run", "dev"], {
   cwd: __dirname,
   stdio: ["ignore", "pipe", "inherit"],
   env: Object.assign({ FORCE_COLOR: true }, process.env),

@@ -12,7 +12,7 @@ import { generateName } from "../util";
 import ElapsedTime from "./ElapsedTime";
 import User from "./User";
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles(() => ({
   vertIcon: {
     marginLeft: "auto",
     cursor: "pointer",

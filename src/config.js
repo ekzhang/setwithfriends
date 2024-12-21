@@ -48,12 +48,12 @@ const config = {
 };
 
 /** The environment of the application. */
-export const env = process.env.REACT_APP_ENV || "development";
+export const env = import.meta.env.MODE || "development";
 
-/** Indicates whether the app is running in development. */
+/** Indicates whether the app is running in development, on emulator. */
 export const isDev = env === "development";
 
 /** The version number (A.B.C) of the application, set by CI in production builds. */
-export const version = process.env.REACT_APP_VERSION ?? null;
+export const version = import.meta.env.VITE_SWF_VERSION ?? null;
 
 export default config[env];

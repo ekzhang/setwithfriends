@@ -7,7 +7,7 @@ import useFirebaseRef from "../hooks/useFirebaseRef";
 import useStats from "../hooks/useStats";
 import { colors } from "../util";
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles(() => ({
   patronIcon: {
     cursor: "pointer",
     "&:hover": {
@@ -55,7 +55,7 @@ function User({
   const userEl = (
     <Component
       style={{
-        color: colors.hasOwnProperty(user.color)
+        color: Object.hasOwn(colors, user.color)
           ? colors[user.color][theme.palette.mode === "dark" ? 100 : 900]
           : "inherit",
         fontWeight: 500,
