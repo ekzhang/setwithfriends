@@ -1,19 +1,19 @@
 import { useState, useContext } from "react";
 
-import AppBar from "@material-ui/core/AppBar";
-import Menu from "@material-ui/core/Menu";
-import MenuItem from "@material-ui/core/MenuItem";
-import Divider from "@material-ui/core/Divider";
-import Link from "@material-ui/core/Link";
-import Toolbar from "@material-ui/core/Toolbar";
-import Tooltip from "@material-ui/core/Tooltip";
-import Typography from "@material-ui/core/Typography";
-import IconButton from "@material-ui/core/IconButton";
-import SettingsIcon from "@material-ui/icons/Settings";
-import Brightness4Icon from "@material-ui/icons/Brightness4";
-import Brightness7Icon from "@material-ui/icons/Brightness7";
-import VolumeOffIcon from "@material-ui/icons/VolumeOff";
-import VolumeUpIcon from "@material-ui/icons/VolumeUp";
+import AppBar from "@mui/material/AppBar";
+import Menu from "@mui/material/Menu";
+import MenuItem from "@mui/material/MenuItem";
+import Divider from "@mui/material/Divider";
+import Link from "@mui/material/Link";
+import Toolbar from "@mui/material/Toolbar";
+import Tooltip from "@mui/material/Tooltip";
+import Typography from "@mui/material/Typography";
+import IconButton from "@mui/material/IconButton";
+import SettingsIcon from "@mui/icons-material/Settings";
+import Brightness4Icon from "@mui/icons-material/Brightness4";
+import Brightness7Icon from "@mui/icons-material/Brightness7";
+import VolumeOffIcon from "@mui/icons-material/VolumeOff";
+import VolumeUpIcon from "@mui/icons-material/VolumeUp";
 
 import firebase from "../firebase";
 import { UserContext, SettingsContext } from "../context";
@@ -93,7 +93,7 @@ function Navbar({
             />
           </InternalLink>
         </Typography>
-        <IconButton color="inherit" onClick={handleChangeVolume}>
+        <IconButton color="inherit" onClick={handleChangeVolume} size="large">
           {settings.volume === "on" ? (
             <Tooltip title="Mute">
               <VolumeUpIcon />
@@ -104,7 +104,7 @@ function Navbar({
             </Tooltip>
           )}
         </IconButton>
-        <IconButton color="inherit" onClick={handleChangeTheme}>
+        <IconButton color="inherit" onClick={handleChangeTheme} size="large">
           {themeType === "light" ? (
             <Tooltip title="Dark theme">
               <Brightness4Icon />
@@ -115,14 +115,13 @@ function Navbar({
             </Tooltip>
           )}
         </IconButton>
-        <IconButton color="inherit" onClick={handleMenu}>
+        <IconButton color="inherit" onClick={handleMenu} size="large">
           <Tooltip title="Settings">
             <SettingsIcon />
           </Tooltip>
         </IconButton>
         <Menu
           anchorEl={anchorEl}
-          getContentAnchorEl={null}
           anchorOrigin={{
             vertical: "bottom",
             horizontal: "center",
@@ -144,6 +143,7 @@ function Navbar({
                 target="_blank"
                 rel="noopener"
                 href={`https://github.com/ekzhang/setwithfriends/releases/tag/v${version}`}
+                underline="hover"
               >
                 Release Notes
               </Link>

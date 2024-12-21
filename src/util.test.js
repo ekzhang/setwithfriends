@@ -60,10 +60,10 @@ describe("findSet()", () => {
 
   it("can find set-chains", () => {
     expect(
-      findSet(["0112", "0111", "0110"], "setchain", ["1200", "0012", "2121"])
+      findSet(["0112", "0111", "0110"], "setchain", ["1200", "0012", "2121"]),
     ).toBe(null);
     expect(
-      findSet(["0112", "0211", "0110"], "setchain", ["1200", "0012", "2121"])
+      findSet(["0112", "0211", "0110"], "setchain", ["1200", "0012", "2121"]),
     ).toStrictEqual(["0012", "0211", "0110"]);
   });
 

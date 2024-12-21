@@ -1,14 +1,14 @@
 import { useContext } from "react";
 
-import List from "@material-ui/core/List";
-import ListItem from "@material-ui/core/ListItem";
-import ListItemIcon from "@material-ui/core/ListItemIcon";
-import ListItemText from "@material-ui/core/ListItemText";
-import PersonIcon from "@material-ui/icons/Person";
-import SnoozeIcon from "@material-ui/icons/Snooze";
-import StarsIcon from "@material-ui/icons/Stars";
-import Tooltip from "@material-ui/core/Tooltip";
-import Typography from "@material-ui/core/Typography";
+import List from "@mui/material/List";
+import ListItemButton from "@mui/material/ListItemButton";
+import ListItemIcon from "@mui/material/ListItemIcon";
+import ListItemText from "@mui/material/ListItemText";
+import PersonIcon from "@mui/icons-material/Person";
+import SnoozeIcon from "@mui/icons-material/Snooze";
+import StarsIcon from "@mui/icons-material/Stars";
+import Tooltip from "@mui/material/Tooltip";
+import Typography from "@mui/material/Typography";
 import { useTransition, animated } from "@react-spring/web";
 import { Link as RouterLink } from "react-router-dom";
 
@@ -20,7 +20,7 @@ function RoomUserList({ game, gameId }) {
 
   // Current list of players, sorted by when they joined
   const users = Object.keys(game.users || {}).sort(
-    (a, b) => game.users[a] - game.users[b]
+    (a, b) => game.users[a] - game.users[b],
   );
   const transition = useTransition(users, {
     from: { opacity: 0 },
@@ -39,15 +39,14 @@ function RoomUserList({ game, gameId }) {
             variant="body2"
             noWrap
             render={(player, playerEl) => (
-              <ListItem
-                button
+              <ListItemButton
                 component={RouterLink}
                 to={`/profile/${playerId}`}
               >
                 <ListItemIcon>
                   {player.connections &&
                   Object.values(player.connections).includes(
-                    `/room/${gameId}`
+                    `/room/${gameId}`,
                   ) ? (
                     <Tooltip title={playerId === game.host ? "Host" : "Player"}>
                       {playerId === game.host ? <StarsIcon /> : <PersonIcon />}
@@ -71,7 +70,7 @@ function RoomUserList({ game, gameId }) {
                     (You)
                   </ListItemText>
                 )}
-              </ListItem>
+              </ListItemButton>
             )}
           />
         </animated.div>

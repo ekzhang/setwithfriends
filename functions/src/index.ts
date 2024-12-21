@@ -34,13 +34,13 @@ export const finishGame = functions.https.onCall(async (data, context) => {
     throw new functions.https.HttpsError(
       "invalid-argument",
       "The function must be called with " +
-        "argument `gameId` to be finished at `/games/:gameId`."
+        "argument `gameId` to be finished at `/games/:gameId`.",
     );
   }
   if (!context.auth) {
     throw new functions.https.HttpsError(
       "failed-precondition",
-      "The function must be called while authenticated."
+      "The function must be called while authenticated.",
     );
   }
 
@@ -52,7 +52,7 @@ export const finishGame = functions.https.onCall(async (data, context) => {
   if (!gameSnap.exists()) {
     throw new functions.https.HttpsError(
       "not-found",
-      `The game with gameId ${gameId} was not found in the database.`
+      `The game with gameId ${gameId} was not found in the database.`,
     );
   }
 
@@ -63,7 +63,7 @@ export const finishGame = functions.https.onCall(async (data, context) => {
   if (findSet(Array.from(deck), gameMode, lastSet)) {
     throw new functions.https.HttpsError(
       "failed-precondition",
-      "The requested game has not yet ended."
+      "The requested game has not yet ended.",
     );
   }
 
@@ -139,7 +139,7 @@ export const finishGame = functions.https.onCall(async (data, context) => {
         });
       // Save these values for use in rating calculation
       userStats[player] = result.snapshot.val();
-    })
+    }),
   );
 
   // If the game is solo, we skip rating calculation.
@@ -209,7 +209,7 @@ export const createGame = functions.https.onCall(async (data, context) => {
     throw new functions.https.HttpsError(
       "invalid-argument",
       "The function must be called with " +
-        "argument `gameId` to be created at `/games/:gameId`."
+        "argument `gameId` to be created at `/games/:gameId`.",
     );
   }
   if (
@@ -219,13 +219,13 @@ export const createGame = functions.https.onCall(async (data, context) => {
     throw new functions.https.HttpsError(
       "invalid-argument",
       "The function must be called with " +
-        'argument `access` given value "public" or "private".'
+        'argument `access` given value "public" or "private".',
     );
   }
   if (!context.auth) {
     throw new functions.https.HttpsError(
       "failed-precondition",
-      "The function must be called while authenticated."
+      "The function must be called while authenticated.",
     );
   }
 
@@ -241,8 +241,8 @@ export const createGame = functions.https.onCall(async (data, context) => {
 
   const recentGames = await Promise.all(
     Object.keys(recentGameIds.val() || {}).map((recentGameId) =>
-      admin.database().ref(`games/${recentGameId}`).once("value")
-    )
+      admin.database().ref(`games/${recentGameId}`).once("value"),
+    ),
   );
 
   let unfinishedGames = 0;
@@ -265,7 +265,7 @@ export const createGame = functions.https.onCall(async (data, context) => {
       ) {
         throw new functions.https.HttpsError(
           "resource-exhausted",
-          "Too many unfinished public games were recently created."
+          "Too many unfinished public games were recently created.",
         );
       }
       return {
@@ -283,7 +283,7 @@ export const createGame = functions.https.onCall(async (data, context) => {
   if (!committed) {
     throw new functions.https.HttpsError(
       "already-exists",
-      "The requested `gameId` already exists."
+      "The requested `gameId` already exists.",
     );
   }
 
@@ -296,13 +296,13 @@ export const createGame = functions.https.onCall(async (data, context) => {
   updates.push(
     admin.database().ref(`gameData/${gameId}`).set({
       deck: generateDeck(),
-    })
+    }),
   );
   updates.push(
     admin
       .database()
       .ref("stats/gameCount")
-      .transaction((count) => (count || 0) + 1)
+      .transaction((count) => (count || 0) + 1),
   );
   if (access === "public") {
     updates.push(
@@ -310,7 +310,7 @@ export const createGame = functions.https.onCall(async (data, context) => {
         .database()
         .ref("publicGames")
         .child(gameId)
-        .set(snapshot?.child("createdAt").val())
+        .set(snapshot?.child("createdAt").val()),
     );
   }
 
@@ -323,7 +323,7 @@ export const customerPortal = functions.https.onCall(async (data, context) => {
   if (!context.auth) {
     throw new functions.https.HttpsError(
       "failed-precondition",
-      "This function must be called while authenticated."
+      "This function must be called while authenticated.",
     );
   }
 
@@ -331,7 +331,7 @@ export const customerPortal = functions.https.onCall(async (data, context) => {
   if (!user.email) {
     throw new functions.https.HttpsError(
       "failed-precondition",
-      "This function must be called by an authenticated user with email."
+      "This function must be called by an authenticated user with email.",
     );
   }
 
@@ -339,7 +339,7 @@ export const customerPortal = functions.https.onCall(async (data, context) => {
   if (!customerResponse.data.length) {
     throw new functions.https.HttpsError(
       "not-found",
-      `A subscription with email ${user.email} was not found.`
+      `A subscription with email ${user.email} was not found.`,
     );
   }
 
@@ -399,7 +399,7 @@ export const handleStripe = functions.https.onRequest(async (req, res) => {
   ) {
     const subscription = event.data.object as Stripe.Subscription;
     const { email } = (await stripe.customers.retrieve(
-      subscription.customer as string
+      subscription.customer as string,
     )) as Stripe.Response<Stripe.Customer>;
 
     if (email) {

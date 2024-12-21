@@ -1,9 +1,9 @@
-import { makeStyles } from "@material-ui/core/styles";
-import FormControlLabel from "@material-ui/core/FormControlLabel";
-import Radio from "@material-ui/core/Radio";
-import RadioGroup from "@material-ui/core/RadioGroup";
-import Switch from "@material-ui/core/Switch";
-import Tooltip from "@material-ui/core/Tooltip";
+import makeStyles from "@mui/styles/makeStyles";
+import FormControlLabel from "@mui/material/FormControlLabel";
+import Radio from "@mui/material/Radio";
+import RadioGroup from "@mui/material/RadioGroup";
+import Switch from "@mui/material/Switch";
+import Tooltip from "@mui/material/Tooltip";
 
 import firebase from "../firebase";
 import { hasHint, modes } from "../util";

@@ -119,7 +119,7 @@ function replayEventNormal(deck: Set<string>, event: GameEvent) {
 function replayEventChain(
   history: GameEvent[],
   deck: Set<string>,
-  event: GameEvent
+  event: GameEvent,
 ) {
   const { c1, c2, c3 } = event;
 
@@ -153,7 +153,7 @@ function replayEventUltra(deck: Set<string>, event: GameEvent) {
  */
 export function replayEvents(
   gameData: admin.database.DataSnapshot,
-  gameMode: GameMode
+  gameMode: GameMode,
 ) {
   const events: GameEvent[] = [];
   gameData.child("events").forEach((e) => {

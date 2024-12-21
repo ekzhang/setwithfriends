@@ -1,11 +1,11 @@
 import { useEffect, useRef, useState, useMemo, useContext, memo } from "react";
 
-import Typography from "@material-ui/core/Typography";
-import Tooltip from "@material-ui/core/Tooltip";
-import MoreVertIcon from "@material-ui/icons/MoreVert";
-import MenuItem from "@material-ui/core/MenuItem";
-import Menu from "@material-ui/core/Menu";
-import { makeStyles } from "@material-ui/core/styles";
+import Typography from "@mui/material/Typography";
+import Tooltip from "@mui/material/Tooltip";
+import MoreVertIcon from "@mui/icons-material/MoreVert";
+import MenuItem from "@mui/material/MenuItem";
+import Menu from "@mui/material/Menu";
+import makeStyles from "@mui/styles/makeStyles";
 
 import User from "./User";
 import InternalLink from "./InternalLink";
@@ -90,7 +90,7 @@ function Chat({
         .ref(databasePath)
         .orderByChild("time")
         .limitToLast(messageLimit),
-    [databasePath, messageLimit]
+    [databasePath, messageLimit],
   );
   const messages = useFirebaseQuery(messagesQuery);
 
@@ -99,7 +99,7 @@ function Chat({
     if (input) {
       if (filter.isProfane(input)) {
         alert(
-          "We detected that your message contains profane language. If you think this was a mistake, please let us know!"
+          "We detected that your message contains profane language. If you think this was a mistake, please let us know!",
         );
       } else {
         firebase.database().ref(databasePath).push({
@@ -202,7 +202,7 @@ function Chat({
                         underline="none"
                       />
                       : {item.message}
-                    </Typography>
+                    </Typography>,
                   )}
                   {user.admin && (
                     <MoreVertIcon
@@ -228,7 +228,7 @@ function Chat({
                   </Menu>
                 </div>
               )
-            )
+            ),
           )}
       </Scrollbox>
       <form onSubmit={handleSubmit}>

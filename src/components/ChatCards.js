@@ -1,8 +1,8 @@
 import { memo } from "react";
 
-import Tooltip from "@material-ui/core/Tooltip";
-import Typography from "@material-ui/core/Typography";
-import { makeStyles } from "@material-ui/core/styles";
+import Tooltip from "@mui/material/Tooltip";
+import Typography from "@mui/material/Typography";
+import makeStyles from "@mui/styles/makeStyles";
 
 import SetCard from "./SetCard";
 import User from "./User";
@@ -13,7 +13,7 @@ const useStyles = makeStyles((theme) => ({
     marginBottom: "0.35em",
     padding: "0 12px",
     textAlign: "center",
-    background: theme.setFoundEntry,
+    background: theme.custom.setFoundEntry,
   },
   logEntryText: {
     display: "flex",

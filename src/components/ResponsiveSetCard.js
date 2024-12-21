@@ -1,6 +1,7 @@
 import { memo } from "react";
 
-import { makeStyles, useTheme } from "@material-ui/core/styles";
+import { useTheme } from "@mui/material/styles";
+import makeStyles from "@mui/styles/makeStyles";
 import clsx from "clsx";
 
 const useStyles = makeStyles((theme) => ({
@@ -16,7 +17,7 @@ const useStyles = makeStyles((theme) => ({
     alignItems: "center",
     justifyContent: "center",
     flexShrink: 0,
-    backgroundColor: theme.setCard.background,
+    backgroundColor: theme.custom.setCard.background,
     transition: "box-shadow 0.15s",
   },
   clickable: {
@@ -44,7 +45,11 @@ function ResponsiveSymbol(props) {
         props.colorOverride.green,
         props.colorOverride.red,
       ]
-    : [theme.setCard.purple, theme.setCard.green, theme.setCard.red];
+    : [
+        theme.custom.setCard.purple,
+        theme.custom.setCard.green,
+        theme.custom.setCard.red,
+      ];
 
   const color = COLORS[props.color];
   const shape = SHAPES[props.shape];

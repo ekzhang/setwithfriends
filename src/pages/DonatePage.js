@@ -1,10 +1,10 @@
 import { useContext, useState } from "react";
 
-import Button from "@material-ui/core/Button";
-import Container from "@material-ui/core/Container";
-import Paper from "@material-ui/core/Paper";
-import Typography from "@material-ui/core/Typography";
-import WhatshotIcon from "@material-ui/icons/Whatshot";
+import Button from "@mui/material/Button";
+import Container from "@mui/material/Container";
+import Paper from "@mui/material/Paper";
+import Typography from "@mui/material/Typography";
+import WhatshotIcon from "@mui/icons-material/Whatshot";
 
 import InternalLink from "../components/InternalLink";
 import User from "../components/User";

@@ -1,9 +1,9 @@
 import { useContext } from "react";
 
-import Typography from "@material-ui/core/Typography";
-import Link from "@material-ui/core/Link";
-import Container from "@material-ui/core/Container";
-import Paper from "@material-ui/core/Paper";
+import Typography from "@mui/material/Typography";
+import Link from "@mui/material/Link";
+import Container from "@mui/material/Container";
+import Paper from "@mui/material/Paper";
 
 import InternalLink from "../components/InternalLink";
 import SetCard from "../components/SetCard";
@@ -18,7 +18,6 @@ function HelpPage() {
       <Typography variant="h4" align="center" style={{ marginTop: 24 }}>
         Help
       </Typography>
-
       <Paper style={{ padding: "1rem", maxWidth: 720, margin: "12px auto" }}>
         <Typography variant="h5" gutterBottom>
           Rules
@@ -26,7 +25,10 @@ function HelpPage() {
         <Typography variant="body1" gutterBottom>
           Welcome to Set with Friends! This web app allows you to play Set, the
           popular real-time card game designed by Marsha Falco in 1974 (
-          <Link href="https://en.wikipedia.org/wiki/Set_(card_game)">
+          <Link
+            href="https://en.wikipedia.org/wiki/Set_(card_game)"
+            underline="hover"
+          >
             Wikipedia
           </Link>
           ). The game is a race to find as many <em>sets</em>, or three-card

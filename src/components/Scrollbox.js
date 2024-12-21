@@ -1,4 +1,4 @@
-import { styled } from "@material-ui/core/styles";
+import { styled } from "@mui/material/styles";
 
 // A scrollable element that has smart side-shadows
 // Modified from: https://stackoverflow.com/a/44794221
