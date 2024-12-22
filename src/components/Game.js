@@ -189,6 +189,7 @@ function Game({
           gamePadding +
           lineSpacing / 2
         }px`,
+        borderLeftWidth: "1px",
       }
     : {
         top: `${
@@ -196,6 +197,7 @@ function Game({
           gamePadding +
           lineSpacing / 2
         }px`,
+        borderTopWidth: "1px",
       };
 
   return (
