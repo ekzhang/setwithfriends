@@ -51,17 +51,17 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-function ProfileGamesTable({ userId, gamesData, handleClickGame }) {
+function ProfileGamesTable({ userId, gamesWithScores, handleClickGame }) {
   const classes = useStyles();
   const theme = useTheme();
 
-  if (!gamesData) {
+  if (!gamesWithScores) {
     return <Loading />;
   }
-  if (Object.keys(gamesData).length === 0) {
+  if (Object.keys(gamesWithScores).length === 0) {
     return (
       <Typography style={{ color: grey[400] }}>
-        No recent games to display...
+        No recent games to display…
       </Typography>
     );
   }
@@ -82,7 +82,7 @@ function ProfileGamesTable({ userId, gamesData, handleClickGame }) {
           </TableRow>
         </TableHead>
         <TableBody>
-          {Object.entries(gamesData)
+          {Object.entries(gamesWithScores)
             .sort(([, g1], [, g2]) => g2.createdAt - g1.createdAt)
             .map(([gameId, game]) => {
               const modeInfo = modes[game.mode || "normal"];
@@ -102,7 +102,9 @@ function ProfileGamesTable({ userId, gamesData, handleClickGame }) {
                   >
                     {modeInfo.name}
                   </TableCell>
-                  <TableCell>{game.scores[userId] || 0}</TableCell>
+                  <TableCell>
+                    {game.scores ? game.scores[userId] || 0 : "—"}
+                  </TableCell>
                   <TableCell>
                     {formatTime(game.endedAt - game.startedAt)}
                   </TableCell>
@@ -110,9 +112,11 @@ function ProfileGamesTable({ userId, gamesData, handleClickGame }) {
                     <ElapsedTime value={game.createdAt} />
                   </TableCell>
                   <TableCell>
-                    {game.scores[userId] === game.topScore && (
-                      <StarIcon style={{ color: amber[500] }} />
-                    )}
+                    {game.scores &&
+                      game.scores[userId] ===
+                        Math.max(0, ...Object.values(game.scores)) && (
+                        <StarIcon style={{ color: amber[500] }} />
+                      )}
                   </TableCell>
                 </TableRow>
               );

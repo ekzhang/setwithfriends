@@ -28,11 +28,11 @@ const datasetVariants = {
   },
   solo: {
     label: "Solo Games",
-    filterFn: (gameData) => Object.keys(gameData.users).length === 1,
+    filterFn: (game) => Object.keys(game.users).length === 1,
   },
   multiplayer: {
     label: "Multiplayer Games",
-    filterFn: (gameData) => Object.keys(gameData.users).length > 1,
+    filterFn: (game) => Object.keys(game.users).length > 1,
   },
 };
 
@@ -54,15 +54,13 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-function mergeGameData(game, gameData) {
-  const { scores } = computeState(gameData, game.mode || "normal");
-  const topScore = Math.max(0, ...Object.values(scores));
-  return {
-    ...game,
-    ...gameData,
-    topScore,
-    scores,
-  };
+function gameWithScores(game, gameData) {
+  if (gameData) {
+    const { scores } = computeState(gameData, game.mode || "normal");
+    return { ...game, scores };
+  } else {
+    return { ...game, scores: null };
+  }
 }
 
 function ProfilePage() {
@@ -112,18 +110,18 @@ function ProfilePage() {
     return <LoadingPage />;
   }
 
-  let gamesData = null;
+  let gamesWithScores = null;
   if (!loadingGameVals && !loadingGameDataVals) {
-    gamesData = {};
+    gamesWithScores = {};
     for (let i = 0; i < gameIds.length; i++) {
       if (gameVals[i].status === "done") {
-        const gameData = mergeGameData(gameVals[i], gameDataVals[i]);
+        const game = gameWithScores(gameVals[i], gameDataVals[i]);
         if (
-          datasetVariants[variant].filterFn(gameData) &&
-          (gameData.mode || "normal") === modeVariant &&
-          !hasHint(gameData)
+          datasetVariants[variant].filterFn(game) &&
+          (game.mode || "normal") === modeVariant &&
+          !hasHint(game)
         ) {
-          gamesData[gameIds[i]] = gameData;
+          gamesWithScores[gameIds[i]] = game;
         }
       }
     }
@@ -189,7 +187,7 @@ function ProfilePage() {
         <ProfileGamesTable
           userId={userId}
           handleClickGame={handleClickGame}
-          gamesData={gamesData}
+          gamesWithScores={gamesWithScores}
         />
       </Paper>
     </Container>
