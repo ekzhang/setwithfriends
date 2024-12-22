@@ -1,4 +1,4 @@
-import admin from "firebase-admin";
+import { getDatabase } from "firebase-admin/database";
 
 function sanitize(name) {
   return (
@@ -9,7 +9,7 @@ function sanitize(name) {
 }
 
 export async function sanitizeNames() {
-  const users = await admin.database().ref("users").orderByKey().once("value");
+  const users = await getDatabase().ref("users").orderByKey().once("value");
 
   const updates = [];
 

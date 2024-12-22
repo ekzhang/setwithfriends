@@ -1,4 +1,4 @@
-import admin from "firebase-admin";
+import { getDatabase } from "firebase-admin/database";
 
 const batchSize = 1000;
 
@@ -14,7 +14,7 @@ const batchSize = 1000;
  */
 export async function calcStats() {
   console.log("Loading users...");
-  const users = await admin.database().ref("users").orderByKey().get();
+  const users = await getDatabase().ref("users").orderByKey().get();
   const userIds = Object.keys(users.val());
   console.log("Done loading users!");
 
@@ -24,8 +24,7 @@ export async function calcStats() {
 
     await Promise.all(
       userIds.slice(i, i + batchSize).map(async (userId) => {
-        const games = await admin
-          .database()
+        const games = await getDatabase()
           .ref(`userGames/${userId}`)
           .once("value");
 
@@ -45,14 +44,13 @@ export async function calcStats() {
 
         await Promise.all(
           Object.keys(games.val()).map(async (gameId) => {
-            const game = await admin.database().ref(`games/${gameId}`).get();
+            const game = await getDatabase().ref(`games/${gameId}`).get();
             if (game.child("status").val() !== "done") {
               if (process.env.VERBOSE)
                 console.log(`[${userId}] Skipping ongoing game ${gameId}`);
               return;
             }
-            const gameData = await admin
-              .database()
+            const gameData = await getDatabase()
               .ref(`gameData/${gameId}`)
               .get();
 
@@ -116,7 +114,7 @@ export async function calcStats() {
             updates[`${mode}/${variant}`] = stats[mode][variant];
           }
         }
-        await admin.database().ref(`userStats/${userId}`).update(updates);
+        await getDatabase().ref(`userStats/${userId}`).update(updates);
       }),
     );
 
