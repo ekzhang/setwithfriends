@@ -99,12 +99,7 @@ function GamePage() {
     if (!loadingGame && !loadingGameData && game && gameData) {
       const gameMode = game.mode || "normal";
       const { current, history } = computeState(gameData, gameMode);
-      if (
-        game.users &&
-        user.id in game.users &&
-        game.status === "ingame" &&
-        !finishing.current
-      ) {
+      if (game.status === "ingame" && !finishing.current) {
         let hasSet = false;
         if (gameMode === "setchain" && history.length > 0) {
           const { c1, c2, c3 } = history[history.length - 1];
