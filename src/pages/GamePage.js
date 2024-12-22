@@ -398,7 +398,7 @@ function GamePage() {
           xs={12}
           sm={8}
           md={6}
-          order={{ xs: 3, sm: 1 }}
+          order={{ xs: 1, sm: 2 }}
           position="relative"
           className={classes.mainColumn}
         >
