@@ -9,18 +9,15 @@
 import { PubSub } from "@google-cloud/pubsub";
 import { spawn, spawnSync } from "node:child_process";
 import path from "node:path";
+import process from "node:process";
 import { fileURLToPath } from "node:url";
 
 // Patch for __dirname not being available in ES modules.
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
-let build, emulators, app;
+console.log("[setwithfriends] Starting development script...");
 
-process.on("exit", () => {
-  if (build && !build.killed) build.kill();
-  if (emulators && !emulators.killed) emulators.kill();
-  if (app && !app.killed) app.kill();
-});
+let build, emulators, app;
 
 // Initial build
 spawnSync("npm", ["run", "build"], {
@@ -67,6 +64,28 @@ const pubsub = new PubSub({
   projectId: "setwithfriends-dev",
 });
 
-setInterval(async () => {
-  await pubsub.topic("firebase-schedule-clearConnections").publishJSON({});
+const pubsubInterval = setInterval(async () => {
+  await pubsub
+    .topic("firebase-schedule-clearConnections")
+    .publishMessage({ json: {} });
 }, 60 * 1000); // every minute
+
+let shutdownCalled = false;
+
+async function shutdown() {
+  if (shutdownCalled) return;
+  shutdownCalled = true;
+
+  clearInterval(pubsubInterval);
+
+  const waitForChild = (p) => new Promise((resolve) => p.on("exit", resolve));
+  await Promise.all([
+    waitForChild(build),
+    waitForChild(emulators),
+    waitForChild(app),
+  ]);
+  console.log("[setwithfriends] Finished development script, goodbye!");
+}
+
+process.on("SIGINT", shutdown);
+process.on("SIGTERM", shutdown);
