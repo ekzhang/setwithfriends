@@ -7,6 +7,7 @@ const config = {
       authDomain: "setwithfriends-dev.web.app",
       databaseURL: "https://setwithfriends-dev.firebaseio.com",
       projectId: "setwithfriends-dev",
+      storageBucket: "setwithfriends-dev.appspot.com",
       appId: "1:369319422608:web:b9038b38a1bd598048c615",
     },
     stripe: null, // Stripe not supported in development
