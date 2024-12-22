@@ -1,0 +1,11 @@
+// Security rules for accessing GCS for Firebase.
+// https://firebase.google.com/docs/storage/security/core-syntax
+
+rules_version = '2';
+service firebase.storage {
+  match /b/{bucket}/o {
+    // Deny access to the storage bucket.
+    // Currently, we only access GCS from cloud functions.
+    allow read, write: if false;
+  }
+}
