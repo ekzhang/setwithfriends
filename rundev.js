@@ -64,11 +64,21 @@ const pubsub = new PubSub({
   projectId: "setwithfriends-dev",
 });
 
-const pubsubInterval = setInterval(async () => {
-  await pubsub
-    .topic("firebase-schedule-clearConnections")
-    .publishMessage({ json: {} });
-}, 60 * 1000); // every minute
+// This is a workaround for the Pub/Sub emulator not supporting scheduled functions.
+// https://github.com/firebase/firebase-tools/issues/2034
+const pubsubIntervals = [
+  setInterval(async () => {
+    await pubsub
+      .topic("firebase-schedule-clearConnections")
+      .publishMessage({ json: {} });
+  }, 60 * 1000), // every minute
+
+  setInterval(async () => {
+    await pubsub
+      .topic("firebase-schedule-archiveStaleGames")
+      .publishMessage({ json: {} });
+  }, 3600 * 1000), // every hour
+];
 
 let shutdownCalled = false;
 
@@ -76,7 +86,9 @@ async function shutdown() {
   if (shutdownCalled) return;
   shutdownCalled = true;
 
-  clearInterval(pubsubInterval);
+  for (const interval of pubsubIntervals) {
+    clearInterval(interval);
+  }
 
   const waitForChild = (p) => new Promise((resolve) => p.on("exit", resolve));
   await Promise.all([

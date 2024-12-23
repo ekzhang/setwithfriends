@@ -20,7 +20,7 @@ import Loading from "../components/Loading";
 import SnackContent from "../components/SnackContent";
 import User from "../components/User";
 import { SettingsContext, UserContext } from "../context";
-import firebase, { createGame, finishGame } from "../firebase";
+import firebase, { createGame, fetchStaleGame, finishGame } from "../firebase";
 import useFirebaseRef from "../hooks/useFirebaseRef";
 import {
   checkSet,
@@ -81,6 +81,7 @@ function GamePage() {
   const [selected, setSelected] = useState([]);
   const [snack, setSnack] = useState({ open: false });
   const [numHints, setNumHints] = useState(0);
+  const [fetchingStaleGame, setFetchingStaleGame] = useState("not-stale");
 
   const [game, loadingGame] = useFirebaseRef(`games/${gameId}`);
   const [gameData, loadingGameData] = useFirebaseRef(`gameData/${gameId}`);
@@ -128,9 +129,35 @@ function GamePage() {
     }
   });
 
+  // Try to fetch the game from cloud storage, if archived due to being stale.
+  useEffect(() => {
+    if (!loadingGame && !loadingGameData) {
+      if (game && gameData) {
+        if (fetchingStaleGame !== "not-stale") {
+          setFetchingStaleGame("not-stale");
+        }
+      } else {
+        if (fetchingStaleGame === "not-stale") {
+          setFetchingStaleGame("fetching");
+          (async () => {
+            // On success, the database should automatically update with game state.
+            const { restored } = await fetchStaleGame({ gameId });
+            if (!restored) {
+              setFetchingStaleGame("failed");
+            }
+          })();
+        }
+      }
+    }
+  }, [loadingGame, loadingGameData, game, gameData, fetchingStaleGame, gameId]);
+
   if (redirect) return <Navigate push to={redirect} />;
 
-  if (loadingGame || loadingGameData) {
+  if (
+    loadingGame ||
+    loadingGameData ||
+    ((!game || !gameData) && fetchingStaleGame !== "failed")
+  ) {
     return <LoadingPage />;
   }
 
