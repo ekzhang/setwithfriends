@@ -203,7 +203,8 @@ export const createGame = functions.https.onCall(async (data, context) => {
   if (
     !(typeof gameId === "string") ||
     gameId.length === 0 ||
-    gameId.length > MAX_GAME_ID_LENGTH
+    gameId.length > MAX_GAME_ID_LENGTH ||
+    !gameId.match(/^[a-zA-Z0-9_-]+$/)
   ) {
     throw new functions.https.HttpsError(
       "invalid-argument",
