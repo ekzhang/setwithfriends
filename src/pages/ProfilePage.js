@@ -7,7 +7,7 @@ import Paper from "@mui/material/Paper";
 import Select from "@mui/material/Select";
 import Typography from "@mui/material/Typography";
 import makeStyles from "@mui/styles/makeStyles";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Navigate, useParams } from "react-router-dom";
 
 import Loading from "../components/Loading";
@@ -15,7 +15,7 @@ import ProfileGamesTable from "../components/ProfileGamesTable";
 import ProfileName from "../components/ProfileName";
 import Subheading from "../components/Subheading";
 import UserStatistics from "../components/UserStatistics";
-import firebase from "../firebase";
+import firebase, { fetchStaleGame } from "../firebase";
 import useFirebaseRefs from "../hooks/useFirebaseRefs";
 import useStats from "../hooks/useStats";
 import { computeState, hasHint, modes } from "../util";
@@ -73,7 +73,7 @@ function ProfilePage() {
       .database()
       .ref(`/userGames/${userId}`)
       .orderByValue()
-      .limitToLast(50);
+      .limitToLast(100);
     const update = (snapshot) => {
       query.off("value", update);
       setGames(snapshot.val() ?? {});
@@ -100,8 +100,25 @@ function ProfilePage() {
   );
   const [gameDataVals, loadingGameDataVals] = useFirebaseRefs(
     useMemo(() => gameIds.map((gameId) => `gameData/${gameId}`), [gameIds]),
-    true,
   );
+
+  /** @type {import("react").MutableRefObject<Set<string>>} */
+  const staleGamesFetched = useRef(new Set());
+
+  useEffect(() => {
+    if (!gameVals || !gameDataVals) return;
+    for (let i = 0; i < gameIds.length; i++) {
+      // Populate archived game data lazily if needed.
+      if (
+        gameVals[i].status === "done" &&
+        !gameDataVals[i] &&
+        !staleGamesFetched.current.has(gameIds[i])
+      ) {
+        staleGamesFetched.current.add(gameIds[i]);
+        fetchStaleGame({ gameId: gameIds[i] });
+      }
+    }
+  }, [gameVals, gameDataVals]);
 
   if (redirect) {
     return <Navigate push to={redirect} />;
