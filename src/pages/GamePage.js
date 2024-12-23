@@ -149,7 +149,7 @@ function GamePage() {
         }
       }
     }
-  });
+  }, [loadingGame, loadingGameData, game, gameData, fetchingStaleGame, gameId]);
 
   if (redirect) return <Navigate push to={redirect} />;
 
