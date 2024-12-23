@@ -3,6 +3,7 @@ import { getAuth } from "firebase-admin/auth";
 import { type DataSnapshot, getDatabase } from "firebase-admin/database";
 import { getStorage } from "firebase-admin/storage";
 import * as functions from "firebase-functions/v1";
+import PQueue from "p-queue";
 import Stripe from "stripe";
 
 import { GameMode, findSet, generateDeck, replayEvents } from "./game";
@@ -494,13 +495,16 @@ export const fetchStaleGame = functions.https.onCall(async (data, context) => {
 export const archiveStaleGames = functions.pubsub
   .schedule("every 1 hours")
   .onRun(async (context) => {
-    const cutoff = Date.now() - 86400 * 1000; // 24 hours ago
+    const cutoff = Date.now() - 30 * 86400 * 1000; // 30 days ago
+    const queue = new PQueue({ concurrency: 50 });
 
     for await (const [gameId] of databaseIterator("gameData")) {
       const game = await getDatabase().ref(`games/${gameId}`).get();
       if (game.val().createdAt < cutoff) {
         console.log(`Archiving stale game state for ${gameId}`);
-        await archiveGameState(gameId);
+        await queue.add(() => archiveGameState(gameId));
       }
     }
+
+    await queue.onIdle();
   });
