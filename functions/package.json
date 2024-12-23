@@ -16,7 +16,7 @@
   "dependencies": {
     "firebase-admin": "^13.0.2",
     "firebase-functions": "^6.2.0",
-    "p-queue": "^8.0.1",
+    "p-queue": "^6.6.2",
     "stripe": "^17.5.0"
   },
   "devDependencies": {
