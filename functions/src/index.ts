@@ -492,18 +492,21 @@ export const fetchStaleGame = functions.https.onCall(async (data, context) => {
 });
 
 /** Archive stale game states to GCS for cost savings. */
-export const archiveStaleGames = functions.pubsub
-  .schedule("every 1 hours")
+export const archiveStaleGames = functions
+  .runWith({ timeoutSeconds: 540, memory: "1GB" })
+  .pubsub.schedule("every 1 hours")
   .onRun(async (context) => {
     const cutoff = Date.now() - 30 * 86400 * 1000; // 30 days ago
     const queue = new PQueue({ concurrency: 50 });
 
     for await (const [gameId] of databaseIterator("gameData")) {
-      const game = await getDatabase().ref(`games/${gameId}`).get();
-      if (game.val().createdAt < cutoff) {
-        console.log(`Archiving stale game state for ${gameId}`);
-        await queue.add(() => archiveGameState(gameId));
-      }
+      await queue.add(async () => {
+        const game = await getDatabase().ref(`games/${gameId}`).get();
+        if (game.val().createdAt < cutoff) {
+          console.log(`Archiving stale game state for ${gameId}`);
+          await archiveGameState(gameId);
+        }
+      });
     }
 
     await queue.onIdle();
