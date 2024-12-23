@@ -17,6 +17,10 @@ const stripe = process.env.FUNCTIONS_EMULATOR
       apiVersion: "2024-12-18.acacia",
     });
 
+// Hack: In Firebase v13, `admin.database.ServerValue.TIMESTAMP`
+// does not work anymore from TypeScript.
+const SERVER_VALUE_TIMESTAMP = { ".sv": "timestamp" };
+
 const MAX_GAME_ID_LENGTH = 64;
 const MAX_UNFINISHED_GAMES_PER_HOUR = 4;
 
@@ -270,9 +274,7 @@ export const createGame = functions.https.onCall(async (data, context) => {
       }
       return {
         host: userId,
-        // Hack: In Firebase v13, `admin.database.ServerValue.TIMESTAMP`
-        // does not work anymore from TypeScript.
-        createdAt: { ".sv": "timestamp" },
+        createdAt: SERVER_VALUE_TIMESTAMP,
         status: "waiting",
         access,
         mode,
@@ -298,6 +300,7 @@ export const createGame = functions.https.onCall(async (data, context) => {
   updates.push(
     getDatabase().ref(`gameData/${gameId}`).set({
       deck: generateDeck(),
+      populatedAt: SERVER_VALUE_TIMESTAMP,
     }),
   );
   updates.push(
@@ -425,8 +428,16 @@ export const handleStripe = functions.https.onRequest(async (req, res) => {
  * Archive a game state from RTDB to GCS, reducing the storage tier.
  * Returns whether the state was found in the database.
  */
-async function archiveGameState(gameId: string): Promise<boolean> {
-  const snap = await getDatabase().ref(`gameData/${gameId}`).get();
+async function archiveGameState(
+  gameId: string,
+  snapInit?: DataSnapshot,
+): Promise<boolean> {
+  let snap: DataSnapshot;
+  if (snapInit) {
+    snap = snapInit;
+  } else {
+    snap = await getDatabase().ref(`gameData/${gameId}`).get();
+  }
   if (!snap.exists()) {
     return false; // Game state is not present in the database, maybe racy?
   }
@@ -458,7 +469,9 @@ async function restoreGameState(gameId: string): Promise<boolean> {
   const jsonBlob = await gzip.decompress(gzippedBlob);
 
   const gameData = JSON.parse(jsonBlob.toString());
-  await getDatabase().ref(`gameData/${gameId}`).set(gameData);
+  await getDatabase()
+    .ref(`gameData/${gameId}`)
+    .set({ ...gameData, populatedAt: SERVER_VALUE_TIMESTAMP });
   return true;
 }
 
@@ -493,20 +506,21 @@ export const fetchStaleGame = functions.https.onCall(async (data, context) => {
 
 /** Archive stale game states to GCS for cost savings. */
 export const archiveStaleGames = functions
-  .runWith({ timeoutSeconds: 540, memory: "1GB" })
+  .runWith({ timeoutSeconds: 540, memory: "2GB" })
   .pubsub.schedule("every 1 hours")
   .onRun(async (context) => {
-    const cutoff = Date.now() - 30 * 86400 * 1000; // 30 days ago
-    const queue = new PQueue({ concurrency: 50 });
+    const cutoff = Date.now() - 14 * 86400 * 1000; // 14 days ago
+    const queue = new PQueue({ concurrency: 200 });
 
-    for await (const [gameId] of databaseIterator("gameData")) {
-      await queue.add(async () => {
-        const game = await getDatabase().ref(`games/${gameId}`).get();
-        if (game.val().createdAt < cutoff) {
+    for await (const [gameId, gameState] of databaseIterator("gameData")) {
+      const populatedAt: number | null = gameState.child("populatedAt").val();
+      if (!populatedAt || populatedAt < cutoff) {
+        await queue.onEmpty();
+        queue.add(async () => {
           console.log(`Archiving stale game state for ${gameId}`);
-          await archiveGameState(gameId);
-        }
-      });
+          await archiveGameState(gameId, gameState);
+        });
+      }
     }
 
     await queue.onIdle();
