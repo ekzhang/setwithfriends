@@ -1,3 +1,4 @@
+// Note: This is deprecated.
 import assert from "assert";
 import { getDatabase } from "firebase-admin/database";
 

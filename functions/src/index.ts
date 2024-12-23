@@ -1,10 +1,12 @@
 import { initializeApp } from "firebase-admin/app";
 import { getAuth } from "firebase-admin/auth";
 import { type DataSnapshot, getDatabase } from "firebase-admin/database";
+import { getStorage } from "firebase-admin/storage";
 import * as functions from "firebase-functions/v1";
 import Stripe from "stripe";
 
 import { GameMode, findSet, generateDeck, replayEvents } from "./game";
+import { databaseIterator, gzip } from "./utils";
 
 initializeApp(); // Sets the default Firebase app.
 
@@ -228,7 +230,7 @@ export const createGame = functions.https.onCall(async (data, context) => {
 
   const userId = context.auth.uid;
 
-  const oneHourAgo = Date.now() - 3600000;
+  const oneHourAgo = Date.now() - 3600 * 1000;
   const recentGameIds = await getDatabase()
     .ref(`userGames/${userId}`)
     .orderByValue()
@@ -416,3 +418,88 @@ export const handleStripe = functions.https.onRequest(async (req, res) => {
 
   res.status(200).end();
 });
+
+/**
+ * Archive a game state from RTDB to GCS, reducing the storage tier.
+ * Returns whether the state was found in the database.
+ */
+async function archiveGameState(gameId: string): Promise<boolean> {
+  const snap = await getDatabase().ref(`gameData/${gameId}`).get();
+  if (!snap.exists()) {
+    return false; // Game state is not present in the database, maybe racy?
+  }
+
+  const jsonBlob = JSON.stringify(snap.val());
+  const gzippedBlob = await gzip.compress(jsonBlob);
+
+  await getStorage()
+    .bucket()
+    .file(`gameData/${gameId}.json.gz`)
+    .save(gzippedBlob);
+
+  // After archiving, we remove the game state from the database.
+  await getDatabase().ref(`gameData/${gameId}`).remove();
+  return true;
+}
+
+/** Restore a game state in GCS to RTDB so it can be read from the client. */
+async function restoreGameState(gameId: string): Promise<boolean> {
+  const file = getStorage().bucket().file(`gameData/${gameId}.json.gz`);
+  let gzippedBlob: Buffer;
+  try {
+    [gzippedBlob] = await file.download();
+  } catch (error: any) {
+    // File was not present.
+    if (error.code === 404) return false;
+    throw error;
+  }
+  const jsonBlob = await gzip.decompress(gzippedBlob);
+
+  const gameData = JSON.parse(jsonBlob.toString());
+  await getDatabase().ref(`gameData/${gameId}`).set(gameData);
+  return true;
+}
+
+/** Try to fetch a game state that's not present, restoring if needed. */
+export const fetchStaleGame = functions.https.onCall(async (data, context) => {
+  if (!context.auth) {
+    throw new functions.https.HttpsError(
+      "failed-precondition",
+      "The function must be called while authenticated.",
+    );
+  }
+
+  const gameId = data.gameId;
+  if (
+    !(typeof gameId === "string") ||
+    gameId.length === 0 ||
+    gameId.length > MAX_GAME_ID_LENGTH
+  ) {
+    throw new functions.https.HttpsError(
+      "invalid-argument",
+      "The function must be called with argument `gameId` to be fetched at `/games/:gameId`.",
+    );
+  }
+
+  try {
+    const restored = await restoreGameState(gameId);
+    return { restored };
+  } catch (error: any) {
+    throw new functions.https.HttpsError("internal", error.message);
+  }
+});
+
+/** Archive stale game states to GCS for cost savings. */
+export const archiveStaleGames = functions.pubsub
+  .schedule("every 1 hours")
+  .onRun(async (context) => {
+    const cutoff = Date.now() - 86400 * 1000; // 24 hours ago
+
+    for await (const [gameId] of databaseIterator("gameData")) {
+      const game = await getDatabase().ref(`games/${gameId}`).get();
+      if (game.val().createdAt < cutoff) {
+        console.log(`Archiving stale game state for ${gameId}`);
+        await archiveGameState(gameId);
+      }
+    }
+  });

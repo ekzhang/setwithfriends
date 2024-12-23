@@ -1,3 +1,4 @@
+// Note: This is deprecated.
 import { getDatabase } from "firebase-admin/database";
 
 const batchSize = 1000;
