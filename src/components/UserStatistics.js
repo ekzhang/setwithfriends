@@ -2,13 +2,19 @@ import Grid from "@mui/material/Grid";
 import Typography from "@mui/material/Typography";
 import { useTheme } from "@mui/material/styles";
 import makeStyles from "@mui/styles/makeStyles";
-import { ArcElement, Chart as ChartJS } from "chart.js";
+import {
+  ArcElement,
+  Chart as ChartJS,
+  Legend,
+  PieController,
+  Tooltip,
+} from "chart.js";
 import { memo } from "react";
 import { Pie } from "react-chartjs-2";
 
 import { formatTime } from "../util";
 
-ChartJS.register(ArcElement);
+ChartJS.register(ArcElement, Legend, PieController, Tooltip);
 
 const useStyles = makeStyles((theme) => ({
   statisticsPanel: {
@@ -58,7 +64,7 @@ function UserStatistics({ stats, variant }) {
     plugins: {
       legend: {
         position: "bottom",
-        onClick: (e) => e.stopPropagation(),
+        onClick: () => {}, // Disable click to show/hide category.
       },
       tooltip: {
         enabled: num.finishedGames > 0,

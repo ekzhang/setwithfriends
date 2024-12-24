@@ -115,7 +115,9 @@ function ProfileGamesTable({ userId, gamesWithScores, handleClickGame }) {
                     {game.scores &&
                       game.scores[userId] ===
                         Math.max(0, ...Object.values(game.scores)) && (
-                        <StarIcon style={{ color: amber[500] }} />
+                        <StarIcon
+                          style={{ color: amber[500], marginBlock: -4 }}
+                        />
                       )}
                   </TableCell>
                 </TableRow>
