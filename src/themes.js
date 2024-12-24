@@ -52,6 +52,10 @@ export const darkTheme = createTheme({
         },
       },
     },
+    MuiPaper: {
+      // https://mui.com/material-ui/migration/v5-component-changes/#change-dark-mode-background-opacity
+      styleOverrides: { root: { backgroundImage: "unset" } },
+    },
     MuiTab: {
       styleOverrides: {
         root: {

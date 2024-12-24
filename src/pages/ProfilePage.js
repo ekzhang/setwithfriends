@@ -118,7 +118,7 @@ function ProfilePage() {
         fetchStaleGame({ gameId: gameIds[i] });
       }
     }
-  }, [gameVals, gameDataVals]);
+  }, [gameIds, gameVals, gameDataVals]);
 
   if (redirect) {
     return <Navigate push to={redirect} />;
