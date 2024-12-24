@@ -62,6 +62,11 @@ export function checkSetUltra(a: string, b: string, c: string, d: string) {
   return null;
 }
 
+/** Check if six cards form a hyperset. The order irrelevant, because if one set of pairs work, all the other possible sets of pairs of the same 6 cards work as well.*/
+export function checkSetHyper(a: string, b: string, c: string, d:string, e: string, f: string) {
+  return checkSet(conjugateCard(a, b), conjugateCard(c, d), conjugateCard(e, f));
+}
+
 /** Find a set in an unordered collection of cards, if any, depending on mode. */
 export function findSet(deck: string[], gameMode: GameMode, old?: string[]) {
   const deckSet = new Set(deck);
@@ -85,6 +90,17 @@ export function findSet(deck: string[], gameMode: GameMode, old?: string[]) {
           return [...ultraConjugates[c], deck[i], deck[j]];
         }
         ultraConjugates[c] = [deck[i], deck[j]];
+      } else if (gameMode === "hyperset") {
+      	for (let k = j + 1; k < deck.length; k++) {
+      	  for (let l = k + 1; l < deck.length; l++) {
+      	    for (let m = l + 1; m < deck.length; m++) {
+              for (let n = m + 1; n < deck.length; n++) {
+                if (checkSetHyper(deck[i], deck[j], deck[k], deck[l], deck[m], deck[n])) 
+                  return [deck[i], deck[j], deck[k], deck[l], deck[m], deck[n]];
+              }
+      	    }
+      	  }
+      	}
       }
     }
   }
@@ -147,6 +163,14 @@ function replayEventUltra(deck: Set<string>, event: GameEvent) {
   return true;
 }
 
+/** Replay game event for hyperset mode */
+function replayEventHyper(deck: Set<string>, event: GameEvent) {
+  const cards = [event.c1, event.c2, event.c3, event.c4, event.c5, event.c6];
+  if (!isValid(deck, cards)) return false;
+  deleteCards(deck, cards);
+  return true;
+}
+
 /**
  * Compute remaining cards (arbitrary order) left in the deck after some
  * events, as well as the time of the final valid event.
@@ -173,6 +197,8 @@ export function replayEvents(
     if (gameMode === "setchain" && replayEventChain(history, deck, event))
       eventValid = true;
     if (gameMode === "ultraset" && replayEventUltra(deck, event))
+      eventValid = true;
+    if (gameMode === "hyperset" && replayEventHyper(deck, event))
       eventValid = true;
     if (eventValid) {
       history.push(event);
