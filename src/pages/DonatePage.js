@@ -76,7 +76,7 @@ function DonatePage() {
           <ul>
             <li>
               Bragging rights with a patron icon next to your name (e.g.,{" "}
-              <User id={user.id} forcePatron />
+              <User id={user.id} showIcon forcePatron />
               ).
             </li>
             <li>
