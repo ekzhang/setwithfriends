@@ -56,7 +56,7 @@ function GameInfoRow({ gameId, onClick }) {
     }
     return (
       <Tooltip title={title} arrow placement="top">
-        <Icon fontSize="small" />
+        <Icon fontSize="small" sx={{ display: "block" }} />
       </Tooltip>
     );
   };

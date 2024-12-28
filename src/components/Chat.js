@@ -199,6 +199,7 @@ function Chat({
                         component={InternalLink}
                         to={`/profile/${item.user}`}
                         underline="none"
+                        showIcon
                       />
                       : {item.message}
                     </Typography>,

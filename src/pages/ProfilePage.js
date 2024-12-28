@@ -163,7 +163,7 @@ function ProfilePage() {
                 <Subheading className={classes.statsHeading}>
                   Statistics
                 </Subheading>
-                <EqualizerIcon />
+                <EqualizerIcon sx={{ mt: "1px" }} />
               </div>
               <div style={{ marginLeft: "auto" }}>
                 <Select

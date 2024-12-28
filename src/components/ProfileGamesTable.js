@@ -29,9 +29,6 @@ const useStyles = makeStyles((theme) => ({
       paddingLeft: 12,
       paddingRight: 12,
     },
-    "& svg": {
-      display: "block",
-    },
     "& th": {
       background: theme.palette.background.panel,
     },
@@ -48,6 +45,11 @@ const useStyles = makeStyles((theme) => ({
     [theme.breakpoints.down("sm")]: {
       display: "none",
     },
+  },
+  starIcon: {
+    display: "block",
+    color: amber[500],
+    marginBlock: -4,
   },
 }));
 
@@ -115,9 +117,7 @@ function ProfileGamesTable({ userId, gamesWithScores, handleClickGame }) {
                     {game.scores &&
                       game.scores[userId] ===
                         Math.max(0, ...Object.values(game.scores)) && (
-                        <StarIcon
-                          style={{ color: amber[500], marginBlock: -4 }}
-                        />
+                        <StarIcon className={classes.starIcon} />
                       )}
                   </TableCell>
                 </TableRow>

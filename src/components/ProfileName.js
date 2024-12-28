@@ -60,6 +60,7 @@ function ProfileName({ userId }) {
   return (
     <User
       id={userId}
+      showIcon
       render={(player, userEl) => {
         const isOnline =
           player.connections && Object.keys(player.connections).length > 0;

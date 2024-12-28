@@ -1,6 +1,8 @@
+import SecurityIcon from "@mui/icons-material/Security";
 import WhatshotIcon from "@mui/icons-material/Whatshot";
 import { useTheme } from "@mui/material/styles";
 import makeStyles from "@mui/styles/makeStyles";
+import clsx from "clsx";
 import { useNavigate } from "react-router-dom";
 
 import useFirebaseRef from "../hooks/useFirebaseRef";
@@ -8,6 +10,14 @@ import useStats from "../hooks/useStats";
 import { colors } from "../util";
 
 const useStyles = makeStyles(() => ({
+  inlineIcon: {
+    fontSize: "inherit",
+    display: "inline",
+    position: "relative",
+    left: "-0.1em",
+    top: "0.15em",
+    color: "inherit",
+  },
   patronIcon: {
     cursor: "pointer",
     "&:hover": {
@@ -32,6 +42,7 @@ function User({
   component,
   render,
   forcePatron,
+  showIcon,
   showRating,
   ...other
 }) {
@@ -46,7 +57,7 @@ function User({
     return null;
   }
 
-  const handleClick = (e) => {
+  const handlePatronClick = (e) => {
     e.preventDefault();
     navigate("/donate");
   };
@@ -68,20 +79,16 @@ function User({
           {loadingStats ? "⋯" : Math.round(stats[showRating].rating)}
         </span>
       )}
-      {(user.patron || forcePatron) && (
-        <WhatshotIcon
-          className={classes.patronIcon}
-          onClick={handleClick}
-          fontSize="inherit"
-          style={{
-            display: "inline",
-            position: "relative",
-            left: "-0.1em",
-            top: "0.15em",
-            color: "inherit",
-          }}
-        />
-      )}
+      {showIcon &&
+        (user.admin ? (
+          // Moderator icon takes precedence over patron icon.
+          <SecurityIcon className={classes.inlineIcon} />
+        ) : user.patron || forcePatron ? (
+          <WhatshotIcon
+            className={clsx(classes.inlineIcon, classes.patronIcon)}
+            onClick={handlePatronClick}
+          />
+        ) : null)}
       <span>{user.name}</span>
     </Component>
   );
