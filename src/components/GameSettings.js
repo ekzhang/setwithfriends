@@ -59,26 +59,25 @@ function GameSettings({ game, gameId, userId }) {
           </Tooltip>
         ))}
       </RadioGroup>
-      {["normal", "setjr"].includes(gameMode) && (
-        <Tooltip arrow placement="left" title={hintTip}>
-          <FormControlLabel
-            control={
-              <Switch
-                size="small"
-                checked={hasHint(game)}
-                onChange={toggleHint}
-              />
-            }
-            label="Enable Hints"
-            disabled={
-              Object.keys(game.users || {}).length > 1 ||
-              game.access !== "private"
-            }
-            slotProps={{ typography: { variant: "body2" } }}
-            sx={{ my: 0.25 }}
-          />
-        </Tooltip>
-      )}
+
+      <Tooltip arrow placement="left" title={hintTip}>
+        <FormControlLabel
+          control={
+            <Switch
+              size="small"
+              checked={hasHint(game)}
+              onChange={toggleHint}
+            />
+          }
+          label="Enable Hints"
+          disabled={
+            Object.keys(game.users || {}).length > 1 ||
+            game.access !== "private"
+          }
+          slotProps={{ typography: { variant: "body2" } }}
+          sx={{ my: 0.25 }}
+        />
+      </Tooltip>
     </div>
   );
 }
