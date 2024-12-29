@@ -76,19 +76,13 @@ function AboutPage() {
       </Paper>
       <Paper style={{ padding: "1rem", maxWidth: 720, margin: "12px auto" }}>
         <Typography variant="body2">
-          Sounds used from{" "}
+          By using this site, you agree to our{" "}
+          <InternalLink to="/legal">terms of service</InternalLink>. Sounds from{" "}
           <Link
             href="https://notificationsounds.com/terms-of-use"
             underline="hover"
           >
             notificationsounds.com
-          </Link>
-          &nbsp;are provided under a{" "}
-          <Link
-            href="https://creativecommons.org/licenses/by/4.0/legalcode"
-            underline="hover"
-          >
-            Creative Commons Attribution license
           </Link>
           .
         </Typography>
