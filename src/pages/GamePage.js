@@ -179,6 +179,7 @@ function GamePage() {
 
   const gameMode = game.mode || "normal";
   const spectating = !game.users || !(user.id in game.users);
+  const maxHints = gameMode === "ultraset" ? 4 : 3;
 
   const { current, scores, history, boardSize } = computeState(
     gameData,
@@ -338,7 +339,7 @@ function GamePage() {
 
   function handleAddHint() {
     setNumHints((numHints) => {
-      if (numHints === 3) {
+      if (numHints === maxHints) {
         return numHints;
       }
       return numHints + 1;
@@ -479,14 +480,16 @@ function GamePage() {
           className={classes.sideColumn}
         >
           <GameSidebar game={game} scores={scores} leaderboard={leaderboard} />
-          <Box mt={1}>
+          <Box mt={2}>
             {hasHint(game) && (
               <Button
-                size="large"
+                size="medium"
                 variant="outlined"
                 color="primary"
                 fullWidth
-                disabled={numHints === 3 || !answer || game.status === "done"}
+                disabled={
+                  numHints === maxHints || !answer || game.status === "done"
+                }
                 onClick={handleAddHint}
               >
                 Add hint: {numHints}
