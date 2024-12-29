@@ -328,11 +328,9 @@ export function computeState(gameData, gameMode = "normal") {
   };
 
   if (gameData.events) {
-    const events = Object.entries(gameData.events)
-      .sort(([k1, e1], [k2, e2]) => {
-        return e1.time !== e2.time ? e1.time - e2.time : k1 < k2;
-      })
-      .map(([, e]) => e);
+    const events = Object.values(gameData.events).sort(
+      (e1, e2) => e1.time - e2.time
+    );
     for (const event of events) {
       if (gameMode === "normal" || gameMode === "setjr")
         processEventNormal(internalGameState, event);
