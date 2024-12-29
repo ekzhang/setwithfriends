@@ -34,7 +34,9 @@ export async function fixGames() {
       // eslint-disable-next-line no-constant-condition
       if (false) {
         await queue.onEmpty();
-        queue.add(getDatabase().ref(`games/${gameId}/enableHint`).set(false));
+        queue.add(() =>
+          getDatabase().ref(`games/${gameId}/enableHint`).set(false),
+        );
       }
     }
   }
