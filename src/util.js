@@ -310,7 +310,7 @@ export function initializeDeck(deck, gameMode) {
     // Remove all cards except those with solid shading.
     return deck.filter((card) => card[2] === "0");
   }
-  return deck;
+  return deck.slice();
 }
 
 export function computeState(gameData, gameMode = "normal") {
