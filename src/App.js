@@ -88,13 +88,19 @@ function App() {
     if (parsedCustoms.light) {
       setCustomLightTheme({
         ...lightTheme,
-        setCard: { ...lightTheme.custom.setCard, ...parsedCustoms.light },
+        custom: {
+          ...lightTheme.custom,
+          setCard: { ...lightTheme.custom.setCard, ...parsedCustoms.light },
+        },
       });
     }
     if (parsedCustoms.dark) {
       setCustomDarkTheme({
         ...darkTheme,
-        setCard: { ...darkTheme.custom.setCard, ...parsedCustoms.dark },
+        custom: {
+          ...darkTheme.custom,
+          setCard: { ...darkTheme.custom.setCard, ...parsedCustoms.dark },
+        },
       });
     }
   }, [customColors]);
