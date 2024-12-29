@@ -58,6 +58,13 @@ export const modes = {
     description: "Find 3 cards that form a Set.",
     setType: "Set",
   },
+  setjr: {
+    name: "Junior",
+    color: "green",
+    description:
+      "A simplified version that only uses cards with solid shading.",
+    setType: "Set",
+  },
   setchain: {
     name: "Set-Chain",
     color: "teal",
@@ -169,6 +176,7 @@ export function findSet(deck, gameMode = "normal", old) {
       const c = conjugateCard(deck[i], deck[j]);
       if (
         gameMode === "normal" ||
+        gameMode === "setjr" ||
         (gameMode === "setchain" && old.length === 0)
       ) {
         if (deckSet.has(c)) {
@@ -290,11 +298,26 @@ function processEventUltra(internalGameState, event) {
   internalGameState.boardSize = boardSize;
 }
 
+/**
+ * Initialize the deck to its starting cards based on the game mode.
+ *
+ * It starts with a shuffled 81-card deck according to database state. Usually
+ * this would be a no-op, but for Set Junior, we need to remove some subset of
+ * the cards before the game starts.
+ */
+export function initializeDeck(deck, gameMode) {
+  if (gameMode === "setjr") {
+    // Remove all cards except those with solid shading.
+    return deck.filter((card) => card[2] === "0");
+  }
+  return deck;
+}
+
 export function computeState(gameData, gameMode = "normal") {
   const scores = {}; // scores of all users
   const used = {}; // set of cards that have been taken
   const history = []; // list of valid events in time order
-  const current = gameData.deck.slice(); // remaining cards in the game
+  const current = initializeDeck(gameData.deck, gameMode); // remaining cards in the game
   const internalGameState = {
     used,
     current,
@@ -311,7 +334,8 @@ export function computeState(gameData, gameMode = "normal") {
       })
       .map(([, e]) => e);
     for (const event of events) {
-      if (gameMode === "normal") processEventNormal(internalGameState, event);
+      if (gameMode === "normal" || gameMode === "setjr")
+        processEventNormal(internalGameState, event);
       if (gameMode === "setchain") processEventChain(internalGameState, event);
       if (gameMode === "ultraset") processEventUltra(internalGameState, event);
     }
@@ -335,6 +359,6 @@ export function hasHint(game) {
     game.users &&
     Object.keys(game.users).length === 1 &&
     game.access === "private" &&
-    (game.mode || "normal") === "normal"
+    (game.mode === "normal" || game.mode === "setjr")
   );
 }

@@ -6,6 +6,8 @@ import {
   conjugateCard,
   filter,
   findSet,
+  generateCards,
+  initializeDeck,
 } from "./util";
 
 it("computes conjugate cards", () => {
@@ -74,6 +76,15 @@ describe("findSet()", () => {
     verifyUltra(findSet(["1202", "0000", "0001", "0002", "2101"], "ultraset"));
     expect(findSet(["1202", "0000", "0001", "0002"], "ultraset")).toBe(null);
   });
+});
+
+it("initializes junior deck", () => {
+  expect(initializeDeck(generateCards(), "setjr")).has.length(27);
+  expect(initializeDeck(generateCards(), "setjr")).includes("1102");
+
+  expect(initializeDeck(generateCards(), "normal")).has.length(81);
+  expect(initializeDeck(generateCards(), "setchain")).has.length(81);
+  expect(initializeDeck(generateCards(), "ultraset")).has.length(81);
 });
 
 describe("bad-words filter", () => {
