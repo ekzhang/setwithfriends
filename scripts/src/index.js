@@ -2,20 +2,12 @@ import { cert, initializeApp } from "firebase-admin/app";
 import inquirer from "inquirer";
 import process from "node:process";
 
-import { calcStats } from "./calcStats.js";
 import { fixGames } from "./fixGames.js";
 import { sanitizeNames } from "./sanitizeNames.js";
 import { listAdmins, listPatrons, toggleAdmin } from "./users.js";
 
 // Add scripts as functions to this array
-const scripts = [
-  listAdmins,
-  listPatrons,
-  toggleAdmin,
-  sanitizeNames,
-  fixGames,
-  calcStats,
-];
+const scripts = [listAdmins, listPatrons, toggleAdmin, sanitizeNames, fixGames];
 
 initializeApp({
   credential: cert("./credential.json"),

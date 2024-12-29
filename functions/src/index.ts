@@ -97,7 +97,7 @@ export const finishGame = functions.https.onCall(async (data, context) => {
     snapshot.child("enableHint").val() &&
     snapshot.child("users").numChildren() === 1 &&
     snapshot.child("access").val() === "private" &&
-    gameMode === "normal"
+    (gameMode === "normal" || gameMode === "setjr")
   ) {
     return;
   }

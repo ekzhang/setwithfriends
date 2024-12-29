@@ -9,7 +9,12 @@ import firebase from "../firebase";
 import { hasHint, modes } from "../util";
 
 const useStyles = makeStyles(() => ({
-  settings: { display: "flex", flexDirection: "column", alignItems: "center" },
+  settings: {
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+    paddingInline: 4,
+  },
 }));
 
 const hintTip =
@@ -31,8 +36,13 @@ function GameSettings({ game, gameId, userId }) {
 
   return (
     <div className={classes.settings}>
-      <RadioGroup row value={gameMode} onChange={handleChangeMode}>
-        {["normal", "setchain", "ultraset"].map((mode) => (
+      <RadioGroup
+        row
+        sx={{ justifyContent: "center" }}
+        value={gameMode}
+        onChange={handleChangeMode}
+      >
+        {Object.keys(modes).map((mode) => (
           <Tooltip
             key={mode}
             arrow
@@ -41,22 +51,31 @@ function GameSettings({ game, gameId, userId }) {
           >
             <FormControlLabel
               value={mode}
-              control={<Radio />}
+              control={<Radio size="small" sx={{ width: 32, height: 32 }} />}
               disabled={userId !== game.host}
               label={modes[mode].name}
+              slotProps={{ typography: { variant: "body2" } }}
             />
           </Tooltip>
         ))}
       </RadioGroup>
-      {gameMode === "normal" && (
+      {["normal", "setjr"].includes(gameMode) && (
         <Tooltip arrow placement="left" title={hintTip}>
           <FormControlLabel
-            control={<Switch checked={hasHint(game)} onChange={toggleHint} />}
+            control={
+              <Switch
+                size="small"
+                checked={hasHint(game)}
+                onChange={toggleHint}
+              />
+            }
             label="Enable Hints"
             disabled={
               Object.keys(game.users || {}).length > 1 ||
               game.access !== "private"
             }
+            slotProps={{ typography: { variant: "body2" } }}
+            sx={{ my: 0.25 }}
           />
         </Tooltip>
       )}

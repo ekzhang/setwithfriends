@@ -214,7 +214,7 @@ function GamePage() {
     lastSet = [c1, c2, c3];
   }
   let answer = findSet(current.slice(0, boardSize), gameMode, lastSet);
-  if (gameMode === "normal" && hasHint(game) && answer) {
+  if (hasHint(game) && answer) {
     answer = answer.slice(0, numHints);
   } else {
     answer = null;
@@ -236,7 +236,7 @@ function GamePage() {
       if (selected.includes(card)) {
         return removeCard(selected, card);
       } else {
-        if (gameMode === "normal") {
+        if (gameMode === "normal" || gameMode === "setjr") {
           const vals = [...selected, card];
           if (vals.length === 3) {
             if (checkSet(...vals)) {
@@ -480,7 +480,7 @@ function GamePage() {
         >
           <GameSidebar game={game} scores={scores} leaderboard={leaderboard} />
           <Box mt={1}>
-            {gameMode === "normal" && hasHint(game) && (
+            {hasHint(game) && (
               <Button
                 size="large"
                 variant="outlined"
