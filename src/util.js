@@ -329,7 +329,7 @@ export function computeState(gameData, gameMode = "normal") {
 
   if (gameData.events) {
     const events = Object.values(gameData.events).sort(
-      (e1, e2) => e1.time - e2.time
+      (e1, e2) => e1.time - e2.time,
     );
     for (const event of events) {
       if (gameMode === "normal" || gameMode === "setjr")
