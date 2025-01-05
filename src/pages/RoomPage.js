@@ -219,7 +219,7 @@ function RoomPage({ match, location }) {
                       fullWidth
                       onClick={startGame}
                     >
-                      Start game (Ctrl+Enter)
+                      Start game
                     </Button>
                   </Tooltip>
                 ) : (

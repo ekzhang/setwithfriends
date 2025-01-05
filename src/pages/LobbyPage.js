@@ -277,8 +277,6 @@ function LobbyPage() {
                   disabled={waiting}
                 >
                   Create a Game
-                  <br />
-                  (Ctrl+Enter)
                 </Button>
               </Tooltip>
               <Tooltip
@@ -293,8 +291,6 @@ function LobbyPage() {
                   disabled={waiting}
                 >
                   New Private Game
-                  <br />
-                  (Shift+Enter)
                 </Button>
               </Tooltip>
             </div>
