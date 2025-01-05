@@ -243,8 +243,7 @@ function Game({
         •{" "}
         <Link component="button" onClick={flipCardOrientation}>
           Rotate cards
-        </Link>{" "}
-        • <Link component="button">Show keys</Link>
+        </Link>
       </Typography>
       {gameMode === "setchain" && lastSet.length ? (
         <Divider
