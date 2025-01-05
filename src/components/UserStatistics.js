@@ -1,13 +1,20 @@
+import Grid from "@mui/material/Grid";
+import Typography from "@mui/material/Typography";
+import { useTheme } from "@mui/material/styles";
+import makeStyles from "@mui/styles/makeStyles";
+import {
+  ArcElement,
+  Chart as ChartJS,
+  Legend,
+  PieController,
+  Tooltip,
+} from "chart.js";
 import { memo } from "react";
-import Grid from "@material-ui/core/Grid";
-import Typography from "@material-ui/core/Typography";
-import { makeStyles, useTheme } from "@material-ui/core/styles";
 import { Pie } from "react-chartjs-2";
-import { Chart as ChartJS, ArcElement } from "chart.js";
 
 import { formatTime } from "../util";
 
-ChartJS.register(ArcElement);
+ChartJS.register(ArcElement, Legend, PieController, Tooltip);
 
 const useStyles = makeStyles((theme) => ({
   statisticsPanel: {
@@ -46,7 +53,7 @@ function UserStatistics({ stats, variant }) {
     datasets: [
       {
         data: [100],
-        backgroundColor: [theme.pie.noGames],
+        backgroundColor: [theme.custom.pie.noGames],
       },
     ],
     labels: ["No games played"],
@@ -57,7 +64,7 @@ function UserStatistics({ stats, variant }) {
     plugins: {
       legend: {
         position: "bottom",
-        onClick: (e) => e.stopPropagation(),
+        onClick: () => {}, // Disable click to show/hide category.
       },
       tooltip: {
         enabled: num.finishedGames > 0,

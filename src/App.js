@@ -1,30 +1,29 @@
-import { useState, useEffect } from "react";
-import firebase from "./firebase";
-import "./styles.css";
+import CssBaseline from "@mui/material/CssBaseline";
+import { StyledEngineProvider, ThemeProvider } from "@mui/material/styles";
+import { useEffect, useState } from "react";
+import { BrowserRouter, Route, Routes } from "react-router-dom";
 
-import { BrowserRouter, Switch, Route } from "react-router-dom";
-import CssBaseline from "@material-ui/core/CssBaseline";
-import { ThemeProvider } from "@material-ui/core/styles";
-
-import { generateColor, generateName } from "./util";
-import { UserContext, SettingsContext } from "./context";
-import useStorage from "./hooks/useStorage";
 import ConnectionsTracker from "./components/ConnectionsTracker";
-import WelcomeDialog from "./components/WelcomeDialog";
 import Navbar from "./components/Navbar";
-import RoomPage from "./pages/RoomPage";
-import GamePage from "./pages/GamePage";
-import LobbyPage from "./pages/LobbyPage";
-import LoadingPage from "./pages/LoadingPage";
-import NotFoundPage from "./pages/NotFoundPage";
-import BannedPage from "./pages/BannedPage";
-import HelpPage from "./pages/HelpPage";
+import WelcomeDialog from "./components/WelcomeDialog";
+import { SettingsContext, UserContext } from "./context";
+import firebase from "./firebase";
+import useStorage from "./hooks/useStorage";
 import AboutPage from "./pages/AboutPage";
+import BannedPage from "./pages/BannedPage";
 import ConductPage from "./pages/ConductPage";
 import DonatePage from "./pages/DonatePage";
+import GamePage from "./pages/GamePage";
+import HelpPage from "./pages/HelpPage";
 import LegalPage from "./pages/LegalPage";
+import LoadingPage from "./pages/LoadingPage";
+import LobbyPage from "./pages/LobbyPage";
+import NotFoundPage from "./pages/NotFoundPage";
 import ProfilePage from "./pages/ProfilePage";
-import { lightTheme, darkTheme } from "./themes";
+import RoomPage from "./pages/RoomPage";
+import "./styles.css";
+import { darkTheme, lightTheme } from "./themes";
+import { generateColor, generateName } from "./util";
 
 function App() {
   const [authUser, setAuthUser] = useState(null);
@@ -35,7 +34,7 @@ function App() {
   const [customColors, setCustomColors] = useStorage("customColors", "{}");
   const [keyboardLayout, setKeyboardLayout] = useStorage(
     "keyboardLayout",
-    "QWERTY"
+    "QWERTY",
   );
   const [volume, setVolume] = useStorage("volume", "on");
 
@@ -50,7 +49,7 @@ function App() {
         firebase
           .auth()
           .signInAnonymously()
-          .catch((error) => {
+          .catch(() => {
             alert("Unable to connect to the server. Please try again later.");
           });
       }
@@ -89,13 +88,19 @@ function App() {
     if (parsedCustoms.light) {
       setCustomLightTheme({
         ...lightTheme,
-        setCard: { ...lightTheme.setCard, ...parsedCustoms.light },
+        custom: {
+          ...lightTheme.custom,
+          setCard: { ...lightTheme.custom.setCard, ...parsedCustoms.light },
+        },
       });
     }
     if (parsedCustoms.dark) {
       setCustomDarkTheme({
         ...darkTheme,
-        setCard: { ...darkTheme.setCard, ...parsedCustoms.dark },
+        custom: {
+          ...darkTheme.custom,
+          setCard: { ...darkTheme.custom.setCard, ...parsedCustoms.dark },
+        },
       });
     }
   }, [customColors]);
@@ -109,45 +114,47 @@ function App() {
   };
 
   return (
-    <ThemeProvider
-      theme={themeType === "light" ? customLightTheme : customDarkTheme}
-    >
-      <BrowserRouter>
-        <CssBaseline />
-        {!user ? (
-          <LoadingPage />
-        ) : user.banned && Date.now() < user.banned ? (
-          <BannedPage time={user.banned} />
-        ) : (
-          <UserContext.Provider value={user}>
-            <SettingsContext.Provider
-              value={{ keyboardLayout, setKeyboardLayout, volume, setVolume }}
-            >
-              <ConnectionsTracker />
-              <WelcomeDialog />
-              <Navbar
-                themeType={themeType}
-                handleChangeTheme={handleChangeTheme}
-                customColors={JSON.parse(customColors)}
-                handleCustomColors={handleCustomColors}
-              />
-              <Switch>
-                <Route exact path="/help" component={HelpPage} />
-                <Route exact path="/about" component={AboutPage} />
-                <Route exact path="/conduct" component={ConductPage} />
-                <Route exact path="/donate" component={DonatePage} />
-                <Route exact path="/legal" component={LegalPage} />
-                <Route exact path="/" component={LobbyPage} />
-                <Route exact path="/room/:id" component={RoomPage} />
-                <Route exact path="/game/:id" component={GamePage} />
-                <Route exact path="/profile/:id" component={ProfilePage} />
-                <Route component={NotFoundPage} />
-              </Switch>
-            </SettingsContext.Provider>
-          </UserContext.Provider>
-        )}
-      </BrowserRouter>
-    </ThemeProvider>
+    <StyledEngineProvider injectFirst>
+      <ThemeProvider
+        theme={themeType === "light" ? customLightTheme : customDarkTheme}
+      >
+        <BrowserRouter>
+          <CssBaseline />
+          {!user ? (
+            <LoadingPage />
+          ) : user.banned && Date.now() < user.banned ? (
+            <BannedPage time={user.banned} />
+          ) : (
+            <UserContext.Provider value={user}>
+              <SettingsContext.Provider
+                value={{ keyboardLayout, setKeyboardLayout, volume, setVolume }}
+              >
+                <ConnectionsTracker />
+                <WelcomeDialog />
+                <Navbar
+                  themeType={themeType}
+                  handleChangeTheme={handleChangeTheme}
+                  customColors={JSON.parse(customColors)}
+                  handleCustomColors={handleCustomColors}
+                />
+                <Routes>
+                  <Route path="/help" element={<HelpPage />} />
+                  <Route path="/about" element={<AboutPage />} />
+                  <Route path="/conduct" element={<ConductPage />} />
+                  <Route path="/donate" element={<DonatePage />} />
+                  <Route path="/legal" element={<LegalPage />} />
+                  <Route path="/" element={<LobbyPage />} />
+                  <Route path="/room/:id" element={<RoomPage />} />
+                  <Route path="/game/:id" element={<GamePage />} />
+                  <Route path="/profile/:id" element={<ProfilePage />} />
+                  <Route path="*" element={<NotFoundPage />} />
+                </Routes>
+              </SettingsContext.Provider>
+            </UserContext.Provider>
+          )}
+        </BrowserRouter>
+      </ThemeProvider>
+    </StyledEngineProvider>
   );
 }
 

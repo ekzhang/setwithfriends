@@ -1,16 +1,15 @@
+import WhatshotIcon from "@mui/icons-material/Whatshot";
+import Button from "@mui/material/Button";
+import Container from "@mui/material/Container";
+import Paper from "@mui/material/Paper";
+import Typography from "@mui/material/Typography";
 import { useContext, useState } from "react";
-
-import Button from "@material-ui/core/Button";
-import Container from "@material-ui/core/Container";
-import Paper from "@material-ui/core/Paper";
-import Typography from "@material-ui/core/Typography";
-import WhatshotIcon from "@material-ui/icons/Whatshot";
 
 import InternalLink from "../components/InternalLink";
 import User from "../components/User";
+import { UserContext } from "../context";
 import firebase, { customerPortal } from "../firebase";
 import useFirebaseRef from "../hooks/useFirebaseRef";
-import { UserContext } from "../context";
 import { patronCheckout } from "../stripe";
 
 function DonatePage() {
@@ -77,7 +76,7 @@ function DonatePage() {
           <ul>
             <li>
               Bragging rights with a patron icon next to your name (e.g.,{" "}
-              <User id={user.id} forcePatron />
+              <User id={user.id} showIcon forcePatron />
               ).
             </li>
             <li>

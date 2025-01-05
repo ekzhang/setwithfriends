@@ -1,19 +1,18 @@
+import Tooltip from "@mui/material/Tooltip";
+import Typography from "@mui/material/Typography";
+import makeStyles from "@mui/styles/makeStyles";
 import { memo } from "react";
 
-import Tooltip from "@material-ui/core/Tooltip";
-import Typography from "@material-ui/core/Typography";
-import { makeStyles } from "@material-ui/core/styles";
-
+import { conjugateCard, formatTime, modes } from "../util";
 import SetCard from "./SetCard";
 import User from "./User";
-import { conjugateCard, formatTime, modes } from "../util";
 
 const useStyles = makeStyles((theme) => ({
   logEntry: {
     marginBottom: "0.35em",
     padding: "0 12px",
     textAlign: "center",
-    background: theme.setFoundEntry,
+    background: theme.custom.setFoundEntry,
   },
   logEntryText: {
     display: "flex",
@@ -44,7 +43,9 @@ function ChatCards({ item, gameMode, startedAt }) {
             id={item.user}
           />
         </div>
-        {(gameMode === "normal" || gameMode === "setchain") && (
+        {(gameMode === "normal" ||
+          gameMode === "setjr" ||
+          gameMode === "setchain") && (
           <div>
             <SetCard size="sm" value={item.c1} />
             <SetCard size="sm" value={item.c2} />

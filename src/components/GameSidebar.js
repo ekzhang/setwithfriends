@@ -1,21 +1,21 @@
-import AlarmIcon from "@material-ui/icons/Alarm";
-import Divider from "@material-ui/core/Divider";
-import List from "@material-ui/core/List";
-import ListItem from "@material-ui/core/ListItem";
-import ListItemIcon from "@material-ui/core/ListItemIcon";
-import ListItemText from "@material-ui/core/ListItemText";
-import Paper from "@material-ui/core/Paper";
-import Tooltip from "@material-ui/core/Tooltip";
-import Typography from "@material-ui/core/Typography";
-import { makeStyles } from "@material-ui/core/styles";
-import SportsEsportsIcon from "@material-ui/icons/SportsEsports";
-import SnoozeIcon from "@material-ui/icons/Snooze";
-import { useLocation, Link as RouterLink } from "react-router-dom";
+import AlarmIcon from "@mui/icons-material/Alarm";
+import SnoozeIcon from "@mui/icons-material/Snooze";
+import SportsEsportsIcon from "@mui/icons-material/SportsEsports";
+import Divider from "@mui/material/Divider";
+import List from "@mui/material/List";
+import ListItemButton from "@mui/material/ListItemButton";
+import ListItemIcon from "@mui/material/ListItemIcon";
+import ListItemText from "@mui/material/ListItemText";
+import Paper from "@mui/material/Paper";
+import Tooltip from "@mui/material/Tooltip";
+import Typography from "@mui/material/Typography";
+import makeStyles from "@mui/styles/makeStyles";
+import { Link as RouterLink, useLocation } from "react-router-dom";
 
-import User from "./User";
-import Subheading from "./Subheading";
 import useMoment from "../hooks/useMoment";
 import { formatTime } from "../util";
+import Subheading from "./Subheading";
+import User from "./User";
 
 const useStyles = makeStyles((theme) => ({
   sidebar: {
@@ -30,7 +30,7 @@ const useStyles = makeStyles((theme) => ({
     justifyContent: "center",
   },
   alarm: {
-    color: theme.alarm,
+    color: theme.custom.alarm,
     marginRight: 10,
     marginBottom: 3,
   },
@@ -73,7 +73,7 @@ function GameSidebar({ game, scores, leaderboard }) {
               variant="body2"
               noWrap
               render={(user, userEl) => (
-                <ListItem button component={RouterLink} to={`/profile/${uid}`}>
+                <ListItemButton component={RouterLink} to={`/profile/${uid}`}>
                   {game.status === "ingame" && (
                     <ListItemIcon>
                       {user.connections &&
@@ -97,7 +97,7 @@ function GameSidebar({ game, scores, leaderboard }) {
                   >
                     <strong>{scores[uid] || 0}</strong>
                   </ListItemText>
-                </ListItem>
+                </ListItemButton>
               )}
             />
           ))}

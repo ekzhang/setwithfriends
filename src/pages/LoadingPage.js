@@ -1,5 +1,5 @@
-import { makeStyles } from "@material-ui/core/styles";
-import Container from "@material-ui/core/Container";
+import Container from "@mui/material/Container";
+import makeStyles from "@mui/styles/makeStyles";
 
 import Loading from "../components/Loading";
 

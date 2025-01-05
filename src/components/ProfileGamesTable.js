@@ -1,21 +1,20 @@
-import Paper from "@material-ui/core/Paper";
-import Table from "@material-ui/core/Table";
-import TableBody from "@material-ui/core/TableBody";
-import TableCell from "@material-ui/core/TableCell";
-import TableContainer from "@material-ui/core/TableContainer";
-import TableHead from "@material-ui/core/TableHead";
-import TableRow from "@material-ui/core/TableRow";
-import { makeStyles } from "@material-ui/core/styles";
-import Typography from "@material-ui/core/Typography";
-import StarIcon from "@material-ui/icons/Star";
-import amber from "@material-ui/core/colors/amber";
-import grey from "@material-ui/core/colors/grey";
-import { useTheme } from "@material-ui/core/styles";
+import StarIcon from "@mui/icons-material/Star";
+import Paper from "@mui/material/Paper";
+import Table from "@mui/material/Table";
+import TableBody from "@mui/material/TableBody";
+import TableCell from "@mui/material/TableCell";
+import TableContainer from "@mui/material/TableContainer";
+import TableHead from "@mui/material/TableHead";
+import TableRow from "@mui/material/TableRow";
+import Typography from "@mui/material/Typography";
+import { amber, grey } from "@mui/material/colors";
+import { useTheme } from "@mui/material/styles";
+import makeStyles from "@mui/styles/makeStyles";
 
+import { colors, formatTime, modes } from "../util";
 import ElapsedTime from "./ElapsedTime";
-import User from "./User";
 import Loading from "./Loading";
-import { formatTime, colors, modes } from "../util";
+import User from "./User";
 
 const useStyles = makeStyles((theme) => ({
   gamesTable: {
@@ -30,14 +29,11 @@ const useStyles = makeStyles((theme) => ({
       paddingLeft: 12,
       paddingRight: 12,
     },
-    "& svg": {
-      display: "block",
-    },
     "& th": {
       background: theme.palette.background.panel,
     },
     "& tr": {
-      background: theme.profileTable.row,
+      background: theme.custom.profileTable.row,
     },
     "& tr:hover": {
       background: theme.palette.action.hover,
@@ -46,23 +42,28 @@ const useStyles = makeStyles((theme) => ({
   },
   // Remove cells of some columns of table for small screens
   vanishingTableCell: {
-    [theme.breakpoints.down("xs")]: {
+    [theme.breakpoints.down("sm")]: {
       display: "none",
     },
   },
+  starIcon: {
+    display: "block",
+    color: amber[500],
+    marginBlock: -4,
+  },
 }));
 
-function ProfileGamesTable({ userId, gamesData, handleClickGame }) {
+function ProfileGamesTable({ userId, gamesWithScores, handleClickGame }) {
   const classes = useStyles();
   const theme = useTheme();
 
-  if (!gamesData) {
+  if (!gamesWithScores) {
     return <Loading />;
   }
-  if (Object.keys(gamesData).length === 0) {
+  if (Object.keys(gamesWithScores).length === 0) {
     return (
       <Typography style={{ color: grey[400] }}>
-        No recent games to display...
+        No recent games in this category.
       </Typography>
     );
   }
@@ -83,7 +84,7 @@ function ProfileGamesTable({ userId, gamesData, handleClickGame }) {
           </TableRow>
         </TableHead>
         <TableBody>
-          {Object.entries(gamesData)
+          {Object.entries(gamesWithScores)
             .sort(([, g1], [, g2]) => g2.createdAt - g1.createdAt)
             .map(([gameId, game]) => {
               const modeInfo = modes[game.mode || "normal"];
@@ -97,13 +98,15 @@ function ProfileGamesTable({ userId, gamesData, handleClickGame }) {
                     style={{
                       color:
                         colors[modeInfo.color][
-                          theme.palette.type === "dark" ? 100 : 900
+                          theme.palette.mode === "dark" ? 100 : 900
                         ],
                     }}
                   >
                     {modeInfo.name}
                   </TableCell>
-                  <TableCell>{game.scores[userId] || 0}</TableCell>
+                  <TableCell>
+                    {game.scores ? game.scores[userId] || 0 : "—"}
+                  </TableCell>
                   <TableCell>
                     {formatTime(game.endedAt - game.startedAt)}
                   </TableCell>
@@ -111,9 +114,11 @@ function ProfileGamesTable({ userId, gamesData, handleClickGame }) {
                     <ElapsedTime value={game.createdAt} />
                   </TableCell>
                   <TableCell>
-                    {game.scores[userId] === game.topScore && (
-                      <StarIcon style={{ color: amber[500] }} />
-                    )}
+                    {game.scores &&
+                      game.scores[userId] ===
+                        Math.max(0, ...Object.values(game.scores)) && (
+                        <StarIcon className={classes.starIcon} />
+                      )}
                   </TableCell>
                 </TableRow>
               );

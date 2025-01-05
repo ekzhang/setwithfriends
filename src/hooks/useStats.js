@@ -1,13 +1,13 @@
-import { useMemo } from "react";
 import cloneDeep from "clone-deep";
+import { useMemo } from "react";
 
-import useFirebaseRef from "./useFirebaseRef";
 import { BASE_RATING, modes } from "../util";
+import useFirebaseRef from "./useFirebaseRef";
 
 /** Listen to statistics for a given user, with filled in default values. */
 function useStats(userId) {
   const [value, loading] = useFirebaseRef(
-    userId ? `/userStats/${userId}` : null
+    userId ? `/userStats/${userId}` : null,
   );
 
   // Fill in possibly uninitialized default values

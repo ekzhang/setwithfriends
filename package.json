@@ -1,5 +1,6 @@
 {
   "name": "setwithfriends",
+  "type": "module",
   "version": "1.0.0",
   "repository": "https://github.com/ekzhang/setwithfriends",
   "license": "MIT",
@@ -7,41 +8,52 @@
   "keywords": [],
   "main": "src/index.js",
   "dependencies": {
-    "@material-ui/core": "^4.12.3",
-    "@material-ui/icons": "^4.11.2",
-    "@react-spring/web": "^9.4.4",
-    "@stripe/stripe-js": "^1.25.0",
-    "bad-words": "^3.0.4",
-    "chart.js": "^3.7.1",
+    "@emotion/react": "^11.14.0",
+    "@emotion/styled": "^11.14.0",
+    "@mui/icons-material": "^6.2.1",
+    "@mui/material": "^6.2.1",
+    "@mui/styles": "^6.2.1",
+    "@react-spring/web": "^9.7.5",
+    "@stripe/stripe-js": "^5.4.0",
+    "bad-words": "^4.0.0",
+    "chart.js": "^4.4.7",
     "clone-deep": "^4.0.1",
-    "clsx": "^1.1.1",
-    "firebase": "^9.6.9",
-    "moment": "^2.29.1",
+    "clsx": "^2.1.1",
+    "firebase": "^11.1.0",
+    "moment": "^2.30.1",
     "project-name-generator": "^2.1.9",
-    "react": "^17.0.2",
-    "react-chartjs-2": "^4.0.1",
+    "react": "^18.3.1",
+    "react-chartjs-2": "^5.2.0",
     "react-color": "^2.19.3",
-    "react-dom": "^17.0.2",
-    "react-router-dom": "^5.3.0",
-    "react-scripts": "5.0.0",
-    "use-sound": "^4.0.1"
+    "react-dom": "^18.3.1",
+    "react-router-dom": "^7.1.0",
+    "use-sound": "^4.0.3"
   },
   "devDependencies": {
-    "@google-cloud/pubsub": "^2.19.0",
-    "cross-env": "^7.0.3",
-    "prettier": "2.6.0"
-  },
-  "eslintConfig": {
-    "extends": "react-app"
+    "@eslint/js": "^9.17.0",
+    "@google-cloud/pubsub": "^4.9.0",
+    "@trivago/prettier-plugin-sort-imports": "^5.2.0",
+    "@types/react": "^18.3.18",
+    "@types/react-dom": "^18.3.5",
+    "@vitejs/plugin-react-swc": "^3.7.2",
+    "eslint": "^9.17.0",
+    "eslint-plugin-react": "^7.37.2",
+    "eslint-plugin-react-hooks": "^5.1.0",
+    "eslint-plugin-react-refresh": "^0.4.16",
+    "globals": "^15.14.0",
+    "prettier": "3.4.2",
+    "vite": "^6.0.5",
+    "vitest": "^2.1.8"
   },
   "scripts": {
-    "start": "react-scripts start",
-    "dev": "node rundev.js",
-    "build:dev": "react-scripts build",
-    "build:preview": "cross-env REACT_APP_ENV=preview react-scripts build",
-    "build": "cross-env REACT_APP_ENV=production react-scripts build",
-    "test": "react-scripts test --env=jsdom",
-    "eject": "react-scripts eject",
+    "dev": "vite dev",
+    "develop": "node rundev.js",
+    "build:dev": "vite build --mode development",
+    "build:preview": "vite build --mode preview",
+    "build": "vite build",
+    "preview": "vite preview",
+    "lint": "eslint src",
+    "test": "vitest",
     "format": "prettier --write ."
   },
   "browserslist": [
@@ -51,7 +63,7 @@
     "not op_mini all"
   ],
   "engines": {
-    "node": "16",
-    "npm": "8"
+    "node": "20",
+    "npm": "10"
   }
 }

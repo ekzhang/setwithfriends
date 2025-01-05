@@ -1,16 +1,16 @@
+import Button from "@mui/material/Button";
+import Dialog from "@mui/material/Dialog";
+import DialogActions from "@mui/material/DialogActions";
+import DialogContent from "@mui/material/DialogContent";
+import DialogTitle from "@mui/material/DialogTitle";
+import Grid from "@mui/material/Grid";
+import makeStyles from "@mui/styles/makeStyles";
+import withTheme from "@mui/styles/withTheme";
 import { useState } from "react";
-
-import { makeStyles, withTheme } from "@material-ui/core/styles";
-import Button from "@material-ui/core/Button";
-import Dialog from "@material-ui/core/Dialog";
-import Grid from "@material-ui/core/Grid";
-import DialogActions from "@material-ui/core/DialogActions";
-import DialogContent from "@material-ui/core/DialogContent";
-import DialogTitle from "@material-ui/core/DialogTitle";
 import { ChromePicker } from "react-color";
 
-import ResponsiveSetCard from "./ResponsiveSetCard";
 import { darkTheme, lightTheme } from "../themes";
+import ResponsiveSetCard from "./ResponsiveSetCard";
 
 const useStyles = makeStyles({
   colorPickerColumn: {
@@ -24,9 +24,9 @@ function ColorChoiceDialog(props) {
   const { open, onClose, title, theme } = props;
   const classes = useStyles();
 
-  const [red, setRed] = useState(theme.setCard.red);
-  const [green, setGreen] = useState(theme.setCard.green);
-  const [purple, setPurple] = useState(theme.setCard.purple);
+  const [red, setRed] = useState(theme.custom.setCard.red);
+  const [green, setGreen] = useState(theme.custom.setCard.green);
+  const [purple, setPurple] = useState(theme.custom.setCard.purple);
 
   function handleClose() {
     onClose(null);
@@ -37,15 +37,15 @@ function ColorChoiceDialog(props) {
   }
 
   function handleReset() {
-    if (theme.palette.type === "light") {
-      setRed(lightTheme.setCard.red);
-      setGreen(lightTheme.setCard.green);
-      setPurple(lightTheme.setCard.purple);
+    if (theme.palette.mode === "light") {
+      setRed(lightTheme.custom.setCard.red);
+      setGreen(lightTheme.custom.setCard.green);
+      setPurple(lightTheme.custom.setCard.purple);
     }
-    if (theme.palette.type === "dark") {
-      setRed(darkTheme.setCard.red);
-      setGreen(darkTheme.setCard.green);
-      setPurple(darkTheme.setCard.purple);
+    if (theme.palette.mode === "dark") {
+      setRed(darkTheme.custom.setCard.red);
+      setGreen(darkTheme.custom.setCard.green);
+      setPurple(darkTheme.custom.setCard.purple);
     }
   }
 
@@ -88,7 +88,7 @@ function ColorChoiceDialog(props) {
             />
           </Grid>
         </Grid>
-        <Grid container direction="row" justify="center">
+        <Grid container direction="row" justifyContent="center">
           <Button
             onClick={handleReset}
             variant="outlined"

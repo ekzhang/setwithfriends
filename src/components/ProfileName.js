@@ -1,19 +1,18 @@
-import { useState, memo, useContext } from "react";
+import MoreVertIcon from "@mui/icons-material/MoreVert";
+import Menu from "@mui/material/Menu";
+import MenuItem from "@mui/material/MenuItem";
+import Typography from "@mui/material/Typography";
+import { useTheme } from "@mui/material/styles";
+import makeStyles from "@mui/styles/makeStyles";
+import { memo, useContext, useState } from "react";
 
-import Typography from "@material-ui/core/Typography";
-import { useTheme } from "@material-ui/core/styles";
-import MoreVertIcon from "@material-ui/icons/MoreVert";
-import MenuItem from "@material-ui/core/MenuItem";
-import Menu from "@material-ui/core/Menu";
-import { makeStyles } from "@material-ui/core/styles";
-
+import { UserContext } from "../context";
 import firebase from "../firebase";
+import { generateName } from "../util";
 import ElapsedTime from "./ElapsedTime";
 import User from "./User";
-import { UserContext } from "../context";
-import { generateName } from "../util";
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles(() => ({
   vertIcon: {
     marginLeft: "auto",
     cursor: "pointer",
@@ -61,6 +60,7 @@ function ProfileName({ userId }) {
   return (
     <User
       id={userId}
+      showIcon
       render={(player, userEl) => {
         const isOnline =
           player.connections && Object.keys(player.connections).length > 0;
