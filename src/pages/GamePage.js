@@ -22,6 +22,7 @@ import User from "../components/User";
 import { SettingsContext, UserContext } from "../context";
 import firebase, { createGame, fetchStaleGame, finishGame } from "../firebase";
 import useFirebaseRef from "../hooks/useFirebaseRef";
+import useKeydown from "../hooks/useKeydown";
 import {
   checkSet,
   checkSetUltra,
@@ -150,6 +151,16 @@ function GamePage() {
       }
     }
   }, [loadingGame, loadingGameData, game, gameData, fetchingStaleGame, gameId]);
+
+  useKeydown((event) => {
+    if (
+      event.ctrlKey === true &&
+      event.keyCode === 13 &&
+      game.status === "done"
+    ) {
+      handlePlayAgain();
+    }
+  });
 
   if (redirect) return <Navigate push to={redirect} />;
 
