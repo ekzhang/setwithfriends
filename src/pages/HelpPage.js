@@ -171,7 +171,12 @@ function HelpPage() {
           shortcuts by selecting your keyboard layout in the settings. The
           shortcuts specific to your layout will then be reflected here.
         </Typography>
-
+        <Typography variant="body1" gutterBottom>
+          You can start a room with the <code>Ctrl + Enter</code> shortcut from
+          the lobby, and start or restart a game with <code>Ctrl + Enter</code>.
+          From the lobby you can also start a private room with{" "}
+          <code>Shift + Enter</code>.
+        </Typography>
         <hr />
         <Typography variant="h5" gutterBottom>
           Game modes
