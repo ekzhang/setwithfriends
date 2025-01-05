@@ -37,14 +37,10 @@ function Game({
     "orientation",
     "vertical"
   );
-
-  const [hotkeysVisible, setHotkeysVisible] = useStorage("show-hotkeys", false);
-
   const { keyboardLayout, volume } = useContext(SettingsContext);
   const keyboardLayoutDesc = standardLayouts[keyboardLayout];
   const isHorizontal = cardOrientation === "horizontal";
   const isLandscape = layoutOrientation === "landscape";
-  const isHotkeysVisible = hotkeysVisible;
   const [gameDimensions, gameEl] = useDimensions();
   const [playLayout] = useSound(layoutSfx);
 
@@ -172,11 +168,6 @@ function Game({
     if (volume === "on") playLayout();
     setLayoutOrientation(isLandscape ? "portrait" : "landscape");
   }
-  function flipHotKeysVisible(event) {
-    event.preventDefault();
-    if (volume === "on") playLayout();
-    setHotkeysVisible(!isHotkeysVisible);
-  }
 
   // Keyboard shortcuts
   const shortcuts = isLandscape
@@ -248,10 +239,7 @@ function Game({
         <Link component="button" onClick={flipCardOrientation}>
           Rotate cards
         </Link>{" "}
-        •{" "}
-        <Link component="button" onClick={flipHotKeysVisible}>
-          Show keys
-        </Link>
+        • <Link component="button">Show keys</Link>
       </Typography>
       {gameMode === "setchain" && lastSet.length ? (
         <Divider
