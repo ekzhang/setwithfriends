@@ -1,7 +1,7 @@
-import Typography from "@material-ui/core/Typography";
-import Link from "@material-ui/core/Link";
-import Container from "@material-ui/core/Container";
-import Paper from "@material-ui/core/Paper";
+import Container from "@mui/material/Container";
+import Link from "@mui/material/Link";
+import Paper from "@mui/material/Paper";
+import Typography from "@mui/material/Typography";
 
 import InternalLink from "../components/InternalLink";
 
@@ -87,6 +87,7 @@ function ConductPage() {
             target="_blank"
             rel="noopener"
             href="https://discord.gg/XbjJyc9"
+            underline="hover"
           >
             official Discord server
           </Link>{" "}

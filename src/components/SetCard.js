@@ -1,6 +1,6 @@
+import { useTheme } from "@mui/material/styles";
+import makeStyles from "@mui/styles/makeStyles";
 import { memo } from "react";
-
-import { makeStyles, useTheme } from "@material-ui/core/styles";
 
 const useStyles = makeStyles((theme) => ({
   card: {
@@ -15,7 +15,7 @@ const useStyles = makeStyles((theme) => ({
     justifyContent: "center",
     flexShrink: 0,
     margin: 6,
-    backgroundColor: theme.setCard.background,
+    backgroundColor: theme.custom.setCard.background,
     transition: "box-shadow 0.15s",
     "&:hover": {
       boxShadow: "0px 0px 5px 3px #bbb",
@@ -52,7 +52,11 @@ function Symbol(props) {
   const classes = useStyles();
   const theme = useTheme();
 
-  const COLORS = [theme.setCard.purple, theme.setCard.green, theme.setCard.red];
+  const COLORS = [
+    theme.custom.setCard.purple,
+    theme.custom.setCard.green,
+    theme.custom.setCard.red,
+  ];
 
   const color = COLORS[props.color];
   const shape = SHAPES[props.shape];

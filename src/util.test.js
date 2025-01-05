@@ -1,9 +1,13 @@
+import { describe, expect, it } from "vitest";
+
 import {
-  conjugateCard,
   checkSet,
   checkSetUltra,
-  findSet,
+  conjugateCard,
   filter,
+  findSet,
+  generateCards,
+  initializeDeck,
 } from "./util";
 
 it("computes conjugate cards", () => {
@@ -60,10 +64,10 @@ describe("findSet()", () => {
 
   it("can find set-chains", () => {
     expect(
-      findSet(["0112", "0111", "0110"], "setchain", ["1200", "0012", "2121"])
+      findSet(["0112", "0111", "0110"], "setchain", ["1200", "0012", "2121"]),
     ).toBe(null);
     expect(
-      findSet(["0112", "0211", "0110"], "setchain", ["1200", "0012", "2121"])
+      findSet(["0112", "0211", "0110"], "setchain", ["1200", "0012", "2121"]),
     ).toStrictEqual(["0012", "0211", "0110"]);
   });
 
@@ -72,6 +76,15 @@ describe("findSet()", () => {
     verifyUltra(findSet(["1202", "0000", "0001", "0002", "2101"], "ultraset"));
     expect(findSet(["1202", "0000", "0001", "0002"], "ultraset")).toBe(null);
   });
+});
+
+it("initializes junior deck", () => {
+  expect(initializeDeck(generateCards(), "setjr")).has.length(27);
+  expect(initializeDeck(generateCards(), "setjr")).includes("1102");
+
+  expect(initializeDeck(generateCards(), "normal")).has.length(81);
+  expect(initializeDeck(generateCards(), "setchain")).has.length(81);
+  expect(initializeDeck(generateCards(), "ultraset")).has.length(81);
 });
 
 describe("bad-words filter", () => {

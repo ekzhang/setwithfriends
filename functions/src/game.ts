@@ -9,7 +9,7 @@ interface GameEvent {
   c4?: string;
 }
 
-export type GameMode = "normal" | "setchain" | "ultraset";
+export type GameMode = "normal" | "setjr" | "setchain" | "ultraset";
 
 /** Generates a random 81-card deck using a Fisher-Yates shuffle. */
 export function generateDeck() {
@@ -71,6 +71,7 @@ export function findSet(deck: string[], gameMode: GameMode, old?: string[]) {
       const c = conjugateCard(deck[i], deck[j]);
       if (
         gameMode === "normal" ||
+        gameMode === "setjr" ||
         (gameMode === "setchain" && old!.length === 0)
       ) {
         if (deckSet.has(c)) {
@@ -89,6 +90,21 @@ export function findSet(deck: string[], gameMode: GameMode, old?: string[]) {
     }
   }
   return null;
+}
+
+/**
+ * Initialize the deck to its starting cards based on the game mode.
+ *
+ * It starts with a shuffled 81-card deck according to database state. Usually
+ * this would be a no-op, but for Set Junior, we need to remove some subset of
+ * the cards before the game starts.
+ */
+function initializeDeck(deck: string[], gameMode: GameMode) {
+  if (gameMode === "setjr") {
+    // Remove all cards except those with solid shading.
+    return deck.filter((card) => card[2] === "0");
+  }
+  return deck;
 }
 
 /** Check if cards are valid (all distinct and exist in deck) */
@@ -119,7 +135,7 @@ function replayEventNormal(deck: Set<string>, event: GameEvent) {
 function replayEventChain(
   history: GameEvent[],
   deck: Set<string>,
-  event: GameEvent
+  event: GameEvent,
 ) {
   const { c1, c2, c3 } = event;
 
@@ -153,7 +169,7 @@ function replayEventUltra(deck: Set<string>, event: GameEvent) {
  */
 export function replayEvents(
   gameData: admin.database.DataSnapshot,
-  gameMode: GameMode
+  gameMode: GameMode,
 ) {
   const events: GameEvent[] = [];
   gameData.child("events").forEach((e) => {
@@ -162,13 +178,18 @@ export function replayEvents(
   // Array.sort() is guaranteed to be stable in Node.js, and the latest ES spec
   events.sort((e1, e2) => e1.time - e2.time);
 
-  const deck: Set<string> = new Set(gameData.child("deck").val());
+  const deck: Set<string> = new Set(
+    initializeDeck(gameData.child("deck").val(), gameMode),
+  );
   const history: GameEvent[] = [];
   const scores: Record<string, number> = {};
   let finalTime = 0;
   for (const event of events) {
     let eventValid = false;
-    if (gameMode === "normal" && replayEventNormal(deck, event))
+    if (
+      (gameMode === "normal" || gameMode === "setjr") &&
+      replayEventNormal(deck, event)
+    )
       eventValid = true;
     if (gameMode === "setchain" && replayEventChain(history, deck, event))
       eventValid = true;

@@ -1,22 +1,21 @@
-import { useState, useMemo, useEffect } from "react";
-import { Redirect } from "react-router-dom";
+import EqualizerIcon from "@mui/icons-material/Equalizer";
+import Container from "@mui/material/Container";
+import Divider from "@mui/material/Divider";
+import Grid from "@mui/material/Grid";
+import MenuItem from "@mui/material/MenuItem";
+import Paper from "@mui/material/Paper";
+import Select from "@mui/material/Select";
+import Typography from "@mui/material/Typography";
+import makeStyles from "@mui/styles/makeStyles";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { Navigate, useParams } from "react-router-dom";
 
-import Container from "@material-ui/core/Container";
-import Divider from "@material-ui/core/Divider";
-import Grid from "@material-ui/core/Grid";
-import { makeStyles } from "@material-ui/core/styles";
-import Paper from "@material-ui/core/Paper";
-import Typography from "@material-ui/core/Typography";
-import Select from "@material-ui/core/Select";
-import MenuItem from "@material-ui/core/MenuItem";
-import EqualizerIcon from "@material-ui/icons/Equalizer";
-
-import ProfileName from "../components/ProfileName";
-import UserStatistics from "../components/UserStatistics";
-import ProfileGamesTable from "../components/ProfileGamesTable";
-import Subheading from "../components/Subheading";
 import Loading from "../components/Loading";
-import firebase from "../firebase";
+import ProfileGamesTable from "../components/ProfileGamesTable";
+import ProfileName from "../components/ProfileName";
+import Subheading from "../components/Subheading";
+import UserStatistics from "../components/UserStatistics";
+import firebase, { fetchStaleGame } from "../firebase";
 import useFirebaseRefs from "../hooks/useFirebaseRefs";
 import useStats from "../hooks/useStats";
 import { computeState, hasHint, modes } from "../util";
@@ -25,15 +24,15 @@ import LoadingPage from "./LoadingPage";
 const datasetVariants = {
   all: {
     label: "All Games",
-    filterFn: (gameData) => true,
+    filterFn: () => true,
   },
   solo: {
     label: "Solo Games",
-    filterFn: (gameData) => Object.keys(gameData.users).length === 1,
+    filterFn: (game) => Object.keys(game.users).length === 1,
   },
   multiplayer: {
     label: "Multiplayer Games",
-    filterFn: (gameData) => Object.keys(gameData.users).length > 1,
+    filterFn: (game) => Object.keys(game.users).length > 1,
   },
 };
 
@@ -41,12 +40,12 @@ const useStyles = makeStyles((theme) => ({
   statsHeading: {
     // Pixel-perfect corrections for icon alignment
     paddingTop: 4,
-    [theme.breakpoints.down("xs")]: {
+    [theme.breakpoints.down("sm")]: {
       paddingTop: 3,
     },
   },
   divider: {
-    [theme.breakpoints.down("sm")]: {
+    [theme.breakpoints.down("md")]: {
       display: "none",
     },
   },
@@ -55,19 +54,17 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-function mergeGameData(game, gameData) {
-  const { scores } = computeState(gameData, game.mode || "normal");
-  const topScore = Math.max(0, ...Object.values(scores));
-  return {
-    ...game,
-    ...gameData,
-    topScore,
-    scores,
-  };
+function gameWithScores(game, gameData) {
+  if (gameData) {
+    const { scores } = computeState(gameData, game.mode || "normal");
+    return { ...game, scores };
+  } else {
+    return { ...game, scores: null };
+  }
 }
 
-function ProfilePage({ match }) {
-  const userId = match.params.id;
+function ProfilePage() {
+  const { id: userId } = useParams();
   const classes = useStyles();
 
   const [games, setGames] = useState(null);
@@ -76,7 +73,7 @@ function ProfilePage({ match }) {
       .database()
       .ref(`/userGames/${userId}`)
       .orderByValue()
-      .limitToLast(50);
+      .limitToLast(100);
     const update = (snapshot) => {
       query.off("value", update);
       setGames(snapshot.val() ?? {});
@@ -99,39 +96,56 @@ function ProfilePage({ match }) {
   const gameIds = useMemo(() => (games ? Object.keys(games) : []), [games]);
   const [gameVals, loadingGameVals] = useFirebaseRefs(
     useMemo(() => gameIds.map((gameId) => `games/${gameId}`), [gameIds]),
-    true
+    true,
   );
   const [gameDataVals, loadingGameDataVals] = useFirebaseRefs(
     useMemo(() => gameIds.map((gameId) => `gameData/${gameId}`), [gameIds]),
-    true
   );
 
+  /** @type {import("react").MutableRefObject<Set<string>>} */
+  const staleGamesFetched = useRef(new Set());
+
+  useEffect(() => {
+    if (!gameVals || !gameDataVals) return;
+    for (let i = 0; i < gameIds.length; i++) {
+      // Populate archived game data lazily if needed.
+      if (
+        gameVals[i].status === "done" &&
+        !gameDataVals[i] &&
+        !staleGamesFetched.current.has(gameIds[i])
+      ) {
+        staleGamesFetched.current.add(gameIds[i]);
+        fetchStaleGame({ gameId: gameIds[i] });
+      }
+    }
+  }, [gameIds, gameVals, gameDataVals]);
+
   if (redirect) {
-    return <Redirect push to={redirect} />;
+    return <Navigate push to={redirect} />;
   }
   if (!games) {
     return <LoadingPage />;
   }
 
-  let gamesData = null;
+  let gamesWithScores = null;
   if (!loadingGameVals && !loadingGameDataVals) {
-    gamesData = {};
+    gamesWithScores = {};
     for (let i = 0; i < gameIds.length; i++) {
       if (gameVals[i].status === "done") {
-        const gameData = mergeGameData(gameVals[i], gameDataVals[i]);
+        const game = gameWithScores(gameVals[i], gameDataVals[i]);
         if (
-          datasetVariants[variant].filterFn(gameData) &&
-          (gameData.mode || "normal") === modeVariant &&
-          !hasHint(gameData)
+          datasetVariants[variant].filterFn(game) &&
+          (game.mode || "normal") === modeVariant &&
+          !hasHint(game)
         ) {
-          gamesData[gameIds[i]] = gameData;
+          gamesWithScores[gameIds[i]] = game;
         }
       }
     }
   }
 
   return (
-    <Container>
+    <Container sx={{ pb: 2 }}>
       <Paper style={{ padding: 16 }}>
         <Grid container className={classes.mainGrid}>
           <Grid item xs={12} md={4}>
@@ -149,10 +163,11 @@ function ProfilePage({ match }) {
                 <Subheading className={classes.statsHeading}>
                   Statistics
                 </Subheading>
-                <EqualizerIcon />
+                <EqualizerIcon sx={{ mt: "1px" }} />
               </div>
               <div style={{ marginLeft: "auto" }}>
                 <Select
+                  variant="standard"
                   value={modeVariant}
                   onChange={(event) => setModeVariant(event.target.value)}
                   style={{ marginRight: "1em" }}
@@ -165,6 +180,7 @@ function ProfilePage({ match }) {
                   ))}
                 </Select>
                 <Select
+                  variant="standard"
                   value={variant}
                   onChange={(event) => setVariant(event.target.value)}
                   color="secondary"
@@ -188,7 +204,7 @@ function ProfilePage({ match }) {
         <ProfileGamesTable
           userId={userId}
           handleClickGame={handleClickGame}
-          gamesData={gamesData}
+          gamesWithScores={gamesWithScores}
         />
       </Paper>
     </Container>

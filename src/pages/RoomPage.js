@@ -1,29 +1,33 @@
-import { useState, useEffect, useContext } from "react";
+import DoneIcon from "@mui/icons-material/Done";
+import LinkIcon from "@mui/icons-material/Link";
+import Box from "@mui/material/Box";
+import Button from "@mui/material/Button";
+import Container from "@mui/material/Container";
+import Grid from "@mui/material/Grid";
+import IconButton from "@mui/material/IconButton";
+import Paper from "@mui/material/Paper";
+import Tooltip from "@mui/material/Tooltip";
+import Typography from "@mui/material/Typography";
+import makeStyles from "@mui/styles/makeStyles";
+import { useContext, useEffect, useState } from "react";
+import {
+  Navigate,
+  useLocation,
+  useNavigate,
+  useParams,
+} from "react-router-dom";
 
-import { makeStyles } from "@material-ui/core/styles";
-import Container from "@material-ui/core/Container";
-import Typography from "@material-ui/core/Typography";
-import Button from "@material-ui/core/Button";
-import IconButton from "@material-ui/core/IconButton";
-import Tooltip from "@material-ui/core/Tooltip";
-import Paper from "@material-ui/core/Paper";
-import Grid from "@material-ui/core/Grid";
-import Box from "@material-ui/core/Box";
-import LinkIcon from "@material-ui/icons/Link";
-import DoneIcon from "@material-ui/icons/Done";
-import { Redirect, useHistory } from "react-router-dom";
-
+import Chat from "../components/Chat";
+import GameSettings from "../components/GameSettings";
+import RoomUserList from "../components/RoomUserList";
+import SimpleInput from "../components/SimpleInput";
+import Subheading from "../components/Subheading";
+import { UserContext } from "../context";
+import firebase from "../firebase";
 import useFirebaseRef from "../hooks/useFirebaseRef";
 import useKeydown from "../hooks/useKeydown";
 import LoadingPage from "./LoadingPage";
 import NotFoundPage from "./NotFoundPage";
-import SimpleInput from "../components/SimpleInput";
-import RoomUserList from "../components/RoomUserList";
-import Subheading from "../components/Subheading";
-import Chat from "../components/Chat";
-import firebase from "../firebase";
-import { UserContext } from "../context";
-import GameSettings from "../components/GameSettings";
 
 const useStyles = makeStyles((theme) => ({
   subpanel: {
@@ -52,11 +56,12 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-function RoomPage({ match, location }) {
+function RoomPage() {
   const user = useContext(UserContext);
-  const gameId = match.params.id;
+  const location = useLocation();
+  const { id: gameId } = useParams();
   const classes = useStyles();
-  const history = useHistory();
+  const navigate = useNavigate();
 
   const [copiedLink, setCopiedLink] = useState(false);
   const [leaving, setLeaving] = useState(false);
@@ -100,7 +105,7 @@ function RoomPage({ match, location }) {
   }
 
   if (game.status !== "waiting" && !leaving) {
-    return <Redirect to={`/game/${gameId}`} />;
+    return <Navigate replace to={`/game/${gameId}`} />;
   }
 
   // Current href, without the query string or hash
@@ -127,121 +132,117 @@ function RoomPage({ match, location }) {
       .database()
       .ref()
       .update(updates)
-      .then(() => history.push("/"))
+      .then(() => navigate("/"))
       .catch((reason) => {
         console.warn(`Failed to leave game (${reason})`);
         setLeaving(false);
       });
   }
   return (
-    <Container>
+    <Container sx={{ pb: 2 }}>
       <Grid container spacing={2}>
-        <Box clone order={{ xs: 2, sm: 1 }}>
-          <Grid item xs={12} sm={4} md={3}>
-            <Paper className={classes.chatPanel}>
-              <Chat title="Game Chat" messageLimit={200} gameId={gameId} />
-            </Paper>
-          </Grid>
-        </Box>
-        <Box clone order={{ xs: 1, sm: 2 }}>
-          <Grid item xs={12} sm={8} md={9}>
-            <Paper style={{ padding: 16 }}>
-              <Typography variant="h4" gutterBottom>
-                Waiting Room{" "}
-                <Tooltip
-                  placement="right"
-                  title={
-                    game.access === "public"
-                      ? "Anyone can join this game."
-                      : "Only players with the link can join this game."
-                  }
-                >
-                  <span style={{ opacity: 0.4 }}>
-                    [{game.access === "public" ? "Public" : "Private"}]
-                  </span>
-                </Tooltip>
-              </Typography>
-              <Grid container spacing={1}>
-                <Grid item xs={12} md={6}>
-                  <div className={classes.subpanel}>
-                    <Subheading>Players</Subheading>
-                    <RoomUserList game={game} gameId={gameId} />
-                  </div>
-                </Grid>
-                <Grid item xs={12} md={6}>
-                  <Grid container spacing={1}>
-                    <Grid item xs={12}>
-                      <div className={classes.subpanel}>
-                        <Subheading>Game Settings</Subheading>
-                        <GameSettings
-                          game={game}
-                          gameId={gameId}
-                          userId={user.id}
-                        />
-                      </div>
-                    </Grid>
-                    <Grid item xs={12}>
-                      <div className={classes.subpanel}>
-                        <Subheading>Inviting Friends</Subheading>
-                        <Typography variant="body1">
-                          To invite someone to play, share this URL:
-                          <span className={classes.shareLink}>
-                            <SimpleInput
-                              readOnly
-                              value={link}
-                              onFocus={(event) => event.target.select()}
-                            />
-                            <Tooltip
-                              placement="top"
-                              title={copiedLink ? "Link copied" : "Copy link"}
-                            >
-                              <IconButton onClick={handleCopy}>
-                                {copiedLink ? <DoneIcon /> : <LinkIcon />}
-                              </IconButton>
-                            </Tooltip>
-                          </span>
-                        </Typography>
-                      </div>
-                    </Grid>
+        <Grid item xs={12} sm={4} md={3} order={{ xs: 2, sm: 1 }}>
+          <Paper className={classes.chatPanel}>
+            <Chat title="Game Chat" messageLimit={200} gameId={gameId} />
+          </Paper>
+        </Grid>
+        <Grid item xs={12} sm={8} md={9} order={{ xs: 1, sm: 2 }}>
+          <Paper style={{ padding: 16 }}>
+            <Typography variant="h4" gutterBottom>
+              Waiting Room{" "}
+              <Tooltip
+                placement="right"
+                title={
+                  game.access === "public"
+                    ? "Anyone can join this game."
+                    : "Only players with the link can join this game."
+                }
+              >
+                <span style={{ opacity: 0.4 }}>
+                  [{game.access === "public" ? "Public" : "Private"}]
+                </span>
+              </Tooltip>
+            </Typography>
+            <Grid container spacing={1}>
+              <Grid item xs={12} md={6}>
+                <div className={classes.subpanel}>
+                  <Subheading>Players</Subheading>
+                  <RoomUserList game={game} gameId={gameId} />
+                </div>
+              </Grid>
+              <Grid item xs={12} md={6}>
+                <Grid container spacing={1}>
+                  <Grid item xs={12}>
+                    <div className={classes.subpanel}>
+                      <Subheading>Game Settings</Subheading>
+                      <GameSettings
+                        game={game}
+                        gameId={gameId}
+                        userId={user.id}
+                      />
+                    </div>
+                  </Grid>
+                  <Grid item xs={12}>
+                    <div className={classes.subpanel}>
+                      <Subheading>Inviting Friends</Subheading>
+                      <Typography variant="body1">
+                        To invite someone to play, share this URL:
+                        <span className={classes.shareLink}>
+                          <SimpleInput
+                            readOnly
+                            value={link}
+                            onFocus={(event) => event.target.select()}
+                          />
+                          <Tooltip
+                            placement="top"
+                            title={copiedLink ? "Link copied" : "Copy link"}
+                          >
+                            <IconButton onClick={handleCopy} size="large">
+                              {copiedLink ? <DoneIcon /> : <LinkIcon />}
+                            </IconButton>
+                          </Tooltip>
+                        </span>
+                      </Typography>
+                    </div>
                   </Grid>
                 </Grid>
               </Grid>
-              <Box marginTop={2}>
-                {user.id === game.host ? (
-                  <Tooltip
-                    arrow
-                    title="Make sure everyone is in the waiting room! Additional players won't be able to join after the game has started."
+            </Grid>
+            <Box marginTop={2}>
+              {user.id === game.host ? (
+                <Tooltip
+                  arrow
+                  title="Make sure everyone is in the waiting room! Additional players won't be able to join after the game has started."
+                >
+                  <Button
+                    size="large"
+                    variant="contained"
+                    color="primary"
+                    fullWidth
+                    onClick={startGame}
                   >
-                    <Button
-                      size="large"
-                      variant="contained"
-                      color="primary"
-                      fullWidth
-                      onClick={startGame}
-                    >
-                      Start game
-                    </Button>
-                  </Tooltip>
-                ) : (
-                  <Tooltip
-                    arrow
-                    title="Currently waiting for the host to start the game. You can leave by pressing this button."
+                    Start game
+                  </Button>
+                </Tooltip>
+              ) : (
+                <Tooltip
+                  arrow
+                  title="Currently waiting for the host to start the game. You can leave by pressing this button."
+                >
+                  <Button
+                    size="large"
+                    variant="outlined"
+                    fullWidth
+                    disabled={leaving}
+                    onClick={leaveGame}
                   >
-                    <Button
-                      size="large"
-                      variant="outlined"
-                      fullWidth
-                      disabled={leaving}
-                      onClick={leaveGame}
-                    >
-                      Leave game
-                    </Button>
-                  </Tooltip>
-                )}
-              </Box>
-            </Paper>
-          </Grid>
-        </Box>
+                    Leave game
+                  </Button>
+                </Tooltip>
+              )}
+            </Box>
+          </Paper>
+        </Grid>
       </Grid>
     </Container>
   );

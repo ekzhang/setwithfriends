@@ -1,19 +1,18 @@
-import { useContext } from "react";
-
-import Divider from "@material-ui/core/Divider";
-import Paper from "@material-ui/core/Paper";
-import Typography from "@material-ui/core/Typography";
-import { lightGreen } from "@material-ui/core/colors";
+import Divider from "@mui/material/Divider";
+import Paper from "@mui/material/Paper";
+import Typography from "@mui/material/Typography";
+import { lightGreen } from "@mui/material/colors";
 import { animated, useSprings } from "@react-spring/web";
+import { useContext } from "react";
 import useSound from "use-sound";
 
-import { generateCards, standardLayouts } from "../util";
+import layoutSfx from "../assets/layoutChangeSound.mp3";
 import ResponsiveSetCard from "../components/ResponsiveSetCard";
+import { SettingsContext } from "../context";
 import useDimensions from "../hooks/useDimensions";
 import useKeydown from "../hooks/useKeydown";
 import useStorage from "../hooks/useStorage";
-import { SettingsContext } from "../context";
-import layoutSfx from "../assets/layoutChangeSound.mp3";
+import { generateCards, standardLayouts } from "../util";
 
 const gamePadding = 8;
 const cardArray = generateCards();
@@ -30,11 +29,11 @@ function Game({
 }) {
   const [layoutOrientation, setLayoutOrientation] = useStorage(
     "layout",
-    "portrait"
+    "portrait",
   );
   const [cardOrientation, setCardOrientation] = useStorage(
     "orientation",
-    "vertical"
+    "vertical",
   );
   const { keyboardLayout, volume } = useContext(SettingsContext);
   const keyboardLayoutDesc = standardLayouts[keyboardLayout];
@@ -69,7 +68,7 @@ function Game({
       gameHeight = cardHeight * rows + 2 * gamePadding + lineSpacing;
     } else {
       cardWidth = Math.floor(
-        (gameWidth - 2 * gamePadding - lineSpacing) / cols
+        (gameWidth - 2 * gamePadding - lineSpacing) / cols,
       );
       cardHeight = Math.round(cardWidth / 1.6);
       gameHeight = cardHeight * rows + 2 * gamePadding;
@@ -81,7 +80,7 @@ function Game({
       gameHeight = cardWidth * rows + 2 * gamePadding + lineSpacing;
     } else {
       cardHeight = Math.floor(
-        (gameWidth - 2 * gamePadding - lineSpacing) / cols
+        (gameWidth - 2 * gamePadding - lineSpacing) / cols,
       );
       cardWidth = Math.round(cardHeight * 1.6);
       gameHeight = cardWidth * rows + 2 * gamePadding;
@@ -154,7 +153,7 @@ function Game({
         tension: 64,
         friction: 14,
       },
-    }))
+    })),
   );
 
   // Keyboard shortcuts
@@ -162,24 +161,28 @@ function Game({
     ? keyboardLayoutDesc.horizontalLayout
     : keyboardLayoutDesc.verticalLayout;
   useKeydown((event) => {
-    const { key } = event;
-    if (key === "Escape") {
-      event.preventDefault();
-      onClear();
-    } else if (key.length === 1 && shortcuts.includes(key.toLowerCase())) {
-      event.preventDefault();
-      const index = shortcuts.indexOf(key.toLowerCase());
-      if (index < board.length) {
-        onClick(board[index]);
+    const { key, ctrlKey, metaKey } = event;
+    if (!ctrlKey && !metaKey) {
+      if (key === "Escape") {
+        event.preventDefault();
+        onClear();
+      } else if (key.length === 1 && shortcuts.includes(key.toLowerCase())) {
+        event.preventDefault();
+        const index = shortcuts.indexOf(key.toLowerCase());
+        if (index < board.length) {
+          onClick(board[index]);
+        }
+      } else if (
+        key.toLowerCase() === keyboardLayoutDesc.orientationChangeKey
+      ) {
+        event.preventDefault();
+        if (volume === "on") playLayout();
+        setCardOrientation(isHorizontal ? "vertical" : "horizontal");
+      } else if (key.toLowerCase() === keyboardLayoutDesc.layoutChangeKey) {
+        event.preventDefault();
+        if (volume === "on") playLayout();
+        setLayoutOrientation(isLandscape ? "portrait" : "landscape");
       }
-    } else if (key.toLowerCase() === keyboardLayoutDesc.orientationChangeKey) {
-      event.preventDefault();
-      if (volume === "on") playLayout();
-      setCardOrientation(isHorizontal ? "vertical" : "horizontal");
-    } else if (key.toLowerCase() === keyboardLayoutDesc.layoutChangeKey) {
-      event.preventDefault();
-      if (volume === "on") playLayout();
-      setLayoutOrientation(isLandscape ? "portrait" : "landscape");
     }
   });
 
@@ -190,6 +193,7 @@ function Game({
           gamePadding +
           lineSpacing / 2
         }px`,
+        borderLeftWidth: "1px",
       }
     : {
         top: `${
@@ -197,6 +201,7 @@ function Game({
           gamePadding +
           lineSpacing / 2
         }px`,
+        borderTopWidth: "1px",
       };
 
   return (
@@ -240,7 +245,7 @@ function Game({
             position: "absolute",
             ...springProps[idx],
             visibility: springProps[idx].opacity.to((x) =>
-              x > 0 ? "visible" : "hidden"
+              x > 0 ? "visible" : "hidden",
             ),
           }}
         >

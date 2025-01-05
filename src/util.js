@@ -1,21 +1,24 @@
-import animals from "./utils/animals.json";
+import {
+  amber,
+  blue,
+  cyan,
+  deepOrange,
+  deepPurple,
+  green,
+  indigo,
+  lightBlue,
+  lightGreen,
+  lime,
+  orange,
+  pink,
+  purple,
+  red,
+  teal,
+} from "@mui/material/colors";
+import { Filter } from "bad-words";
 import moment from "moment";
-import Filter from "bad-words";
-import red from "@material-ui/core/colors/red";
-import pink from "@material-ui/core/colors/pink";
-import purple from "@material-ui/core/colors/purple";
-import deepPurple from "@material-ui/core/colors/deepPurple";
-import indigo from "@material-ui/core/colors/indigo";
-import blue from "@material-ui/core/colors/blue";
-import lightBlue from "@material-ui/core/colors/lightBlue";
-import cyan from "@material-ui/core/colors/cyan";
-import teal from "@material-ui/core/colors/teal";
-import green from "@material-ui/core/colors/green";
-import lightGreen from "@material-ui/core/colors/lightGreen";
-import lime from "@material-ui/core/colors/lime";
-import amber from "@material-ui/core/colors/amber";
-import orange from "@material-ui/core/colors/orange";
-import deepOrange from "@material-ui/core/colors/deepOrange";
+
+import animals from "./utils/animals.json";
 
 export const filter = new Filter();
 
@@ -53,6 +56,13 @@ export const modes = {
     name: "Normal",
     color: "purple",
     description: "Find 3 cards that form a Set.",
+    setType: "Set",
+  },
+  setjr: {
+    name: "Junior",
+    color: "green",
+    description:
+      "A simplified version that only uses cards with solid shading.",
     setType: "Set",
   },
   setchain: {
@@ -166,6 +176,7 @@ export function findSet(deck, gameMode = "normal", old) {
       const c = conjugateCard(deck[i], deck[j]);
       if (
         gameMode === "normal" ||
+        gameMode === "setjr" ||
         (gameMode === "setchain" && old.length === 0)
       ) {
         if (deckSet.has(c)) {
@@ -287,11 +298,26 @@ function processEventUltra(internalGameState, event) {
   internalGameState.boardSize = boardSize;
 }
 
+/**
+ * Initialize the deck to its starting cards based on the game mode.
+ *
+ * It starts with a shuffled 81-card deck according to database state. Usually
+ * this would be a no-op, but for Set Junior, we need to remove some subset of
+ * the cards before the game starts.
+ */
+export function initializeDeck(deck, gameMode) {
+  if (gameMode === "setjr") {
+    // Remove all cards except those with solid shading.
+    return deck.filter((card) => card[2] === "0");
+  }
+  return deck.slice();
+}
+
 export function computeState(gameData, gameMode = "normal") {
   const scores = {}; // scores of all users
   const used = {}; // set of cards that have been taken
   const history = []; // list of valid events in time order
-  const current = gameData.deck.slice(); // remaining cards in the game
+  const current = initializeDeck(gameData.deck, gameMode); // remaining cards in the game
   const internalGameState = {
     used,
     current,
@@ -302,13 +328,12 @@ export function computeState(gameData, gameMode = "normal") {
   };
 
   if (gameData.events) {
-    const events = Object.entries(gameData.events)
-      .sort(([k1, e1], [k2, e2]) => {
-        return e1.time !== e2.time ? e1.time - e2.time : k1 < k2;
-      })
-      .map(([_k, e]) => e);
+    const events = Object.values(gameData.events).sort(
+      (e1, e2) => e1.time - e2.time,
+    );
     for (const event of events) {
-      if (gameMode === "normal") processEventNormal(internalGameState, event);
+      if (gameMode === "normal" || gameMode === "setjr")
+        processEventNormal(internalGameState, event);
       if (gameMode === "setchain") processEventChain(internalGameState, event);
       if (gameMode === "ultraset") processEventUltra(internalGameState, event);
     }
@@ -331,7 +356,6 @@ export function hasHint(game) {
     game.enableHint &&
     game.users &&
     Object.keys(game.users).length === 1 &&
-    game.access === "private" &&
-    (game.mode || "normal") === "normal"
+    game.access === "private"
   );
 }

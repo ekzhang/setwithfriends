@@ -1,19 +1,18 @@
+import Button from "@mui/material/Button";
+import Dialog from "@mui/material/Dialog";
+import DialogActions from "@mui/material/DialogActions";
+import DialogContent from "@mui/material/DialogContent";
+import DialogContentText from "@mui/material/DialogContentText";
+import DialogTitle from "@mui/material/DialogTitle";
+import FormControl from "@mui/material/FormControl";
+import InputLabel from "@mui/material/InputLabel";
+import MenuItem from "@mui/material/MenuItem";
+import Select from "@mui/material/Select";
+import makeStyles from "@mui/styles/makeStyles";
 import { useContext } from "react";
 
-import Button from "@material-ui/core/Button";
-import Dialog from "@material-ui/core/Dialog";
-import Select from "@material-ui/core/Select";
-import DialogActions from "@material-ui/core/DialogActions";
-import DialogContent from "@material-ui/core/DialogContent";
-import DialogTitle from "@material-ui/core/DialogTitle";
-import InputLabel from "@material-ui/core/InputLabel";
-import FormControl from "@material-ui/core/FormControl";
-import MenuItem from "@material-ui/core/MenuItem";
-import DialogContentText from "@material-ui/core/DialogContentText";
-import { makeStyles } from "@material-ui/core/styles";
-
-import { standardLayouts } from "../util";
 import { SettingsContext } from "../context";
+import { standardLayouts } from "../util";
 
 const useStyles = makeStyles({
   formControl: {
@@ -50,9 +49,13 @@ function KeyboardLayoutDialog(props) {
           </b>
           .
         </DialogContentText>
-        <FormControl className={classes.formControl}>
+        <FormControl variant="standard" className={classes.formControl}>
           <InputLabel>Layout</InputLabel>
-          <Select value={keyboardLayout} onChange={handleChange}>
+          <Select
+            variant="standard"
+            value={keyboardLayout}
+            onChange={handleChange}
+          >
             {menuItems}
           </Select>
         </FormControl>

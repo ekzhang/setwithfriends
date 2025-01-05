@@ -2,7 +2,7 @@
   "rules": {
     "games": {
       "$gameId": {
-        ".read": "auth != null",
+        ".read": "auth != null && (!root.child('users').child(auth.uid).child('banned').exists() || root.child('users').child(auth.uid).child('banned').val() < now)",
         "startedAt": {
           ".write": "auth != null && auth.uid == data.parent().child('host').val() && !data.exists() && newData.exists()",
           ".validate": "newData.isNumber() && newData.val() == now"
@@ -19,7 +19,7 @@
         },
         "mode": {
           ".write": "auth != null && auth.uid == data.parent().child('host').val() && newData.exists()",
-          ".validate": "newData.isString()&& (newData.val() == 'normal' || newData.val() == 'ultraset' || newData.val() == 'setchain')"
+          ".validate": "newData.isString() && (newData.val() == 'normal' || newData.val() == 'setjr' || newData.val() == 'ultraset' || newData.val() == 'setchain')"
         },
         "enableHint": {
           ".write": "auth != null && auth.uid == data.parent().child('host').val() && newData.exists()",
@@ -102,7 +102,7 @@
     },
     "chats": {
       "$chatId": {
-        ".read": "auth != null",
+        ".read": "auth != null && (!root.child('users').child(auth.uid).child('banned').exists() || root.child('users').child(auth.uid).child('banned').val() < now)",
         ".indexOn": ["time", "user"],
         "$messageId": {
           ".write": "auth != null && ((!data.exists() && newData.exists()) || (data.exists() && root.child('users').child(auth.uid).child('admin').val() == true))",
@@ -123,7 +123,7 @@
       }
     },
     "lobbyChat": {
-      ".read": "auth != null",
+      ".read": "auth != null && (!root.child('users').child(auth.uid).child('banned').exists() || root.child('users').child(auth.uid).child('banned').val() < now)",
       ".indexOn": ["time", "user"],
       "$messageId": {
         ".write": "auth != null && ((!data.exists() && newData.exists()) || (data.exists() && root.child('users').child(auth.uid).child('admin').val() == true))",

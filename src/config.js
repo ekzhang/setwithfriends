@@ -7,6 +7,7 @@ const config = {
       authDomain: "setwithfriends-dev.web.app",
       databaseURL: "https://setwithfriends-dev.firebaseio.com",
       projectId: "setwithfriends-dev",
+      storageBucket: "setwithfriends-dev.appspot.com",
       appId: "1:369319422608:web:b9038b38a1bd598048c615",
     },
     stripe: null, // Stripe not supported in development
@@ -48,12 +49,12 @@ const config = {
 };
 
 /** The environment of the application. */
-export const env = process.env.REACT_APP_ENV || "development";
+export const env = import.meta.env.MODE || "development";
 
-/** Indicates whether the app is running in development. */
+/** Indicates whether the app is running in development, on emulator. */
 export const isDev = env === "development";
 
 /** The version number (A.B.C) of the application, set by CI in production builds. */
-export const version = process.env.REACT_APP_VERSION ?? null;
+export const version = import.meta.env.VITE_SWF_VERSION ?? null;
 
 export default config[env];

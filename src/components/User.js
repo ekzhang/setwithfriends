@@ -1,12 +1,23 @@
-import { useHistory } from "react-router-dom";
-import { useTheme, makeStyles } from "@material-ui/core/styles";
-import WhatshotIcon from "@material-ui/icons/Whatshot";
+import SecurityIcon from "@mui/icons-material/Security";
+import WhatshotIcon from "@mui/icons-material/Whatshot";
+import { useTheme } from "@mui/material/styles";
+import makeStyles from "@mui/styles/makeStyles";
+import clsx from "clsx";
+import { useNavigate } from "react-router-dom";
 
 import useFirebaseRef from "../hooks/useFirebaseRef";
 import useStats from "../hooks/useStats";
 import { colors } from "../util";
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles(() => ({
+  inlineIcon: {
+    fontSize: "inherit",
+    display: "inline",
+    position: "relative",
+    left: "-0.1em",
+    top: "0.15em",
+    color: "inherit",
+  },
   patronIcon: {
     cursor: "pointer",
     "&:hover": {
@@ -31,11 +42,12 @@ function User({
   component,
   render,
   forcePatron,
+  showIcon,
   showRating,
   ...other
 }) {
   const theme = useTheme();
-  const history = useHistory();
+  const navigate = useNavigate();
   const classes = useStyles();
 
   const [user, loading] = useFirebaseRef(`users/${id}`);
@@ -45,17 +57,17 @@ function User({
     return null;
   }
 
-  const handleClick = (e) => {
+  const handlePatronClick = (e) => {
     e.preventDefault();
-    history.push("/donate");
+    navigate("/donate");
   };
 
   const Component = component || "span";
   const userEl = (
     <Component
       style={{
-        color: colors.hasOwnProperty(user.color)
-          ? colors[user.color][theme.palette.type === "dark" ? 100 : 900]
+        color: Object.hasOwn(colors, user.color)
+          ? colors[user.color][theme.palette.mode === "dark" ? 100 : 900]
           : "inherit",
         fontWeight: 500,
         ...style,
@@ -67,20 +79,16 @@ function User({
           {loadingStats ? "⋯" : Math.round(stats[showRating].rating)}
         </span>
       )}
-      {(user.patron || forcePatron) && (
-        <WhatshotIcon
-          className={classes.patronIcon}
-          onClick={handleClick}
-          fontSize="inherit"
-          style={{
-            display: "inline",
-            position: "relative",
-            left: "-0.1em",
-            top: "0.15em",
-            color: "inherit",
-          }}
-        />
-      )}
+      {showIcon &&
+        (user.admin ? (
+          // Moderator icon takes precedence over patron icon.
+          <SecurityIcon className={classes.inlineIcon} />
+        ) : user.patron || forcePatron ? (
+          <WhatshotIcon
+            className={clsx(classes.inlineIcon, classes.patronIcon)}
+            onClick={handlePatronClick}
+          />
+        ) : null)}
       <span>{user.name}</span>
     </Component>
   );

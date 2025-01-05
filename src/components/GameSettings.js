@@ -1,15 +1,20 @@
-import { makeStyles } from "@material-ui/core/styles";
-import FormControlLabel from "@material-ui/core/FormControlLabel";
-import Radio from "@material-ui/core/Radio";
-import RadioGroup from "@material-ui/core/RadioGroup";
-import Switch from "@material-ui/core/Switch";
-import Tooltip from "@material-ui/core/Tooltip";
+import FormControlLabel from "@mui/material/FormControlLabel";
+import Radio from "@mui/material/Radio";
+import RadioGroup from "@mui/material/RadioGroup";
+import Switch from "@mui/material/Switch";
+import Tooltip from "@mui/material/Tooltip";
+import makeStyles from "@mui/styles/makeStyles";
 
 import firebase from "../firebase";
 import { hasHint, modes } from "../util";
 
 const useStyles = makeStyles(() => ({
-  settings: { display: "flex", flexDirection: "column", alignItems: "center" },
+  settings: {
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+    paddingInline: 4,
+  },
 }));
 
 const hintTip =
@@ -31,8 +36,13 @@ function GameSettings({ game, gameId, userId }) {
 
   return (
     <div className={classes.settings}>
-      <RadioGroup row value={gameMode} onChange={handleChangeMode}>
-        {["normal", "setchain", "ultraset"].map((mode) => (
+      <RadioGroup
+        row
+        sx={{ justifyContent: "center" }}
+        value={gameMode}
+        onChange={handleChangeMode}
+      >
+        {Object.keys(modes).map((mode) => (
           <Tooltip
             key={mode}
             arrow
@@ -41,25 +51,33 @@ function GameSettings({ game, gameId, userId }) {
           >
             <FormControlLabel
               value={mode}
-              control={<Radio />}
+              control={<Radio size="small" sx={{ width: 32, height: 32 }} />}
               disabled={userId !== game.host}
               label={modes[mode].name}
+              slotProps={{ typography: { variant: "body2" } }}
             />
           </Tooltip>
         ))}
       </RadioGroup>
-      {gameMode === "normal" && (
-        <Tooltip arrow placement="left" title={hintTip}>
-          <FormControlLabel
-            control={<Switch checked={hasHint(game)} onChange={toggleHint} />}
-            label="Enable Hints"
-            disabled={
-              Object.keys(game.users || {}).length > 1 ||
-              game.access !== "private"
-            }
-          />
-        </Tooltip>
-      )}
+
+      <Tooltip arrow placement="left" title={hintTip}>
+        <FormControlLabel
+          control={
+            <Switch
+              size="small"
+              checked={hasHint(game)}
+              onChange={toggleHint}
+            />
+          }
+          label="Enable Hints"
+          disabled={
+            Object.keys(game.users || {}).length > 1 ||
+            game.access !== "private"
+          }
+          slotProps={{ typography: { variant: "body2" } }}
+          sx={{ my: 0.25 }}
+        />
+      </Tooltip>
     </div>
   );
 }

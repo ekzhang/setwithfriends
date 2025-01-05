@@ -1,4 +1,4 @@
-import { useState, useRef, useLayoutEffect } from "react";
+import { useLayoutEffect, useRef, useState } from "react";
 
 function useDimensions() {
   const ref = useRef();

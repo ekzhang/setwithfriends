@@ -1,15 +1,25 @@
-import * as functions from "firebase-functions";
-import * as admin from "firebase-admin";
-admin.initializeApp();
-
+import { initializeApp } from "firebase-admin/app";
+import { getAuth } from "firebase-admin/auth";
+import { type DataSnapshot, getDatabase } from "firebase-admin/database";
+import { getStorage } from "firebase-admin/storage";
+import * as functions from "firebase-functions/v1";
+import PQueue from "p-queue";
 import Stripe from "stripe";
+
+import { GameMode, findSet, generateDeck, replayEvents } from "./game";
+import { databaseIterator, gzip } from "./utils";
+
+initializeApp(); // Sets the default Firebase app.
+
 const stripe = process.env.FUNCTIONS_EMULATOR
   ? (null as any)
   : new Stripe(functions.config().stripe.secret, {
-      apiVersion: "2020-08-27",
+      apiVersion: "2024-12-18.acacia",
     });
 
-import { generateDeck, replayEvents, findSet, GameMode } from "./game";
+// Hack: In Firebase v13, `admin.database.ServerValue.TIMESTAMP`
+// does not work anymore from TypeScript.
+const SERVER_VALUE_TIMESTAMP = { ".sv": "timestamp" };
 
 const MAX_GAME_ID_LENGTH = 64;
 const MAX_UNFINISHED_GAMES_PER_HOUR = 4;
@@ -20,7 +30,7 @@ const BASE_RATING = 1200;
 
 type TransactionResult = {
   committed: boolean;
-  snapshot: functions.database.DataSnapshot;
+  snapshot: DataSnapshot;
 };
 
 /** Ends the game with the correct time and updates ratings */
@@ -34,25 +44,22 @@ export const finishGame = functions.https.onCall(async (data, context) => {
     throw new functions.https.HttpsError(
       "invalid-argument",
       "The function must be called with " +
-        "argument `gameId` to be finished at `/games/:gameId`."
+        "argument `gameId` to be finished at `/games/:gameId`.",
     );
   }
   if (!context.auth) {
     throw new functions.https.HttpsError(
       "failed-precondition",
-      "The function must be called while authenticated."
+      "The function must be called while authenticated.",
     );
   }
 
-  const gameData = await admin
-    .database()
-    .ref(`gameData/${gameId}`)
-    .once("value");
-  const gameSnap = await admin.database().ref(`games/${gameId}`).once("value");
+  const gameData = await getDatabase().ref(`gameData/${gameId}`).once("value");
+  const gameSnap = await getDatabase().ref(`games/${gameId}`).once("value");
   if (!gameSnap.exists()) {
     throw new functions.https.HttpsError(
       "not-found",
-      `The game with gameId ${gameId} was not found in the database.`
+      `The game with gameId ${gameId} was not found in the database.`,
     );
   }
 
@@ -63,14 +70,13 @@ export const finishGame = functions.https.onCall(async (data, context) => {
   if (findSet(Array.from(deck), gameMode, lastSet)) {
     throw new functions.https.HttpsError(
       "failed-precondition",
-      "The requested game has not yet ended."
+      "The requested game has not yet ended.",
     );
   }
 
   // The game has ended, so we attempt to do an atomic update.
   // Safety: Events can only be appended to the game, so the final time must remain the same.
-  const { committed, snapshot }: TransactionResult = await admin
-    .database()
+  const { committed, snapshot }: TransactionResult = await getDatabase()
     .ref(`games/${gameId}`)
     .transaction((game) => {
       if (game.status !== "ingame") {
@@ -90,8 +96,7 @@ export const finishGame = functions.https.onCall(async (data, context) => {
   if (
     snapshot.child("enableHint").val() &&
     snapshot.child("users").numChildren() === 1 &&
-    snapshot.child("access").val() === "private" &&
-    gameMode === "normal"
+    snapshot.child("access").val() === "private"
   ) {
     return;
   }
@@ -123,8 +128,7 @@ export const finishGame = functions.https.onCall(async (data, context) => {
   const userStats: Record<string, any> = {};
   await Promise.all(
     players.map(async (player) => {
-      const result: TransactionResult = await admin
-        .database()
+      const result: TransactionResult = await getDatabase()
         .ref(`userStats/${player}/${gameMode}/${variant}`)
         .transaction((stats) => {
           stats ??= {}; // tslint:disable-line no-parameter-reassignment
@@ -139,7 +143,7 @@ export const finishGame = functions.https.onCall(async (data, context) => {
         });
       // Save these values for use in rating calculation
       userStats[player] = result.snapshot.val();
-    })
+    }),
   );
 
   // If the game is solo, we skip rating calculation.
@@ -150,8 +154,7 @@ export const finishGame = functions.https.onCall(async (data, context) => {
   // Retrieve old ratings from the database.
   const ratings: Record<string, number> = {};
   for (const player of players) {
-    const ratingSnap = await admin
-      .database()
+    const ratingSnap = await getDatabase()
       .ref(`userStats/${player}/${gameMode}/rating`)
       .once("value");
     const rating = ratingSnap.exists() ? ratingSnap.val() : BASE_RATING;
@@ -191,7 +194,7 @@ export const finishGame = functions.https.onCall(async (data, context) => {
 
     updates[`${player}/${gameMode}/rating`] = newRating;
   }
-  await admin.database().ref("userStats").update(updates);
+  await getDatabase().ref("userStats").update(updates);
 });
 
 /** Create a new game in the database */
@@ -204,12 +207,13 @@ export const createGame = functions.https.onCall(async (data, context) => {
   if (
     !(typeof gameId === "string") ||
     gameId.length === 0 ||
-    gameId.length > MAX_GAME_ID_LENGTH
+    gameId.length > MAX_GAME_ID_LENGTH ||
+    !gameId.match(/^[a-zA-Z0-9_-]+$/)
   ) {
     throw new functions.https.HttpsError(
       "invalid-argument",
       "The function must be called with " +
-        "argument `gameId` to be created at `/games/:gameId`."
+        "argument `gameId` to be created at `/games/:gameId`.",
     );
   }
   if (
@@ -219,21 +223,20 @@ export const createGame = functions.https.onCall(async (data, context) => {
     throw new functions.https.HttpsError(
       "invalid-argument",
       "The function must be called with " +
-        'argument `access` given value "public" or "private".'
+        'argument `access` given value "public" or "private".',
     );
   }
   if (!context.auth) {
     throw new functions.https.HttpsError(
       "failed-precondition",
-      "The function must be called while authenticated."
+      "The function must be called while authenticated.",
     );
   }
 
   const userId = context.auth.uid;
 
-  const oneHourAgo = Date.now() - 3600000;
-  const recentGameIds = await admin
-    .database()
+  const oneHourAgo = Date.now() - 3600 * 1000;
+  const recentGameIds = await getDatabase()
     .ref(`userGames/${userId}`)
     .orderByValue()
     .startAt(oneHourAgo)
@@ -241,8 +244,8 @@ export const createGame = functions.https.onCall(async (data, context) => {
 
   const recentGames = await Promise.all(
     Object.keys(recentGameIds.val() || {}).map((recentGameId) =>
-      admin.database().ref(`games/${recentGameId}`).once("value")
-    )
+      getDatabase().ref(`games/${recentGameId}`).once("value"),
+    ),
   );
 
   let unfinishedGames = 0;
@@ -256,7 +259,7 @@ export const createGame = functions.https.onCall(async (data, context) => {
     }
   }
 
-  const gameRef = admin.database().ref(`games/${gameId}`);
+  const gameRef = getDatabase().ref(`games/${gameId}`);
   const { committed, snapshot } = await gameRef.transaction((currentData) => {
     if (currentData === null) {
       if (
@@ -265,12 +268,12 @@ export const createGame = functions.https.onCall(async (data, context) => {
       ) {
         throw new functions.https.HttpsError(
           "resource-exhausted",
-          "Too many unfinished public games were recently created."
+          "Too many unfinished public games were recently created.",
         );
       }
       return {
         host: userId,
-        createdAt: admin.database.ServerValue.TIMESTAMP,
+        createdAt: SERVER_VALUE_TIMESTAMP,
         status: "waiting",
         access,
         mode,
@@ -283,7 +286,7 @@ export const createGame = functions.https.onCall(async (data, context) => {
   if (!committed) {
     throw new functions.https.HttpsError(
       "already-exists",
-      "The requested `gameId` already exists."
+      "The requested `gameId` already exists.",
     );
   }
 
@@ -294,23 +297,22 @@ export const createGame = functions.https.onCall(async (data, context) => {
   //   3. /publicGames (if access is public)
   const updates: Array<Promise<any>> = [];
   updates.push(
-    admin.database().ref(`gameData/${gameId}`).set({
+    getDatabase().ref(`gameData/${gameId}`).set({
       deck: generateDeck(),
-    })
+      populatedAt: SERVER_VALUE_TIMESTAMP,
+    }),
   );
   updates.push(
-    admin
-      .database()
+    getDatabase()
       .ref("stats/gameCount")
-      .transaction((count) => (count || 0) + 1)
+      .transaction((count) => (count || 0) + 1),
   );
   if (access === "public") {
     updates.push(
-      admin
-        .database()
+      getDatabase()
         .ref("publicGames")
         .child(gameId)
-        .set(snapshot?.child("createdAt").val())
+        .set(snapshot?.child("createdAt").val()),
     );
   }
 
@@ -323,15 +325,15 @@ export const customerPortal = functions.https.onCall(async (data, context) => {
   if (!context.auth) {
     throw new functions.https.HttpsError(
       "failed-precondition",
-      "This function must be called while authenticated."
+      "This function must be called while authenticated.",
     );
   }
 
-  const user = await admin.auth().getUser(context.auth.uid);
+  const user = await getAuth().getUser(context.auth.uid);
   if (!user.email) {
     throw new functions.https.HttpsError(
       "failed-precondition",
-      "This function must be called by an authenticated user with email."
+      "This function must be called by an authenticated user with email.",
     );
   }
 
@@ -339,7 +341,7 @@ export const customerPortal = functions.https.onCall(async (data, context) => {
   if (!customerResponse.data.length) {
     throw new functions.https.HttpsError(
       "not-found",
-      `A subscription with email ${user.email} was not found.`
+      `A subscription with email ${user.email} was not found.`,
     );
   }
 
@@ -354,8 +356,7 @@ export const customerPortal = functions.https.onCall(async (data, context) => {
 export const clearConnections = functions.pubsub
   .schedule("every 1 minutes")
   .onRun(async (context) => {
-    const onlineUsers = await admin
-      .database()
+    const onlineUsers = await getDatabase()
       .ref("users")
       .orderByChild("connections")
       .startAt(false)
@@ -369,7 +370,7 @@ export const clearConnections = functions.pubsub
         actions.push(snap.ref.child("connections").remove());
       }
     });
-    actions.push(admin.database().ref("stats/onlineUsers").set(numUsers));
+    actions.push(getDatabase().ref("stats/onlineUsers").set(numUsers));
     await Promise.all(actions);
   });
 
@@ -399,18 +400,17 @@ export const handleStripe = functions.https.onRequest(async (req, res) => {
   ) {
     const subscription = event.data.object as Stripe.Subscription;
     const { email } = (await stripe.customers.retrieve(
-      subscription.customer as string
+      subscription.customer as string,
     )) as Stripe.Response<Stripe.Customer>;
 
     if (email) {
-      const user = await admin
-        .auth()
+      const user = await getAuth()
         .getUserByEmail(email)
         .catch(() => null);
 
       if (user) {
         const newState = event.type === "customer.subscription.created";
-        await admin.database().ref(`users/${user.uid}/patron`).set(newState);
+        await getDatabase().ref(`users/${user.uid}/patron`).set(newState);
         console.log(`Processed ${email} (${user.uid}): newState = ${newState}`);
       } else {
         console.log(`Failed to find user: ${email}`);
@@ -422,3 +422,105 @@ export const handleStripe = functions.https.onRequest(async (req, res) => {
 
   res.status(200).end();
 });
+
+/**
+ * Archive a game state from RTDB to GCS, reducing the storage tier.
+ * Returns whether the state was found in the database.
+ */
+async function archiveGameState(
+  gameId: string,
+  snapInit?: DataSnapshot,
+): Promise<boolean> {
+  let snap: DataSnapshot;
+  if (snapInit) {
+    snap = snapInit;
+  } else {
+    snap = await getDatabase().ref(`gameData/${gameId}`).get();
+  }
+  if (!snap.exists()) {
+    return false; // Game state is not present in the database, maybe racy?
+  }
+
+  const jsonBlob = JSON.stringify(snap.val());
+  const gzippedBlob = await gzip.compress(jsonBlob);
+
+  await getStorage()
+    .bucket()
+    .file(`gameData/${gameId}.json.gz`)
+    .save(gzippedBlob);
+
+  // After archiving, we remove the game state from the database.
+  await getDatabase().ref(`gameData/${gameId}`).remove();
+  return true;
+}
+
+/** Restore a game state in GCS to RTDB so it can be read from the client. */
+async function restoreGameState(gameId: string): Promise<boolean> {
+  const file = getStorage().bucket().file(`gameData/${gameId}.json.gz`);
+  let gzippedBlob: Buffer;
+  try {
+    [gzippedBlob] = await file.download();
+  } catch (error: any) {
+    // File was not present.
+    if (error.code === 404) return false;
+    throw error;
+  }
+  const jsonBlob = await gzip.decompress(gzippedBlob);
+
+  const gameData = JSON.parse(jsonBlob.toString());
+  await getDatabase()
+    .ref(`gameData/${gameId}`)
+    .set({ ...gameData, populatedAt: SERVER_VALUE_TIMESTAMP });
+  return true;
+}
+
+/** Try to fetch a game state that's not present, restoring if needed. */
+export const fetchStaleGame = functions.https.onCall(async (data, context) => {
+  if (!context.auth) {
+    throw new functions.https.HttpsError(
+      "failed-precondition",
+      "The function must be called while authenticated.",
+    );
+  }
+
+  const gameId = data.gameId;
+  if (
+    !(typeof gameId === "string") ||
+    gameId.length === 0 ||
+    gameId.length > MAX_GAME_ID_LENGTH
+  ) {
+    throw new functions.https.HttpsError(
+      "invalid-argument",
+      "The function must be called with argument `gameId` to be fetched at `/games/:gameId`.",
+    );
+  }
+
+  try {
+    const restored = await restoreGameState(gameId);
+    return { restored };
+  } catch (error: any) {
+    throw new functions.https.HttpsError("internal", error.message);
+  }
+});
+
+/** Archive stale game states to GCS for cost savings. */
+export const archiveStaleGames = functions
+  .runWith({ timeoutSeconds: 540, memory: "2GB" })
+  .pubsub.schedule("every 1 hours")
+  .onRun(async (context) => {
+    const cutoff = Date.now() - 14 * 86400 * 1000; // 14 days ago
+    const queue = new PQueue({ concurrency: 200 });
+
+    for await (const [gameId, gameState] of databaseIterator("gameData")) {
+      const populatedAt: number | null = gameState.child("populatedAt").val();
+      if (!populatedAt || populatedAt < cutoff) {
+        await queue.onEmpty();
+        queue.add(async () => {
+          console.log(`Archiving stale game state for ${gameId}`);
+          await archiveGameState(gameId, gameState);
+        });
+      }
+    }
+
+    await queue.onIdle();
+  });

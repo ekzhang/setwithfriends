@@ -8,7 +8,7 @@ which can be done by admin users following the
 secret, and save it to a file in this folder called `credential.json`.
 
 After downloading the credentials file, you can run scripts with `npm install`
-and `npm start`.
+and `node .`.
 
 ## Structure
 

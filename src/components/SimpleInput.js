@@ -1,4 +1,4 @@
-import { styled } from "@material-ui/core/styles";
+import { styled } from "@mui/material/styles";
 
 const SimpleInput = styled("input")(({ theme }) => ({
   width: "100%",
@@ -10,9 +10,10 @@ const SimpleInput = styled("input")(({ theme }) => ({
   outline: "none",
   appearance: "none",
   transition: "border-color 0.2s",
-  color: theme.input.textColor,
-  caretColor: theme.input.caretColor,
-  backgroundColor: theme.input.background,
+  color: theme.components.MuiInput.styleOverrides.root.color,
+  caretColor: theme.components.MuiInput.styleOverrides.root.caretColor,
+  backgroundColor:
+    theme.components.MuiInput.styleOverrides.root.backgroundColor,
   "&:focus": {
     borderColor: theme.palette.primary.main,
   },
