@@ -5,7 +5,7 @@ import Link from "@material-ui/core/Link";
 import Paper from "@material-ui/core/Paper";
 import Typography from "@material-ui/core/Typography";
 import { lightGreen } from "@material-ui/core/colors";
-import { useTheme } from "@material-ui/core/styles";
+import { makeStyles, useTheme } from "@material-ui/core/styles";
 import { animated, useSprings } from "@react-spring/web";
 import useSound from "use-sound";
 
@@ -164,27 +164,6 @@ function Game({
       },
     }))
   );
-  const springPropsLabel = useSprings(
-    cardArray.length,
-    cardArray.map((c) => ({
-      to: {
-        transform: `translate(${
-          isHorizontal
-            ? cards[c].positionX + cardHeight + gamePadding
-            : cards[c].positionX + gamePadding
-        }px, ${
-          isHorizontal
-            ? cards[c].positionY + cardHeight - gamePadding
-            : cards[c].positionY - gamePadding
-        }px)`,
-        opacity: cards[c].opacity,
-      },
-      config: {
-        tension: 64,
-        friction: 14,
-      },
-    }))
-  );
 
   function flipCardOrientation(event) {
     event.preventDefault();
@@ -287,18 +266,6 @@ function Game({
       ) : null}
       {cardArray.map((card, idx) => (
         <div>
-          <animated.h2
-            style={{
-              color: theme.palette.primary.main,
-              float: "left",
-              position: "absolute",
-              "font-family": "lucida-grande, courier, monospace",
-              ...springPropsLabel[idx],
-            }}
-          >
-            ?
-          </animated.h2>
-
           <animated.div
             key={card}
             style={{
@@ -309,6 +276,17 @@ function Game({
               ),
             }}
           >
+            <span
+              style={{
+                top: 2,
+                left: 5,
+                position: "absolute",
+                float: "left",
+                color: theme.palette.text.primary,
+              }}
+            >
+              {card}
+            </span>
             <ResponsiveSetCard
               value={card}
               width={cardWidth}
