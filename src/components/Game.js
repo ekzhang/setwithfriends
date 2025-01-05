@@ -296,7 +296,7 @@ function Game({
               ...springPropsLabel[idx],
             }}
           >
-            {(shortcuts[board.indexOf(card)] || "﹖").toUpperCase()}
+            ?
           </animated.h2>
 
           <animated.div
