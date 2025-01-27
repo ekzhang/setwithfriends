@@ -25,6 +25,7 @@ import { UserContext } from "../context";
 import firebase, { createGame } from "../firebase";
 import useFirebaseQuery from "../hooks/useFirebaseQuery";
 import useFirebaseRef from "../hooks/useFirebaseRef";
+import useKeydown from "../hooks/useKeydown";
 
 const useStyles = makeStyles((theme) => ({
   mainGrid: {
@@ -154,6 +155,23 @@ function LobbyPage() {
   const handleTabChange = (event, newValue) => {
     setTabValue(newValue);
   };
+
+  useKeydown((event) => {
+    if (
+      event.ctrlKey === true &&
+      event.shiftKey === false &&
+      event.keyCode === 13
+    ) {
+      newRoom("public");
+    }
+    if (
+      event.ctrlKey === false &&
+      event.shiftKey === true &&
+      event.keyCode === 13
+    ) {
+      newRoom("private");
+    }
+  });
 
   if (redirect) return <Navigate push to={redirect} />;
 

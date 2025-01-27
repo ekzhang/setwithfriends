@@ -25,6 +25,7 @@ import Subheading from "../components/Subheading";
 import { UserContext } from "../context";
 import firebase from "../firebase";
 import useFirebaseRef from "../hooks/useFirebaseRef";
+import useKeydown from "../hooks/useKeydown";
 import LoadingPage from "./LoadingPage";
 import NotFoundPage from "./NotFoundPage";
 
@@ -89,6 +90,12 @@ function RoomPage() {
     }
   }, [user.id, game, gameId, leaving]);
 
+  useKeydown((event) => {
+    if (event.ctrlKey === true && event.keyCode === 13) {
+      startGame();
+    }
+  });
+
   if (loadingGame) {
     return <LoadingPage />;
   }
@@ -131,7 +138,6 @@ function RoomPage() {
         setLeaving(false);
       });
   }
-
   return (
     <Container sx={{ pb: 2 }}>
       <Grid container spacing={2}>
