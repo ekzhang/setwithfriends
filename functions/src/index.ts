@@ -506,9 +506,9 @@ export const fetchStaleGame = functions.https.onCall(async (data, context) => {
 /** Archive stale game states to GCS for cost savings. */
 export const archiveStaleGames = functions
   .runWith({ timeoutSeconds: 540, memory: "2GB" })
-  .pubsub.schedule("every 1 hours")
+  .pubsub.schedule("every 6 hours")
   .onRun(async (context) => {
-    const cutoff = Date.now() - 14 * 86400 * 1000; // 14 days ago
+    const cutoff = Date.now() - 3 * 86400 * 1000; // 3 days ago
     const queue = new PQueue({ concurrency: 200 });
 
     for await (const [gameId, gameState] of databaseIterator("gameData")) {
