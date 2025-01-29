@@ -7,7 +7,7 @@ import PQueue from "p-queue";
 import Stripe from "stripe";
 
 import { GameMode, findSet, generateDeck, replayEvents } from "./game";
-import { databaseIterator, gzip } from "./utils";
+import { gzip } from "./utils";
 
 initializeApp(); // Sets the default Firebase app.
 
@@ -506,15 +506,29 @@ export const fetchStaleGame = functions.https.onCall(async (data, context) => {
 /** Archive stale game states to GCS for cost savings. */
 export const archiveStaleGames = functions
   .runWith({ timeoutSeconds: 540, memory: "2GB" })
-  .pubsub.schedule("every 6 hours")
+  .pubsub.schedule("every 1 hours")
   .onRun(async (context) => {
-    const cutoff = Date.now() - 3 * 86400 * 1000; // 3 days ago
+    const cutoff = Date.now() - 14 * 86400 * 1000; // 14 days ago
     const queue = new PQueue({ concurrency: 200 });
 
-    for await (const [gameId, gameState] of databaseIterator("gameData")) {
+    const snap = await getDatabase()
+      .ref("gameData")
+      .orderByChild("populatedAt")
+      .endBefore(cutoff)
+      .get();
+
+    const childKeys: string[] = [];
+    snap.forEach((child) => {
+      childKeys.push(child.key);
+    });
+
+    let archiveCount = 0;
+    for (const gameId of childKeys) {
+      const gameState = snap.child(gameId);
       const populatedAt: number | null = gameState.child("populatedAt").val();
       if (!populatedAt || populatedAt < cutoff) {
         await queue.onEmpty();
+        archiveCount += 1;
         queue.add(async () => {
           console.log(`Archiving stale game state for ${gameId}`);
           await archiveGameState(gameId, gameState);
@@ -523,4 +537,5 @@ export const archiveStaleGames = functions
     }
 
     await queue.onIdle();
+    console.log(`Completed archive of ${archiveCount} games`);
   });

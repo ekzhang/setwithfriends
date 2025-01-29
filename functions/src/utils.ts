@@ -30,21 +30,22 @@ export const gzip = {
 export async function* databaseIterator(
   path: string,
   batchSize = 1000,
+  start?: string, // inclusive
+  end?: string, // inclusive
 ): AsyncGenerator<[string, DataSnapshot]> {
-  let lastKey = null;
+  let lastKey: string | undefined = undefined;
   while (true) {
-    const snap = lastKey
-      ? await getDatabase()
-          .ref(path)
-          .orderByKey()
-          .startAfter(lastKey)
-          .limitToFirst(batchSize)
-          .get()
-      : await getDatabase()
-          .ref(path)
-          .orderByKey()
-          .limitToFirst(batchSize)
-          .get();
+    let query = getDatabase().ref(path).orderByKey();
+    if (lastKey !== undefined) {
+      query = query.startAfter(lastKey);
+    } else if (start !== undefined) {
+      query = query.startAt(start);
+    }
+    if (end !== undefined) {
+      query = query.endAt(end);
+    }
+
+    const snap = await query.limitToFirst(batchSize).get();
     if (!snap.exists()) return;
 
     const childKeys: string[] = [];
