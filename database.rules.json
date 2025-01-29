@@ -28,6 +28,7 @@
       }
     },
     "gameData": {
+      ".indexOn": "populatedAt",
       "$gameId": {
         ".read": "auth != null",
         "events": {
