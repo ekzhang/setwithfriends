@@ -1,4 +1,5 @@
 import Divider from "@mui/material/Divider";
+import Link from "@mui/material/Link";
 import Paper from "@mui/material/Paper";
 import Typography from "@mui/material/Typography";
 import { lightGreen } from "@mui/material/colors";
@@ -156,6 +157,17 @@ function Game({
     })),
   );
 
+  function flipCardOrientation(event) {
+    event.preventDefault();
+    if (volume === "on") playLayout();
+    setCardOrientation(isHorizontal ? "vertical" : "horizontal");
+  }
+  function flipLayoutOrientation(event) {
+    event.preventDefault();
+    if (volume === "on") playLayout();
+    setLayoutOrientation(isLandscape ? "portrait" : "landscape");
+  }
+
   // Keyboard shortcuts
   const shortcuts = isLandscape
     ? keyboardLayoutDesc.horizontalLayout
@@ -175,13 +187,9 @@ function Game({
       } else if (
         key.toLowerCase() === keyboardLayoutDesc.orientationChangeKey
       ) {
-        event.preventDefault();
-        if (volume === "on") playLayout();
-        setCardOrientation(isHorizontal ? "vertical" : "horizontal");
+        flipCardOrientation(event);
       } else if (key.toLowerCase() === keyboardLayoutDesc.layoutChangeKey) {
-        event.preventDefault();
-        if (volume === "on") playLayout();
-        setLayoutOrientation(isLandscape ? "portrait" : "landscape");
+        flipLayoutOrientation(event);
       }
     }
   });
@@ -228,7 +236,14 @@ function Game({
           width: "100%",
         }}
       >
-        <strong>{unplayed.length}</strong> cards remaining in the deck
+        <strong>{unplayed.length}</strong> cards remaining in the deck •{" "}
+        <Link component="button" onClick={flipLayoutOrientation}>
+          Rotate layout
+        </Link>{" "}
+        •{" "}
+        <Link component="button" onClick={flipCardOrientation}>
+          Rotate cards
+        </Link>
       </Typography>
       {gameMode === "setchain" && lastSet.length ? (
         <Divider
