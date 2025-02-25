@@ -11,7 +11,6 @@ import ResponsiveSetCard from "../components/ResponsiveSetCard";
 import { SettingsContext } from "../context";
 import useDimensions from "../hooks/useDimensions";
 import useKeydown from "../hooks/useKeydown";
-import useStorage from "../hooks/useStorage";
 import { generateCards, standardLayouts } from "../util";
 
 const gamePadding = 8;
@@ -27,15 +26,14 @@ function Game({
   answer,
   lastSet,
 }) {
-  const [layoutOrientation, setLayoutOrientation] = useStorage(
-    "layout",
-    "portrait",
-  );
-  const [cardOrientation, setCardOrientation] = useStorage(
-    "orientation",
-    "vertical",
-  );
-  const { keyboardLayout, volume } = useContext(SettingsContext);
+  const {
+    keyboardLayout,
+    volume,
+    layoutOrientation,
+    toggleLayoutOrientation,
+    cardOrientation,
+    toggleCardOrientation,
+  } = useContext(SettingsContext);
   const keyboardLayoutDesc = standardLayouts[keyboardLayout];
   const isHorizontal = cardOrientation === "horizontal";
   const isLandscape = layoutOrientation === "landscape";
@@ -177,11 +175,11 @@ function Game({
       ) {
         event.preventDefault();
         if (volume === "on") playLayout();
-        setCardOrientation(isHorizontal ? "vertical" : "horizontal");
+        toggleCardOrientation();
       } else if (key.toLowerCase() === keyboardLayoutDesc.layoutChangeKey) {
         event.preventDefault();
         if (volume === "on") playLayout();
-        setLayoutOrientation(isLandscape ? "portrait" : "landscape");
+        toggleLayoutOrientation();
       }
     }
   });
