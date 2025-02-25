@@ -13,7 +13,9 @@ import Toolbar from "@mui/material/Toolbar";
 import Tooltip from "@mui/material/Tooltip";
 import Typography from "@mui/material/Typography";
 import { useContext, useState } from "react";
+import useSound from "use-sound";
 
+import layoutSfx from "../assets/layoutChangeSound.mp3";
 import { version } from "../config";
 import { SettingsContext, UserContext } from "../context";
 import firebase from "../firebase";
@@ -33,6 +35,7 @@ function Navbar({
 }) {
   const user = useContext(UserContext);
   const settings = useContext(SettingsContext);
+  const [playLayout] = useSound(layoutSfx);
   const [anchorEl, setAnchorEl] = useState(null);
   const [changeName, setChangeName] = useState(false);
   const [changeUserColor, setChangeUserColor] = useState(false);
@@ -180,6 +183,16 @@ function Navbar({
             }}
           >
             Change keyboard layout
+          </MenuItem>
+          <MenuItem
+            onClick={() => {
+              if (settings.volume === "on") playLayout();
+              settings.toggleLayoutOrientation();
+              settings.toggleCardOrientation();
+              handleCloseMenu();
+            }}
+          >
+            Flip board layout
           </MenuItem>
           <MenuItem
             onClick={() => {

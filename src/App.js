@@ -36,6 +36,22 @@ function App() {
     "keyboardLayout",
     "QWERTY",
   );
+  const [layoutOrientation, setLayoutOrientation] = useStorage(
+    "layout",
+    "portrait",
+  );
+  const [cardOrientation, setCardOrientation] = useStorage(
+    "orientation",
+    "vertical",
+  );
+
+  const toggleLayoutOrientation = () => {
+    setLayoutOrientation((x) => (x === "portrait" ? "landscape" : "portrait"));
+  };
+  const toggleCardOrientation = () => {
+    setCardOrientation((x) => (x === "vertical" ? "horizontal" : "vertical"));
+  };
+
   const [volume, setVolume] = useStorage("volume", "on");
 
   useEffect(() => {
@@ -127,7 +143,16 @@ function App() {
           ) : (
             <UserContext.Provider value={user}>
               <SettingsContext.Provider
-                value={{ keyboardLayout, setKeyboardLayout, volume, setVolume }}
+                value={{
+                  keyboardLayout,
+                  setKeyboardLayout,
+                  volume,
+                  setVolume,
+                  layoutOrientation,
+                  toggleLayoutOrientation,
+                  cardOrientation,
+                  toggleCardOrientation,
+                }}
               >
                 <ConnectionsTracker />
                 <WelcomeDialog />
